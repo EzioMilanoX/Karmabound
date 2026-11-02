@@ -458,7 +458,7 @@ def aplicar_voto(estado: EstadoRun, ctx: Contexto, voto: Voto) -> None:
     else:
         voto.lutas_restantes = lutas_da_duracao(voto.duracao, estado.proxima_luta, 1)
     estado.votos.jurar(voto)
-    estado.jogador.aplicar_efeitos(estado.votos.efeitos())
+    atualizar_efeitos(estado)  # votos + Dom + Relíquias: só os votos apagaria o resto
 
 
 def _com(ctx: Contexto, restricoes, ganhos, duracao: str) -> Callable[[EstadoRun], None]:

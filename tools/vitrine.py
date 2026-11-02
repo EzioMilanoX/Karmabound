@@ -160,6 +160,32 @@ def _cinema(loop, destino: Path) -> list[Path]:
     salvos.append(_foto(loop, titulo, destino / "20_titulo.png"))
     titulo.relogio = 0.22
     salvos.append(_foto(loop, titulo, destino / "21_transicao_tinta.png"))
+    salvos += _sobrepostas(loop, destino)
+    return salvos
+
+
+def _sobrepostas(loop, destino: Path) -> list[Path]:
+    """Pausa, opções, uma dica e a quebra de um voto, por cima de uma luta."""
+    from karmabound.run import aplicar_voto
+    from karmabound.tela_pausa import DicaScene, OpcoesScene, PausaScene, VotosScene
+    from karmabound.votos import Voto
+
+    j, cena = _cena("lua_de_sangue", 2, False)
+    cat = j.ctx.catalogo
+    aplicar_voto(j.estado, j.ctx, Voto([cat.restricoes["sem_descanso"]], [cat.ganhos["forca"]]))
+    nada = lambda *a: None  # noqa: E731
+    pausa = PausaScene(cena, j, Entrada(), nada, nada, None)
+    pausa.cursor = 2
+    salvos = [_foto(loop, pausa, destino / "22_pausa.png")]
+    opcoes = OpcoesScene(pausa, Entrada(), nada, nada)
+    opcoes.cursor = 4
+    salvos.append(_foto(loop, opcoes, destino / "23_opcoes.png"))
+    salvos.append(
+        _foto(loop, DicaScene(cena, "despertar", Entrada(), nada, nada), destino / "24_dica.png")
+    )
+    votos = VotosScene(pausa, j, Entrada(), nada, nada, nada)
+    votos.voto, votos.marcadas, votos.cursor = j.estado.votos.ativos[0], {"corpo_ofertado"}, 1
+    salvos.append(_foto(loop, votos, destino / "25_quebrar_voto.png"))
     return salvos
 
 

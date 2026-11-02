@@ -31,6 +31,7 @@ from karmabound.run import (
     aplicar_arco,
     aplicar_dom,
     aplicar_voto,
+    atualizar_efeitos,
     avaliar_restricoes,
     beneficios_dos_ganhos,
     comecar_luta,
@@ -45,7 +46,7 @@ from karmabound.run import (
     substituir_tecnica,
     vai_ter_reliquia,
 )
-from karmabound.votos import Voto, Votos
+from karmabound.votos import FimDaRun, Voto, Votos
 
 
 @dataclass
@@ -284,6 +285,29 @@ class Jornada:
     def recusar_altar(self) -> None:
         self._exigir("altar")
         self._depois_da_tecnica()
+
+    def quebrar_voto(self, voto: Voto, ids_quebra: list[str]) -> bool:
+        """Quebra `voto` (de qualquer fase da run): perde os ganhos, metade da vida e o Carma,
+        e jura um voto de quebra com as restrições `ids_quebra`, pelo prazo que faltava.
+
+        Devolve False se a run acabou (quebrar um voto de quebra encerra a run).
+        """
+        cat = self.ctx.catalogo
+        quebra = Voto(
+            [cat.restricoes[i] for i in ids_quebra],
+            [],
+            voto.duracao,
+            lutas_restantes=voto.lutas_restantes,
+        )
+        try:
+            self.estado.votos.quebrar(voto, quebra, self.jogador, self.carma)
+        except FimDaRun:
+            self.estado.derrotado = True
+            self.jogador.vida = 0
+            self.fase = "derrota"
+            return False
+        atualizar_efeitos(self.estado)
+        return True
 
     # ------------------------------------------------------------------ ajuda às telas
 

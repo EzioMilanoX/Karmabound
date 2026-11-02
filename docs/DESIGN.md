@@ -165,6 +165,14 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **Cinema**: entrada do rival (1,7 s; o chefe 2,6 s), vitória (o rival se desfaz em tinta) e derrota (as correntes se fecham), título animado, e uma transição de tinta no começo de cada tela.
 - **Reação**: o Primeiro Trovão passou a sutileza 1 — a reação a golpes perigosos tinha caído para 17% (o alvo de design é ~33%); voltou a 26–31% sem mudar as vitórias.
 
+### Polimento para jogar (2026-11-02)
+
+- **Pausa** (Esc em qualquer tela da run): continuar, opções, quebrar um voto, voltar ao título (pede confirmação: a run se perde) e sair. No título e no fim, Esc sai.
+- **Opções**, salvas em `~/.karmabound/opcoes.json`: volume da música e dos efeitos (0–10), silenciar, tela cheia, velocidade das animações (1×, 1,5×, 2×), dicas. O volume da música pediu um marco na engine (**M17**: `IAudioEngine.set_track_volume`, default no-op).
+- **Dicas da primeira run**: cada sistema se explica uma vez (roleta, Arco, luta, Percepção, Despertar, técnicas, espaços cheios, Relíquias, Altar). `KARMABOUND_DICAS=0` desliga (os testes usam).
+- **Quebrar um voto pela tela**: a regra já existia (`Votos.quebrar`); agora `Jornada.quebrar_voto` e a tela. O voto de quebra fica no lugar do quebrado pelo prazo que faltava.
+- **Bug achado pelo teste:** jurar um voto recalculava o lutador só com os votos — o Dom e as Relíquias sumiam até o fim da luta seguinte (e o Altar media os votos com esse defeito). `aplicar_voto` agora recalcula tudo.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.

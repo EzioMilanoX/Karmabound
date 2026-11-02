@@ -19,6 +19,7 @@ from karmabound.arenas import desenhar_arena
 from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica, _extra_da_dor
 from karmabound.figuras import ESTILOS, desenhar_lutador
 from karmabound.jornada import Jornada
+from karmabound.opcoes import OPCOES
 from karmabound.run import espacos
 from karmabound.visual import (
     ALTURA,
@@ -82,8 +83,11 @@ class Texto:
 
 
 class LutaScene(IScene):
-    def __init__(self, jornada: Jornada, entrada: IInputProvider, ao_terminar, ao_sair) -> None:
+    def __init__(
+        self, jornada: Jornada, entrada: IInputProvider, ao_terminar, ao_sair, ao_dica=None
+    ) -> None:
         self.j = jornada
+        self.ao_dica = ao_dica or (lambda _id: None)  # dicas da primeira run (o Fluxo decide)
         self.luta: Luta = jornada.luta
         self.entrada = entrada
         self.ao_terminar = ao_terminar  # chamado com venceu: bool depois do banner
@@ -193,6 +197,8 @@ class LutaScene(IScene):
         som.tocar("critico" if acao.critico else som.SOM_DO_EFEITO.get(nome_efeito, "golpe"))
         if acao.reagiu:
             som.tocar("percebeu")
+        if acao.reagiu or (ator is rival and tecnica is not None and tecnica.perigosa):
+            self.ao_dica("percepcao")
         if acao.esquivas or acao.escudados or acao.instintos:
             som.tocar("defesa")
         if acao.dano and alvo is j:
@@ -281,6 +287,7 @@ class LutaScene(IScene):
             som.musica("luta_carma" if self.j.carma.transbordando else "luta")
 
     def update(self, world, delta_time: float) -> None:
+        delta_time *= OPCOES.velocidade  # a velocidade das animações, das opções
         self.relogio += delta_time
         e = self.entrada
         if self.primeiro_quadro:
@@ -312,6 +319,8 @@ class LutaScene(IScene):
                 self._animar(self.luta.turno_rival())
             return
 
+        if self.luta.pode_despertar():
+            self.ao_dica("despertar")
         if e.is_action_pressed("despertar") and self.luta.pode_despertar():
             self._celebrar(self.luta.despertar())  # não gasta o turno
             return

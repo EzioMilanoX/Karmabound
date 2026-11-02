@@ -32,7 +32,9 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 | Onde | Ação | Tecla |
 |---|---|---|
-| Título | Escolher o modo / começar / abrir o Grimório | ↑ ↓ / Enter / G |
+| Título | Escolher o modo / começar / Grimório / opções | ↑ ↓ / Enter / G / O |
+| Durante a run | Pausa: continuar, opções, quebrar um voto, voltar ao título | Esc |
+| Opções | Música, efeitos, silenciar, tela cheia, velocidade, dicas | ↑ ↓ / ← → |
 | Grimório | Trocar de roda / de habilidade / voltar | ← → / ↑ ↓ / Backspace |
 | Roleta | Girar / escolher 1 de 3 / continuar | Espaço / 1–3 / Enter |
 | Luta | Usar a técnica do selo (6 = técnica do Dom) | 1–6 (ou ← → e Enter) |
@@ -41,7 +43,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 | Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
 | Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
 | Altar (compra) | Comprar um nível do ganho / devolver / voltar | → ou Enter / ← / Backspace |
-| Qualquer tela | Sair | Esc |
+| Título e fim da run | Sair | Esc |
 
 ### Uma run
 
@@ -56,6 +58,8 @@ Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada g
 Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta, na luta e no Grimório: a **Espiral Concentrada** é o Rasengan (Naruto), o **Clarão Negro** é o Kokusen (Jujutsu Kaisen), o **Corte do Mundo** é o corte que divide o mundo do Sukuna, o **Corpo Perfeito** é o Sukuna da Era Heian, o **Instante Suspenso** é The World (JoJo), a **Liberação Final** é o Bankai (Bleach). As obras vão de Naruto, One Piece, Bleach, Dragon Ball e Hunter x Hunter a Jujutsu Kaisen, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling e Attack on Titan. A lista completa, com a origem de cada uma, está no [catálogo](docs/CATALOGO.md).
 
 O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
+
+Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparece (dá para desligar ou rever nas opções). **Esc** pausa: dali se abrem as opções (volume da música e dos efeitos, silenciar, tela cheia, velocidade das animações) e se **quebra um voto**, com a punição e o voto de quebra.
 
 ### O visual
 

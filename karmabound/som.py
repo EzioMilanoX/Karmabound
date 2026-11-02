@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from karmabound.opcoes import OPCOES
+
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 
 # volume de cada efeito (o que não está aqui toca em 1,0)
@@ -71,12 +73,28 @@ class _Som:
                 self.musicas.add(arquivo.stem)
             except Exception:
                 pass
+        self.aplicar_volume()
+
+    def _efeitos(self) -> float:
+        return 0.0 if OPCOES.mudo else OPCOES.volume_efeitos / 10
+
+    def aplicar_volume(self) -> None:
+        """Leva o volume da música das opções para a engine (M17: `set_track_volume`)."""
+        if self.audio is None or not hasattr(self.audio, "set_track_volume"):
+            return
+        try:
+            self.audio.set_track_volume(0.0 if OPCOES.mudo else OPCOES.volume_musica / 10)
+        except Exception:
+            pass
 
     def tocar(self, nome: str, volume: float = 1.0) -> None:
         if self.audio is None or nome not in self.sons:
             return
+        alto = volume * VOLUMES.get(nome, 1.0) * self._efeitos()
+        if alto <= 0:
+            return
         try:
-            self.audio.play_one_shot(nome, volume * VOLUMES.get(nome, 1.0))
+            self.audio.play_one_shot(nome, alto)
         except Exception:
             pass
 

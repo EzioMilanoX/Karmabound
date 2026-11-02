@@ -35,5 +35,6 @@
   "pagar_custo": "KEY_C",
   "sair": "KEY_ESCAPE",
   "despertar": "KEY_E",
-  "grimorio": "KEY_G"
+  "grimorio": "KEY_G",
+  "opcoes": "KEY_O"
 }

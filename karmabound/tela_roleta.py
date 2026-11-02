@@ -15,6 +15,7 @@ from ouroboros.interfaces.renderer import IRenderer
 
 from karmabound import som, vfx
 from karmabound.mesa import Giro, Mesa
+from karmabound.opcoes import OPCOES
 from karmabound.visual import (  # noqa: F401  (reexporta para quem importava daqui)
     ALTURA,
     FERRO,
@@ -129,6 +130,7 @@ class RoletaScene(IScene):
         return (self.inicio + int(passos * _ease_out(min(self.t / self._duracao(), 1.0)))) % n
 
     def update(self, world, delta_time: float) -> None:
+        delta_time *= OPCOES.velocidade  # a velocidade das animações, das opções
         self.relogio += delta_time
         self.t += delta_time
         e = self.entrada

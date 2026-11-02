@@ -283,7 +283,16 @@ def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
         json.loads((raiz / "karmabound" / "data" / "rodas.json").read_text(encoding="utf-8")),
         ensure_ascii=False,
     )
-    for modulo in ("tela_luta", "tela_roleta", "tela_menus", "tela_grimorio", "vfx", "arenas"):
+    for modulo in (
+        "tela_luta",
+        "tela_roleta",
+        "tela_menus",
+        "tela_grimorio",
+        "tela_pausa",
+        "dicas",
+        "vfx",
+        "arenas",
+    ):
         arvore = ast.parse((raiz / "karmabound" / f"{modulo}.py").read_text(encoding="utf-8"))
         docstrings = {
             id(n.value) for n in ast.walk(arvore) if isinstance(n, ast.Expr)
