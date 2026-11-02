@@ -30,6 +30,20 @@ class Efeitos:
     reviver: int = 0  # vezes na run que volta ao cair
     dano_chefe_mult: float = 1.0
     sangue_frio: bool = False  # sempre reage à surpresa
+    # Dons e Relíquias
+    esquiva: float = 0.0  # chance de um golpe inteiro errar (a única sorte dentro da luta)
+    furia: int = 0  # dano extra máximo, proporcional à vida perdida
+    sombra: float = 0.0  # a sombra repete esta fração de cada golpe
+    escudo_inicial: int = 0  # golpes do rival ignorados no começo de cada luta
+    cura_inicio: int = 0  # cura no início de cada luta
+    salvacao: int = 0  # vezes na run que um golpe fatal deixa com 1 de vida
+    carma_por_vitoria: float = 0.0
+    bloqueio_mult: float = 1.0
+    guarda_despertar: bool = False  # Coração Selado
+    guarda_resto: float = 0.0  # Carma que sobra ao guardar um Despertar
+    cura_mult: float = 1.0  # multiplica toda cura (entre lutas e no início da luta)
+    evolucao_imediata: bool = False  # Fragmento do Deus Cego
+    fator_evolucao: float = 1.3  # quanto uma evolução cresce
 
     @classmethod
     def de_dict(cls, d: dict) -> Efeitos:
@@ -70,5 +84,18 @@ def somar(lista: list[Efeitos]) -> Efeitos:
             reviver=total.reviver + e.reviver,
             dano_chefe_mult=total.dano_chefe_mult * e.dano_chefe_mult,
             sangue_frio=total.sangue_frio or e.sangue_frio,
+            esquiva=min(0.6, 1 - (1 - total.esquiva) * (1 - e.esquiva)),
+            furia=total.furia + e.furia,
+            sombra=total.sombra + e.sombra,
+            escudo_inicial=total.escudo_inicial + e.escudo_inicial,
+            cura_inicio=total.cura_inicio + e.cura_inicio,
+            salvacao=total.salvacao + e.salvacao,
+            carma_por_vitoria=total.carma_por_vitoria + e.carma_por_vitoria,
+            bloqueio_mult=total.bloqueio_mult * e.bloqueio_mult,
+            guarda_despertar=total.guarda_despertar or e.guarda_despertar,
+            evolucao_imediata=total.evolucao_imediata or e.evolucao_imediata,
+            guarda_resto=max(total.guarda_resto, e.guarda_resto),
+            cura_mult=total.cura_mult * e.cura_mult,
+            fator_evolucao=max(total.fator_evolucao, e.fator_evolucao),
         )
     return total

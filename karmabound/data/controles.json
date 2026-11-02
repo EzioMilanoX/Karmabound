@@ -4,7 +4,35 @@
   "escolher_1": "KEY_1",
   "escolher_2": "KEY_2",
   "escolher_3": "KEY_3",
+  "tecnica_1": "KEY_1",
+  "tecnica_2": "KEY_2",
+  "tecnica_3": "KEY_3",
+  "tecnica_4": "KEY_4",
+  "tecnica_5": "KEY_5",
+  "tecnica_6": "KEY_6",
+  "esquerda": [
+    "KEY_LEFT",
+    "KEY_A"
+  ],
+  "direita": [
+    "KEY_RIGHT",
+    "KEY_D"
+  ],
+  "cima": [
+    "KEY_UP",
+    "KEY_W"
+  ],
+  "baixo": [
+    "KEY_DOWN",
+    "KEY_S"
+  ],
+  "confirmar": [
+    "KEY_RETURN",
+    "KEY_SPACE"
+  ],
+  "cancelar": "KEY_BACKSPACE",
   "sofrer_dano": "KEY_D",
   "pagar_custo": "KEY_C",
-  "sair": "KEY_ESCAPE"
+  "sair": "KEY_ESCAPE",
+  "despertar": "KEY_E"
 }

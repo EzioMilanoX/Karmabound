@@ -43,7 +43,7 @@ pip install pygame-ce "ouroboros-engine @ git+https://github.com/EzioMilanoX/Our
 python -m karmabound
 ```
 
-No Windows, duplo clique em **`run.bat`** faz o mesmo.
+No Windows, duplo clique em **`run.bat`** faz o mesmo. Abre o título; escolha o modo e jogue uma run inteira. `python -m karmabound --roleta` abre só a roleta, como caixa de areia.
 
 ## Para desenvolver
 

@@ -30,6 +30,9 @@ class Fatia:
     peso: float = 1.0
     combate: dict | None = field(default=None, hash=False, compare=False)  # só técnicas
     evento: str = ""  # ex.: "altar" (o Juramento abre o Altar dos Votos)
+    efeito: dict | None = field(default=None, hash=False, compare=False)  # Dons, Relíquias
+    tecnica: dict | None = field(default=None, hash=False, compare=False)  # técnica de Dom
+    regra: dict | None = field(default=None, hash=False, compare=False)  # Arcos
 
 
 @dataclass(frozen=True)

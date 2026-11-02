@@ -1,0 +1,621 @@
+"""Tela de luta: duelo frente a frente, rival em cima, você embaixo.
+
+Só apresentação: cada ação passa pela `Luta` (regras) na hora em que é escolhida,
+e a tela anima o `Acao` que voltou. Enquanto uma animação toca, a entrada fica
+travada; o rival age sozinho depois de uma pausa curta.
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass
+
+from ouroboros.bootstrap.scene import IScene
+from ouroboros.interfaces.input_provider import IInputProvider
+from ouroboros.interfaces.renderer import IRenderer
+
+from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica
+from karmabound.figuras import desenhar_lutador
+from karmabound.jornada import Jornada
+from karmabound.visual import (
+    ALTURA,
+    FERRO,
+    FONTE_PINCEL,
+    FUNDO,
+    LACA,
+    LARGURA,
+    OURO,
+    SANGUE_VIVO,
+    TINTA,
+    VERDE_JADE,
+    Cor,
+    alpha,
+    ease_out,
+    hex_cor,
+    mistura,
+    quebrar,
+)
+
+DURACAO_ACAO = 0.6
+PAUSA_RIVAL = 0.35
+
+POS_RIVAL = (480, 282)
+POS_JOGADOR = (150, 626)
+SELO_Y = 500
+SELO_X0 = 372
+SELO_PASSO = 104
+RAIO_SELO = 30
+
+KANJI_BASICO = "打"
+KANJI_HESITAR = "躊"
+NOMES_TIPO = {"ataque": "um ATAQUE", "defesa": "uma DEFESA", "maldita": "algo MALDITO"}
+ROMANOS = ("I", "II", "III", "IV", "V")
+
+
+@dataclass
+class Texto:
+    """Número ou palavra que sobe e some (dano, 'percebeu!', 'surpresa!')."""
+
+    x: float
+    y: float
+    texto: str
+    cor: Cor
+    inicio: float
+    tamanho: int = 30
+
+
+class LutaScene(IScene):
+    def __init__(self, jornada: Jornada, entrada: IInputProvider, ao_terminar, ao_sair) -> None:
+        self.j = jornada
+        self.luta: Luta = jornada.luta
+        self.entrada = entrada
+        self.ao_terminar = ao_terminar  # chamado com venceu: bool depois do banner
+        self.ao_sair = ao_sair
+        self.relogio = 0.0
+        self.anim_ate = 0.0
+        self.proxima_rival = PAUSA_RIVAL
+        self.cursor = 1 if self.j.jogador.tecnicas else 0
+        self.modo = "escolher"  # escolher | sacrificio | fim
+        self.contrato: Tecnica | None = None
+        self.textos: list[Texto] = []
+        self.golpe: tuple[Lutador, float] | None = None  # quem avança e quando
+        self.tremor: dict[int, float] = {}  # id(lutador) -> início do tremor
+        self.vida_vista = {
+            id(self.j.jogador): self.j.jogador.vida,
+            id(self.luta.rival): self.luta.rival.vida,
+        }
+        self.aviso = ""
+        self.aviso_ate = 0.0
+        self.registro = (
+            "A luta começa." if self.luta.vez is self.j.jogador else "O rival se move primeiro."
+        )
+        if jornada.aviso:  # o que aconteceu com a técnica do último giro
+            self.registro = f"{jornada.aviso} · {self.registro}"
+            jornada.aviso = ""
+        cores = {r.id: hex_cor(r.cor) for r in jornada.ctx.raridades}
+        fatias = jornada.ctx.tecnicas
+        dons = {f.id: f for f in jornada.ctx.rodas["destino"].fatias}
+        self.kanji = {tid: f.kanji for tid, f in {**fatias, **dons}.items()}
+        self.cor_raridade = cores
+        self.kanji[jornada.ctx.basico.id] = KANJI_BASICO
+        self.kanji[HESITAR.id] = KANJI_HESITAR
+        # nomes pelo catálogo: uma técnica destruída pelo Contrato some da lista do lutador
+        self.nomes = {tid: f.nome for tid, f in {**fatias, **dons}.items()}
+        self.nomes[jornada.ctx.basico.id] = jornada.ctx.basico.nome
+        self.nomes[HESITAR.id] = HESITAR.nome
+
+    # --------------------------------------------------------------- slots
+
+    def slots(self) -> list[Tecnica | None]:
+        """Selo 1 = Golpe (ou Hesitar); 2 a 5 = os quatro espaços; 6 = a técnica do Dom."""
+        prontas = self.luta.prontas(self.j.jogador)
+        primeiro = HESITAR if prontas == [HESITAR] else self.luta.basico
+        tecnicas = list(self.j.jogador.tecnicas)
+        vazios = [None] * (self.j.ctx.combate["espacos"] - len(tecnicas))
+        dom = [self.j.jogador.tecnica_dom] if self.j.jogador.tecnica_dom else []
+        return [primeiro] + tecnicas + vazios + dom
+
+    def _disponivel(self, t: Tecnica | None) -> bool:
+        return t is not None and t in self.luta.prontas(self.j.jogador)
+
+    def _motivo_indisponivel(self, t: Tecnica) -> str:
+        j = self.j.jogador
+        if j.pular:
+            return "você perde este turno (o preço do Santuário)"
+        if t.copia_rival and self.luta.ultima_tecnica(self.luta.rival) is None:
+            return "o rival ainda não usou nada para roubar"
+        if t.tipo in j.efeitos.proibir_tipos or (
+            t is self.luta.basico and j.efeitos.proibir_basico
+        ):
+            return "proibido pelo seu voto"
+        if j.recargas.get(t.id, 0):
+            return f"em recarga ({j.recargas[t.id]})"
+        if t.consome_tecnica:
+            return "o pacto exige outra técnica para sacrificar"
+        return "indisponível"
+
+    # --------------------------------------------------------------- lógica
+
+    def _avisar(self, texto: str) -> None:
+        self.aviso, self.aviso_ate = texto, self.relogio + 1.6
+
+    def _nome(self, tid: str) -> str:
+        for t in [*self.j.jogador.tecnicas, *self.luta.rival.tecnicas]:
+            if t.id == tid:
+                return t.nome  # com o nível, se evoluiu
+        return self.nomes.get(tid, tid)
+
+    def _executar(self, t: Tecnica, sacrificio: Tecnica | None = None) -> None:
+        self._animar(self.luta.resolver(t, sacrificio))
+
+    def _animar(self, acao: Acao) -> None:
+        j, rival = self.j.jogador, self.luta.rival
+        ator = j if acao.ator == j.nome else rival
+        alvo = rival if ator is j else j
+        self.golpe = (ator, self.relogio)
+        self.anim_ate = self.relogio + DURACAO_ACAO
+        ax, ay = self._centro(alvo)
+        bx, by = self._centro(ator)
+        nome = self._nome(acao.tecnica)
+        partes = [f"{'Você' if ator is j else 'O rival'}: {nome}"]
+        if acao.surpresa and not acao.reagiu:
+            self.textos.append(Texto(ax, ay - 110, "surpresa!", OURO, self.relogio, 22))
+        if acao.dano:
+            self.tremor[id(alvo)] = self.relogio
+            self.textos.append(
+                Texto(ax + 30, ay - 70, f"-{acao.dano}", SANGUE_VIVO, self.relogio, 34)
+            )
+            partes.append(f"{acao.dano} de dano")
+        if acao.reagiu:
+            self.textos.append(Texto(ax - 40, ay - 92, "percebeu!", VERDE_JADE, self.relogio, 22))
+            self.tremor[id(ator)] = self.relogio + 0.2
+            partes.append("percebido: metade, e contra-golpe")
+        if acao.destruida:
+            self.textos.append(
+                Texto(
+                    bx,
+                    by - 150,
+                    f"契 {self._nome(acao.destruida)} se desfaz",
+                    OURO,
+                    self.relogio,
+                    18,
+                )
+            )
+            partes.append(f"o pacto levou {self._nome(acao.destruida)}")
+        if acao.copiou:
+            partes[0] += f" (roubou {self._nome(acao.copiou)})"
+        if acao.esquivas:
+            self.textos.append(Texto(ax - 30, ay - 120, "esquivou!", VERDE_JADE, self.relogio, 22))
+            partes.append("esquivou")
+        if acao.escudados:
+            self.textos.append(Texto(ax + 40, ay - 120, "escudo!", TINTA, self.relogio, 20))
+            partes.append("o escudo segurou")
+        if acao.sombra:
+            partes.append(f"a sombra fez {acao.sombra}")
+        if acao.turno_extra:
+            self.textos.append(Texto(bx, by - 150, "刻 ação extra!", OURO, self.relogio, 20))
+            partes.append("e age de novo")
+        self.registro = " · ".join(partes)
+        if self.luta.vez is rival:
+            self.proxima_rival = self.anim_ate + PAUSA_RIVAL
+
+    def update(self, world, delta_time: float) -> None:
+        self.relogio += delta_time
+        e = self.entrada
+        self.textos = [t for t in self.textos if self.relogio - t.inicio < 1.1]
+        for lut in (self.j.jogador, self.luta.rival):  # a barra de vida desce devagar
+            vista = self.vida_vista[id(lut)]
+            self.vida_vista[id(lut)] = vista + (lut.vida - vista) * min(1.0, delta_time * 8)
+        if e.is_action_pressed("sair"):
+            self.ao_sair()
+            return
+        if self.relogio < self.anim_ate:
+            return
+        if self.modo == "fim":
+            if e.is_action_pressed("confirmar"):
+                self.ao_terminar(self.luta.vencedor is self.j.jogador)
+            return
+        if self.luta.acabou:
+            self.modo = "fim"
+            return
+        if self.luta.vez is self.luta.rival:
+            if self.relogio >= self.proxima_rival:
+                self._animar(self.luta.turno_rival())
+            return
+
+        slots = self.slots()
+        if self.modo == "sacrificio":
+            self._escolher_sacrificio(slots)
+            return
+        for i in range(len(slots)):
+            if e.is_action_pressed(f"tecnica_{i + 1}"):
+                self.cursor = i
+                self._tentar(slots[i])
+                return
+        if e.is_action_pressed("esquerda"):
+            self.cursor = (self.cursor - 1) % len(slots)
+        elif e.is_action_pressed("direita"):
+            self.cursor = (self.cursor + 1) % len(slots)
+        elif e.is_action_pressed("confirmar"):
+            self._tentar(slots[self.cursor])
+
+    def _tentar(self, t: Tecnica | None) -> None:
+        if t is None:
+            self._avisar("espaço vazio")
+        elif not self._disponivel(t):
+            self._avisar(f"{t.nome}: {self._motivo_indisponivel(t)}")
+        elif t.consome_tecnica:
+            self.contrato, self.modo = t, "sacrificio"
+        else:
+            self._executar(t)
+
+    def _escolher_sacrificio(self, slots: list[Tecnica | None]) -> None:
+        e = self.entrada
+        if e.is_action_pressed("cancelar"):
+            self.contrato, self.modo = None, "escolher"
+            return
+        for i, t in enumerate(slots):
+            if e.is_action_pressed(f"tecnica_{i + 1}"):
+                dom = self.j.jogador.tecnica_dom
+                if t is None or t is self.contrato or t in (self.luta.basico, HESITAR, dom):
+                    self._avisar("escolha outra das suas técnicas")
+                    return
+                contrato, self.contrato, self.modo = self.contrato, None, "escolher"
+                self._executar(contrato, sacrificio=t)
+                return
+
+    # --------------------------------------------------------------- desenho
+
+    def _centro(self, lutador: Lutador) -> tuple[float, float]:
+        return POS_JOGADOR if lutador is self.j.jogador else POS_RIVAL
+
+    def _deslocamento(self, lutador: Lutador) -> tuple[float, float]:
+        dx = dy = 0.0
+        if self.golpe and self.golpe[0] is lutador:
+            k = (self.relogio - self.golpe[1]) / DURACAO_ACAO
+            if 0 <= k < 1:
+                avanço = math.sin(min(k / 0.5, 1) * math.pi) * 34  # vai e volta
+                sentido = -1 if lutador is self.j.jogador else 1
+                dx, dy = -sentido * avanço * 0.55, sentido * avanço
+        inicio = self.tremor.get(id(lutador))
+        if inicio is not None and 0 <= self.relogio - inicio < 0.35:
+            forca = 7 * (1 - (self.relogio - inicio) / 0.35)
+            dx += math.sin(self.relogio * 90) * forca
+        return dx, dy
+
+    def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:
+        r.draw_text(x, y, texto, tam, cor, anchor=anchor, font_id=FONTE_PINCEL)
+
+    def render(self, world, renderer: IRenderer) -> None:
+        r = renderer
+        r.draw_ui_rect(0, 0, LARGURA, ALTURA, FUNDO)
+        # ensō atrás do rival
+        r.draw_ui_arc(
+            POS_RIVAL[0],
+            POS_RIVAL[1] - 66,
+            92,
+            math.radians(110),
+            math.radians(430),
+            alpha(TINTA, 18),
+            10,
+        )
+        self._cabecalho(r)
+        self._rival(r)
+        self._intencao(r)
+        self._corrente(r)
+        self._jogador(r)
+        self._selos(r)
+        self._rodape(r)
+        for t in self.textos:
+            k = (self.relogio - t.inicio) / 1.1
+            self._texto(
+                r,
+                t.x,
+                t.y - 36 * ease_out(k),
+                t.texto,
+                t.tamanho,
+                alpha(t.cor, 255 * (1 - k**2)),
+                "center",
+            )
+        if self.modo == "fim" and self.relogio >= self.anim_ate:
+            self._banner(r)
+
+    def _cabecalho(self, r: IRenderer) -> None:
+        j = self.j
+        cap = ROMANOS[j.capitulo - 1] if j.capitulo <= len(ROMANOS) else str(j.capitulo)
+        e = j.estado
+        posicao = "chefe" if e.chefe else f"luta {e.luta_no_capitulo} de {e.tamanho_capitulo}"
+        self._texto(r, 24, 18, f"Capítulo {cap} · {posicao}", 18, alpha(TINTA, 170))
+        if j.arco:
+            self._texto(r, 24, 42, f"{j.arco.kanji} {j.arco.nome}", 16, alpha(TINTA, 120))
+        if e.reliquias:
+            kanjis = " ".join(x.kanji for x in e.reliquias)
+            self._texto(r, 24, 64, f"宝 {kanjis}", 16, alpha(OURO, 150))
+        nome_modo = j.ctx.combate["dificuldades"][j.modo]["nome"]
+        self._texto(r, LARGURA - 24, 18, nome_modo, 16, alpha(TINTA, 120), "topright")
+        for k, v in enumerate(j.estado.votos.ativos):
+            rotulo = " · ".join(x.kanji for x in v.restricoes) + (
+                "  (quebra)" if v.de_quebra else ""
+            )
+            self._texto(
+                r, LARGURA - 24, 42 + k * 22, f"誓 {rotulo}", 15, alpha(OURO, 170), "topright"
+            )
+
+    def _barra(self, r, x, y, largura, lut: Lutador, cor: Cor) -> None:
+        vista = self.vida_vista[id(lut)]
+        r.draw_ui_rect(x, y, largura, 8, LACA)
+        r.draw_ui_rect(
+            x, y, largura * max(0.0, vista) / lut.vida_max, 8, alpha((255, 255, 255, 255), 90)
+        )
+        r.draw_ui_rect(x, y, largura * max(0, lut.vida) / lut.vida_max, 8, cor)
+        if lut.efeitos.morte_abaixo:  # Fio da Navalha: a linha que não pode ser cruzada
+            lx = x + largura * lut.efeitos.morte_abaixo
+            r.draw_ui_line(lx, y - 3, lx, y + 11, SANGUE_VIVO, 2)
+
+    def _rival(self, r: IRenderer) -> None:
+        rival = self.luta.rival
+        x, y = POS_RIVAL
+        dx, dy = self._deslocamento(rival)
+        escala = 1.05 if rival.chefe else 0.92
+        if rival.chefe:
+            r.draw_ui_circle(x, y - 66, 86, alpha(SANGUE_VIVO, 24))
+        clarao = 0.0
+        inicio = self.tremor.get(id(rival))
+        if inicio is not None and 0 <= self.relogio - inicio < 0.3:
+            clarao = 1 - (self.relogio - inicio) / 0.3
+        desenhar_lutador(
+            r,
+            x + dx,
+            y + dy,
+            escala,
+            (60, 22, 24, 255),
+            alpha(TINTA, 230),
+            clarao=clarao,
+            clarao_cor=SANGUE_VIVO,
+        )
+        nome = "Chefe do capítulo" if rival.chefe else f"Rival {self.j.n_luta}"
+        self._texto(r, x, 36, nome, 22, TINTA, "center")
+        self._barra(r, x - 120, 72, 240, rival, SANGUE_VIVO)
+        self._texto(
+            r, x + 130, 64, f"{max(0, rival.vida)} / {rival.vida_max}", 15, alpha(TINTA, 150)
+        )
+        if rival.marca:
+            self._texto(
+                r,
+                x - 130,
+                62,
+                f"呪 {rival.marca}",
+                20,
+                mistura(TINTA, (157, 92, 224, 255), 0.7),
+                "topright",
+            )
+
+    def _intencao(self, r: IRenderer) -> None:
+        x, y = 660, 150
+        r.draw_ui_rect(x - 14, y - 14, 276, 88, alpha(LACA, 230))
+        self._texto(r, x, y - 6, "próxima ação do rival", 14, alpha(TINTA, 120))
+        vista = self.luta.ver_intencao()
+        if self.j.jogador.cego:
+            self._texto(r, x, y + 22, "você está cego", 18, SANGUE_VIVO)
+            self._texto(r, x, y + 46, "(o preço do Olho Roubado)", 14, alpha(TINTA, 90))
+        elif vista is None:
+            self._texto(r, x, y + 22, "você não consegue ler", 18, alpha(TINTA, 110))
+            self._texto(r, x, y + 46, "(Percepção 0)", 14, alpha(TINTA, 90))
+        elif isinstance(vista, str):
+            self._texto(r, x, y + 22, f"prepara {NOMES_TIPO.get(vista, vista)}", 19, TINTA)
+            self._texto(r, x, y + 46, "(Percepção 1: só o tipo)", 14, alpha(TINTA, 90))
+        else:
+            cor = SANGUE_VIVO if vista.perigosa else TINTA
+            kanji = self.kanji.get(vista.id, "?")
+            self._texto(r, x, y + 12, kanji, 34, cor)
+            self._texto(r, x + 46, y + 16, vista.nome, 19, cor)
+            detalhe = f"dano {vista.dano * vista.golpes}" if vista.dano else vista.tipo
+            if vista.perigosa:
+                detalhe += f" · perigosa · sutil {vista.sutileza}"
+            self._texto(r, x + 46, y + 42, detalhe, 14, alpha(TINTA, 140))
+
+    def _corrente(self, r: IRenderer) -> None:
+        carma = self.j.carma
+        frac = carma.valor / carma.config.maximo
+        cheio = carma.transbordando
+        y, x0, x1, elos = 330, 70, 890, 30
+        passo = (x1 - x0) / elos
+        pulso = 0.5 + 0.5 * math.sin(self.relogio * 6)
+        for i in range(elos):
+            x = x0 + i * passo + passo / 2
+            ativo = i < round(frac * elos)
+            cor = FERRO
+            if ativo:
+                cor = mistura(FERRO, SANGUE_VIVO, (0.65 + 0.35 * pulso) if cheio else 0.45)
+            if i % 2 == 0:
+                r.draw_ui_polygon(
+                    [
+                        (x - 11, y),
+                        (x - 6, y - 5),
+                        (x + 6, y - 5),
+                        (x + 11, y),
+                        (x + 6, y + 5),
+                        (x - 6, y + 5),
+                    ],
+                    cor,
+                    2,
+                )
+            else:
+                r.draw_ui_line(x - 13, y, x + 13, y, cor, 3)
+        self._texto(r, 24, y - 12, "業", 24, OURO)
+        if cheio:
+            self._texto(
+                r, 480, y + 16, "transbordando: o próximo giro desperta", 15, SANGUE_VIVO, "center"
+            )
+        else:
+            self._texto(
+                r,
+                480,
+                y + 16,
+                f"Carma {carma.valor:.0f} / {carma.config.maximo:.0f}",
+                14,
+                alpha(TINTA, 120),
+                "center",
+            )
+
+    def _jogador(self, r: IRenderer) -> None:
+        j = self.j.jogador
+        x, y = POS_JOGADOR
+        dx, dy = self._deslocamento(j)
+        clarao = 0.0
+        inicio = self.tremor.get(id(j))
+        if inicio is not None and 0 <= self.relogio - inicio < 0.3:
+            clarao = 1 - (self.relogio - inicio) / 0.3
+        guarda = 1.0 if j.bloqueio or j.revide else 0.0
+        desenhar_lutador(
+            r,
+            x + dx,
+            y + dy,
+            1.2,
+            TINTA,
+            alpha((255, 255, 255, 255), 200),
+            guarda=guarda,
+            clarao=clarao,
+            clarao_cor=SANGUE_VIVO,
+        )
+        self._texto(r, 40, 360, "Você", 22, TINTA)
+        dom = f"{self.j.dom.kanji} {self.j.dom.nome}" if self.j.dom else ""
+        self._texto(r, 106, 365, dom, 15, alpha(TINTA, 130))
+        self._barra(r, 40, 394, 250, j, TINTA)
+        info = f"{max(0, j.vida)} / {j.vida_max} · Vel {j.velocidade} · Perc {j.percepcao}"
+        self._texto(r, 40, 406, info, 15, alpha(TINTA, 150))
+        estados = []
+        if j.bloqueio:
+            estados.append(f"守 bloqueio {j.bloqueio}")
+        if j.revide:
+            estados.append(f"返 revide {j.revide}")
+        if j.marca:
+            estados.append(f"呪 {j.marca}")
+        if j.eco:
+            estados.append(f"eco {j.eco}")
+        if j.santuario:
+            estados.append(f"域 santuário {j.santuario}")
+        if j.pular:
+            estados.append("perde o próximo turno")
+        if j.escudos:
+            estados.append(f"灰 escudo {j.escudos}")
+        if self.j.estado.mesa.carma.guardados:
+            estados.append(f"封 {self.j.estado.mesa.carma.guardados} guardado")
+        self._texto(r, 40, 428, "   ".join(estados), 15, alpha(OURO, 170))
+
+    def _selos(self, r: IRenderer) -> None:
+        slots = self.slots()
+        sac = self.modo == "sacrificio"
+        for i, t in enumerate(slots):
+            x = SELO_X0 + i * SELO_PASSO
+            y = SELO_Y
+            if t is None:
+                r.draw_ui_circle(x, y, RAIO_SELO, alpha(FERRO, 120), 1)
+                self._texto(r, x, y + 40, "vazio", 14, alpha(TINTA, 70), "center")
+                continue
+            pronta = self._disponivel(t)
+            raridade = getattr(t, "raridade", "cinza")
+            cor = (
+                self.cor_raridade.get(raridade, TINTA)
+                if t not in (self.luta.basico, HESITAR)
+                else TINTA
+            )
+            if sac:
+                alvo_ok = t not in (
+                    self.luta.basico,
+                    HESITAR,
+                    self.contrato,
+                    self.j.jogador.tecnica_dom,
+                )
+                cor = OURO if alvo_ok else alpha(FERRO, 140)
+                pronta = alvo_ok
+            selecionado = i == self.cursor and not sac
+            if selecionado:
+                r.draw_ui_circle(x, y, RAIO_SELO + 10, alpha(cor, 60))
+            r.draw_ui_circle(x, y, RAIO_SELO, LACA)
+            r.draw_ui_circle(
+                x, y, RAIO_SELO, cor if pronta else alpha(FERRO, 160), 3 if selecionado else 2
+            )
+            kanji = self.kanji.get(t.id, "?")
+            self._texto(
+                r,
+                x,
+                y - 2,
+                kanji,
+                30,
+                mistura(cor, TINTA, 0.35) if pronta else alpha(TINTA, 70),
+                "center",
+            )
+            espera = self.j.jogador.recargas.get(t.id, 0)
+            if espera and not sac:
+                r.draw_ui_circle(x + 22, y - 22, 11, SANGUE_VIVO)
+                self._texto(r, x + 22, y - 23, str(espera), 15, TINTA, "center")
+            if t.tipo in self.j.jogador.efeitos.proibir_tipos or (
+                t is self.luta.basico and self.j.jogador.efeitos.proibir_basico
+            ):
+                self._texto(r, x - 22, y - 34, "縛", 18, SANGUE_VIVO, "center")
+            r.draw_ui_circle(x - 25, y - 25, 10, LACA)
+            self._texto(r, x - 25, y - 26, str(i + 1), 14, alpha(TINTA, 160), "center")
+            nome = quebrar(t.nome, 13)[:2]  # nomes longos em duas linhas, para não colidir
+            for k, linha in enumerate(nome):
+                cor_nome = TINTA if pronta else alpha(TINTA, 90)
+                self._texto(r, x, y + 38 + k * 16, linha, 14, cor_nome, "center")
+            yr = y + 40 + len(nome) * 16
+            cor_resumo = alpha(TINTA, 110 if pronta else 60)
+            self._texto(r, x, yr, self._resumo(t), 13, cor_resumo, "center")
+
+    def _resumo(self, t: Tecnica) -> str:
+        j = self.j.jogador
+        if t.copia_rival:
+            roubada = self.luta.ultima_tecnica(self.luta.rival)
+            return f"rouba {roubada.nome}" if roubada else "nada a roubar"
+        if t.santuario:
+            return f"santuário {t.santuario}"
+        if t.turno_extra:
+            return "2 ações" + (f" · -{t.custo_vida} vida" if t.custo_vida else "")
+        if t.consome_carma:
+            return f"{int(t.dano_por_carma * self.j.carma.valor)} · gasta o Carma"
+        partes = []
+        if t.dano:
+            partes.append(
+                f"{t.dano}×{t.golpes}" if t.golpes > 1 else f"{t.dano + j.efeitos.bonus_dano}"
+            )
+        if t.bloqueio:
+            partes.append(f"bloq {t.bloqueio}")
+        if t.revide:
+            partes.append(f"revide {t.revide}")
+        if t.marca:
+            partes.append(f"呪{t.marca}")
+        if t.consome_tecnica:
+            partes.append("pacto")
+        return " · ".join(partes) or t.tipo
+
+    def _rodape(self, r: IRenderer) -> None:
+        if self.modo == "sacrificio":
+            self._texto(
+                r,
+                624,
+                606,
+                "契 Qual técnica o pacto leva? (número) · Backspace desiste",
+                16,
+                OURO,
+                "center",
+            )
+            return
+        if self.relogio < self.aviso_ate:
+            self._texto(r, 624, 606, self.aviso, 16, SANGUE_VIVO, "center")
+            return
+        for k, linha in enumerate(quebrar(self.registro, 62)[:2]):
+            self._texto(r, 624, 598 + k * 18, linha, 14, alpha(TINTA, 150), "center")
+
+    def _banner(self, r: IRenderer) -> None:
+        venceu = self.luta.vencedor is self.j.jogador
+        r.draw_ui_rect(0, 250, LARGURA, 150, alpha(FUNDO, 220))
+        if venceu:
+            titulo, cor = ("勝  Vitória", OURO)
+        elif self.luta.estourou_prazo:
+            titulo, cor = ("限  O prazo do seu voto venceu", SANGUE_VIVO)
+        else:
+            titulo, cor = ("敗  Você caiu", SANGUE_VIVO)
+        self._texto(r, 480, 300, titulo, 44, cor, "center")
+        self._texto(r, 480, 356, "Enter para continuar", 16, alpha(TINTA, 140), "center")

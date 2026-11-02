@@ -29,6 +29,8 @@ class Carma:
     def __init__(self, config: ConfigCarma, valor: float = 0.0) -> None:
         self.config = config
         self.valor = valor
+        self.guardar = False  # Coração Selado: ao encher, vira um Despertar guardado
+        self.guardados = 0
 
     @property
     def transbordando(self) -> bool:
@@ -37,7 +39,15 @@ class Carma:
     def _somar(self, quantia: float) -> None:
         if self.transbordando:
             return  # travado até o Despertar
-        self.valor = min(max(self.valor + quantia, 0.0), self.config.maximo)
+        novo = max(self.valor + quantia, 0.0)
+        if self.guardar and novo >= self.config.maximo:
+            self.guardados += 1  # guarda na hora; o excedente continua acumulando
+            novo -= self.config.maximo
+        self.valor = min(novo, self.config.maximo)
+
+    def ganhar(self, quantia: float) -> None:
+        """Carma de recompensa (Rosário de Ossos, Arco do Juízo); respeita a trava."""
+        self._somar(quantia)
 
     def registrar_giro(self, raridade: str) -> None:
         self._somar(self.config.por_giro.get(raridade, 0.0))

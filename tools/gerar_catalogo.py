@@ -22,9 +22,23 @@ CAMPOS_COMBATE = [
     ("revide", "revide"),
     ("custo_vida", "custo de vida"),
     ("marca", "marca"),
+    ("eco", "você sofre por turno"),
     ("fortalecer", "fortalecer"),
     ("dano_por_carma", "dano × Carma"),
+    ("consome_carma", "consome o Carma"),
+    ("consome_tecnica", "destrói outra técnica sua"),
 ]
+
+
+def _efeito(c: dict) -> str:
+    partes = []
+    for k, rot in CAMPOS_COMBATE:
+        v = c.get(k)
+        if v is True:
+            partes.append(rot)
+        elif v:
+            partes.append(f"{rot} {v:g}" if isinstance(v, float) else f"{rot} {v}")
+    return ", ".join(partes)
 
 
 def _ler(nome: str) -> dict:
@@ -69,7 +83,7 @@ def gerar() -> str:
             rar = raridades[f["raridade"]]["nome"]
             if tecnicas:
                 c = f.get("combate", {})
-                efeito = ", ".join(f"{rot} {c[k]}" for k, rot in CAMPOS_COMBATE if c.get(k))
+                efeito = _efeito(c)
                 out.append(
                     f"| {f['kanji']} | {f['nome']} | {rar} | {c.get('tipo', '')} | {efeito} | "
                     f"{c.get('recarga', 0)} | {c.get('sutileza', 0)} | "

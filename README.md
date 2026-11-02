@@ -4,11 +4,11 @@
 
 Você não escolhe seu poder: **gira por ele**. Dons, técnicas, o arco de cada capítulo e as relíquias saem de rodas de sorteio desenhadas como uma mandala de selos. Todo azar fica preso ao seu **Carma** — e quando o Carma transborda, no pior momento, você **Desperta**.
 
-> Protótipo (v0). Já existem a roleta jogável, as regras de combate com quatro modos de dificuldade calibrados por simulação, e o sistema de votos vinculativos. Ainda não há tela de luta nem executável.
+> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: Dons, técnicas, Relíquias, Arcos, duplicatas que evoluem e o Altar dos Votos, com quatro modos de dificuldade calibrados por simulação. Ainda sem executável, e com o Despertar em versão provisória.
 
 📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos.
 
-![A roleta com o Carma transbordando](docs/telas/07_carma_transbordando.png)
+![Uma luta: o rival anuncia a próxima ação, a corrente do Carma atravessa a tela e as técnicas ficam na base](docs/telas/run_03_luta.png)
 
 ## Rodando
 
@@ -26,17 +26,24 @@ pip install "ouroboros-engine @ git+https://github.com/EzioMilanoX/OuroborosEngi
 python -m karmabound
 ```
 
-No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique. Passo a passo e problemas comuns em [INSTALL.md](INSTALL.md).
+No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique. Passo a passo e problemas comuns em [INSTALL.md](INSTALL.md). `python -m karmabound --roleta` abre só a roleta, como caixa de areia (Tab troca de roda; D e C enchem o Carma sem lutar).
 
-### Controles da roleta
+### Controles
 
-| Ação | Tecla |
-|---|---|
-| Girar | Espaço |
-| Trocar de roda (Destino, Técnicas, Arco, Relíquias) | Tab |
-| Escolher uma das 3 técnicas sorteadas | 1, 2, 3 |
-| Sofrer dano / pagar um custo (para encher o Carma sem lutar) | D / C |
-| Sair | Esc |
+| Onde | Ação | Tecla |
+|---|---|---|
+| Título | Escolher o modo / começar | ↑ ↓ / Enter |
+| Roleta | Girar / escolher 1 de 3 / continuar | Espaço / 1–3 / Enter |
+| Roleta | Liberar um Despertar guardado (Coração Selado) | E |
+| Luta | Usar a técnica do selo (6 = técnica do Dom) | 1–6 (ou ← → e Enter) |
+| Luta | Contrato: escolher a técnica sacrificada / desistir | 1–5 / Backspace |
+| Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
+| Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
+| Qualquer tela | Sair | Esc |
+
+### Uma run
+
+Título → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. O **Juramento** abre o Altar dos Votos. A run acaba ao vencer as 12 lutas — ou ao cair.
 
 ## A ideia em uma frase
 
@@ -50,6 +57,8 @@ Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada g
 | 技 **Técnicas** | Golpes, defesas e técnicas malditas | gira 3, escolhe 1 |
 | 章 **Arco** | A regra do capítulo (Lua de Sangue, Invasão, Maldição Coletiva…) | gira e aceita |
 | 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem | gira e aceita |
+
+Tudo o que a roleta entrega vale na luta: o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
 
 Cada fatia é um **selo com um kanji**, colorido pela raridade: **Cinza** (60%), **Sangue** (28%), **Maldito** (10%), **Divino** (2%). O resultado é decidido antes da animação; o selo aceso só corre pelo círculo até ele. A tela mostra a **taxa publicada ao lado da taxa real** de cada raridade — sem dinheiro, nunca.
 
@@ -78,10 +87,20 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 2 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 2 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 2 por luta, chefe ×1,25 | 72 |
-| Brutal | ~10% | 12 + 2,5 por luta, chefe ×1,25 | 70 |
+| Acessível | ~45% | 12 + 4,4 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 4,65 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 4,7 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 5,8 por luta, chefe ×1,25 | 68 |
+
+### Poderes com preço
+
+Os poderes mais raros são quebrados de propósito — e cobram à altura. Cada um foi medido em pontos de vitória contra uma régua (Maldito +5 a +10, Divino +10 a +20):
+
+| Poder | Raridade | O que faz | O preço | Vale |
+|---|---|---|---|---|
+| 呪 Marca da Maldição | Maldito | Golpe de 10; o rival sofre 3 por turno, e Marcas se somam | você sofre 1 por turno por Marca | +8 |
+| 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +10 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | ~+5 ⚠️ |
+| 裁 Julgamento | Divino | Dano = 1,3 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +14 |
 
 ## Votos vinculativos (o Juramento)
 
@@ -101,12 +120,17 @@ karmabound/
   carma.py      pity suave e duro, compartilhado
   mesa.py       uma sessão de giros: a tela e o simulador giram pela mesma Mesa
   combate.py    a luta 1v1 por recarga, IA do rival e piloto automático
-  efeitos.py    o que votos (e depois Dons/Relíquias) fazem no lutador
+  efeitos.py    o que votos, Dons e Relíquias fazem no lutador
   votos.py      catálogo, pontos, teto, preço e quebra dos votos
-  run.py        uma run continuável — base do simulador e da medição do Altar
+  run.py        os passos de uma run (Dom, Arco, luta, técnica, relíquia) + o piloto automático
   simulacao.py  runs em massa para calibrar
+  jornada.py    a run jogada por uma pessoa, fase a fase (as telas só chamam a Jornada)
   tela_roleta.py  a mandala, as correntes e o Despertar (IScene da engine)
-  game.py       composição sobre a OuroborosEngine
+  tela_luta.py  o duelo frente a frente
+  tela_menus.py título, troca de técnica, Altar dos Votos e fim
+  figuras.py    as silhuetas de tinta, feitas de polígonos
+  visual.py     paleta, fonte e utilitários de desenho
+  game.py       o Fluxo: põe a tela da fase atual da Jornada no topo da engine
   data/         rodas, balanceamento, controles e votos em JSON
 ```
 
@@ -117,12 +141,13 @@ karmabound/
 ## Ferramentas e testes
 
 ```bash
-pytest                              # testes headless (regras, tela, votos, calibração)
+pytest                              # testes headless, incluindo runs inteiras jogadas pelas telas
 ruff check .                        # lint
 python tools/simular.py --combate   # vitórias, Carma e Percepção por modo
 python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitória
+python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale, contra a régua
 python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
-python tools/capturar_telas.py      # PNG de cada estado da roleta em docs/telas/
+python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
 ```
 
 ## Documentação

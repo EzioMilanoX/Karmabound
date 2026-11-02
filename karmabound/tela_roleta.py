@@ -14,10 +14,25 @@ from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
 from karmabound.mesa import Giro, Mesa
+from karmabound.visual import (  # noqa: F401  (reexporta para quem importava daqui)
+    ALTURA,
+    FERRO,
+    FONTE_PINCEL,
+    FUNDO,
+    LACA,
+    LARGURA,
+    OURO,
+    SANGUE_VIVO,
+    TINTA,
+    Cor,
+)
+from karmabound.visual import alpha as _alpha
+from karmabound.visual import ease_out as _ease_out
+from karmabound.visual import hex_cor as _hex
+from karmabound.visual import mistura as _mistura
+from karmabound.visual import pct as _pct
+from karmabound.visual import quebrar as _quebrar
 
-FONTE_PINCEL = 1
-
-LARGURA, ALTURA = 960, 640
 CENTRO = (370, 352)
 RAIO_SELOS = 170
 RAIO_SELO = 27
@@ -30,61 +45,35 @@ DURACAO_SUBGIRO = 1.1  # cada opção do modo "escolha"
 DURACAO_QUEBRA = 1.3  # correntes se partindo, antes do giro do Despertar
 VOLTAS = 2
 
-# Tinta clara sobre laca escura.
-FUNDO = (20, 18, 16, 255)
-LACA = (31, 28, 25, 255)
-TINTA = (216, 207, 192, 255)
-FERRO = (92, 86, 80, 255)
-SANGUE_VIVO = (196, 30, 36, 255)
-OURO = (233, 196, 106, 255)
-
 ORDEM_RODAS = ("destino", "tecnicas", "arco", "reliquias")
-Cor = tuple[int, int, int, int]
-
-
-def _hex(cor: str) -> Cor:
-    cor = cor.lstrip("#")
-    return (int(cor[0:2], 16), int(cor[2:4], 16), int(cor[4:6], 16), 255)
-
-
-def _mistura(a: Cor, b: Cor, t: float) -> Cor:
-    t = max(0.0, min(1.0, t))
-    return tuple(round(x + (y - x) * t) for x, y in zip(a, b, strict=True))  # type: ignore[return-value]
-
-
-def _alpha(cor: Cor, a: float) -> Cor:
-    return (cor[0], cor[1], cor[2], max(0, min(255, round(a))))
-
-
-def _ease_out(x: float) -> float:
-    return 1 - (1 - x) ** 3
-
-
-def _pct(v: float) -> str:
-    return f"{v:.1f}%".replace(".", ",")
-
-
-def _quebrar(texto: str, largura: int) -> list[str]:
-    linhas: list[str] = []
-    atual = ""
-    for palavra in texto.split():
-        if atual and len(atual) + 1 + len(palavra) > largura:
-            linhas.append(atual)
-            atual = palavra
-        else:
-            atual = f"{atual} {palavra}".strip()
-    return linhas + ([atual] if atual else [])
 
 
 class RoletaScene(IScene):
-    def __init__(self, mesa: Mesa, entrada: IInputProvider, ao_sair) -> None:
+    def __init__(
+        self,
+        mesa: Mesa,
+        entrada: IInputProvider,
+        ao_sair,
+        roda_fixa: str | None = None,
+        girar=None,
+        ao_concluir=None,
+        titulo: str = "",
+        jornada=None,
+    ) -> None:
+        """Sem `girar`: caixa de areia (abas, teclas de teste). Com `girar` (modo jornada):
+        uma roda só, um giro feito por `girar()` (a Jornada), e `ao_concluir(indice)` no Enter.
+        """
         self.mesa = mesa
         self.entrada = entrada
         self.ao_sair = ao_sair
+        self.girar_fn = girar
+        self.ao_concluir = ao_concluir
+        self.titulo = titulo
+        self.j = jornada  # para liberar um Despertar guardado (Coração Selado)
         self.cores = {r.id: _hex(r.cor) for r in mesa.raridades}
         self.cores_claras = {r: _mistura(c, TINTA, 0.25) for r, c in self.cores.items()}
         self.nomes_raridade = {r.id: r.nome for r in mesa.raridades}
-        self.i_roda = 0
+        self.i_roda = ORDEM_RODAS.index(roda_fixa) if roda_fixa else 0
         self.estado = "parado"  # parado | quebrando | girando | escolhendo | resultado
         self.t = 0.0  # tempo no estado atual
         self.relogio = 0.0  # tempo total, para pulsos
@@ -94,10 +83,14 @@ class RoletaScene(IScene):
         self.inicio = 0  # selo aceso quando o giro atual começou
         self.aceso = 0
         self.escolhida: int | None = None
-        self.carma_visual = 0.0  # o Carma que a tela mostra; acompanha a Mesa no fim de cada giro
+        self.carma_visual = mesa.carma.valor  # o que a tela mostra; acompanha a Mesa no fim do giro
         ordem = list(range(ELOS))
         random.Random(7).shuffle(ordem)  # elos racham numa ordem fixa, espalhada pela corrente
         self.ordem_rachaduras = ordem
+
+    @property
+    def jornada(self) -> bool:
+        return self.girar_fn is not None
 
     @property
     def roda(self):
@@ -115,7 +108,7 @@ class RoletaScene(IScene):
         return DURACAO_GIRO * (1.3 if self.giro and self.giro.despertar else 1.0)
 
     def _comecar_giro(self) -> None:
-        self.giro = self.mesa.girar(self.roda.id)
+        self.giro = self.girar_fn() if self.jornada else self.mesa.girar(self.roda.id)
         ids = [f.id for f in self.roda.fatias]
         self.alvos = [ids.index(f.id) for f in self.giro.fatias]
         self.revelados = 0
@@ -137,6 +130,25 @@ class RoletaScene(IScene):
         if e.is_action_pressed("sair"):
             self.ao_sair()
             return
+
+        if self.jornada:
+            if self.estado == "parado" and e.is_action_pressed("girar"):
+                self._comecar_giro()
+                return
+            if (
+                self.estado == "parado"
+                and self.j is not None
+                and e.is_action_pressed("despertar")
+                and self.j.pode_liberar_despertar()
+            ):
+                self.j.liberar_despertar()
+                self.carma_visual = self.mesa.carma.valor
+                return
+            if self.estado == "resultado" and e.is_action_pressed("confirmar"):
+                self.ao_concluir(self.escolhida or 0)
+                return
+            if self.estado not in ("quebrando", "girando", "escolhendo"):
+                return
 
         if self.estado in ("parado", "resultado"):
             if e.is_action_pressed("trocar_roda"):
@@ -189,7 +201,10 @@ class RoletaScene(IScene):
         self._corrente(r)
         self._mandala(r)
         self._centro(r)
-        self._abas(r)
+        if self.jornada:
+            self._texto(r, 36, 16, f"{self.roda.kanji} {self.titulo or self.roda.nome}", 26, TINTA)
+        else:
+            self._abas(r)
         self._painel(r)
         self._controles(r)
         self._despertar(r)
@@ -425,7 +440,16 @@ class RoletaScene(IScene):
             self._texto(r, x, y + 58 + j * 22, linha, 17, TINTA)
 
     def _controles(self, r: IRenderer) -> None:
-        linhas = ["espaço girar · tab trocar roda", "D dano · C custo · esc sair"]
+        if self.jornada:
+            pode = self.j is not None and self.j.pode_liberar_despertar()
+            dica = {
+                "parado": "espaço gira" + (" · E libera um Despertar guardado" if pode else ""),
+                "escolhendo": "1, 2 ou 3 escolhe",
+                "resultado": "Enter continua",
+            }.get(self.estado, "")
+            linhas = [dica, "esc sai"]
+        else:
+            linhas = ["espaço girar · tab trocar roda", "D dano · C custo · esc sair"]
         for j, linha in enumerate(linhas):
             self._texto(r, 700, ALTURA - 52 + j * 22, linha, 14, _alpha(TINTA, 110))
 

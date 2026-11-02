@@ -33,7 +33,7 @@
       "maldito": 0,
       "divino": -40
     },
-    "por_dano_total": 32,
+    "por_dano_total": 44,
     "por_custo": 6,
     "pity_suave_inicio": 60,
     "pity_suave_multiplicador": 3.0,
@@ -56,7 +56,7 @@
     },
     "bonus_surpresa": 0.5,
     "jogador": {
-      "vida": 72,
+      "vida": 70,
       "velocidade": 2,
       "percepcao": 1,
       "tecnicas": [
@@ -66,7 +66,7 @@
     },
     "rivais": {
       "vida_base": 12,
-      "vida_por_luta": 2,
+      "vida_por_luta": 4.7,
       "chefe_multiplicador": 1.25,
       "tecnicas_base": 2,
       "tecnicas_por_capitulo": 1,
@@ -102,7 +102,7 @@
         "nome": "Acessível",
         "alvo_vitoria": 0.45,
         "rivais": {
-          "vida_por_luta": 2,
+          "vida_por_luta": 4.4,
           "chefe_multiplicador": 1.2
         },
         "jogador": {
@@ -113,7 +113,7 @@
         "nome": "Equilibrado",
         "alvo_vitoria": 0.36,
         "rivais": {
-          "vida_por_luta": 2,
+          "vida_por_luta": 4.65,
           "chefe_multiplicador": 1.2
         },
         "jogador": {
@@ -124,22 +124,22 @@
         "nome": "Difícil",
         "alvo_vitoria": 0.25,
         "rivais": {
-          "vida_por_luta": 2,
+          "vida_por_luta": 4.7,
           "chefe_multiplicador": 1.25
         },
         "jogador": {
-          "vida": 72
+          "vida": 70
         }
       },
       "brutal": {
         "nome": "Brutal",
         "alvo_vitoria": 0.1,
         "rivais": {
-          "vida_por_luta": 2.5,
+          "vida_por_luta": 5.8,
           "chefe_multiplicador": 1.25
         },
         "jogador": {
-          "vida": 70
+          "vida": 68
         }
       }
     }

@@ -146,12 +146,14 @@ def simular_com_combate(
     max_turnos: int = 80,
     dificuldade: str | None = None,
     altar=None,
+    preparar=None,
 ) -> ResultadoCombate:
     """Runs inteiras com lutas de verdade (`run.py`), jogador no piloto automático.
 
     O Despertar ainda não existe: quando o Carma transborda, conta um transbordo e
     zera, para medir onde os Despertares cairiam. `altar`: o que fazer quando sai o
     Juramento (padrão: nada; `run.altar_auto` monta votos, mas é lento).
+    `preparar(estado, ctx)`: mexe na run logo depois de criada (forçar um Dom, uma Relíquia).
     """
     from karmabound.run import Contexto, Registro, jogar_run, nova_run
 
@@ -168,7 +170,10 @@ def simular_com_combate(
     res = ResultadoCombate(runs)
     reg = Registro(res.dano_por_luta, res.turnos_por_luta)
     for _ in range(runs):
-        estado = jogar_run(nova_run(ctx, rng), ctx, rng, altar=altar, reg=reg)
+        estado = nova_run(ctx, rng)
+        if preparar is not None:
+            preparar(estado, ctx)
+        estado = jogar_run(estado, ctx, rng, altar=altar, reg=reg)
         if estado.derrotado:
             res.derrota_na_luta[estado.proxima_luta] += 1
         else:

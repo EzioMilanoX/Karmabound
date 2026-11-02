@@ -127,12 +127,20 @@ Calibrados por simulação com o piloto automático (`python tools/simular.py --
 
 Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a calibração feita com dano aleatório se confirmou.
 
+### A run na tela (decidido em 2026-11-02)
+
+- **Layout de duelo frente a frente:** rival em cima, você embaixo, a corrente do Carma atravessando a tela entre os dois, cinco selos de técnica na base (o Golpe e os quatro espaços).
+- **Silhuetas de tinta:** figuras de hakama e espada feitas de polígonos, com passadas de pincel deslocadas. Avançam ao golpear, tremem e ficam vermelhas ao apanhar. Sem rosto: a mesma figura serve de frente e de costas.
+- **Ritmo animado e rápido:** ~0,6 s por ação, número de dano subindo, "percebeu!" em verde e "surpresa!" em dourado; o rival age sozinho depois de uma pausa curta.
+- **Run completa jogável:** título com escolha de modo → Destino → Arco de cada capítulo → lutas → giro de Técnicas entre lutas (troca quando os 4 espaços estão cheios) → Relíquias às vezes → Altar quando sai o Juramento → fim. `jornada.py` é a run fase a fase, sem tela; `game.py` só troca de tela conforme a fase.
+- **Altar simples:** você escolhe até 3 restrições e a duração; o Altar mede cada uma contra o seu build, compra os ganhos e mostra a estimativa de lutas a mais ou a menos antes de você jurar. A compra manual de ganhos fica para depois.
+- **Despertar provisório:** enquanto o efeito na luta não é decidido, o Carma transbordado fica travado e o próximo giro de qualquer roda vira o Despertar (giro Divino garantido), como na roleta. O Julgamento ainda pode gastar esse Carma.
+
 ### Ainda não implementado no combate
 
 - **Despertar:** vai ter **variedade** (ideias: Retribuição — a dor da luta volta ao rival; Tomar o destino — roubar uma técnica e travar as dele). **Gatilho em aberto** (assim que transborda, à beira da morte, ou quando o jogador quiser). Hoje a simulação só conta onde ele cairia.
-- **Dons e Relíquias** ainda não têm efeito na luta; Percepção 3 (ver duas à frente) também não.
+- Percepção 3 (ver duas à frente) ainda não existe.
 - Números das técnicas são rascunho; os poderes Malditos e Divinos têm efeito provisório até a conversa sobre o custo de cada um.
-- Tela de luta.
 
 ## Votos vinculativos — o Juramento (blueprint GAM-11 O.A.T.H.)
 
@@ -153,6 +161,56 @@ Decidido em 2026-11-02. O Juramento deixou de ser técnica de luta: tirá-lo na 
 - O piloto do Altar só jura se o voto completo compensa (como um jogador lendo a estimativa do Altar); sem isso, ele entrava em votos negativos com câmbio alto.
 - O trio Sem Descanso + Corpo Ofertado + Voto Exposto ainda domina as escolhas do piloto; decidido não mexer por enquanto.
 
+## Poderes Malditos e Divinos (redesenhados em 2026-11-02)
+
+Medidos com `python tools/medir_poder.py`: o jogador começa com o poder no 3º espaço, contra uma linha de base com a Investida; 9.000 runs no Difícil. Régua: Maldito +5 a +10, Divino +10 a +20.
+
+| Poder | Raridade | Como funciona | Valor |
+|---|---|---|---|
+| **Marca da Maldição** | Maldito | Golpe de 10 que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Preço: você sofre 1 por turno por Marca aplicada. | **+8,4** |
+| **Contrato** | Divino | Golpe de 60, uma vez por luta. Preço: cada uso destrói uma das suas outras técnicas para o resto da run (a mais fraca, ou a que você escolher). Sem outra técnica para sacrificar, fica indisponível. | **+11,3** |
+| **Julgamento** | Divino | Dano = 0,8 × Carma, e consome todo o Carma — até um Carma transbordando. A dor vira golpe agora, ou espera o Despertar. | **+14,2** |
+| Juramento | Maldito | Abre o Altar dos Votos (ver acima). | **+13,4** |
+
+- A Marca como "só maldição" (sem dano) ficou negativa em todas as versões: as lutas duram ~4 turnos seus, e um turno sem atacar custa mais do que a maldição devolve. Virou golpe que amaldiçoa.
+- O piloto usa os poderes caros como um jogador sensato: Contrato só para fechar a luta ou num chefe; Julgamento só para fechar a luta ou com Carma ≥ 60; Marca só em rival com vida e sem empilhar além de duas.
+- Com o Julgamento consumindo Carma, os transbordos caíram para ~1,0 por run; o Carma por dano subiu de 32 para **44** para voltar a ~1,25. Os modos foram recalibrados depois disso (vida do jogador: 80 / 76 / 70 / 68).
+
+## Dons, Relíquias, Arcos e duplicatas (2026-11-02)
+
+Decidido: as três rodas que eram só texto passam a valer na luta; **sorte é permitida nos Dons** (a esquiva é a única sorte dentro da luta); os sistemas que faltavam foram criados (duplicatas, lutas extras, Despertar guardado). Régua estendida: **Cinza +1 a +3, Sangue +3 a +5** (Maldito +5 a +10, Divino +10 a +20).
+
+Valores medidos com `python tools/medir_poder.py` (Difícil, 7.500 runs por item; ruído ~±2 pontos):
+
+| Item | Raridade | Efeito | Valor |
+|---|---|---|---|
+| 体 Corpo Resistente (Dom) | Cinza | +3 de vida máxima | +3,1 |
+| 速 Reflexo Treinado (Dom) | Cinza | 4% de chance de esquivar um golpe | +3,1 |
+| 沸 Sangue Fervente (Dom) | Sangue | até +2 de dano, pela vida perdida | +4,8 |
+| 影 Sombra Leal (Dom) | Sangue | a sombra repete 8% de cada golpe | +5,0 |
+| 眼 Olho Roubado (Dom, técnica) | Maldito | usa a última técnica do rival com +40%; preço: cego até o próximo turno | +9,6 |
+| 灰 Pele de Cinzas (Dom) | Maldito | o 1º golpe de cada luta não fere; preço: cura em 55% | +12,4 ⚠️ |
+| 域 Santuário (Dom, técnica) | Divino | 1×/luta: 4 turnos de golpes imperceptíveis e +50%; preço: perde um turno | +6,3 ⚠️ |
+| 刻 Instante Suspenso (Dom, técnica) | Divino | 1×/luta: duas ações seguidas; preço: 3 de vida | +15,2 |
+| 布 Bandagem | Cinza | cura 2 no início de cada luta | +3,9 |
+| 符 Amuleto Rachado | Cinza | 1×/run, golpe fatal deixa com 1 de vida | +3,1 |
+| 骨 Rosário de Ossos | Sangue | +8 de Carma por rival derrotado | +7,5 ⚠️ |
+| 鬼 Máscara de Oni | Sangue | +1 de dano; preço: bloqueios pela metade | +4,2 |
+| 封 Coração Selado | Maldito | ao encher, o Carma vira um Despertar guardado (libera com E na roleta), e o Carma enche 50% mais rápido | +9,7 |
+| 神 Fragmento do Deus Cego | Divino | duplicatas evoluem na hora, ×1,5 | +13,2 |
+| 契 Contrato (técnica) | Divino | golpe de 40, 1×/luta, destrói outra técnica sua; o demônio cresce +10 por técnica consumida | +0,6 a +5 ⚠️ |
+| 裁 Julgamento (técnica) | Divino | dano = 1,3 × Carma, consome o Carma | +13,6 |
+| 呪 Marca da Maldição (técnica) | Maldito | golpe de 10 que amaldiçoa | +6,9 |
+
+⚠️ fora da régua, a revisitar: **Santuário e Contrato** abaixo do piso do Divino; **Pele de Cinzas e Rosário** um pouco acima. O Contrato, mesmo crescendo, não passa de ~+5 com o piloto: perder técnicas pesa mais do que o golpe.
+
+- **Duplicatas:** tirar de novo uma técnica que você tem dá 1 fragmento; 2 fragmentos evoluem a técnica (efeitos ×1,3, recarga −1, nome com II, III…). O Fragmento do Deus Cego evolui na hora, ×1,5. Relíquias repetidas se somam.
+- **Arcos** (para os dois lados, o capítulo inteiro): Treino na Montanha (cura 50%), Torneio Regular (nada), Lua de Sangue (+3 de dano para todos), **Invasão (+1 luta no capítulo e Relíquia garantida a cada luta — a run fica com 12 ou mais)**, Maldição Coletiva (seu Carma ×2, rivais +20% de vida), Arco do Juízo (chefe +50% de vida e dano; vencê-lo enche o Carma).
+- **Carma vale muito:** com o Despertar provisório (Carma cheio = Divino garantido), todo preço em Carma pesa demais. Por isso o Instante custa vida em vez de Carma (decisão de 2026-11-02).
+- **Achados que eram defeito de regra, não de número:** o Instante gastava o turno e devolvia um (ganho zero) — agora são duas ações de verdade depois dele; o Coração Selado guardava só no giro (nada ganhava) — agora guarda no instante em que o Carma enche.
+- **Arquitetura:** as regras da run são passos em `run.py` (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`, `receber_tecnica`, `receber_reliquia`, `girar`). O piloto automático e a Jornada do jogador usam os mesmos passos: o simulador mede exatamente o jogo que se joga.
+- **Modos recalibrados** depois disso: o jogador ficou bem mais forte, então os rivais crescem +4,4 / +4,65 / +4,7 / +5,8 de vida por luta (antes +2 a +2,5). Resultado: 45,0% / 37,5% / 25,8% / 8,5%.
+
 ## Poderes impossíveis de balancear
 
 Preocupação levantada em 2026-11-02: alguns arquétipos (parar o tempo, copiar, golpe que nunca erra, dano igual ao Carma) quebram qualquer luta.
@@ -170,7 +228,7 @@ Ferramentas para calibrar os custos:
 ## Em aberto
 
 - **Despertar:** quais variedades e qual gatilho.
-- **Custo de cada poder** Maldito e Divino (filosofia já decidida: quebrado, mas com preço).
+- Revisitar **Santuário, Contrato, Pele de Cinzas e Rosário** (fora da régua).
 - **Conteúdo das rodas:** nomes e textos atuais são rascunho.
 - **Progressão entre runs:** desbloquear fatias novas nas rodas? Carma residual?
 - **Estilo de arte** definitivo.

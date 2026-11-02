@@ -7,14 +7,14 @@
       "kanji": "命",
       "modo": "aceita",
       "fatias": [
-        { "id": "corpo_resistente", "nome": "Corpo Resistente", "kanji": "体", "raridade": "cinza", "texto": "Mais vida máxima." },
-        { "id": "reflexo_treinado", "nome": "Reflexo Treinado", "kanji": "速", "raridade": "cinza", "texto": "Chance de esquivar." },
-        { "id": "sangue_fervente", "nome": "Sangue Fervente", "kanji": "沸", "raridade": "sangue", "texto": "Causa mais dano quanto mais ferido estiver." },
-        { "id": "sombra_leal", "nome": "Sombra Leal", "kanji": "影", "raridade": "sangue", "texto": "Sua sombra repete metade do seu golpe." },
-        { "id": "olho_roubado", "nome": "Olho Roubado", "kanji": "眼", "raridade": "maldito", "texto": "Copia a última técnica do rival; fica cego no turno seguinte." },
-        { "id": "pele_de_cinzas", "nome": "Pele de Cinzas", "kanji": "灰", "raridade": "maldito", "texto": "Ignora o primeiro golpe de cada luta; não pode ser curado." },
-        { "id": "santuario", "nome": "Santuário", "kanji": "域", "raridade": "divino", "texto": "Fecha a arena por 3 turnos: seus golpes não erram. Depois, pula um turno." },
-        { "id": "instante_suspenso", "nome": "Instante Suspenso", "kanji": "刻", "raridade": "divino", "texto": "Ganha um turno extra ao custo de Carma." }
+        { "id": "corpo_resistente", "nome": "Corpo Resistente", "kanji": "体", "raridade": "cinza", "texto": "+15 de vida máxima.", "efeito": {"vida_max": 3} },
+        { "id": "reflexo_treinado", "nome": "Reflexo Treinado", "kanji": "速", "raridade": "cinza", "texto": "15% de chance de esquivar um golpe inteiro.", "efeito": {"esquiva": 0.04} },
+        { "id": "sangue_fervente", "nome": "Sangue Fervente", "kanji": "沸", "raridade": "sangue", "texto": "Até +6 de dano, proporcional à vida que você já perdeu.", "efeito": {"furia": 2} },
+        { "id": "sombra_leal", "nome": "Sombra Leal", "kanji": "影", "raridade": "sangue", "texto": "Sua sombra repete cada golpe seu com 50% do dano.", "efeito": {"sombra": 0.08} },
+        { "id": "olho_roubado", "nome": "Olho Roubado", "kanji": "眼", "raridade": "maldito", "texto": "Técnica: usa a última técnica do rival como se fosse sua. Preço: Percepção 0 até o seu próximo turno.", "tecnica": {"tipo": "maldita", "copia_rival": true, "copia_bonus": 1.4, "cega_proprio": true, "recarga": 2} },
+        { "id": "pele_de_cinzas", "nome": "Pele de Cinzas", "kanji": "灰", "raridade": "maldito", "texto": "O primeiro golpe de cada luta não te fere. Preço: você nunca é curado.", "efeito": {"escudo_inicial": 1, "cura_mult": 0.55} },
+        { "id": "santuario", "nome": "Santuário", "kanji": "域", "raridade": "divino", "texto": "Técnica, uma vez por luta: por 3 turnos seus golpes não são percebidos e causam +50%. Preço: depois você perde um turno.", "tecnica": {"tipo": "maldita", "santuario": 4, "pular_depois": true, "recarga": 99} },
+        { "id": "instante_suspenso", "nome": "Instante Suspenso", "kanji": "刻", "raridade": "divino", "texto": "Técnica: um turno extra. Preço: 25 de Carma.", "tecnica": {"tipo": "maldita", "turno_extra": true, "custo_vida": 3, "recarga": 99} }
       ]
     },
     {
@@ -31,9 +31,9 @@
         { "id": "contra_ataque", "nome": "Contra-ataque", "kanji": "返", "raridade": "sangue", "texto": "Devolve parte do próximo golpe.", "combate": {"tipo": "defesa", "bloqueio": 5, "revide": 6, "recarga": 3} },
         { "id": "lamina_de_sangue", "nome": "Lâmina de Sangue", "kanji": "刃", "raridade": "sangue", "texto": "Gasta vida para causar muito dano.", "combate": {"tipo": "ataque", "dano": 16, "custo_vida": 4, "recarga": 3, "sutileza": 3, "perigosa": true} },
         { "id": "juramento", "nome": "Juramento", "kanji": "誓", "raridade": "maldito", "texto": "Abre o Altar dos Votos: monte um voto vinculativo (restrições viram poder).", "evento": "altar" },
-        { "id": "marca_da_maldicao", "nome": "Marca da Maldição", "kanji": "呪", "raridade": "maldito", "texto": "O rival recebe dano a cada técnica que usar.", "combate": {"tipo": "maldita", "marca": 3, "recarga": 4, "sutileza": 3} },
-        { "id": "contrato", "nome": "Contrato", "kanji": "契", "raridade": "divino", "texto": "Poder enorme; remove uma fatia da sua roda de Técnicas para sempre.", "combate": {"tipo": "maldita", "dano": 30, "custo_vida": 10, "recarga": 99, "sutileza": 2, "perigosa": true} },
-        { "id": "julgamento", "nome": "Julgamento", "kanji": "裁", "raridade": "divino", "texto": "Dano igual ao Carma acumulado.", "combate": {"tipo": "maldita", "dano_por_carma": 0.4, "recarga": 4, "sutileza": 3, "perigosa": true} }
+        { "id": "marca_da_maldicao", "nome": "Marca da Maldição", "kanji": "呪", "raridade": "maldito", "texto": "Golpe que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Você sofre 1 por turno por Marca aplicada.", "combate": {"tipo": "maldita", "dano": 10, "marca": 3, "eco": 1, "recarga": 2, "sutileza": 3} },
+        { "id": "contrato", "nome": "Contrato", "kanji": "契", "raridade": "divino", "texto": "Golpe devastador, uma vez por luta. A cada uso, uma das suas outras técnicas é destruída para o resto da run.", "combate": {"tipo": "maldita", "dano": 40, "recarga": 99, "sutileza": 2, "perigosa": true, "consome_tecnica": true, "cresce_ao_consumir": 10} },
+        { "id": "julgamento", "nome": "Julgamento", "kanji": "裁", "raridade": "divino", "texto": "Dano igual ao Carma acumulado, e consome todo o Carma: a dor vira golpe agora, ou espera o Despertar.", "combate": {"tipo": "maldita", "dano_por_carma": 1.3, "consome_carma": true, "recarga": 4, "sutileza": 3, "perigosa": true} }
       ]
     },
     {
@@ -42,12 +42,12 @@
       "kanji": "章",
       "modo": "aceita",
       "fatias": [
-        { "id": "treino_na_montanha", "nome": "Treino na Montanha", "kanji": "山", "raridade": "cinza", "texto": "Cura entre lutas." },
-        { "id": "torneio_regular", "nome": "Torneio Regular", "kanji": "闘", "raridade": "cinza", "texto": "Sem regra especial." },
-        { "id": "lua_de_sangue", "nome": "Lua de Sangue", "kanji": "月", "raridade": "sangue", "texto": "Todos causam mais dano." },
-        { "id": "invasao", "nome": "Invasão", "kanji": "侵", "raridade": "sangue", "texto": "Lutas extras, mais giros de Relíquia." },
-        { "id": "maldicao_coletiva", "nome": "Maldição Coletiva", "kanji": "禍", "raridade": "maldito", "texto": "O Carma enche em dobro, para você e para os rivais." },
-        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe do capítulo desperta junto com você." }
+        { "id": "treino_na_montanha", "nome": "Treino na Montanha", "kanji": "山", "raridade": "cinza", "texto": "Cura entre lutas sobe de 30% para 50%.", "regra": {"cura_entre_lutas": 0.5} },
+        { "id": "torneio_regular", "nome": "Torneio Regular", "kanji": "闘", "raridade": "cinza", "texto": "Sem regra especial.", "regra": {} },
+        { "id": "lua_de_sangue", "nome": "Lua de Sangue", "kanji": "月", "raridade": "sangue", "texto": "Todos, você e os rivais, causam +3 de dano.", "regra": {"dano_todos": 3} },
+        { "id": "invasao", "nome": "Invasão", "kanji": "侵", "raridade": "sangue", "texto": "+1 luta neste capítulo, e um giro de Relíquia garantido depois de cada luta.", "regra": {"luta_extra": 1, "reliquia_garantida": true} },
+        { "id": "maldicao_coletiva", "nome": "Maldição Coletiva", "kanji": "禍", "raridade": "maldito", "texto": "Seu Carma enche em dobro, e os rivais têm +20% de vida.", "regra": {"carma_mult": 2.0, "vida_rival_mult": 1.2} },
+        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo.", "regra": {"chefe_mult": 1.5, "carma_cheio_chefe": true} }
       ]
     },
     {
@@ -56,12 +56,12 @@
       "kanji": "宝",
       "modo": "aceita",
       "fatias": [
-        { "id": "bandagem", "nome": "Bandagem", "kanji": "布", "raridade": "cinza", "texto": "Cura um pouco no início de cada luta." },
-        { "id": "amuleto_rachado", "nome": "Amuleto Rachado", "kanji": "符", "raridade": "cinza", "texto": "Uma vez por run, evita um golpe fatal." },
-        { "id": "rosario_de_ossos", "nome": "Rosário de Ossos", "kanji": "骨", "raridade": "sangue", "texto": "Cada derrota de rival dá um pouco de Carma." },
-        { "id": "mascara_de_oni", "nome": "Máscara de Oni", "kanji": "鬼", "raridade": "sangue", "texto": "Mais dano, menos defesa." },
-        { "id": "coracao_selado", "nome": "Coração Selado", "kanji": "封", "raridade": "maldito", "texto": "Guarda um Despertar para usar quando quiser." },
-        { "id": "fragmento_do_deus_cego", "nome": "Fragmento do Deus Cego", "kanji": "神", "raridade": "divino", "texto": "Duplicatas viram poder em vez de fragmentos." }
+        { "id": "bandagem", "nome": "Bandagem", "kanji": "布", "raridade": "cinza", "texto": "Cura 4 no início de cada luta.", "efeito": {"cura_inicio": 2} },
+        { "id": "amuleto_rachado", "nome": "Amuleto Rachado", "kanji": "符", "raridade": "cinza", "texto": "Uma vez por run, um golpe fatal te deixa com 1 de vida.", "efeito": {"salvacao": 1} },
+        { "id": "rosario_de_ossos", "nome": "Rosário de Ossos", "kanji": "骨", "raridade": "sangue", "texto": "Cada rival derrotado dá +10 de Carma.", "efeito": {"carma_por_vitoria": 8} },
+        { "id": "mascara_de_oni", "nome": "Máscara de Oni", "kanji": "鬼", "raridade": "sangue", "texto": "+3 de dano em todo golpe. Preço: seus bloqueios valem metade.", "efeito": {"bonus_dano": 1, "bloqueio_mult": 0.5} },
+        { "id": "coracao_selado", "nome": "Coração Selado", "kanji": "封", "raridade": "maldito", "texto": "Ao transbordar, o Carma vira um Despertar guardado e zera. Você libera o Despertar no giro que quiser.", "efeito": {"guarda_despertar": true, "carma_mult": 1.5} },
+        { "id": "fragmento_do_deus_cego", "nome": "Fragmento do Deus Cego", "kanji": "神", "raridade": "divino", "texto": "Técnicas repetidas evoluem na hora, em vez de virar fragmento.", "efeito": {"evolucao_imediata": true, "fator_evolucao": 1.5} }
       ]
     }
   ]

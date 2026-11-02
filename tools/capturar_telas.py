@@ -24,7 +24,7 @@ from karmabound.tela_roleta import DURACAO_QUEBRA, RoletaScene  # noqa: E402
 
 def capturar(destino: Path) -> list[Path]:
     destino.mkdir(parents=True, exist_ok=True)
-    loop = build_game(seed=3)
+    loop = build_game(seed=3, roleta=True)
     cena: RoletaScene = loop.current_scene
     carma = cena.mesa.carma
     salvos: list[Path] = []
@@ -80,8 +80,85 @@ def capturar(destino: Path) -> list[Path]:
     return salvos
 
 
+def capturar_run(destino: Path) -> list[Path]:
+    """As telas da run: título, roleta da jornada, luta, troca, Altar e fim."""
+    from karmabound.combate import Tecnica
+    from karmabound.jornada import Jornada
+    from karmabound.mesa import Giro
+    from karmabound.tela_luta import LutaScene
+    from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene
+    from karmabound.tela_roleta import RoletaScene
+
+    class Entrada:
+        apertadas: set = set()
+
+        def is_action_pressed(self, a):
+            return a in self.apertadas
+
+    destino.mkdir(parents=True, exist_ok=True)
+    loop = build_game(seed=3)
+    ent = Entrada()
+    nada = lambda *a: None  # noqa: E731
+    salvos: list[Path] = []
+
+    def foto(cena, nome, segundos=0.0, teclas=()):
+        ent.apertadas = set(teclas)
+        cena.update(None, 1 / 60)
+        ent.apertadas = set()
+        for _ in range(int(segundos * 60)):
+            cena.update(None, 1 / 60)
+        loop.renderer.begin_frame()
+        cena.render(None, loop.renderer)
+        caminho = destino / f"{nome}.png"
+        pygame.image.save(pygame.display.get_surface(), str(caminho))
+        salvos.append(caminho)
+
+    foto(TituloScene(ent, nada, nada), "run_01_titulo")
+    j = Jornada.nova("dificil", seed=11)
+    j.amostras_altar = 40
+    roleta = RoletaScene(
+        j.estado.mesa, ent, nada, "destino", j.girar_destino, nada, titulo="Seu destino"
+    )
+    foto(roleta, "run_02_destino", 3.5, ["girar"])
+    j.girar_arco()
+    from karmabound.run import aplicar_dom, receber_reliquia
+
+    dons = {f.id: f for f in j.ctx.rodas["destino"].fatias}
+    rel = {f.id: f for f in j.ctx.rodas["reliquias"].fatias}
+    aplicar_dom(j.estado, j.ctx, dons["instante_suspenso"])
+    for rid in ("bandagem", "mascara_de_oni", "coracao_selado"):
+        receber_reliquia(j.estado, rel[rid])
+    j.aviso = "Golpe Direto: fragmento 1 de 2"
+    tec = j.ctx.tecnicas
+    j.jogador.tecnicas.append(Tecnica.de_fatia(tec["marca_da_maldicao"]))
+    j.jogador.percepcao = 2
+    luta = LutaScene(j, ent, nada, nada)
+    foto(luta, "run_03_luta", 2.0)
+
+    j.jogador.tecnicas.append(Tecnica.de_fatia(tec["julgamento"]))
+    j.pendente, j.fase = tec["contrato"], "substituir"
+    foto(SubstituirScene(j, ent, nada, nada), "run_04_substituir")
+
+    j.fase = "tecnica"
+    j.giro = Giro(j.ctx.rodas["tecnicas"], [next(f for f in tec.values() if f.evento == "altar")])
+    j.escolher_tecnica(0)
+    altar = AltarScene(j, ent, nada, nada)
+    foto(altar, "run_05_altar_pesando")
+    altar.update(None, 1 / 60)
+    altar.marcadas = {"sem_descanso", "corpo_ofertado"}
+    foto(altar, "run_06_altar")
+    altar.cursor = altar.linhas.index("pesar")
+    foto(altar, "run_07_altar_proposta", 0.1, ["confirmar"])
+
+    j.fase = "vitoria"
+    j.estado.lutas_vencidas = 12
+    foto(FimScene(j, ent, nada, nada), "run_08_fim")
+    loop.renderer.shutdown()
+    return salvos
+
+
 if __name__ == "__main__":
     padrao = Path(__file__).resolve().parent.parent / "docs" / "telas"
     pasta = Path(sys.argv[1]) if len(sys.argv) > 1 else padrao
-    for p in capturar(pasta):
+    for p in capturar(pasta) + capturar_run(pasta):
         print(p)

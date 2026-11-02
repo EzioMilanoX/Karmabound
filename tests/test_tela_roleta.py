@@ -27,7 +27,7 @@ class EntradaFalsa:
 
 @pytest.fixture
 def cena():
-    loop = build_game(seed=4)
+    loop = build_game(seed=4, roleta=True)
     cena = loop.current_scene
     cena.entrada = EntradaFalsa()
     cena.saiu = False

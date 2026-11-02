@@ -1,9 +1,18 @@
-"""Uma run inteira com combate real, que pode continuar de qualquer ponto.
+"""Uma run: os passos e um piloto automático que os percorre.
 
-`jogar_run` é usado pelo simulador (runs do zero) e por `medir`, que é como o
-Altar dos Votos pesa uma restrição: continua a run do jogador muitas vezes,
-com e sem ela, usando as mesmas seeds dos dois lados (números aleatórios
-comuns), e devolve a diferença em lutas vencidas.
+Os passos (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`,
+`receber_tecnica`, `receber_reliquia`, `girar`...) são as regras da run. Dois
+pilotos os usam: `jogar_run` (o piloto automático, para o simulador e para o
+Altar) e a `Jornada` (uma pessoa, fase a fase). Assim o que a simulação mede é
+exatamente o jogo que se joga.
+
+`medir` é como o Altar dos Votos pesa uma restrição: continua a run do jogador
+muitas vezes, com e sem ela, usando as mesmas seeds dos dois lados (números
+aleatórios comuns), e devolve a diferença em lutas vencidas.
+
+Despertar provisório: o Carma transbordado trava, e o próximo giro de qualquer
+roda vira o Despertar (giro Divino garantido). Com o Coração Selado, ao
+transbordar o Carma vira um Despertar guardado e zera.
 """
 
 from __future__ import annotations
@@ -14,9 +23,17 @@ from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from karmabound.carma import Carma, ConfigCarma
-from karmabound.combate import Luta, Lutador, Tecnica, config_combate, escolher_jogador_auto
-from karmabound.mesa import Mesa
+from karmabound.carma import ConfigCarma
+from karmabound.combate import (
+    Luta,
+    Lutador,
+    Tecnica,
+    config_combate,
+    escolher_jogador_auto,
+    evoluir,
+)
+from karmabound.efeitos import Efeitos, somar
+from karmabound.mesa import Giro, Mesa
 from karmabound.rodas import (
     Fatia,
     Raridade,
@@ -45,6 +62,7 @@ class Contexto:
 
     @property
     def lutas(self) -> int:
+        """Lutas de uma run sem Invasão."""
         return self.capitulos * self.lutas_por_capitulo
 
     @property
@@ -75,35 +93,226 @@ class EstadoRun:
     jogador: Lutador
     mesa: Mesa
     votos: Votos
-    proxima_luta: int = 1
+    proxima_luta: int = 1  # número da próxima luta na run inteira (dá a força do rival)
+    capitulo: int = 1
+    luta_no_capitulo: int = 1
+    tamanho_capitulo: int = 4  # cresce com a Invasão
     lutas_vencidas: int = 0
     derrotado: bool = False
-    transbordos: int = 0
+    venceu: bool = False
+    transbordos: int = 0  # vezes que o Carma transbordou (Despertar ou guardado)
+    despertares: int = 0
+    liberando: bool = False  # um Despertar guardado foi liberado para o próximo giro
     altares: int = 0
+    dom: Fatia | None = None
+    arco: Fatia | None = None  # None no começo de cada capítulo: falta girar o Arco
+    reliquias: list[Fatia] = field(default_factory=list)
+    fragmentos: Counter = field(default_factory=Counter)
 
     @property
     def acabou(self) -> bool:
-        return self.derrotado
+        return self.derrotado or self.venceu
+
+    @property
+    def chefe(self) -> bool:
+        return self.luta_no_capitulo >= self.tamanho_capitulo
+
+    @property
+    def regra(self) -> dict:
+        return (self.arco.regra or {}) if self.arco else {}
 
     def clonar(self, rng: random.Random) -> EstadoRun:
         """Cópia independente para simular um futuro (rodas e catálogo são compartilhados)."""
         mesa = Mesa(self.mesa.rodas, self.mesa.raridades, self.mesa.carma.config, rng)
-        mesa.carma = Carma(self.mesa.carma.config, self.mesa.carma.valor)
+        mesa.carma = copy.copy(self.mesa.carma)
         jogador = copy.copy(self.jogador)
         jogador.tecnicas = list(self.jogador.tecnicas)
         jogador.recargas = dict(self.jogador.recargas)
         jogador.carma = mesa.carma
         votos = Votos(self.votos.catalogo, [copy.copy(v) for v in self.votos.ativos])
-        return EstadoRun(
-            jogador,
-            mesa,
-            votos,
-            self.proxima_luta,
-            self.lutas_vencidas,
-            self.derrotado,
-            self.transbordos,
-            self.altares,
+        clone = copy.copy(self)
+        clone.jogador, clone.mesa, clone.votos = jogador, mesa, votos
+        clone.reliquias = list(self.reliquias)
+        clone.fragmentos = Counter(self.fragmentos)
+        return clone
+
+
+# ----------------------------------------------------------------------- efeitos
+
+
+def efeitos_do_estado(estado: EstadoRun) -> Efeitos:
+    """Votos + Dom + Relíquias + a parte do Arco que é do jogador."""
+    partes = [estado.votos.efeitos()]
+    if estado.dom is not None and estado.dom.efeito:
+        partes.append(Efeitos.de_dict(estado.dom.efeito))
+    partes += [Efeitos.de_dict(r.efeito) for r in estado.reliquias if r.efeito]
+    if estado.regra.get("carma_mult"):
+        partes.append(Efeitos(carma_mult=estado.regra["carma_mult"]))
+    return somar(partes)
+
+
+def atualizar_efeitos(estado: EstadoRun) -> None:
+    efeitos = efeitos_do_estado(estado)
+    estado.jogador.aplicar_efeitos(efeitos)
+    estado.mesa.carma.guardar = efeitos.guarda_despertar
+
+
+# ----------------------------------------------------------------------- roleta
+
+
+def girar(estado: EstadoRun, ctx: Contexto, roda: str) -> Giro:
+    """Gira uma roda da run. Com o Carma transbordado, o giro vira o Despertar."""
+    estado.liberando = False
+    giro = estado.mesa.girar(roda)
+    if giro.despertar:
+        estado.despertares += 1
+        estado.transbordos += 1
+    return giro
+
+
+def liberar_despertar(estado: EstadoRun) -> bool:
+    """Coração Selado: gasta um Despertar guardado; o próximo giro desperta."""
+    carma = estado.mesa.carma
+    if not carma.guardados:
+        return False
+    carma.guardados -= 1
+    carma.valor = carma.config.maximo
+    estado.liberando = True
+    return True
+
+
+# ----------------------------------------------------------------------- passos
+
+
+def aplicar_dom(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
+    estado.dom = fatia
+    j = estado.jogador
+    j.tecnica_dom = None
+    if fatia.tecnica:
+        j.tecnica_dom = Tecnica(
+            id=fatia.id, nome=fatia.nome, raridade=fatia.raridade, **fatia.tecnica
         )
+    atualizar_efeitos(estado)
+
+
+def aplicar_arco(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
+    estado.arco = fatia
+    estado.tamanho_capitulo = ctx.lutas_por_capitulo + estado.regra.get("luta_extra", 0)
+    atualizar_efeitos(estado)
+
+
+def gerar_rival(
+    ctx: Contexto,
+    n_luta: int,
+    rng: random.Random,
+    capitulo: int | None = None,
+    chefe: bool | None = None,
+) -> Lutador:
+    cfg = ctx.combate["rivais"]
+    por_capitulo = cfg["raridades_por_capitulo"]
+    if capitulo is None:
+        capitulo = (n_luta - 1) // ctx.lutas_por_capitulo + 1
+    if chefe is None:
+        chefe = n_luta % ctx.lutas_por_capitulo == 0
+    indice = min(capitulo - 1, len(por_capitulo) - 1)
+    raridades = set(por_capitulo[indice])
+    pool = [f for f in ctx.tecnicas.values() if f.raridade in raridades and f.combate]
+    n_tec = min(len(pool), cfg["tecnicas_base"] + indice * cfg["tecnicas_por_capitulo"])
+    vida = cfg["vida_base"] + cfg["vida_por_luta"] * n_luta
+    return Lutador(
+        nome=f"Rival {n_luta}" + (" (chefe)" if chefe else ""),
+        vida_max=round(vida * (cfg["chefe_multiplicador"] if chefe else 1)),
+        velocidade=rng.randint(*cfg["velocidade"]),
+        percepcao=rng.randint(*cfg["percepcao"]) + (cfg["chefe_percepcao_extra"] if chefe else 0),
+        tecnicas=[Tecnica.de_fatia(f) for f in rng.sample(pool, n_tec)],
+        chefe=chefe,
+    )
+
+
+def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
+    rival = gerar_rival(ctx, estado.proxima_luta, rng, estado.capitulo, estado.chefe)
+    regra = estado.regra
+    mult = regra.get("vida_rival_mult", 1.0) * (
+        regra.get("chefe_mult", 1.0) if rival.chefe else 1.0
+    )
+    if mult != 1.0:
+        rival.vida_max = rival.base_vida_max = rival.vida = round(rival.vida_max * mult)
+    jogador = estado.jogador
+    jogador.nova_luta()
+    if regra.get("dano_todos"):  # Lua de Sangue: vale para os dois
+        jogador.dano_extra = rival.dano_extra = regra["dano_todos"]
+    if rival.chefe and regra.get("chefe_mult"):  # Arco do Juízo
+        rival.dano_mult = regra["chefe_mult"]
+    return Luta(jogador, rival, ctx.basico, rng, ctx.combate["bonus_surpresa"])
+
+
+def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
+    """Fecha a luta: contadores, recompensas, cura, votos e o avanço de capítulo."""
+    jogador, carma = estado.jogador, estado.mesa.carma
+    if luta.vencedor is not jogador:
+        estado.derrotado = True
+        return False
+    estado.lutas_vencidas += 1
+    estado.proxima_luta += 1
+    if jogador.efeitos.carma_por_vitoria:
+        carma.ganhar(jogador.efeitos.carma_por_vitoria)  # Rosário de Ossos
+    if luta.rival.chefe and estado.regra.get("carma_cheio_chefe"):
+        carma.ganhar(carma.config.maximo)  # Arco do Juízo
+    if not jogador.efeitos.sem_cura:
+        fracao = estado.regra.get("cura_entre_lutas", ctx.combate["cura_entre_lutas"])
+        fracao *= jogador.efeitos.cura_mult
+        jogador.vida = min(jogador.vida_max, jogador.vida + round(jogador.vida_max * fracao))
+    estado.votos.fim_de_luta()
+    if estado.luta_no_capitulo >= estado.tamanho_capitulo:
+        estado.capitulo += 1
+        estado.luta_no_capitulo = 1
+        estado.arco = None
+        estado.tamanho_capitulo = ctx.lutas_por_capitulo
+        estado.venceu = estado.capitulo > ctx.capitulos
+    else:
+        estado.luta_no_capitulo += 1
+    atualizar_efeitos(estado)
+    return True
+
+
+def receber_tecnica(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> str:
+    """'altar' | 'equipada' | 'fragmento' | 'evoluiu' | 'cheio' (falta escolher o que sai)."""
+    if fatia.evento == "altar":
+        return "altar"
+    if not fatia.combate:
+        return "nada"
+    tecnicas = estado.jogador.tecnicas
+    for i, t in enumerate(tecnicas):
+        if t.id == fatia.id:  # duplicata
+            estado.fragmentos[t.id] += 1
+            if estado.jogador.efeitos.evolucao_imediata or estado.fragmentos[t.id] >= 2:
+                tecnicas[i] = evoluir(t, estado.jogador.efeitos.fator_evolucao)
+                estado.fragmentos[t.id] = 0
+                return "evoluiu"
+            return "fragmento"
+    if len(tecnicas) < ctx.combate["espacos"]:
+        tecnicas.append(Tecnica.de_fatia(fatia))
+        return "equipada"
+    return "cheio"
+
+
+def substituir_tecnica(estado: EstadoRun, sai: Tecnica | None, entra: Fatia) -> None:
+    if sai is not None:
+        estado.jogador.tecnicas.remove(sai)
+        estado.jogador.tecnicas.append(Tecnica.de_fatia(entra))
+
+
+def receber_reliquia(estado: EstadoRun, fatia: Fatia) -> None:
+    estado.reliquias.append(fatia)
+    atualizar_efeitos(estado)
+
+
+def vai_ter_reliquia(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> bool:
+    sorte = rng.random()
+    return estado.regra.get("reliquia_garantida", False) or sorte < ctx.chance_reliquia
+
+
+# ----------------------------------------------------------------------- piloto automático
 
 
 def nova_run(ctx: Contexto, rng: random.Random) -> EstadoRun:
@@ -118,27 +327,8 @@ def nova_run(ctx: Contexto, rng: random.Random) -> EstadoRun:
         carma=mesa.carma,
     )
     estado = EstadoRun(jogador, mesa, Votos(ctx.catalogo))
-    mesa.girar("destino", permitir_despertar=False)
+    aplicar_dom(estado, ctx, girar(estado, ctx, "destino").fatias[0])
     return estado
-
-
-def gerar_rival(ctx: Contexto, n_luta: int, rng: random.Random) -> Lutador:
-    cfg = ctx.combate["rivais"]
-    por_capitulo = cfg["raridades_por_capitulo"]
-    capitulo = min((n_luta - 1) // ctx.lutas_por_capitulo, len(por_capitulo) - 1)
-    chefe = n_luta % ctx.lutas_por_capitulo == 0
-    raridades = set(por_capitulo[capitulo])
-    pool = [f for f in ctx.tecnicas.values() if f.raridade in raridades and f.combate]
-    n_tec = min(len(pool), cfg["tecnicas_base"] + capitulo * cfg["tecnicas_por_capitulo"])
-    vida = cfg["vida_base"] + cfg["vida_por_luta"] * n_luta
-    return Lutador(
-        nome=f"Rival {n_luta}" + (" (chefe)" if chefe else ""),
-        vida_max=round(vida * (cfg["chefe_multiplicador"] if chefe else 1)),
-        velocidade=rng.randint(*cfg["velocidade"]),
-        percepcao=rng.randint(*cfg["percepcao"]) + (cfg["chefe_percepcao_extra"] if chefe else 0),
-        tecnicas=[Tecnica.de_fatia(f) for f in rng.sample(pool, n_tec)],
-        chefe=chefe,
-    )
 
 
 @dataclass
@@ -156,10 +346,8 @@ Altar = Callable[[EstadoRun, "Contexto", random.Random], None]
 
 def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Registro | None) -> bool:
     jogador = estado.jogador
-    rival = gerar_rival(ctx, estado.proxima_luta, rng)
-    jogador.nova_luta()
+    luta = comecar_luta(estado, ctx, rng)
     vida_antes = jogador.vida
-    luta = Luta(jogador, rival, ctx.basico, rng, ctx.combate["bonus_surpresa"])
     while not luta.acabou and luta.turnos < ctx.max_turnos:
         if luta.vez is jogador:
             luta.resolver(escolher_jogador_auto(luta))
@@ -169,23 +357,20 @@ def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Regist
             if reg is not None and t is not None and (t.perigosa or acao.surpresa) and t.dano > 0:
                 reg.golpes_perigosos_recebidos += 1
                 reg.reacoes += acao.reagiu
-        if estado.mesa.carma.transbordando:  # Despertar ainda sem efeito: só conta e zera
-            estado.transbordos += 1
-            estado.mesa.carma.despertar()
     if reg is not None:
         reg.dano_por_luta.append(max(0, vida_antes - jogador.vida) / jogador.vida_max)
         reg.turnos_por_luta.append(luta.turnos)
-    return luta.vencedor is jogador
+    if not luta.acabou:  # passou do limite de turnos: conta como derrota
+        jogador.vida = 0
+    return encerrar_luta(estado, ctx, luta)
 
 
-def _equipar(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
-    tecnicas = estado.jogador.tecnicas
-    if any(t.id == fatia.id for t in tecnicas):
-        return
-    if len(tecnicas) >= ctx.combate["espacos"]:
-        ordem = ctx.ordem
-        tecnicas.remove(min(tecnicas, key=lambda t: (ordem.index(t.raridade), t.dano)))
-    tecnicas.append(Tecnica.de_fatia(fatia))
+def _substituir_auto(estado: EstadoRun, ctx: Contexto, nova: Fatia) -> None:
+    """Troca a pior técnica pela nova, se a nova for de raridade igual ou maior."""
+    ordem = ctx.ordem
+    pior = min(estado.jogador.tecnicas, key=lambda t: (ordem.index(t.raridade), t.dano))
+    if ordem.index(nova.raridade) >= ordem.index(pior.raridade):
+        substituir_tecnica(estado, pior, nova)
 
 
 def jogar_run(
@@ -196,33 +381,23 @@ def jogar_run(
     reg: Registro | None = None,
     ate: int | None = None,
 ) -> EstadoRun:
-    """Joga da `proxima_luta` até o fim (ou até `ate`, inclusive) ou até a derrota."""
-    ultima = ate or ctx.lutas
-    mesa, jogador = estado.mesa, estado.jogador
-    while not estado.acabou and estado.proxima_luta <= ultima:
-        n = estado.proxima_luta
-        if (n - 1) % ctx.lutas_por_capitulo == 0:
-            mesa.girar("arco", permitir_despertar=False)
-        if not jogar_luta(estado, ctx, rng, reg):
-            estado.derrotado = True
+    """Joga da próxima luta até o fim da run (ou até a luta `ate`, inclusive) ou até cair."""
+    while not estado.acabou and (ate is None or estado.proxima_luta <= ate):
+        if estado.arco is None:
+            aplicar_arco(estado, ctx, girar(estado, ctx, "arco").fatias[0])
+        if not jogar_luta(estado, ctx, rng, reg) or estado.venceu:
             break
-        estado.lutas_vencidas += 1
-        estado.proxima_luta += 1
-        if not jogador.efeitos.sem_cura:
-            cura = round(jogador.vida_max * ctx.combate["cura_entre_lutas"])
-            jogador.vida = min(jogador.vida_max, jogador.vida + cura)
-        if estado.votos.fim_de_luta():
-            jogador.aplicar_efeitos(estado.votos.efeitos())
-        giro = mesa.girar("tecnicas", permitir_despertar=False)
+        liberar_despertar(estado)  # o piloto libera um Despertar guardado na hora
+        giro = girar(estado, ctx, "tecnicas")
         nova = max(giro.fatias, key=lambda f: ctx.ordem.index(f.raridade))
-        if nova.evento == "altar":
-            if altar is not None:
-                estado.altares += 1
-                altar(estado, ctx, rng)
-        elif nova.combate:
-            _equipar(estado, ctx, nova)
-        if rng.random() < ctx.chance_reliquia:
-            mesa.girar("reliquias", permitir_despertar=False)
+        resultado = receber_tecnica(estado, ctx, nova)
+        if resultado == "altar" and altar is not None:
+            estado.altares += 1
+            altar(estado, ctx, rng)
+        elif resultado == "cheio":
+            _substituir_auto(estado, ctx, nova)
+        if vai_ter_reliquia(estado, ctx, rng):
+            receber_reliquia(estado, girar(estado, ctx, "reliquias").fatias[0])
     return estado
 
 
@@ -249,9 +424,10 @@ def medir(
 
 
 def aplicar_voto(estado: EstadoRun, ctx: Contexto, voto: Voto) -> None:
-    voto.lutas_restantes = lutas_da_duracao(
-        voto.duracao, estado.proxima_luta, ctx.lutas_por_capitulo
-    )
+    if voto.duracao == "capitulo":  # o capítulo pode ter crescido com a Invasão
+        voto.lutas_restantes = estado.tamanho_capitulo - estado.luta_no_capitulo + 1
+    else:
+        voto.lutas_restantes = lutas_da_duracao(voto.duracao, estado.proxima_luta, 1)
     estado.votos.jurar(voto)
     estado.jogador.aplicar_efeitos(estado.votos.efeitos())
 
@@ -261,6 +437,73 @@ def _com(ctx: Contexto, restricoes, ganhos, duracao: str) -> Callable[[EstadoRun
         aplicar_voto(e, ctx, Voto(list(restricoes), list(ganhos), duracao))
 
     return modificar
+
+
+def medir_restricoes(
+    estado: EstadoRun, ctx: Contexto, duracao: str = "run", amostras: int = 120, seed: int = 0
+) -> dict[str, float]:
+    """Sacrifício de cada restrição sozinha contra o build atual, em lutas (≥ 0 = custa)."""
+    return {
+        r.id: -medir(estado, ctx, _com(ctx, [r], [], duracao), amostras, seed)
+        for r in ctx.catalogo.restricoes.values()
+    }
+
+
+def avaliar_restricoes(
+    estado: EstadoRun,
+    ctx: Contexto,
+    restricoes: list,
+    individuais: dict[str, float],
+    duracao: str = "run",
+    amostras: int = 120,
+    seed: int = 0,
+) -> tuple[float, float]:
+    """(pontos, sacrifício medido junto) de um conjunto de restrições."""
+    cat = ctx.catalogo
+    junto = -medir(estado, ctx, _com(ctx, restricoes, [], duracao), amostras, seed)
+    creditado = cat.creditado(junto, [individuais[r.id] for r in restricoes])
+    return cat.pontos(creditado, duracao, restricoes), junto
+
+
+def comprar_ganhos(
+    estado: EstadoRun,
+    ctx: Contexto,
+    restricoes: list,
+    pontos: float,
+    sacrificio: float,
+    duracao: str = "run",
+    amostras: int = 120,
+    seed: int = 0,
+) -> list:
+    """Gasta `pontos` nível a nível, sempre no ganho de maior benefício por nível acessível."""
+    cat = ctx.catalogo
+    beneficio = {
+        g.id: medir(estado, ctx, _com(ctx, restricoes, [g], duracao), amostras, seed) + sacrificio
+        for g in cat.ganhos.values()
+    }
+    restante, niveis, ganhos = pontos, Counter(), []
+    while True:
+        opcoes = []
+        for g in cat.ganhos.values():
+            proximo = niveis[g.id] + 1
+            if beneficio[g.id] <= 0 or proximo > g.niveis:
+                continue
+            preco = cat.preco(g, beneficio[g.id], proximo)
+            if preco <= restante:
+                opcoes.append((beneficio[g.id] / proximo, preco, g))
+        if not opcoes:
+            return ganhos
+        _, preco, g = max(opcoes, key=lambda o: o[0])
+        restante -= preco
+        niveis[g.id] += 1
+        ganhos.append(g)
+
+
+def saldo_do_voto(
+    estado: EstadoRun, ctx: Contexto, voto: Voto, amostras: int = 120, seed: int = 0
+) -> float:
+    """Lutas vencidas a mais (ou a menos) com o voto inteiro: a estimativa que o Altar mostra."""
+    return medir(estado, ctx, _com(ctx, voto.restricoes, voto.ganhos, voto.duracao), amostras, seed)
 
 
 def montar_voto_auto(
@@ -275,14 +518,11 @@ def montar_voto_auto(
 
     Junta restrições (as de maior crédito primeiro) enquanto o voto render mais pontos;
     cada uma credita no máximo o teto, então a combinação é o caminho para mais poder.
-    Depois compra ganhos nível a nível, sempre o de maior benefício por nível ainda
-    acessível com os pontos que sobram.
+    Depois compra ganhos e só jura se o voto inteiro compensa, como um jogador que lê
+    a estimativa do Altar.
     """
     cat = ctx.catalogo
-    individuais = {
-        r.id: -medir(estado, ctx, _com(ctx, [r], [], duracao), amostras, seed)
-        for r in cat.restricoes.values()
-    }
+    individuais = medir_restricoes(estado, ctx, duracao, amostras, seed)
     candidatas = sorted(
         (r for r in cat.restricoes.values() if individuais[r.id] > 0),
         key=lambda r: min(individuais[r.id], cat.teto_por_restricao),
@@ -292,39 +532,15 @@ def montar_voto_auto(
     pontos = sacrificio = 0.0
     for r in candidatas[:max_restricoes]:
         teste = escolha + [r]
-        junto = -medir(estado, ctx, _com(ctx, teste, [], duracao), amostras, seed)
-        creditado = cat.creditado(junto, [individuais[x.id] for x in teste])
-        p = cat.pontos(creditado, duracao, teste)
+        p, junto = avaliar_restricoes(estado, ctx, teste, individuais, duracao, amostras, seed)
         if p <= pontos:
             break
         escolha, pontos, sacrificio = teste, p, junto
     if not escolha:
         return None
-
-    beneficio = {
-        g.id: medir(estado, ctx, _com(ctx, escolha, [g], duracao), amostras, seed) + sacrificio
-        for g in cat.ganhos.values()
-    }
-    restante, niveis, ganhos = pontos, Counter(), []
-    while True:
-        opcoes = []
-        for g in cat.ganhos.values():
-            proximo = niveis[g.id] + 1
-            if beneficio[g.id] <= 0 or proximo > g.niveis:
-                continue
-            preco = cat.preco(g, beneficio[g.id], proximo)
-            if preco <= restante:
-                opcoes.append((beneficio[g.id] / proximo, preco, g))
-        if not opcoes:
-            break
-        _, preco, g = max(opcoes, key=lambda o: o[0])
-        restante -= preco
-        niveis[g.id] += 1
-        ganhos.append(g)
+    ganhos = comprar_ganhos(estado, ctx, escolha, pontos, sacrificio, duracao, amostras, seed)
     voto = Voto(escolha, ganhos, duracao, pontos=pontos, sacrificio=sacrificio)
-    # Como um jogador que lê a estimativa do Altar: só jura se o voto inteiro compensa.
-    saldo = medir(estado, ctx, _com(ctx, escolha, ganhos, duracao), amostras, seed)
-    return voto if saldo > 0 else None
+    return voto if saldo_do_voto(estado, ctx, voto, amostras, seed) > 0 else None
 
 
 def altar_auto(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> None:

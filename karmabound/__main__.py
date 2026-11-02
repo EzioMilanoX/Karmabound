@@ -1,10 +1,12 @@
-"""Ponto de entrada: python -m karmabound"""
+"""Ponto de entrada: python -m karmabound [--roleta]"""
+
+import sys
 
 from karmabound.game import run
 
 
 def main() -> None:
-    run()
+    run(roleta="--roleta" in sys.argv[1:])
 
 
 if __name__ == "__main__":

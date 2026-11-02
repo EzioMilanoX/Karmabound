@@ -184,3 +184,50 @@ def test_modos_ficam_em_ordem_de_dificuldade():
     facil = simular_com_combate(400, seed=2, dificuldade="acessivel")
     brutal = simular_com_combate(400, seed=2, dificuldade="brutal")
     assert facil.vitorias > brutal.vitorias * 2
+
+
+JULG = Tecnica("julg", "Julgamento", "maldita", dano_por_carma=0.8, consome_carma=True, recarga=4)
+PACTO = Tecnica("pacto", "Contrato", "maldita", dano=60, recarga=99, consome_tecnica=True)
+MALDICAO = Tecnica("maldicao", "Marca", "maldita", dano=10, marca=3, eco=1, recarga=2)
+
+
+def test_marca_cobra_o_preco_de_quem_marca():
+    j, r = lutador("J", [MALDICAO], vel=3), lutador("R")
+    lt = sem_abertura(luta(j, r))
+    lt.resolver(MALDICAO)
+    assert r.vida == 50 - 10 and r.marca == 3 and j.eco == 1
+    lt.resolver(BASICO)  # o rival age e sofre a Marca
+    assert r.vida == 50 - 10 - 3
+    vida_j = j.vida
+    lt.resolver(BASICO)  # você age e paga o eco
+    assert j.vida == vida_j - 1
+
+
+def test_julgamento_vira_o_carma_em_dano_e_consome():
+    c = carma()
+    c.valor = 50
+    j, r = lutador("J", [JULG], vel=3, carma=c), lutador("R", vida=99)
+    acao = sem_abertura(luta(j, r)).resolver(JULG)
+    assert acao.dano == 40 and c.valor == 0
+
+
+def test_julgamento_consome_ate_um_carma_transbordando():
+    c = carma()
+    c.valor = 100
+    j, r = lutador("J", [JULG], vel=3, carma=c), lutador("R", vida=999)
+    sem_abertura(luta(j, r)).resolver(JULG)
+    assert c.valor == 0 and not c.transbordando  # trocou o Despertar pelo golpe
+
+
+def test_contrato_destroi_a_tecnica_mais_fraca_ou_a_escolhida():
+    j, r = lutador("J", [PACTO, GUARDA, INVESTIDA], vel=3), lutador("R", vida=999)
+    acao = sem_abertura(luta(j, r)).resolver(PACTO)
+    assert acao.destruida == "guarda" and [t.id for t in j.tecnicas] == ["pacto", "investida"]
+    j2, r2 = lutador("J", [PACTO, GUARDA, INVESTIDA], vel=3), lutador("R", vida=999)
+    sem_abertura(luta(j2, r2)).resolver(PACTO, sacrificio=INVESTIDA)
+    assert [t.id for t in j2.tecnicas] == ["pacto", "guarda"]
+
+
+def test_contrato_sem_nada_para_sacrificar_fica_indisponivel():
+    j, r = lutador("J", [PACTO], vel=3), lutador("R")
+    assert PACTO not in luta(j, r).prontas(j)
