@@ -9,13 +9,14 @@ um voto e as dicas da primeira run; cada uma desempilha ao fechar.
 
 from __future__ import annotations
 
+import datetime
 from pathlib import Path
 
 from ouroboros.bootstrap.composition_root import CompositionRoot
 from ouroboros.bootstrap.engine_config import EngineConfig
 from ouroboros.bootstrap.game_loop import GameLoop
 
-from karmabound import opcoes
+from karmabound import opcoes, salvar
 from karmabound.grimorio import Grimorio
 from karmabound.jornada import Jornada
 from karmabound.mesa import Mesa
@@ -75,6 +76,7 @@ class Fluxo:
 
     def titulo(self) -> None:
         self.jornada = None
+        hoje = datetime.date.today().isoformat()
         self._cena(
             TituloScene(
                 self.entrada,
@@ -82,6 +84,10 @@ class Fluxo:
                 self.loop.stop,
                 self.abrir_grimorio,
                 ao_opcoes=lambda: self.abrir_opcoes(self.loop.current_scene),
+                continuar=salvar.resumo(),
+                ao_continuar=self.continuar,
+                ao_diaria=self.semente_do_dia,
+                recorde_diaria=salvar.melhor_diaria(hoje),
             )
         )
 
@@ -118,10 +124,26 @@ class Fluxo:
                 DicaScene(baixo, dica_id, self.entrada, self._fechar, self.loop.stop)
             )
 
-    def comecar(self, modo: str) -> None:
-        self.jornada = Jornada.nova(modo, self.seed)
+    def comecar(self, modo: str, seed: int | None = None, diaria: str = "") -> None:
+        self.jornada = Jornada.nova(modo, self.seed if seed is None else seed)
         self.jornada.grimorio = self.grimorio
+        self.jornada.diaria = diaria
         self.passo()
+
+    def continuar(self) -> None:
+        """A run salva, de onde parou (no meio de uma luta: a mesma luta, desde o começo)."""
+        j = salvar.carregar()
+        if j is None:
+            self.titulo()
+            return
+        j.grimorio = self.grimorio
+        self.jornada = j
+        self.passo()
+
+    def semente_do_dia(self) -> None:
+        """Todo mundo gira a mesma sorte hoje: Difícil, seed tirada da data."""
+        hoje = datetime.date.today()
+        self.comecar("dificil", seed=int(hoje.strftime("%Y%m%d")), diaria=hoje.isoformat())
 
     def _roleta(self, roda: str, girar, depois) -> None:
         j = self.jornada
@@ -161,8 +183,13 @@ class Fluxo:
         elif fase == "reliquia":
             self._roleta("reliquias", j.girar_reliquia, self.passo)
         else:  # vitoria | derrota
-            self._cena(FimScene(j, self.entrada, self.titulo, self.loop.stop))
+            salvar.apagar()
+            recorde = (
+                salvar.registrar_diaria(j.diaria, j.estado.lutas_vencidas) if j.diaria else None
+            )
+            self._cena(FimScene(j, self.entrada, self.titulo, self.loop.stop, recorde))
             return
+        salvar.salvar(j)
         dica = {
             "destino": "roleta",
             "arco": "arco",

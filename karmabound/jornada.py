@@ -18,6 +18,7 @@ Fases:
 
 from __future__ import annotations
 
+import pickle
 import random
 from dataclasses import dataclass, field
 
@@ -87,6 +88,8 @@ class Jornada:
     sacrificios: dict[str, dict[str, float]] = field(default_factory=dict)  # cache do Altar
     amostras_altar: int = 80
     grimorio: Grimorio | None = None  # registra o que sai da roleta (só quem joga)
+    antes_da_luta: bytes | None = field(default=None, repr=False)  # a foto para continuar
+    diaria: str = ""  # a data, numa run da semente do dia
 
     # ------------------------------------------------------------------ começo
 
@@ -168,6 +171,7 @@ class Jornada:
         return giro
 
     def _comecar_luta(self) -> None:
+        self.antes_da_luta = pickle.dumps((self.estado, self.rng))  # continuar = a mesma luta
         self.luta = comecar_luta(self.estado, self.ctx, self.rng)
         self.fase = "luta"
 

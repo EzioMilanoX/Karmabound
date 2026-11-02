@@ -160,6 +160,17 @@ def _cinema(loop, destino: Path) -> list[Path]:
     salvos.append(_foto(loop, titulo, destino / "20_titulo.png"))
     titulo.relogio = 0.22
     salvos.append(_foto(loop, titulo, destino / "21_transicao_tinta.png"))
+    com_save = TituloScene(
+        Entrada(),
+        lambda m: None,
+        lambda: None,
+        continuar="Difícil · capítulo 2 · luta 6",
+        ao_continuar=lambda: None,
+        ao_diaria=lambda: None,
+        recorde_diaria=7,
+    )
+    com_save.relogio = 4.0
+    salvos.append(_foto(loop, com_save, destino / "26_titulo_continuar.png"))
     salvos += _sobrepostas(loop, destino)
     return salvos
 

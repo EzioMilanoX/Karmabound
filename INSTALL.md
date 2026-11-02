@@ -14,7 +14,7 @@ Sai `dist\Karmabound\Karmabound.exe`, com a pasta `_internal` ao lado — leve a
 
 `Karmabound.exe --headless` abre o jogo, desenha um quadro e sai: serve para testar um build sem abrir janela.
 
-O progresso do Grimório e as opções ficam em `%USERPROFILE%\.karmabound\` (`grimorio.json`, `opcoes.json`).
+O progresso do Grimório e as opções ficam em `%USERPROFILE%\.karmabound\` (`grimorio.json`, `opcoes.json`, a run salva `run.sav` e os recordes da semente do dia `recordes.json`).
 
 ## Do código
 

@@ -173,6 +173,12 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **Quebrar um voto pela tela**: a regra já existia (`Votos.quebrar`); agora `Jornada.quebrar_voto` e a tela. O voto de quebra fica no lugar do quebrado pelo prazo que faltava.
 - **Bug achado pelo teste:** jurar um voto recalculava o lutador só com os votos — o Dom e as Relíquias sumiam até o fim da luta seguinte (e o Altar media os votos com esse defeito). `aplicar_voto` agora recalcula tudo.
 
+### Continuar e semente do dia (2026-11-02)
+
+- **A run salva a cada fase** (`salvar.py`, `~/.karmabound/run.sav`, um espaço só). Sair no meio de uma luta guarda a **foto de antes dela** (`Jornada.antes_da_luta`): ao continuar, a luta recomeça igual, com o mesmo rival e a mesma sorte — sair de uma luta ruim não sorteia outra. Vitória ou derrota apagam o arquivo; arquivo de outra versão ou estragado é ignorado.
+- **Semente do dia**: Difícil, seed tirada da data (todo mundo gira a mesma sorte); o melhor resultado de cada dia fica em `recordes.json` e aparece no título e no fim da run.
+- A pausa não pede mais confirmação para voltar ao título: a run fica salva.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.

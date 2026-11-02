@@ -73,24 +73,20 @@ class PausaScene(_Sobre):
         super().__init__(baixo, entrada, ao_fechar, ao_sair)
         self.j = jornada
         self.fluxo = fluxo
-        self.confirmar_titulo = False
 
     @property
     def itens(self) -> list[tuple[str, str]]:
         itens = [("continuar", "Continuar"), ("opcoes", "Opções")]
         if self.j is not None and self.j.estado.votos.ativos:
             itens.append(("votos", "Votos (quebrar um voto)"))
-        itens += [("titulo", "Voltar ao título"), ("sair", "Sair do jogo")]
+        itens += [("titulo", "Voltar ao título (a run fica salva)"), ("sair", "Sair do jogo")]
         return itens
 
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
         e = self.entrada
         if e.is_action_pressed("sair") or e.is_action_pressed("cancelar"):
-            if self.confirmar_titulo:
-                self.confirmar_titulo = False
-            else:
-                self.ao_fechar()
+            self.ao_fechar()
             return
         itens = self.itens
         self._mover(len(itens))
@@ -107,10 +103,7 @@ class PausaScene(_Sobre):
         elif acao == "votos":
             self.fluxo.abrir_votos(self)
         elif acao == "titulo":
-            if self.confirmar_titulo:
-                self.fluxo.titulo()
-            else:
-                self.confirmar_titulo = True
+            self.fluxo.titulo()  # a run fica salva: o título oferece continuar
         elif acao == "sair":
             self.ao_sair()
 
@@ -120,16 +113,6 @@ class PausaScene(_Sobre):
         moldura(r, 300, 150, 660, 470, OURO)
         self._t(r, 480, 172, "止  Pausa", 32, OURO, "center")
         self._lista(r, 340, 236, [texto for _, texto in self.itens], largura=300)
-        if self.confirmar_titulo:
-            self._t(
-                r,
-                480,
-                432,
-                "A run será perdida. Enter de novo confirma.",
-                15,
-                SANGUE_VIVO,
-                "center",
-            )
         self._t(
             r,
             480,

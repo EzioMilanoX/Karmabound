@@ -71,14 +71,41 @@ class _Base(IScene):
 
 
 class TituloScene(_Base):
-    def __init__(self, entrada, ao_escolher, ao_sair, ao_grimorio=None, ao_opcoes=None) -> None:
+    def __init__(
+        self,
+        entrada,
+        ao_escolher,
+        ao_sair,
+        ao_grimorio=None,
+        ao_opcoes=None,
+        continuar: str | None = None,
+        ao_continuar=None,
+        ao_diaria=None,
+        recorde_diaria: int | None = None,
+    ) -> None:
         super().__init__(entrada, ao_sair)
         self.ao_grimorio = ao_grimorio
         self.ao_opcoes = ao_opcoes
+        self.ao_continuar = ao_continuar
+        self.ao_diaria = ao_diaria
         cfg = carregar_balanceamento()["combate"]
         self.modos = [(m, d) for m, d in cfg["dificuldades"].items() if not m.startswith("_")]
+        # cada linha: (o que faz, texto, detalhe à direita)
+        self.itens: list[tuple[str, str, str]] = []
+        if continuar and ao_continuar is not None:
+            self.itens.append(("continuar", "Continuar a run", continuar))
+        if ao_diaria is not None:
+            detalhe = (
+                f"hoje: {recorde_diaria} de 12"
+                if recorde_diaria is not None
+                else "Difícil, a mesma sorte para todos"
+            )
+            self.itens.append(("diaria", "Semente do dia", detalhe))
+        self.itens += [(m, d["nome"], f"~{d['alvo_vitoria']:.0%} vencem") for m, d in self.modos]
         padrao = cfg["dificuldade_padrao"]
-        self.cursor = next(i for i, (m, _) in enumerate(self.modos) if m == padrao)
+        self.cursor = (
+            0 if continuar else next(i for i, x in enumerate(self.itens) if x[0] == padrao)
+        )
         self.ao_escolher = ao_escolher
 
     def update(self, world, delta_time: float) -> None:
@@ -94,14 +121,20 @@ class TituloScene(_Base):
             return
         som.musica("titulo")
         if e.is_action_pressed("cima"):
-            self.cursor = (self.cursor - 1) % len(self.modos)
+            self.cursor = (self.cursor - 1) % len(self.itens)
             som.tocar("mover")
         elif e.is_action_pressed("baixo"):
-            self.cursor = (self.cursor + 1) % len(self.modos)
+            self.cursor = (self.cursor + 1) % len(self.itens)
             som.tocar("mover")
         elif e.is_action_pressed("confirmar"):
             som.tocar("confirmar")
-            self.ao_escolher(self.modos[self.cursor][0])
+            acao = self.itens[self.cursor][0]
+            if acao == "continuar":
+                self.ao_continuar()
+            elif acao == "diaria":
+                self.ao_diaria()
+            else:
+                self.ao_escolher(acao)
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
@@ -135,18 +168,20 @@ class TituloScene(_Base):
         self._t(r, 480, 70, "業", 96, OURO, "center")
         self._t(r, 480, 150, "Karmabound", 52, TINTA, "center")
         self._t(r, 480, 200, "todo azar fica preso ao seu Carma", 18, alpha(TINTA, 150), "center")
-        y0 = 452
-        for i, (_, d) in enumerate(self.modos):
-            y = y0 + i * 36
+        passo = 36 if len(self.itens) <= 4 else max(24, 168 // len(self.itens))
+        y0 = 452 if len(self.itens) <= 4 else 432
+        for i, (acao, texto, detalhe) in enumerate(self.itens):
+            y = y0 + i * passo
             atual = i == self.cursor
-            cor = TINTA if atual else alpha(TINTA, 110)
-            if atual:
-                r.draw_ui_rect(330, y - 6, 300, 32, alpha(LACA, 255))
-                r.draw_ui_polygon([(344, y + 3), (354, y + 10), (344, y + 17)], OURO)
-            self._t(r, 366, y - 2, d["nome"], 20, cor)
-            self._t(
-                r, 618, y + 2, f"~{d['alvo_vitoria']:.0%} vencem", 14, alpha(TINTA, 90), "topright"
+            especial = acao in ("continuar", "diaria")
+            cor = (
+                (OURO if especial else TINTA) if atual else alpha(OURO if especial else TINTA, 120)
             )
+            if atual:
+                r.draw_ui_rect(230, y - 4, 500, passo - 3, alpha(LACA, 255))
+                r.draw_ui_polygon([(244, y + 3), (254, y + 10), (244, y + 17)], OURO)
+            self._t(r, 266, y - 2, texto, 18, cor)
+            self._t(r, 718, y + 2, detalhe, 13, alpha(TINTA, 100), "topright")
         self._t(
             r,
             480,
@@ -506,10 +541,11 @@ class AltarScene(_Base):
 
 
 class FimScene(_Base):
-    def __init__(self, jornada: Jornada, entrada, ao_reiniciar, ao_sair) -> None:
+    def __init__(self, jornada: Jornada, entrada, ao_reiniciar, ao_sair, recorde=None) -> None:
         super().__init__(entrada, ao_sair)
         self.j = jornada
         self.ao_reiniciar = ao_reiniciar
+        self.recorde = recorde  # o melhor da semente do dia, se era uma
 
     def update(self, world, delta_time: float) -> None:
         if self.relogio == 0.0:
@@ -546,6 +582,9 @@ class FimScene(_Base):
             "Técnicas: " + ", ".join(t.nome for t in j.jogador.tecnicas),
             ("Relíquias: " + " ".join(x.kanji for x in j.estado.reliquias))
             if j.estado.reliquias
+            else "",
+            f"Semente do dia ({j.diaria}): seu melhor hoje é {self.recorde} de 12"
+            if j.diaria and self.recorde is not None
             else "",
         ]
         for k, linha in enumerate(x for x in linhas if x):

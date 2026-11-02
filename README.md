@@ -59,6 +59,8 @@ Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta,
 
 O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
 
+A run **fica salva** a cada fase: o título oferece **Continuar a run** (no meio de uma luta, ela recomeça igual — mesmo rival, mesma sorte). A **Semente do dia** dá a todo mundo a mesma sorte no Difícil, e o título mostra o seu melhor resultado do dia.
+
 Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparece (dá para desligar ou rever nas opções). **Esc** pausa: dali se abrem as opções (volume da música e dos efeitos, silenciar, tela cheia, velocidade das animações) e se **quebra um voto**, com a punição e o voto de quebra.
 
 ### O visual
