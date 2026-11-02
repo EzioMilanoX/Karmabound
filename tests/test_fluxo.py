@@ -127,7 +127,7 @@ def test_altar_desenha_todos_os_estados():
     quadro({"confirmar"})
     quadro()
     quadro()  # mede o voto
-    assert cena.estado == "proposta" and cena.proposta is not None
+    assert cena.estado == "comprar" and cena.proposta is not None
     quadro({"cancelar"})
     assert cena.estado == "escolher"
     loop.renderer.shutdown()

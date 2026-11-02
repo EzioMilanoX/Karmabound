@@ -1,6 +1,22 @@
 # Instalando e rodando Karmabound
 
-Karmabound ainda não tem executável: por enquanto roda a partir do código, com Python.
+Dá para jogar de dois jeitos: pelo **executável do Windows** (gerado a partir do código, sem precisar de Python para jogar) ou direto do código, com Python.
+
+## Executável (Windows)
+
+Com o ambiente de desenvolvimento pronto (passos abaixo) e `pip install pyinstaller`:
+
+```bat
+build.bat
+```
+
+Sai `dist\Karmabound\Karmabound.exe`, com a pasta `_internal` ao lado — leve a pasta `Karmabound` inteira. É `onedir` de propósito: um `.exe` único se extrai no `%TEMP%` e o Windows 11 (Controle Inteligente de Aplicativos) barra isso num executável sem assinatura. Sem assinatura de código, o Windows ainda pode avisar na primeira vez ("O Windows protegeu o computador" → Mais informações → Executar assim mesmo).
+
+`Karmabound.exe --headless` abre o jogo, desenha um quadro e sai: serve para testar um build sem abrir janela.
+
+O progresso do Grimório fica em `%USERPROFILE%\.karmabound\grimorio.json`.
+
+## Do código
 
 ## Requisitos
 

@@ -105,6 +105,7 @@ class EstadoRun:
     despertares: int = 0
     divino_pendente: int = 0  # giros Divinos garantidos por Despertares feitos na luta
     altares: int = 0
+    pontos_guardados: float = 0.0  # pontos de voto não gastos: ficam para o próximo voto
     dom: Fatia | None = None
     arco: Fatia | None = None  # None no começo de cada capítulo: falta girar o Arco
     reliquias: list[Fatia] = field(default_factory=list)
@@ -493,6 +494,31 @@ def avaliar_restricoes(
     return cat.pontos(creditado, duracao, restricoes), junto
 
 
+def beneficios_dos_ganhos(
+    estado: EstadoRun,
+    ctx: Contexto,
+    restricoes: list,
+    sacrificio: float,
+    duracao: str = "run",
+    amostras: int = 120,
+    seed: int = 0,
+) -> dict[str, float]:
+    """Quanto cada ganho rende junto destas restrições, em lutas: é o que dá o preço."""
+    return {
+        g.id: medir(estado, ctx, _com(ctx, restricoes, [g], duracao), amostras, seed) + sacrificio
+        for g in ctx.catalogo.ganhos.values()
+    }
+
+
+def custo_dos_ganhos(ctx: Contexto, ganhos: list, beneficio: dict[str, float]) -> float:
+    """Pontos que uma compra custa: cada nível de um ganho custa mais que o anterior."""
+    cat, total = ctx.catalogo, 0.0
+    for gid, n in Counter(g.id for g in ganhos).items():
+        g = cat.ganhos[gid]
+        total += sum(cat.preco(g, beneficio[gid], k) for k in range(1, n + 1))
+    return total
+
+
 def comprar_ganhos(
     estado: EstadoRun,
     ctx: Contexto,
@@ -502,13 +528,14 @@ def comprar_ganhos(
     duracao: str = "run",
     amostras: int = 120,
     seed: int = 0,
+    beneficio: dict[str, float] | None = None,
 ) -> list:
     """Gasta `pontos` nível a nível, sempre no ganho de maior benefício por nível acessível."""
     cat = ctx.catalogo
-    beneficio = {
-        g.id: medir(estado, ctx, _com(ctx, restricoes, [g], duracao), amostras, seed) + sacrificio
-        for g in cat.ganhos.values()
-    }
+    if beneficio is None:
+        beneficio = beneficios_dos_ganhos(
+            estado, ctx, restricoes, sacrificio, duracao, amostras, seed
+        )
     restante, niveis, ganhos = pontos, Counter(), []
     while True:
         opcoes = []
@@ -566,8 +593,13 @@ def montar_voto_auto(
         escolha, pontos, sacrificio = teste, p, junto
     if not escolha:
         return None
-    ganhos = comprar_ganhos(estado, ctx, escolha, pontos, sacrificio, duracao, amostras, seed)
+    pontos += estado.pontos_guardados  # a força que sobrou de votos anteriores
+    beneficio = beneficios_dos_ganhos(estado, ctx, escolha, sacrificio, duracao, amostras, seed)
+    ganhos = comprar_ganhos(
+        estado, ctx, escolha, pontos, sacrificio, duracao, amostras, seed, beneficio
+    )
     voto = Voto(escolha, ganhos, duracao, pontos=pontos, sacrificio=sacrificio)
+    voto.sobra = pontos - custo_dos_ganhos(ctx, ganhos, beneficio)
     return voto if saldo_do_voto(estado, ctx, voto, amostras, seed) > 0 else None
 
 
@@ -577,3 +609,4 @@ def altar_auto(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> None:
     voto = montar_voto_auto(estado, ctx, seed=rng.randrange(1 << 30))
     if voto is not None:
         aplicar_voto(estado, ctx, voto)
+        estado.pontos_guardados = max(0.0, voto.sobra)

@@ -133,7 +133,7 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **Silhuetas de tinta:** figuras de hakama e espada feitas de polígonos, com passadas de pincel deslocadas. Avançam ao golpear, tremem e ficam vermelhas ao apanhar. Sem rosto: a mesma figura serve de frente e de costas.
 - **Ritmo animado e rápido:** ~0,6 s por ação, número de dano subindo, "percebeu!" em verde e "surpresa!" em dourado; o rival age sozinho depois de uma pausa curta.
 - **Run completa jogável:** título com escolha de modo → Destino → Arco de cada capítulo → lutas → giro de Técnicas entre lutas (troca quando os 4 espaços estão cheios) → Relíquias às vezes → Altar quando sai o Juramento → fim. `jornada.py` é a run fase a fase, sem tela; `game.py` só troca de tela conforme a fase.
-- **Altar simples:** você escolhe até 3 restrições e a duração; o Altar mede cada uma contra o seu build, compra os ganhos e mostra a estimativa de lutas a mais ou a menos antes de você jurar. A compra manual de ganhos fica para depois.
+- **Altar com compra manual** (2026-11-02): você escolhe até 3 restrições e a duração; o Altar mede cada uma contra o seu build e dá a força do voto. A compra abre com a sugestão do Altar marcada e você muda nível a nível. **Às cegas, por decisão:** a tela não mostra preço nem benefício nem a estimativa final — só a barra de força que resta e "não cabe". **A sobra fica guardada** para o próximo voto (`EstadoRun.pontos_guardados`; o piloto automático também guarda).
 
 ### O Despertar (decidido e implementado em 2026-11-02)
 
@@ -214,19 +214,19 @@ Valores medidos com `python tools/medir_poder.py` na dificuldade final (Difícil
 |---|---|---|---|
 | 体 Corpo Resistente (Dom) | Cinza | +3 de vida máxima | +3,8 |
 | 速 Reflexo Treinado (Dom) | Cinza | 4% de chance de esquivar | +3,8 |
-| 見 Sentir a Intenção (Dom) | Sangue | a surpresa do rival não ganha bônus | +7,7 ⚠️ |
+| 見 Sentir a Intenção (Dom) | Maldito | a surpresa do rival não ganha bônus | +7,7 |
 | 沸 Sangue Fervente (Dom) | Sangue | até +1,5 de dano, pela vida perdida | +3,2 |
 | 影 Sombra Leal (Dom) | Sangue | a sombra repete 8% de cada golpe | +5,2 |
 | 再 Carne que Volta (Dom) | Sangue | abaixo de 30% da vida, cura 1 por turno | +5,8 |
-| 兵 Sangue de Soldado (Dom) | Maldito | +1 de Velocidade | +13,2 ⚠️ |
+| 兵 Sangue de Soldado (Dom) | Maldito | +1 de Velocidade; −6 de vida | +4,9 |
 | 眼 Olho Roubado (Dom, técnica) | Maldito | usa a última técnica do rival com +25%; cego até o próximo turno | +9,0 |
-| 灰 Pele de Cinzas (Dom) | Maldito | o 1º golpe de cada luta não fere; cura em 55% | +2,2 ⚠️ |
+| 灰 Pele de Cinzas (Dom) | Maldito | o 1º golpe de cada luta não fere; cura em 63% | +6,7 |
 | 六 Olhos que Tudo Veem (Dom) | Maldito | +2 de Percepção; −10% de vida | +8,3 |
 | 門 Portões Abertos (Dom) | Maldito | +5 de dano; 1 de vida por turno | +7,5 |
 | 域 Santuário (Dom, técnica) | Divino | 4 turnos imperceptíveis e +50%; perde um turno | +19,7 |
 | 刻 Instante Suspenso (Dom, técnica) | Divino | duas ações seguidas; 8 de vida | +18,0 |
 | 宿 Corpo Perfeito (Dom) | Divino | Golpe 2× com +2; nunca defende | +12,7 |
-| 布 Bandagem | Cinza | cura 1 no início de cada luta | +0,8 ⚠️ |
+| 布 Bandagem | Cinza | cura 1 no início de cada luta | +3,5 |
 | 符 Amuleto Rachado | Cinza | 1×/run, golpe fatal deixa com 1 | +3,9 |
 | 重 Manto de Peso | Cinza | +1 de vida máxima a cada 2 vitórias | +2,8 |
 | 骨 Rosário de Ossos | Sangue | +3 de Carma por vitória | +2,9 |
@@ -244,13 +244,13 @@ Valores medidos com `python tools/medir_poder.py` na dificuldade final (Difícil
 | 牙 Presa da Lua | Sangue | 12, sutileza 4 | +3,4 |
 | 鎖 Corrente do Julgamento | Sangue | 7 e sela a ação anunciada | +2,8 |
 | 元 Esfera dos Mil | Maldito | 10 + a dor sofrida, até +20 | +6,8 |
-| 幻 Lua Ilusória | Maldito | o rival perde o turno; 4 de vida | +3,4 ⚠️ |
-| 呪 Marca da Maldição | Maldito | golpe de 10 que amaldiçoa | +2,9 ⚠️ |
-| 契 Contrato | Divino | golpe de 40, 1×/luta, destrói outra técnica; +5 por técnica consumida | +4,9 ⚠️ |
-| 裁 Julgamento | Divino | dano = 2 × Carma, consome o Carma | +20,8 ⚠️ |
-| 界 Corte do Mundo | Divino | 42 absoluto, pronto no 4º turno | +8,2 ⚠️ |
+| 幻 Lua Ilusória | Maldito | o rival perde o turno; 2 de vida | +6,7 |
+| 呪 Marca da Maldição | Maldito | golpe de 10 que amaldiçoa (4 por turno) | +4,5 |
+| 契 Contrato | Divino | golpe de 40, 1×/luta, destrói outra técnica; +7 por técnica consumida | +12,3 |
+| 裁 Julgamento | Divino | dano = 1,8 × Carma, consome o Carma | +14,6 |
+| 界 Corte do Mundo | Divino | 50 absoluto, pronto no 4º turno | +9,5 |
 
-⚠️ fora da régua, a revisitar. Abaixo: **Contrato, Corte do Mundo, Lua Ilusória, Marca, Pele de Cinzas, Bandagem**. Acima: **Julgamento, Sangue de Soldado, Sentir a Intenção**.
+Todos dentro da régua (±2 de ruído) depois da segunda rodada de ajustes (2026-11-02). A Pele de Cinzas mostrou o quanto a cura entre lutas vale: com a cura a 55% ela dava +2; a 75%, +20.
 
 - **O Contrato e o tamanho da roda.** Com 10 técnicas, os giros traziam muita repetida (fragmento) e o Contrato ficava sem o que consumir. Com 20, quase todo giro traz uma técnica nova, e o Contrato (+15 por técnica consumida) virava uma bola de neve: +45 pontos. Agora cresce +5. A mesma causa derrubou o Fragmento do Deus Cego (que vive de repetidas), que passou a ×1,8.
 - **A Esfera dos Mil nos rivais.** Os rivais também sorteiam as técnicas novas; uma Esfera sem teto num rival que já apanhou 60 devolvia 70 de dano e empurrava o jogo inteiro para matar rápido. O bônus da dor tem teto de +20.
@@ -260,7 +260,7 @@ Valores medidos com `python tools/medir_poder.py` na dificuldade final (Difícil
 - **Carma vale muito:** cheio, ele é um Despertar na luta e um Divino depois. Todo preço em Carma pesa demais — por isso o Instante custa vida (decisão de 2026-11-02), e o Julgamento precisa de um golpe enorme para compensar.
 - **Achados que eram defeito de regra, não de número:** o Instante gastava o turno e devolvia um (ganho zero) — agora são duas ações de verdade depois dele; o Coração Selado guardava só no giro (nada ganhava) — agora guarda no instante em que o Carma enche.
 - **Arquitetura:** as regras da run são passos em `run.py` (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`, `receber_tecnica`, `receber_reliquia`, `girar`). O piloto automático e a Jornada do jogador usam os mesmos passos: o simulador mede exatamente o jogo que se joga.
-- **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a **+5,1 / +5,35 / +5,35 / +6,55** (o Equilibrado e o Difícil se separam pela sua vida e pelo chefe). Resultado: **45,9% / 35,9% / 27,4% / 8,7%**.
+- **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a **+5,25 / +5,5 / +5,55 / +6,7** (com a força do Altar guardada entre votos). Resultado: **45,1% / 35,2% / 24,9% / 10,0%**, reação 26–31%.
 
 ## Poderes impossíveis de balancear
 

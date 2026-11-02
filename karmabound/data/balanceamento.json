@@ -103,7 +103,7 @@
         "nome": "Acessível",
         "alvo_vitoria": 0.45,
         "rivais": {
-          "vida_por_luta": 5.1,
+          "vida_por_luta": 5.25,
           "chefe_multiplicador": 1.2
         },
         "jogador": {
@@ -114,7 +114,7 @@
         "nome": "Equilibrado",
         "alvo_vitoria": 0.36,
         "rivais": {
-          "vida_por_luta": 5.35,
+          "vida_por_luta": 5.5,
           "chefe_multiplicador": 1.2
         },
         "jogador": {
@@ -125,7 +125,7 @@
         "nome": "Difícil",
         "alvo_vitoria": 0.25,
         "rivais": {
-          "vida_por_luta": 5.35,
+          "vida_por_luta": 5.55,
           "chefe_multiplicador": 1.25
         },
         "jogador": {
@@ -136,7 +136,7 @@
         "nome": "Brutal",
         "alvo_vitoria": 0.1,
         "rivais": {
-          "vida_por_luta": 6.55,
+          "vida_por_luta": 6.7,
           "chefe_multiplicador": 1.25
         },
         "jogador": {

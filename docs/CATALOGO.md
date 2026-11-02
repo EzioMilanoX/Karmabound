@@ -17,13 +17,13 @@
 |---|---|---|---|---|
 | 体 | Corpo Resistente | Cinza | +3 de vida máxima. | O treino do Saitama · One Punch Man |
 | 速 | Reflexo Treinado | Cinza | 4% de chance de esquivar um golpe inteiro. | Shunpo · Bleach |
-| 見 | Sentir a Intenção | Sangue | Você sente a emboscada: o ataque surpresa do rival não ganha bônus contra você. | Haki da Observação · One Piece |
+| 見 | Sentir a Intenção | Maldito | Você sente a emboscada: o ataque surpresa do rival não ganha bônus contra você. | Haki da Observação · One Piece |
 | 沸 | Sangue Fervente | Sangue | Até +1,5 de dano, proporcional à vida que você já perdeu. | A fúria do Guts · Berserk |
 | 影 | Sombra Leal | Sangue | Sua sombra repete cada golpe seu com 8% do dano. | Exército das Sombras · Solo Leveling |
-| 兵 | Sangue de Soldado | Maldito | +1 de Velocidade: você quase sempre ataca primeiro. | Sangue Ackerman · Attack on Titan |
+| 兵 | Sangue de Soldado | Maldito | +1 de Velocidade: você quase sempre ataca primeiro. Preço: −6 de vida máxima. | Sangue Ackerman · Attack on Titan |
 | 再 | Carne que Volta | Sangue | Abaixo de 30% da vida, você cura 1 a cada turno seu. | Regeneração de Oni · Demon Slayer |
 | 眼 | Olho Roubado | Maldito | Técnica: usa a última técnica do rival como se fosse sua, com +25%. Preço: Percepção 0 até o seu próximo turno. | Sharingan · Naruto |
-| 灰 | Pele de Cinzas | Maldito | O primeiro golpe de cada luta não te fere. Preço: toda cura vale 55%. | Hierro · Bleach |
+| 灰 | Pele de Cinzas | Maldito | O primeiro golpe de cada luta não te fere. Preço: toda cura vale 63%. | Hierro · Bleach |
 | 六 | Olhos que Tudo Veem | Maldito | +2 de Percepção: você lê a técnica do rival e reage a quase tudo. Preço: −10% de vida máxima. | Seis Olhos (Gojo) · Jujutsu Kaisen |
 | 門 | Portões Abertos | Maldito | +5 de dano em todo golpe. Preço: você perde 1 de vida a cada turno seu. | Oito Portões (Hachimon) · Naruto |
 | 域 | Santuário | Divino | Técnica, uma vez por luta: por 4 turnos seus golpes não são percebidos e causam +50%. Preço: depois você perde um turno. | Expansão de Domínio · Jujutsu Kaisen |
@@ -48,12 +48,12 @@
 | 牙 | Presa da Lua | Sangue | ataque | dano 12 | 2 | 4 | sim | Getsuga Tensho · Bleach |
 | 鎖 | Corrente do Julgamento | Sangue | ataque | dano 7, sela a ação do rival por 2 | 3 | 2 |  | Corrente do Julgamento (Kurapika) · Hunter x Hunter |
 | 誓 | Juramento | Maldito |  |  | 0 | 0 |  | Restrições e Juramentos (Kurapika) · Hunter x Hunter |
-| 呪 | Marca da Maldição | Maldito | maldita | dano 10, marca 3, você sofre por turno 1 | 2 | 3 |  | Selo Amaldiçoado · Naruto |
+| 呪 | Marca da Maldição | Maldito | maldita | dano 10, marca 4, você sofre por turno 1 | 2 | 3 |  | Selo Amaldiçoado · Naruto |
 | 元 | Esfera dos Mil | Maldito | maldita | dano 10, dano × dor sofrida 1 | 4 | 3 |  | Genki Dama · Dragon Ball |
-| 幻 | Lua Ilusória | Maldito | maldita | custo de vida 4, o rival perde turnos: 1 | 4 | 0 |  | Tsukuyomi (Itachi) · Naruto |
-| 契 | Contrato | Divino | maldita | dano 40, destrói outra técnica sua, cresce por técnica consumida 5 | 99 | 2 | sim | Contrato com o Demônio · Chainsaw Man |
-| 裁 | Julgamento | Divino | maldita | dano × Carma 2, consome o Carma | 4 | 3 | sim | Shinra Tensei (Pain, a dor) · Naruto |
-| 界 | Corte do Mundo | Divino | maldita | dano 42, atravessa bloqueio, escudo e esquiva, começa a luta em recarga 3 | 99 | 99 |  | O corte que divide o mundo (Sukuna) · Jujutsu Kaisen |
+| 幻 | Lua Ilusória | Maldito | maldita | custo de vida 2, o rival perde turnos: 1 | 4 | 0 |  | Tsukuyomi (Itachi) · Naruto |
+| 契 | Contrato | Divino | maldita | dano 40, destrói outra técnica sua, cresce por técnica consumida 7 | 99 | 2 | sim | Contrato com o Demônio · Chainsaw Man |
+| 裁 | Julgamento | Divino | maldita | dano × Carma 1.8, consome o Carma | 4 | 3 | sim | Shinra Tensei (Pain, a dor) · Naruto |
+| 界 | Corte do Mundo | Divino | maldita | dano 50, atravessa bloqueio, escudo e esquiva, começa a luta em recarga 3 | 99 | 99 |  | O corte que divide o mundo (Sukuna) · Jujutsu Kaisen |
 
 ## 章 Arco (gira e aceita)
 
@@ -150,7 +150,7 @@ Até 3 votos ativos; quebrar um voto libera o espaço. O valor de cada restriç�
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 12 +5.1 | ×1.2 | 80 |
-| Equilibrado | 36% | 12 +5.35 | ×1.2 | 76 |
-| Difícil (padrão) | 25% | 12 +5.35 | ×1.25 | 70 |
-| Brutal | 10% | 12 +6.55 | ×1.25 | 68 |
+| Acessível | 45% | 12 +5.25 | ×1.2 | 80 |
+| Equilibrado | 36% | 12 +5.5 | ×1.2 | 76 |
+| Difícil (padrão) | 25% | 12 +5.55 | ×1.25 | 70 |
+| Brutal | 10% | 12 +6.7 | ×1.25 | 68 |

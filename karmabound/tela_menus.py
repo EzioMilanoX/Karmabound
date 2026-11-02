@@ -8,7 +8,6 @@ desenha "o Altar pesa..." num quadro e mede no seguinte.
 from __future__ import annotations
 
 import math
-from collections import Counter
 
 from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
@@ -30,7 +29,6 @@ from karmabound.visual import (
     OURO,
     SANGUE_VIVO,
     TINTA,
-    VERDE_JADE,
     alpha,
     hex_cor,
     mistura,
@@ -44,12 +42,6 @@ NOME_DURACAO = {
     "run": "o resto da run",
 }
 DURANTE = {"luta": "Só nesta luta", "capitulo": "Até o fim do capítulo", "run": "Pelo resto da run"}
-
-
-def _lutas(v: float) -> str:
-    """'1,5 luta', '3,7 lutas' — sem sinal; quem chama diz se é a mais ou a menos."""
-    v = abs(v)
-    return f"{v:.1f} luta".replace(".", ",") + ("s" if v >= 2 else "")
 
 
 def _cortar(texto: str, n: int) -> str:
@@ -254,7 +246,8 @@ class SubstituirScene(_Base):
 
 
 class AltarScene(_Base):
-    """Versão simples: você escolhe as restrições e a duração; o Altar compra os ganhos."""
+    """Você escolhe as restrições e a duração; o Altar pesa e dá a força do voto; você
+    compra os ganhos. Sem números: só se mais um nível ainda cabe. A sobra fica guardada."""
 
     def __init__(self, jornada: Jornada, entrada, ao_concluir, ao_sair) -> None:
         super().__init__(entrada, ao_sair)
@@ -266,7 +259,9 @@ class AltarScene(_Base):
         self.cursor = 0
         self.pesos: dict[str, float] | None = None
         self.proposta: PropostaDeVoto | None = None
-        self.estado = "pesar"  # pesar | escolher | propor | proposta
+        self.compra: list = []  # os ganhos marcados (um item por nível)
+        self.cursor_compra = 0
+        self.estado = "pesar"  # pesar | escolher | propor | comprar
         self.quadros = 0
         self.aviso = ""
 
@@ -287,15 +282,13 @@ class AltarScene(_Base):
         if self.estado == "propor":
             if self.quadros > 1:
                 self.proposta = self.j.propor_voto(sorted(self.marcadas), self.duracao)
-                self.estado = "proposta"
+                self.compra = list(self.proposta.voto.ganhos)  # a sugestão do Altar
+                self.cursor_compra = 0
+                self.estado = "comprar"
             return
         e = self.entrada
-        if self.estado == "proposta":
-            if e.is_action_pressed("confirmar") and self.proposta and self.proposta.voto.ganhos:
-                self.j.jurar(self.proposta)
-                self.ao_concluir()
-            elif e.is_action_pressed("cancelar") or e.is_action_pressed("confirmar"):
-                self.estado = "escolher"
+        if self.estado == "comprar":
+            self._comprar(e)
             return
         linhas = self.linhas
         if e.is_action_pressed("cima"):
@@ -322,6 +315,50 @@ class AltarScene(_Base):
             else:
                 self.aviso = "no máximo 3 restrições por voto"
 
+    # --------------------------------------------------------------- compra
+
+    @property
+    def ganhos(self) -> list:
+        return list(self.j.ctx.catalogo.ganhos.values())
+
+    @property
+    def linhas_compra(self) -> list:
+        return [*self.ganhos, "jurar", "voltar"]
+
+    def _niveis(self, g) -> int:
+        return sum(1 for x in self.compra if x.id == g.id)
+
+    def _comprar(self, e) -> None:
+        linhas = self.linhas_compra
+        item = linhas[self.cursor_compra]
+        if e.is_action_pressed("cancelar"):
+            self.estado = "escolher"
+        elif e.is_action_pressed("cima"):
+            self.cursor_compra, self.aviso = (self.cursor_compra - 1) % len(linhas), ""
+            som.tocar("mover")
+        elif e.is_action_pressed("baixo"):
+            self.cursor_compra, self.aviso = (self.cursor_compra + 1) % len(linhas), ""
+            som.tocar("mover")
+        elif e.is_action_pressed("esquerda") and not isinstance(item, str):
+            if self._niveis(item):  # devolve o último nível desse ganho
+                i = max(k for k, x in enumerate(self.compra) if x.id == item.id)
+                self.compra.pop(i)
+                som.tocar("mover")
+        elif e.is_action_pressed("direita") or e.is_action_pressed("confirmar"):
+            if item == "jurar":
+                som.tocar("confirmar")
+                self.j.jurar(self.proposta, self.compra)
+                self.ao_concluir()
+            elif item == "voltar":
+                self.estado = "escolher"
+            elif self.proposta.cabe(self.j.ctx, self.compra, item):
+                self.compra.append(item)
+                som.tocar("confirmar")
+            else:
+                self.aviso = (
+                    "nível máximo" if self._niveis(item) >= item.niveis else "não cabe neste voto"
+                )
+
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
         self._t(r, 40, 24, "誓  Altar dos Votos", 30, OURO)
@@ -343,8 +380,9 @@ class AltarScene(_Base):
             )
             self._t(r, 480, 300, texto, 24, alpha(TINTA, 180), "center")
             return
-        if self.estado == "proposta":
-            self._proposta(r)
+        if self.estado == "comprar":
+            self._tela_compra(r)
+            vfx.revelar(r, self.relogio)
             return
         self._t(
             r,
@@ -397,72 +435,67 @@ class AltarScene(_Base):
             "center",
         )
 
-    def _proposta(self, r: IRenderer) -> None:
+    def _tela_compra(self, r: IRenderer) -> None:
         p = self.proposta
         if p is None:
             return
         v = p.voto
-        self._t(r, 40, 82, "Você abre mão de:", 17, alpha(TINTA, 150))
-        for k, res in enumerate(v.restricoes):
-            self._t(r, 60, 112 + k * 30, f"{res.kanji}  {res.nome} — {res.texto}", 18, SANGUE_VIVO)
-        y = 112 + len(v.restricoes) * 30 + 16
+        abre = " · ".join(f"{x.kanji} {x.nome}" for x in v.restricoes)
         self._t(
-            r,
-            40,
-            y,
-            f"{DURANTE[v.duracao]}. Para você, isso custa ~{_lutas(p.sacrificio)}; "
-            f"cada restrição conta no máximo {_lutas(self.j.ctx.catalogo.teto_por_restricao)}.",
-            16,
-            alpha(TINTA, 150),
+            r, 40, 72, f"Você abre mão de: {abre} — {DURANTE[v.duracao].lower()}", 16, SANGUE_VIVO
         )
-        self._t(
-            r,
-            40,
-            y + 36,
-            f"Em troca ({v.pontos:.1f} pontos):".replace(".", ","),
-            17,
-            alpha(TINTA, 150),
-        )
-        niveis = Counter(g.id for g in v.ganhos)
-        vistos = []
-        for g in v.ganhos:
-            if g.id in vistos:
-                continue
-            vistos.append(g.id)
-            n = niveis[g.id]
-            self._t(
-                r,
-                60,
-                y + 66 + (len(vistos) - 1) * 30,
-                f"{g.kanji}  {g.nome}{f' ×{n}' if n > 1 else ''} — {g.texto}",
-                18,
-                OURO,
-            )
-        y2 = y + 66 + max(1, len(vistos)) * 30 + 20
-        if not v.ganhos:
-            self._t(
-                r, 60, y + 66, "nada: o sacrifício não paga nenhum ganho", 18, alpha(TINTA, 120)
-            )
-        cor = VERDE_JADE if p.saldo > 0 else SANGUE_VIVO
-        self._t(
-            r,
-            40,
-            y2,
-            f"Estimativa do Altar: {_lutas(p.saldo)} vencida(s) "
-            f"{'a mais' if p.saldo > 0 else 'a menos'} no resto da run",
-            19,
-            cor,
-        )
-        for k, linha in enumerate(
-            quebrar(
-                "Quebrar um voto depois custa os ganhos, metade da vida e todo o Carma, "
-                "e exige jurar um voto de quebra.",
-                90,
-            )
+        # a força do voto: quanto ainda dá para comprar, sem números
+        restante = max(0.0, p.pontos - p.custo(self.j.ctx, self.compra))
+        frac = restante / p.pontos if p.pontos > 0 else 0.0
+        self._t(r, 40, 102, "força do voto", 15, alpha(TINTA, 140))
+        r.draw_ui_rect(160, 106, 420, 12, LACA)
+        r.draw_ui_rect(160, 106, 420 * frac, 12, alpha(OURO, 200))
+        if self.j.estado.pontos_guardados > 0:
+            self._t(r, 596, 102, "(com a força guardada de votos anteriores)", 13, alpha(OURO, 140))
+        for i, g in enumerate(self.ganhos):
+            y = 136 + i * 34
+            atual = i == self.cursor_compra
+            if atual:
+                r.draw_ui_rect(30, y - 5, 900, 32, LACA)
+            n = self._niveis(g)
+            cabe = p.cabe(self.j.ctx, self.compra, g)
+            cor = OURO if n else (TINTA if cabe else alpha(TINTA, 80))
+            self._t(r, 52, y - 2, g.kanji, 22, cor)
+            self._t(r, 88, y, g.nome, 17, cor)
+            self._t(r, 260, y + 2, _cortar(g.texto, 52), 14, alpha(TINTA, 150 if cabe or n else 70))
+            if g.niveis > 1:
+                for k in range(g.niveis):
+                    cheio = k < n
+                    r.draw_ui_circle(
+                        770 + k * 18,
+                        y + 10,
+                        6,
+                        OURO if cheio else alpha(FERRO, 160),
+                        0 if cheio else 1,
+                    )
+            elif n:
+                r.draw_ui_circle(770, y + 10, 6, OURO)
+            if not cabe and n < g.niveis:
+                self._t(r, 920, y + 2, "não cabe", 13, alpha(TINTA, 90), "topright")
+        base = 136 + len(self.ganhos) * 34 + 6
+        for k, (item, texto) in enumerate(
+            (("jurar", "Jurar este voto"), ("voltar", "Voltar às restrições"))
         ):
-            self._t(r, 40, y2 + 34 + k * 20, linha, 14, alpha(TINTA, 110))
-        dica = "Enter jura · Backspace volta" if v.ganhos else "Enter ou Backspace volta"
-        self._t(r, 480, ALTURA - 26, dica, 15, alpha(TINTA, 130), "center")
+            y = base + k * 30
+            if self.linhas_compra[self.cursor_compra] == item:
+                r.draw_ui_rect(30, y - 5, 420, 28, LACA)
+            self._t(r, 52, y - 2, texto, 17, OURO if item == "jurar" else TINTA)
+        if self.aviso:
+            self._t(r, 920, base, self.aviso, 15, SANGUE_VIVO, "topright")
+        self._t(
+            r,
+            480,
+            ALTURA - 26,
+            "↑ ↓ move · → ou Enter compra um nível · ← devolve · Backspace volta",
+            14,
+            alpha(TINTA, 100),
+            "center",
+        )
 
 
 # ----------------------------------------------------------------------- fim

@@ -32,8 +32,10 @@ from karmabound.run import (
     aplicar_dom,
     aplicar_voto,
     avaliar_restricoes,
+    beneficios_dos_ganhos,
     comecar_luta,
     comprar_ganhos,
+    custo_dos_ganhos,
     encerrar_luta,
     girar,
     medir_restricoes,
@@ -48,11 +50,25 @@ from karmabound.votos import Voto, Votos
 
 @dataclass
 class PropostaDeVoto:
-    """O que o Altar mostra antes de jurar."""
+    """O voto que o Altar oferece: as restrições, os pontos e a compra sugerida.
 
-    voto: Voto
+    O jogador mexe na compra; `beneficio` dá o preço de cada ganho (a tela não mostra
+    números: só se um nível ainda cabe nos pontos).
+    """
+
+    voto: Voto  # os ganhos aqui são a sugestão do Altar
     sacrificio: float  # lutas vencidas a menos, medido junto
-    saldo: float  # lutas vencidas a mais com o voto inteiro (o número que decide)
+    pontos: float = 0.0  # os do voto + os guardados de votos anteriores
+    beneficio: dict[str, float] = field(default_factory=dict)
+    saldo: float | None = None  # só com estimar=True: lutas vencidas a mais com o voto
+
+    def custo(self, ctx: Contexto, ganhos: list) -> float:
+        return custo_dos_ganhos(ctx, ganhos, self.beneficio)
+
+    def cabe(self, ctx: Contexto, ganhos: list, mais) -> bool:
+        """Se mais um nível de `mais` cabe nos pontos (e ainda há nível a comprar)."""
+        n = sum(1 for g in ganhos if g.id == mais.id)
+        return n < mais.niveis and self.custo(ctx, [*ganhos, mais]) <= self.pontos + 1e-9
 
 
 @dataclass
@@ -227,25 +243,42 @@ class Jornada:
             )
         return self.sacrificios[duracao]
 
-    def propor_voto(self, ids: list[str], duracao: str = "run") -> PropostaDeVoto | None:
-        """Mede as restrições escolhidas juntas, compra ganhos e estima o saldo."""
+    def propor_voto(
+        self, ids: list[str], duracao: str = "run", estimar: bool = False
+    ) -> PropostaDeVoto | None:
+        """Mede as restrições juntas, dá os pontos (com os guardados) e sugere uma compra.
+
+        `estimar`: também mede o saldo do voto sugerido (o Altar não mostra; é para testes
+        e ferramentas).
+        """
         self._exigir("altar")
         cat = self.ctx.catalogo
         restricoes = [cat.restricoes[i] for i in ids]
         if not restricoes:
             return None
         individuais = self.pesar_restricoes(duracao)
-        seed, n = self.n_luta, self.amostras_altar
-        pontos, junto = avaliar_restricoes(
-            self.estado, self.ctx, restricoes, individuais, duracao, n, seed
-        )
-        ganhos = comprar_ganhos(self.estado, self.ctx, restricoes, pontos, junto, duracao, n, seed)
+        seed, n, e = self.n_luta, self.amostras_altar, self.estado
+        pontos, junto = avaliar_restricoes(e, self.ctx, restricoes, individuais, duracao, n, seed)
+        pontos += e.pontos_guardados
+        beneficio = beneficios_dos_ganhos(e, self.ctx, restricoes, junto, duracao, n, seed)
+        ganhos = comprar_ganhos(e, self.ctx, restricoes, pontos, junto, duracao, n, seed, beneficio)
         voto = Voto(restricoes, ganhos, duracao, pontos=pontos, sacrificio=junto)
-        return PropostaDeVoto(voto, junto, saldo_do_voto(self.estado, self.ctx, voto, n, seed))
+        proposta = PropostaDeVoto(voto, junto, pontos, beneficio)
+        if estimar:
+            proposta.saldo = saldo_do_voto(e, self.ctx, voto, n, seed)
+        return proposta
 
-    def jurar(self, proposta: PropostaDeVoto) -> None:
+    def jurar(self, proposta: PropostaDeVoto, ganhos: list | None = None) -> None:
+        """Jura com a compra do jogador (`ganhos`; sem ela, a sugestão). A sobra fica guardada."""
         self._exigir("altar")
+        compra = list(proposta.voto.ganhos if ganhos is None else ganhos)
+        custo = proposta.custo(self.ctx, compra)
+        if custo > proposta.pontos + 1e-9:
+            raise ValueError("a compra passa dos pontos do voto")
+        proposta.voto.ganhos = compra
+        proposta.voto.sobra = proposta.pontos - custo
         aplicar_voto(self.estado, self.ctx, proposta.voto)
+        self.estado.pontos_guardados = proposta.voto.sobra
         self._depois_da_tecnica()
 
     def recusar_altar(self) -> None:

@@ -207,7 +207,7 @@
 <p>Os lutadores são <strong>silhuetas de tinta</strong> — hakama e espada feitos de polígonos, com passadas de pincel deslocadas — enquanto não há arte de personagem. Cada ação leva cerca de 0,6 segundo: o golpe avança, o alvo treme, o dano sobe e some, e o rival responde sozinho.</p>
 <div class="par">
   <figure><img src="telas/run_06_altar.png" alt="O Altar dos Votos listando oito restrições, cada uma com quanto custa ao seu build"><figcaption>O Altar mede cada restrição contra o seu build.</figcaption></figure>
-  <figure><img src="telas/run_07_altar_proposta.png" alt="A proposta do Altar: as restrições, os ganhos comprados e a estimativa de lutas a mais ou a menos"><figcaption>Antes de jurar, a estimativa honesta do voto inteiro.</figcaption></figure>
+  <figure><img src="telas/run_07_altar_proposta.png" alt="A compra no Altar: a barra com a força do voto e a lista de ganhos, com os níveis comprados marcados"><figcaption>Você compra os ganhos às cegas: só a força do voto que resta.</figcaption></figure>
 </div>
 
 <h2 id="poderes"><span class="kanji">契</span>Quebrados, mas com preço</h2>
@@ -215,9 +215,9 @@
 <table>
   <thead><tr><th></th><th>Poder</th><th>O que faz</th><th>O preço</th><th class="num">Vale</th></tr></thead>
   <tbody>
-    <tr><td class="k r-maldito">呪</td><td>Marca da Maldição</td><td>Golpe de 10; o rival sofre 3 a cada turno, e as Marcas se somam</td><td>você sofre 1 por turno por Marca</td><td class="num">+3</td></tr>
-    <tr><td class="k r-divino">契</td><td>Contrato</td><td>Golpe de 40, uma vez por luta; o demônio cresce +5 a cada técnica consumida</td><td>cada uso destrói uma das suas outras técnicas, para sempre</td><td class="num">+5</td></tr>
-    <tr><td class="k r-divino">裁</td><td>Julgamento</td><td>Dano igual a 2 × o seu Carma</td><td>consome todo o Carma — e o Despertar que vinha com ele</td><td class="num">+21</td></tr>
+    <tr><td class="k r-maldito">呪</td><td>Marca da Maldição</td><td>Golpe de 10; o rival sofre 4 a cada turno, e as Marcas se somam</td><td>você sofre 1 por turno por Marca</td><td class="num">+4,5</td></tr>
+    <tr><td class="k r-divino">契</td><td>Contrato</td><td>Golpe de 40, uma vez por luta; o demônio cresce +7 a cada técnica consumida</td><td>cada uso destrói uma das suas outras técnicas, para sempre</td><td class="num">+12</td></tr>
+    <tr><td class="k r-divino">裁</td><td>Julgamento</td><td>Dano igual a 1,8 × o seu Carma</td><td>consome todo o Carma — e o Despertar que vinha com ele</td><td class="num">+15</td></tr>
   </tbody>
 </table>
 <p>O Julgamento é a escolha mais temática do jogo: a dor acumulada pode virar um golpe agora ou esperar o Despertar. Não dá para ter os dois.</p>
@@ -250,10 +250,10 @@
 <table>
   <thead><tr><th>Modo</th><th class="num">Vitória do piloto</th><th>Rivais</th><th class="num">Sua vida</th></tr></thead>
   <tbody>
-    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 5,1 por luta, chefe ×1,2</td><td class="num">80</td></tr>
-    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 5,35 por luta, chefe ×1,2</td><td class="num">76</td></tr>
-    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 5,35 por luta, chefe ×1,25</td><td class="num">70</td></tr>
-    <tr><td>Brutal</td><td class="num">~9%</td><td>12 + 6,55 por luta, chefe ×1,25</td><td class="num">68</td></tr>
+    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 5,25 por luta, chefe ×1,2</td><td class="num">80</td></tr>
+    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 5,5 por luta, chefe ×1,2</td><td class="num">76</td></tr>
+    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 5,55 por luta, chefe ×1,25</td><td class="num">70</td></tr>
+    <tr><td>Brutal</td><td class="num">~10%</td><td>12 + 6,7 por luta, chefe ×1,25</td><td class="num">68</td></tr>
   </tbody>
 </table>
 <p>O primeiro rival tem sempre 12 de vida: um modo fácil não deveria significar lutas vazias. O piloto é propositalmente simples — um jogador de verdade, lendo o rival, vence mais.</p>
@@ -300,8 +300,6 @@ python tools/gerar_catalogo.py      # docs/CATALOGO.md a partir dos dados</code>
 
 <h2 id="falta"><span class="kanji">未</span>O que ainda não existe</h2>
 <ul>
-  <li>A compra manual de ganhos no Altar (hoje o Altar compra por você).</li>
-  <li>Rever o que ficou fora da régua na última medição: Contrato, Lua Ilusória, Marca, Pele de Cinzas e Bandagem abaixo; Julgamento, Sangue de Soldado e Sentir a Intenção acima.</li>
   <li>A progressão entre runs e o estilo de arte definitivo dos personagens.</li>
   <li>Um executável que dispense o Python.</li>
 </ul>

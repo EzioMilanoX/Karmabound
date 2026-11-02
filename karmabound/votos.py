@@ -123,6 +123,7 @@ class Voto:
     lutas_restantes: int | None = None  # None = até o fim da run
     pontos: float = 0.0
     sacrificio: float = 0.0
+    sobra: float = 0.0  # pontos não gastos (guardados para o próximo voto)
 
     @property
     def efeitos(self) -> Efeitos:

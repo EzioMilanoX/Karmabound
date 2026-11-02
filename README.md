@@ -4,7 +4,7 @@
 
 Você não escolhe seu poder: **gira por ele**. Dons, técnicas, o arco de cada capítulo e as relíquias saem de rodas de sorteio desenhadas como uma mandala de selos. Todo azar fica preso ao seu **Carma** — e quando o Carma transborda, no pior momento, você **Desperta**.
 
-> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: 59 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos, o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Ainda sem executável.
+> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: 59 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos, o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Executável do Windows pelo `build.bat`.
 
 📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos.
 
@@ -26,7 +26,7 @@ pip install "ouroboros-engine @ git+https://github.com/EzioMilanoX/OuroborosEngi
 python -m karmabound
 ```
 
-No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique. Passo a passo e problemas comuns em [INSTALL.md](INSTALL.md). `python -m karmabound --roleta` abre só a roleta, como caixa de areia (Tab troca de roda; D e C enchem o Carma sem lutar).
+No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`** gera o executável em `dist\Karmabound\` (PyInstaller, onedir). Passo a passo e problemas comuns em [INSTALL.md](INSTALL.md). `python -m karmabound --roleta` abre só a roleta, como caixa de areia (Tab troca de roda; D e C enchem o Carma sem lutar).
 
 ### Controles
 
@@ -40,6 +40,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique. Passo a passo e 
 | Luta | Contrato: escolher a técnica sacrificada / desistir | 1–5 / Backspace |
 | Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
 | Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
+| Altar (compra) | Comprar um nível do ganho / devolver / voltar | → ou Enter / ← / Backspace |
 | Qualquer tela | Sair | Esc |
 
 ### Uma run
@@ -106,10 +107,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 5,1 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 5,35 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 5,35 por luta, chefe ×1,25 | 70 |
-| Brutal | ~9% | 12 + 6,55 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 5,25 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 5,5 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 5,55 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 6,7 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
@@ -117,19 +118,19 @@ Os poderes mais raros são quebrados de propósito — e cobram à altura. Cada 
 
 | Poder | Raridade | O que faz | O preço | Vale |
 |---|---|---|---|---|
-| 呪 Marca da Maldição | Maldito | Golpe de 10; o rival sofre 3 por turno, e Marcas se somam | você sofre 1 por turno por Marca | +3 ⚠️ |
-| 幻 Lua Ilusória (Tsukuyomi) | Maldito | O rival perde o próximo turno | 4 de vida: os olhos sangram | +3 ⚠️ |
-| 界 Corte do Mundo (Sukuna) | Divino | 42 de dano que atravessa bloqueio, escudo e esquiva, impossível de perceber | só fica pronto no seu 4º turno | +8 ⚠️ |
+| 呪 Marca da Maldição | Maldito | Golpe de 10; o rival sofre 4 por turno, e Marcas se somam | você sofre 1 por turno por Marca | +4,5 |
+| 幻 Lua Ilusória (Tsukuyomi) | Maldito | O rival perde o próximo turno | 2 de vida: os olhos sangram | +7 |
+| 界 Corte do Mundo (Sukuna) | Divino | 50 de dano que atravessa bloqueio, escudo e esquiva, impossível de perceber | só fica pronto no seu 4º turno | +9,5 |
 | 宿 Corpo Perfeito (Sukuna Heian) | Divino | Quatro braços: o Golpe acerta 2× com +2 | você nunca defende | +13 |
 | 卵 Ovo do Eclipse (Behelit) | Divino | Desperta à beira da morte, mesmo sem Carma (1×/run) | o seu Dom é sacrificado | +16 |
-| 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +5 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | +5 ⚠️ |
-| 裁 Julgamento | Divino | Dano = 2 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +21 ⚠️ |
-
-⚠️ fora da régua na última medição, a revisitar.
+| 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +7 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | +12 |
+| 裁 Julgamento | Divino | Dano = 1,8 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +15 |
 
 ## Votos vinculativos (o Juramento)
 
 Tirar o **Juramento** na roleta abre o **Altar dos Votos**: você monta o próprio voto, como nos animes. Escolhe **restrições** — simples (−25% de vida), de conduta (nunca usar defesa), de revelação (o rival te lê melhor) ou de risco (cair abaixo de 20% é morte) — e os pontos compram **ganhos**: simples em níveis (Força, Vigor, Percepção, Velocidade), especiais (Golpe Oculto, Primeiro Sangue…) e exclusivos (Segunda Vida, Carrasco, Sangue Frio).
+
+**Você compra os ganhos.** O Altar abre com a compra que ele faria já marcada, e você mexe à vontade — mas às cegas: sem preço nem estimativa, só uma barra com a **força do voto** que resta e o aviso de quando um ganho não cabe mais. O que você não gastar **fica guardado** para o próximo voto (dá até para jurar só as restrições e guardar toda a força).
 
 O que torna o sistema diferente: **o valor de uma restrição não é tabelado**. O Altar simula o resto da sua run com e sem ela e mede o potencial que você realmente sacrificaria. Proibir o que você não usa não rende nada; proibir o seu melhor golpe rende muito. Sacrifícios maiores e permanentes rendem mais que a soma, mas cada restrição tem um teto — para ir além, é preciso combinar restrições diferentes. Quebrar um voto é possível, com punição e um voto de quebra que, se quebrado, encerra a run. Calibrado, o Juramento vale cerca de **+13 pontos de vitória**.
 
@@ -180,6 +181,7 @@ python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSO
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
 python tools/vitrine.py             # PNG de cada arena, rival e efeito, em docs/telas/vitrine/
 python tools/gerar_sons.py          # sintetiza os efeitos e as músicas em assets/ (WAV)
+python tools/gerar_icone.py         # o ícone (業 dourado) em assets/
 ```
 
 ## Documentação
