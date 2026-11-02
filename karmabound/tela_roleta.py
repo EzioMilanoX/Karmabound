@@ -13,6 +13,7 @@ from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
+from karmabound import som, vfx
 from karmabound.mesa import Giro, Mesa
 from karmabound.visual import (  # noqa: F401  (reexporta para quem importava daqui)
     ALTURA,
@@ -115,6 +116,9 @@ class RoletaScene(IScene):
         self.revelados = 0
         self.inicio = self.aceso
         self.escolhida = None
+        if self.giro.despertar:
+            som.tocar("despertar")
+            som.tocar("corrente")
         self._ir("quebrando" if self.giro.despertar else "girando")
 
     def _indice_girando(self) -> int:
@@ -128,6 +132,7 @@ class RoletaScene(IScene):
         self.relogio += delta_time
         self.t += delta_time
         e = self.entrada
+        som.musica("roleta")
         if e.is_action_pressed("sair"):
             self.ao_sair()
             return
@@ -162,15 +167,22 @@ class RoletaScene(IScene):
                 self._ir("girando")
 
         elif self.estado == "girando":
-            self.aceso = self._indice_girando()
+            novo = self._indice_girando()
+            if novo != self.aceso:
+                som.tocar("tique")  # o selo aceso passa para o próximo
+            self.aceso = novo
             if self.t >= self._duracao():
                 self.aceso = self.alvos[self.revelados]
+                som.tocar("parar")
                 self.revelados += 1
                 if self.revelados < len(self.alvos):
                     self.inicio = self.aceso
                     self._ir("girando")
                 else:
                     self.carma_visual = self.mesa.carma.valor
+                    ordem = [r.id for r in self.mesa.raridades]
+                    melhor = max((f.raridade for f in self.giro.fatias), key=ordem.index)
+                    som.tocar(f"revela_{melhor}")
                     if len(self.alvos) > 1:
                         self._ir("escolhendo")
                     else:
@@ -180,6 +192,7 @@ class RoletaScene(IScene):
         elif self.estado == "escolhendo":
             for i in range(len(self.alvos)):
                 if e.is_action_pressed(f"escolher_{i + 1}"):
+                    som.tocar("confirmar")
                     self.escolhida = i
                     self.aceso = self.alvos[i]
                     self._ir("resultado")
@@ -200,6 +213,7 @@ class RoletaScene(IScene):
         self._painel(r)
         self._controles(r)
         self._despertar(r)
+        vfx.revelar(r, self.relogio)
 
     def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:
         r.draw_text(x, y, texto, tam, cor, anchor=anchor, font_id=FONTE_PINCEL)

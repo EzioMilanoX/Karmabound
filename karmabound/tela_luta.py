@@ -14,7 +14,7 @@ from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
-from karmabound import vfx
+from karmabound import som, vfx
 from karmabound.arenas import desenhar_arena
 from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica, _extra_da_dor
 from karmabound.figuras import ESTILOS, desenhar_lutador
@@ -40,6 +40,9 @@ from karmabound.visual import (
 )
 
 DURACAO_ACAO = 0.6
+DURACAO_ENTRADA = 1.7  # a entrada do rival (o chefe demora mais)
+DURACAO_ENTRADA_CHEFE = 2.6
+DURACAO_FIM = 1.3  # o rival se desfaz, ou as correntes se fecham
 DURACAO_DESPERTAR = 1.6
 PAUSA_RIVAL = 0.35
 
@@ -56,6 +59,7 @@ NOMES_TIPO = {"ataque": "um ATAQUE", "defesa": "uma DEFESA", "maldita": "algo MA
 ROMANOS = ("I", "II", "III", "IV", "V")
 ESCALA_JOGADOR = 1.2
 NOME_ESTILO = {"espadachim": "Ronin", "monge": "Monge Errante", "ninja": "Shinobi", "oni": "Oni"}
+KANJI_ESTILO = {"espadachim": "浪", "monge": "僧", "ninja": "忍", "oni": "鬼", "colosso": "魔"}
 COR_ESTILO = {
     "espadachim": (60, 22, 24, 255),
     "monge": (62, 44, 24, 255),
@@ -85,8 +89,11 @@ class LutaScene(IScene):
         self.ao_terminar = ao_terminar  # chamado com venceu: bool depois do banner
         self.ao_sair = ao_sair
         self.relogio = 0.0
-        self.anim_ate = 0.0
-        self.proxima_rival = PAUSA_RIVAL
+        self.entrada_ate = DURACAO_ENTRADA_CHEFE if self.luta.rival.chefe else DURACAO_ENTRADA
+        self.anim_ate = self.entrada_ate  # ninguém age durante a entrada do rival
+        self.proxima_rival = self.entrada_ate + PAUSA_RIVAL
+        self.fim_inicio: float | None = None
+        self.primeiro_quadro = True
         self.cursor = 1 if self.j.jogador.tecnicas else 0
         self.modo = "escolher"  # escolher | sacrificio | fim
         self.contrato: Tecnica | None = None
@@ -183,6 +190,13 @@ class LutaScene(IScene):
         if acao.copiou:  # o Olho Roubado toca o efeito da técnica roubada, depois do olho
             nome_efeito = "olho"
         self.efeito = (nome_efeito, ator, alvo, self.relogio, acao.critico)
+        som.tocar("critico" if acao.critico else som.SOM_DO_EFEITO.get(nome_efeito, "golpe"))
+        if acao.reagiu:
+            som.tocar("percebeu")
+        if acao.esquivas or acao.escudados or acao.instintos:
+            som.tocar("defesa")
+        if acao.dano and alvo is j:
+            som.tocar("dano", 0.6)
         self.anim_ate = self.relogio + max(DURACAO_ACAO, vfx.duracao(nome_efeito))
         ax, ay = self._centro(alvo)
         bx, by = self._centro(ator)
@@ -253,15 +267,26 @@ class LutaScene(IScene):
     def _celebrar(self, fatia) -> None:
         """A cena do Despertar: trava a entrada um pouco mais que uma ação."""
         self.desperto = (fatia, self.relogio)
+        som.tocar("despertar")
         if self.j.grimorio is not None:
             self.j.grimorio.ver([fatia])
         self.anim_ate = max(self.anim_ate, self.relogio + DURACAO_DESPERTAR)
         self.tremor[id(self.j.jogador)] = self.relogio
         self.registro = f"覚醒 {fatia.nome}: {fatia.texto}"
 
+    def _musica(self) -> None:
+        if self.luta.rival.chefe:
+            som.musica("chefe")
+        else:
+            som.musica("luta_carma" if self.j.carma.transbordando else "luta")
+
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
         e = self.entrada
+        if self.primeiro_quadro:
+            self.primeiro_quadro = False
+            som.tocar("chefe_entra" if self.luta.rival.chefe else "rival_entra")
+        self._musica()
         self.textos = [t for t in self.textos if self.relogio - t.inicio < 1.1]
         for lut in (self.j.jogador, self.luta.rival):  # a barra de vida desce devagar
             vista = self.vida_vista[id(lut)]
@@ -277,6 +302,10 @@ class LutaScene(IScene):
             return
         if self.luta.acabou:
             self.modo = "fim"
+            self.fim_inicio = self.relogio
+            self.anim_ate = self.relogio + DURACAO_FIM
+            venceu = self.luta.vencedor is self.j.jogador
+            som.tocar("vitoria" if venceu else "derrota")
             return
         if self.luta.vez is self.luta.rival:
             if self.relogio >= self.proxima_rival:
@@ -297,8 +326,10 @@ class LutaScene(IScene):
                 return
         if e.is_action_pressed("esquerda"):
             self.cursor = (self.cursor - 1) % len(slots)
+            som.tocar("mover")
         elif e.is_action_pressed("direita"):
             self.cursor = (self.cursor + 1) % len(slots)
+            som.tocar("mover")
         elif e.is_action_pressed("confirmar"):
             self._tentar(slots[self.cursor])
 
@@ -383,8 +414,53 @@ class LutaScene(IScene):
                 "center",
             )
         self._cena_despertar(r)
+        self._entrada_do_rival(r)
         if self.modo == "fim" and self.relogio >= self.anim_ate:
             self._banner(r)
+        vfx.revelar(r, self.relogio)
+
+    def _fim(self) -> tuple[float, bool] | None:
+        """(progresso 0–1 do fim, venceu), ou None se a luta não acabou."""
+        if self.fim_inicio is None:
+            return None
+        k = min(1.0, (self.relogio - self.fim_inicio) / DURACAO_FIM)
+        return k, self.luta.vencedor is self.j.jogador
+
+    def _entrada_do_rival(self, r: IRenderer) -> None:
+        """Uma pincelada atravessa a tela com o nome do rival; o chefe escurece tudo antes."""
+        if self.relogio >= self.entrada_ate:
+            return
+        k = self.relogio / self.entrada_ate
+        rival = self.luta.rival
+        some = 1 - max(0.0, k - 0.75) / 0.25
+        if rival.chefe:
+            r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha((30, 4, 6, 255), 160 * some))
+        varre = ease_out(min(1.0, k / 0.35))
+        y0, altura = 168, 96
+        r.draw_ui_polygon(
+            [
+                (0, y0 + 8),
+                (LARGURA * varre, y0),
+                (LARGURA * varre, y0 + altura),
+                (0, y0 + altura - 10),
+            ],
+            alpha((8, 7, 6, 255), 235 * some),
+        )
+        r.draw_ui_line(0, y0 + 4, LARGURA * varre, y0 - 2, alpha(SANGUE_VIVO, 200 * some), 3)
+        if k > 0.2:
+            brilho = 255 * min(1.0, (k - 0.2) / 0.2) * some
+            kanji = KANJI_ESTILO[self.estilo_rival]
+            nome = "Chefe do capítulo" if rival.chefe else NOME_ESTILO[self.estilo_rival]
+            arco = self.j.arco.nome if self.j.arco else ""
+            sub = (
+                f"Capítulo {self.j.capitulo} · {arco}"
+                if rival.chefe
+                else f"Rival {self.j.n_luta} · {arco}"
+            )
+            cor = SANGUE_VIVO if rival.chefe else OURO
+            self._texto(r, 300, y0 + 6, kanji, 70, alpha(cor, brilho), "center")
+            self._texto(r, 360, y0 + 18, nome, 36, alpha(TINTA, brilho))
+            self._texto(r, 362, y0 + 62, sub, 16, alpha(TINTA, brilho * 0.6))
 
     def _corpo(self, lutador: Lutador) -> tuple[float, float]:
         """O centro do corpo (os efeitos saem e chegam aqui), com o deslocamento do golpe."""
@@ -478,13 +554,26 @@ class LutaScene(IScene):
         inicio = self.tremor.get(id(rival))
         if inicio is not None and 0 <= self.relogio - inicio < 0.3:
             clarao = 1 - (self.relogio - inicio) / 0.3
+        visivel = 1.0
+        fim = self._fim()
+        if fim and fim[1]:  # venceu: o rival se desfaz em tinta
+            visivel = 1 - fim[0]
+            vfx.dissolver(r, x, y, fim[0], COR_ESTILO[self.estilo_rival])
+        entrada = min(1.0, self.relogio / (self.entrada_ate * 0.45))
+        if entrada < 1:  # a entrada: o rival surge de uma mancha de tinta
+            r.draw_ui_circle(
+                x, y - 66, 140 * (1 - entrada) + 20, alpha((8, 7, 6, 255), 200 * (1 - entrada))
+            )
+            visivel *= entrada
+        if visivel <= 0.01:
+            visivel = 0.0
         desenhar_lutador(
             r,
             x + dx,
             y + dy,
             escala,
-            COR_ESTILO[self.estilo_rival],
-            alpha(TINTA, 230),
+            alpha(COR_ESTILO[self.estilo_rival], 255 * visivel),
+            alpha(TINTA, 230 * visivel),
             guarda=1.0 if rival.bloqueio or rival.revide else 0.0,
             clarao=clarao,
             clarao_cor=SANGUE_VIVO,
@@ -612,18 +701,22 @@ class LutaScene(IScene):
         for ativo, aura in ((j.forma, "forma_desperta"), (j.instinto, "instinto_puro")):
             if ativo:  # a aura fica enquanto o Despertar dura
                 vfx.aura(r, aura, x + dx, y + dy - 66 * ESCALA_JOGADOR, 0.12, self.relogio)
+        fim = self._fim()
+        cai = fim[0] if fim and not fim[1] else 0.0  # perdeu: você cai e as correntes fecham
         desenhar_lutador(
             r,
             x + dx,
-            y + dy,
+            y + dy + 40 * cai,
             ESCALA_JOGADOR,
-            TINTA,
-            alpha((255, 255, 255, 255), 200),
+            alpha(TINTA, 255 * (1 - 0.6 * cai)),
+            alpha((255, 255, 255, 255), 200 * (1 - 0.6 * cai)),
             guarda=guarda,
             clarao=clarao,
             clarao_cor=SANGUE_VIVO,
             tempo=self.relogio,
         )
+        if cai:
+            vfx.correntes_fechando(r, x, y - 66 * ESCALA_JOGADOR, cai)
         self._texto(r, 40, 360, "Você", 22, TINTA)
         dom = f"{self.j.dom.kanji} {self.j.dom.nome}" if self.j.dom else ""
         self._texto(r, 106, 365, dom, 15, alpha(TINTA, 130))
@@ -780,6 +873,8 @@ class LutaScene(IScene):
     def _banner(self, r: IRenderer) -> None:
         venceu = self.luta.vencedor is self.j.jogador
         r.draw_ui_rect(0, 250, LARGURA, 150, alpha(FUNDO, 220))
+        cor_traco = OURO if venceu else SANGUE_VIVO  # uma pincelada atrás do título
+        r.draw_ui_polygon([(170, 286), (790, 276), (780, 330), (180, 338)], alpha(cor_traco, 40))
         if venceu:
             titulo, cor = ("勝  Vitória", OURO)
         elif self.luta.estourou_prazo:

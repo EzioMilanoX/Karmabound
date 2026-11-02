@@ -62,7 +62,9 @@ def _cena(arco: str, n_luta: int, chefe: bool) -> tuple[Jornada, LutaScene]:
     j.luta.abertura = False
     j.luta.vez = j.jogador
     nada = lambda *a: None  # noqa: E731
-    return j, LutaScene(j, Entrada(), nada, nada)
+    cena = LutaScene(j, Entrada(), nada, nada)
+    cena.relogio = cena.entrada_ate + 0.6  # pula a entrada do rival e a tinta da transição
+    return j, cena
 
 
 def capturar(destino: Path) -> list[Path]:
@@ -116,6 +118,7 @@ def _extras(loop, destino: Path) -> list[Path]:
     todas = [f for roda in j.ctx.rodas.values() for f in roda.fatias]
     g.ver(f for i, f in enumerate(todas) if i % 3)
     grim = GrimorioScene(g, Entrada(), lambda: None, lambda: None, ctx=j.ctx)
+    grim.relogio = 1.0
     grim.i_roda, grim.cursor = 1, 13
     salvos = [_foto(loop, grim, destino / "13_grimorio.png")]
     grim.i_roda, grim.cursor = 3, 9
@@ -129,6 +132,34 @@ def _extras(loop, destino: Path) -> list[Path]:
     for _ in range(int(0.6 * 60)):
         cena.update(None, 1 / 60)
     salvos.append(_foto(loop, cena, destino / "15_despertar_liberacao.png"))
+    salvos += _cinema(loop, destino)
+    return salvos
+
+
+def _cinema(loop, destino: Path) -> list[Path]:
+    """Entrada do rival e do chefe, fim da luta, título e a tinta da transição."""
+    from karmabound.tela_menus import TituloScene
+
+    salvos = []
+    for nome, chefe, momento in (
+        ("16_entrada_rival", False, 0.75),
+        ("17_entrada_chefe", True, 1.2),
+    ):
+        j, cena = _cena("invasao" if not chefe else "lua_de_sangue", 2, chefe)
+        cena.relogio, cena.anim_ate = momento, cena.entrada_ate
+        salvos.append(_foto(loop, cena, destino / f"{nome}.png"))
+    for nome, venceu in (("18_vitoria", True), ("19_derrota", False)):
+        j, cena = _cena("torneio_regular", 3, False)
+        (j.luta.rival if venceu else j.jogador).vida = 0
+        cena.update(None, 1 / 60)  # percebe o fim
+        for _ in range(int(0.7 * 60)):
+            cena.update(None, 1 / 60)
+        salvos.append(_foto(loop, cena, destino / f"{nome}.png"))
+    titulo = TituloScene(Entrada(), lambda m: None, lambda: None)
+    titulo.relogio = 4.4
+    salvos.append(_foto(loop, titulo, destino / "20_titulo.png"))
+    titulo.relogio = 0.22
+    salvos.append(_foto(loop, titulo, destino / "21_transicao_tinta.png"))
     return salvos
 
 

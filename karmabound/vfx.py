@@ -25,6 +25,7 @@ from karmabound.visual import (
     VERDE_JADE,
     Cor,
     alpha,
+    mistura,
 )
 
 AZUL_CHAKRA = (150, 205, 255, 255)
@@ -584,3 +585,56 @@ def aura(r: IRenderer, despertar_id: str, x: float, y: float, k: float, relogio:
                 alpha(cor, 220 * forca),
                 4,
             )
+
+
+# ----------------------------------------------------------------------- cinema: transição, fim
+
+DURACAO_REVELAR = 0.5
+_MANCHAS = [  # (x, y, raio): manchas que cobrem a tela inteira no começo
+    (x, y, 150 + 40 * math.sin(x * 0.7 + y))
+    for x in range(-40, LARGURA + 120, 170)
+    for y in range(-40, ALTURA + 120, 170)
+]
+
+
+def revelar(r: IRenderer, t: float) -> None:
+    """A tela nasce coberta de tinta e as manchas se recolhem (t: tempo desde a entrada)."""
+    k = t / DURACAO_REVELAR
+    if k >= 1:
+        return
+    encolhe = (1 - k) ** 2
+    for i, (x, y, raio) in enumerate(_MANCHAS):
+        atraso = 0.6 + 0.4 * math.sin(i * 1.7) ** 2  # cada mancha recolhe num ritmo
+        tam = raio * min(1.0, encolhe / atraso)
+        if tam < 2:
+            continue
+        r.draw_ui_circle(x, y, tam, (10, 9, 8, 255))
+        for j in range(5):  # respingos em volta: a borda irregular da tinta
+            a = i * 1.3 + j * 1.256
+            d = tam * (0.85 + 0.25 * math.sin(i + j * 2.1))
+            r.draw_ui_circle(x + math.cos(a) * d, y + math.sin(a) * d, tam * 0.32, (10, 9, 8, 255))
+
+
+def correntes_fechando(r: IRenderer, x: float, y: float, k: float) -> None:
+    """A derrota: correntes entram dos dois lados e se fecham sobre quem caiu."""
+    fecha = 1 - (1 - min(1.0, k)) ** 3
+    for dy in (-60, -20, 20):
+        for lado in (-1, 1):
+            inicio = (x + lado * 210, y + dy + lado * 24)  # perto de quem caiu, longe dos selos
+            fim = _lerp(inicio, (x, y + dy), fecha)
+            _corrente(r, inicio, fim, alpha((150, 140, 130, 255), 230))
+        if fecha >= 0.98:
+            r.draw_ui_circle(x, y + dy, 9, SANGUE_VIVO, 3)
+
+
+def dissolver(r: IRenderer, x: float, y: float, k: float, cor: Cor) -> None:
+    """A vitória: o rival se desfaz em gotas de tinta que sobem e se espalham."""
+    for i in range(46):
+        s = i * 2.39
+        ox = math.sin(s * 3.1) * 46
+        oy = -20 - (math.sin(s * 1.7) * 0.5 + 0.5) * 150
+        sobe = k * (60 + 90 * (math.sin(s * 5.3) ** 2))
+        px = x + ox * (1 + k * 1.5) + math.sin(s) * 40 * k
+        py = y + oy - sobe
+        clara = mistura(cor, TINTA, 0.55)  # a tinta do rival, clara o bastante para o fundo escuro
+        r.draw_ui_circle(px, py, 4.5 * (1 - k) + 1.5, alpha(clara, 240 * (1 - k)))

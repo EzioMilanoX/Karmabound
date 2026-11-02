@@ -16,6 +16,7 @@ from karmabound.grimorio import Grimorio
 from karmabound.jornada import Jornada
 from karmabound.mesa import Mesa
 from karmabound.rodas import DADOS
+from karmabound.som import SOM
 from karmabound.tela_grimorio import GrimorioScene
 from karmabound.tela_luta import LutaScene
 from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene
@@ -43,6 +44,7 @@ def _montar_loop() -> GameLoop:
     )
     loop = CompositionRoot(config).build()
     loop.renderer.load_font(FONTE_PINCEL, str(FONTES / "YujiSyuku-Regular.ttf"))
+    SOM.configurar(loop.audio_engine)
     return loop
 
 

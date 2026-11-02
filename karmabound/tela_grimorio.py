@@ -10,6 +10,7 @@ from dataclasses import dataclass
 
 from ouroboros.interfaces.renderer import IRenderer
 
+from karmabound import som, vfx
 from karmabound.grimorio import Grimorio
 from karmabound.run import Contexto
 from karmabound.tela_menus import _Base
@@ -89,9 +90,12 @@ class GrimorioScene(_Base):
         if self._sair():
             return
         e = self.entrada
+        som.musica("titulo")
         if e.is_action_pressed("cancelar"):
             self.ao_voltar()
-        elif e.is_action_pressed("esquerda"):
+            return
+        antes = (self.i_roda, self.cursor)
+        if e.is_action_pressed("esquerda"):
             self.i_roda, self.cursor = (self.i_roda - 1) % len(ORDEM_RODAS), 0
         elif e.is_action_pressed("direita"):
             self.i_roda, self.cursor = (self.i_roda + 1) % len(ORDEM_RODAS), 0
@@ -99,6 +103,8 @@ class GrimorioScene(_Base):
             self.cursor = (self.cursor - 1) % len(self.lista)
         elif e.is_action_pressed("baixo"):
             self.cursor = (self.cursor + 1) % len(self.lista)
+        if (self.i_roda, self.cursor) != antes:
+            som.tocar("mover")
 
     # --------------------------------------------------------------- desenho
 
@@ -123,6 +129,7 @@ class GrimorioScene(_Base):
             alpha(TINTA, 100),
             "center",
         )
+        vfx.revelar(r, self.relogio)
 
     def _abas(self, r: IRenderer) -> None:
         x = 36

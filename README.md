@@ -62,6 +62,8 @@ O **Grimório** (G, no título) guarda todas as habilidades que já saíram da r
 - **Uma arena por Arco**: o Monte Myoboku, a arena do Torneio, o Eclipse, a vila em chamas, Shibuya sob o Véu e Marineford.
 - **Rivais variados**: Ronin, Monge Errante, Shinobi e Oni, e o chefe é um colosso de quatro braços.
 - **Uma aura por Despertar**, e cartas com moldura da raridade e a linha de origem.
+- **Cinema**: o rival entra numa pincelada de tinta com o nome em caligrafia (o chefe escurece a tela antes); na vitória ele se desfaz em tinta, na derrota as correntes se fecham sobre você; o título respira (ensō, corrente do Carma, tinta escorrendo); entre telas, a tinta cobre e recolhe.
+- **Som e música sintetizados em código** (`python tools/gerar_sons.py`): taiko, gongo, sinos, shamisen, koto, correntes e cortes, em escalas japonesas. Uma faixa para o título, a roleta, a luta e o chefe; a música da luta acelera quando o Carma enche.
 
 ![O Corte do Mundo atravessando a tela contra o chefe, em Marineford](docs/telas/vitrine/06_marineford_corte_do_mundo.png)
 
@@ -154,6 +156,7 @@ karmabound/
   figuras.py    as silhuetas de tinta (5 estilos), feitas de polígonos
   vfx.py        um efeito de tinta por habilidade e uma aura por Despertar
   arenas.py     o cenário de cada Arco
+  som.py        efeitos e música por nome (mudo até o jogo configurar)
   grimorio.py   o que já saiu da roleta, salvo entre runs (~/.karmabound)
   tela_grimorio.py  o Grimório: todas as habilidades, com a origem
   visual.py     paleta, fonte e utilitários de desenho
@@ -176,6 +179,7 @@ python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale
 python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
 python tools/vitrine.py             # PNG de cada arena, rival e efeito, em docs/telas/vitrine/
+python tools/gerar_sons.py          # sintetiza os efeitos e as músicas em assets/ (WAV)
 ```
 
 ## Documentação

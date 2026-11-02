@@ -157,6 +157,14 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **A fonte de pincel (Yuji Syuku) não tem mácron nem setas** (ō, ū, ↳ viram um quadrado): as romanizações vão sem mácron (Myoboku, Tensho) e um teste confere todo texto do jogo contra a fonte.
 - **Grimório:** guarda os ids já vistos em `~/.karmabound/grimorio.json` (pasta trocável por `KARMABOUND_SAVE`; os testes usam uma temporária). Só a Jornada registra — o simulador nunca toca no arquivo.
 
+### Som, música e cinema (decidido e implementado em 2026-11-02)
+
+- **Tudo sintetizado em código** (`tools/gerar_sons.py`, numpy): taiko com a pele que afina depois da batida, gongo de parciais inarmônicos, sinos, shamisen e koto por Karplus-Strong (o shamisen com o zumbido do sawari), correntes, vento e cortes de ruído filtrado. Sem assets de terceiros; seed fixa.
+- **Músicas em loop sem emenda**: mistura num buffer circular (as caudas voltam para o começo) e as camadas contínuas entram e saem em rampa sobre a emenda. Escalas hirajoshi e in. Faixas: título (koto, drone, vento), roleta (batida de coração), luta (taiko e shamisen), luta com o Carma cheio (mais densa) e chefe (odaiko, gongo, trítono).
+- `som.py` é mudo até o jogo chamar `SOM.configurar` (testes e simulador nunca tocam nada); arquivo que falta ou placa de som ausente vira silêncio, nunca erro.
+- **Cinema**: entrada do rival (1,7 s; o chefe 2,6 s), vitória (o rival se desfaz em tinta) e derrota (as correntes se fecham), título animado, e uma transição de tinta no começo de cada tela.
+- **Reação**: o Primeiro Trovão passou a sutileza 1 — a reação a golpes perigosos tinha caído para 17% (o alvo de design é ~33%); voltou a 26–31% sem mudar as vitórias.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.

@@ -7,12 +7,15 @@ desenha "o Altar pesa..." num quadro e mede no seguinte.
 
 from __future__ import annotations
 
+import math
 from collections import Counter
 
 from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
+from karmabound import som, vfx
+from karmabound.arenas import _particulas
 from karmabound.combate import Tecnica
 from karmabound.figuras import desenhar_lutador
 from karmabound.jornada import Jornada, PropostaDeVoto
@@ -30,6 +33,7 @@ from karmabound.visual import (
     VERDE_JADE,
     alpha,
     hex_cor,
+    mistura,
     quebrar,
 )
 
@@ -92,18 +96,46 @@ class TituloScene(_Base):
         if self.ao_grimorio is not None and e.is_action_pressed("grimorio"):
             self.ao_grimorio()
             return
+        som.musica("titulo")
         if e.is_action_pressed("cima"):
             self.cursor = (self.cursor - 1) % len(self.modos)
+            som.tocar("mover")
         elif e.is_action_pressed("baixo"):
             self.cursor = (self.cursor + 1) % len(self.modos)
+            som.tocar("mover")
         elif e.is_action_pressed("confirmar"):
+            som.tocar("confirmar")
             self.ao_escolher(self.modos[self.cursor][0])
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
-        r.draw_ui_arc(480, 250, 190, 1.9, 7.5, alpha(TINTA, 16), 14)
-        desenhar_lutador(r, 330, 420, 1.25, TINTA, alpha((255, 255, 255, 255), 190), guarda=0.6)
-        desenhar_lutador(r, 630, 420, 1.25, (60, 22, 24, 255), alpha(TINTA, 220))
+        t = self.relogio
+        _particulas(r, t, 26, alpha(TINTA, 40), sobe=False, tam=1.8, vel=14, deriva=24, semente=3)
+        self._gotas(r, t)
+        # o ensō se desenha no primeiro segundo e depois gira devagar
+        traco = min(1.0, t / 1.4)
+        ini = 1.9 + t * 0.05
+        r.draw_ui_arc(480, 250, 190, ini, ini + 5.6 * traco, alpha(TINTA, 22), 14)
+        self._corrente_de_fundo(r, t)
+        respira = math.sin(t * 1.6) * 2
+        desenhar_lutador(
+            r,
+            330,
+            420 + respira,
+            1.25,
+            TINTA,
+            alpha((255, 255, 255, 255), 190),
+            guarda=0.6,
+            tempo=t,
+        )
+        desenhar_lutador(
+            r, 630, 420 - respira, 1.25, (74, 18, 16, 255), alpha(TINTA, 220), estilo="oni", tempo=t
+        )
+        choque = (t % 4.5) / 4.5  # de tempos em tempos, as lâminas se cruzam num clarão
+        if choque > 0.93:
+            k = (choque - 0.93) / 0.07
+            r.draw_ui_line(420, 330, 540, 290, alpha(SANGUE_VIVO, 255 * (1 - k)), 3)
+            r.draw_ui_circle(480, 310, 40 * k + 6, alpha((255, 255, 255, 255), 120 * (1 - k)), 2)
         self._t(r, 480, 70, "業", 96, OURO, "center")
         self._t(r, 480, 150, "Karmabound", 52, TINTA, "center")
         self._t(r, 480, 200, "todo azar fica preso ao seu Carma", 18, alpha(TINTA, 150), "center")
@@ -128,6 +160,38 @@ class TituloScene(_Base):
             alpha(TINTA, 100),
             "center",
         )
+        vfx.revelar(r, t)
+
+    def _gotas(self, r: IRenderer, t: float) -> None:
+        """Tinta escorrendo do alto da tela."""
+        for i, x in enumerate((60, 150, 255, 705, 812, 905)):
+            ciclo = (t * (0.12 + 0.03 * i) + i * 0.37) % 1.0
+            comp = 40 + 160 * ciclo
+            r.draw_ui_line(x, 0, x, comp, alpha(TINTA, 26), 3 + i % 2)
+            r.draw_ui_circle(x, comp + 4, 4 + i % 2, alpha(TINTA, 40))
+
+    def _corrente_de_fundo(self, r: IRenderer, t: float) -> None:
+        """A corrente do Carma atravessa o título, avermelhando aos poucos."""
+        y = 268
+        pulso = 0.5 + 0.5 * math.sin(t * 1.2)
+        for i in range(34):
+            x = 20 + i * 28
+            cor = mistura(FERRO, SANGUE_VIVO, 0.15 + 0.35 * pulso * (i % 5 == 0))
+            if i % 2 == 0:
+                r.draw_ui_polygon(
+                    [
+                        (x - 10, y),
+                        (x - 5, y - 5),
+                        (x + 5, y - 5),
+                        (x + 10, y),
+                        (x + 5, y + 5),
+                        (x - 5, y + 5),
+                    ],
+                    alpha(cor, 70),
+                    2,
+                )
+            else:
+                r.draw_ui_line(x - 12, y, x + 12, y, alpha(cor, 70), 3)
 
 
 # ----------------------------------------------------------------------- troca de técnica
@@ -141,12 +205,14 @@ class SubstituirScene(_Base):
         self.cores = {r.id: hex_cor(r.cor) for r in jornada.ctx.raridades}
 
     def update(self, world, delta_time: float) -> None:
+        self.relogio += delta_time
         if self._sair():
             return
         e = self.entrada
         tecnicas = self.j.jogador.tecnicas
         for i, t in enumerate(tecnicas):
             if e.is_action_pressed(f"tecnica_{i + 1}"):
+                som.tocar("confirmar")
                 self.j.substituir(t)
                 self.ao_concluir()
                 return
@@ -409,6 +475,10 @@ class FimScene(_Base):
         self.ao_reiniciar = ao_reiniciar
 
     def update(self, world, delta_time: float) -> None:
+        if self.relogio == 0.0:
+            som.musica(None)
+            som.tocar("vitoria" if self.j.fase == "vitoria" else "derrota")
+        self.relogio += delta_time
         if self._sair():
             return
         if self.entrada.is_action_pressed("confirmar"):
@@ -417,12 +487,18 @@ class FimScene(_Base):
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
         j = self.j
+        t = self.relogio
         venceu = j.fase == "vitoria"
-        if venceu:
-            desenhar_lutador(r, 480, 300, 1.5, TINTA, alpha(OURO, 220), guarda=0.3)
+        if venceu:  # o ensō dourado se fecha em volta de quem venceu
+            traco = min(1.0, t / 1.6)
+            r.draw_ui_arc(480, 220, 150, 1.6, 1.6 + 6.0 * traco, alpha(OURO, 120), 10)
+            _particulas(r, t, 30, alpha(OURO, 110), sobe=True, tam=2.0, vel=30, semente=5)
+            desenhar_lutador(r, 480, 300, 1.5, TINTA, alpha(OURO, 220), guarda=0.3, tempo=t)
             self._t(r, 480, 330, "勝  O torneio é seu", 44, OURO, "center")
-        else:
-            desenhar_lutador(r, 480, 300, 1.5, (60, 22, 24, 255), alpha(TINTA, 200))
+        else:  # as correntes fecham sobre quem caiu
+            _particulas(r, t, 30, alpha(SANGUE_VIVO, 90), sobe=False, tam=2.0, vel=20, semente=9)
+            desenhar_lutador(r, 480, 300, 1.5, (60, 22, 24, 255), alpha(TINTA, 200), tempo=t)
+            vfx.correntes_fechando(r, 480, 220, min(1.0, t / 1.4))
             self._t(r, 480, 330, "敗  Seu destino terminou aqui", 40, SANGUE_VIVO, "center")
         modo = j.ctx.combate["dificuldades"][j.modo]["nome"]
         votos = len(j.estado.votos.ativos) + len(j.estado.votos.quebrados)
@@ -440,3 +516,4 @@ class FimScene(_Base):
         self._t(
             r, 480, ALTURA - 30, "Enter volta ao título · esc sai", 15, alpha(TINTA, 110), "center"
         )
+        vfx.revelar(r, t)

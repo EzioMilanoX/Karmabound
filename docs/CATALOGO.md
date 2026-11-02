@@ -37,7 +37,7 @@
 | 拳 | Golpe Direto | Cinza | ataque | dano 7 | 1 | 2 |  | Gomu Gomu no Pistol · One Piece |
 | 守 | Guarda Alta | Cinza | defesa | bloqueio 8 | 2 | 0 |  | Ken (Nen) · Hunter x Hunter |
 | 突 | Investida | Cinza | ataque | dano 11 | 2 | 1 | sim | Dynamic Entry (Gai) · Naruto |
-| 雷 | Primeiro Trovão | Cinza | ataque | dano 6, sempre surpresa | 2 | 2 |  | Hekireki Issen · Demon Slayer |
+| 雷 | Primeiro Trovão | Cinza | ataque | dano 6, sempre surpresa | 2 | 1 |  | Hekireki Issen · Demon Slayer |
 | 分 | Clones de Sombra | Cinza | ataque | dano 3, golpes 3 | 2 | 2 |  | Kage Bunshin no Jutsu · Naruto |
 | 癒 | Mão Curadora | Cinza | defesa | cura 5 | 3 | 0 |  | Ninjutsu Médico · Naruto |
 | 十 | Corte em Cruz | Sangue | ataque | dano 5, golpes 2 | 2 | 3 |  | Nitoryu (Zoro) · One Piece |

@@ -30,6 +30,7 @@ def capturar(destino: Path) -> list[Path]:
     salvos: list[Path] = []
 
     def foto(nome: str) -> None:
+        cena.relogio = max(cena.relogio, 1.0)  # já passou a tinta da transição
         loop.renderer.begin_frame()
         cena.render(None, loop.renderer)
         caminho = destino / f"{nome}.png"
@@ -107,6 +108,8 @@ def capturar_run(destino: Path) -> list[Path]:
         ent.apertadas = set()
         for _ in range(int(segundos * 60)):
             cena.update(None, 1 / 60)
+        if not isinstance(cena, LutaScene):
+            cena.relogio = max(cena.relogio, 2.0)  # o ensō do título fechado, a tinta já recolhida
         loop.renderer.begin_frame()
         cena.render(None, loop.renderer)
         caminho = destino / f"{nome}.png"
