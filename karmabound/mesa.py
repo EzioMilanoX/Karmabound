@@ -64,10 +64,17 @@ class Mesa:
             r: (100 * self.base[r] / total_base, 100 * agora[r] / total_agora) for r in self.ordem
         }
 
-    def girar(self, roda_id: str, permitir_despertar: bool = True) -> Giro:
+    def girar(
+        self, roda_id: str, permitir_despertar: bool = True, forcar_despertar: bool = False
+    ) -> Giro:
         """Gira `roda_id`. Com o Carma transbordando (e `permitir_despertar`),
         o giro vira o Despertar: uma fatia garantida da raridade máxima."""
         roda = self.rodas[roda_id]
+        if roda.uniforme:  # Roda do Despertar: igual para todas as fatias, fora do Carma
+            fatia = self.rng.choices(roda.fatias, weights=[f.peso for f in roda.fatias])[0]
+            return Giro(roda, [fatia])
+        if forcar_despertar:  # o prêmio de um Despertar feito na luta: o Carma já foi pago
+            return Giro(roda, [sortear(roda, self.base, self.rng, forcar=self.ordem[-1])], True)
         if permitir_despertar and self.carma.transbordando:
             self.carma.despertar()
             return Giro(roda, [sortear(roda, self.base, self.rng, forcar=self.ordem[-1])], True)

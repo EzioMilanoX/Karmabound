@@ -23,8 +23,9 @@ def rodas():
     return carregar_rodas(RARIDADES)
 
 
-def test_carrega_as_quatro_rodas(rodas):
-    assert set(rodas) == {"destino", "tecnicas", "arco", "reliquias"}
+def test_carrega_as_cinco_rodas(rodas):
+    assert set(rodas) == {"destino", "tecnicas", "arco", "reliquias", "despertar"}
+    assert rodas["despertar"].uniforme and not rodas["tecnicas"].uniforme
 
 
 def test_mesma_seed_mesmo_resultado(rodas):

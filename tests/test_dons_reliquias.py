@@ -14,7 +14,6 @@ from karmabound.run import (
     comecar_luta,
     encerrar_luta,
     girar,
-    liberar_despertar,
     nova_run,
     receber_reliquia,
     receber_tecnica,
@@ -267,17 +266,19 @@ def test_treino_na_montanha_cura_mais(ctx):
     assert e.jogador.vida == 10 + round(e.jogador.vida_max * 0.5 * e.jogador.efeitos.cura_mult)
 
 
-def test_coracao_selado_guarda_na_hora_e_libera_quando_quiser(ctx):
+def test_coracao_selado_guarda_na_hora_e_o_despertar_sai_na_luta(ctx):
     e = nova_run(ctx, random.Random(7))
     receber_reliquia(e, fatia(ctx, "reliquias", "coracao_selado"))
+    aplicar_arco(e, ctx, fatia(ctx, "arco", "torneio_regular"))
     c = e.mesa.carma
     c.valor = 95
     c.registrar_custo()  # +6 (×1,5): passa de 100
     assert c.guardados == 1 and not c.transbordando and 0 < c.valor < 20
-    assert not girar(e, ctx, "reliquias").despertar
-    assert liberar_despertar(e)
-    assert girar(e, ctx, "reliquias").despertar
-    assert c.guardados == 0
+    assert not girar(e, ctx, "reliquias").despertar  # guardado não desperta no giro
+    lt = comecar_luta(e, ctx, random.Random(7))
+    assert lt.pode_despertar()
+    lt.despertar()
+    assert c.guardados == 0 and 0 < c.valor < 20  # gastou o guardado, não o Carma
 
 
 def test_rosario_da_carma_a_cada_vitoria(ctx):
@@ -288,4 +289,4 @@ def test_rosario_da_carma_a_cada_vitoria(ctx):
     lt.rival.vida = 0
     e.mesa.carma.valor = 0
     encerrar_luta(e, ctx, lt)
-    assert e.mesa.carma.valor == pytest.approx(8)
+    assert e.mesa.carma.valor == pytest.approx(3)

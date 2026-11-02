@@ -30,9 +30,11 @@ class Fatia:
     peso: float = 1.0
     combate: dict | None = field(default=None, hash=False, compare=False)  # só técnicas
     evento: str = ""  # ex.: "altar" (o Juramento abre o Altar dos Votos)
+    origem: str = ""  # a homenagem: "técnica · obra"
     efeito: dict | None = field(default=None, hash=False, compare=False)  # Dons, Relíquias
     tecnica: dict | None = field(default=None, hash=False, compare=False)  # técnica de Dom
     regra: dict | None = field(default=None, hash=False, compare=False)  # Arcos
+    despertar: dict | None = field(default=None, hash=False, compare=False)  # Roda do Despertar
 
 
 @dataclass(frozen=True)
@@ -43,6 +45,7 @@ class Roda:
     opcoes: int
     fatias: tuple[Fatia, ...]
     kanji: str = ""
+    uniforme: bool = False  # sem raridade nem Carma: sorteio igual entre as fatias
 
     def da_raridade(self, raridade: str) -> list[Fatia]:
         return [f for f in self.fatias if f.raridade == raridade]
@@ -63,7 +66,15 @@ def carregar_rodas(raridades: list[Raridade], caminho: Path | None = None) -> di
     rodas: dict[str, Roda] = {}
     for r in bruto["rodas"]:
         fatias = tuple(Fatia(**{**f, "tags": tuple(f.get("tags", ()))}) for f in r["fatias"])
-        roda = Roda(r["id"], r["nome"], r["modo"], r.get("opcoes", 1), fatias, r.get("kanji", ""))
+        roda = Roda(
+            r["id"],
+            r["nome"],
+            r["modo"],
+            r.get("opcoes", 1),
+            fatias,
+            r.get("kanji", ""),
+            r.get("uniforme", False),
+        )
         _validar(roda, ids_raridade)
         rodas[roda.id] = roda
     return rodas
@@ -79,7 +90,7 @@ def _validar(roda: Roda, ids_raridade: set[str]) -> None:
     if desconhecidas:
         raise ValueError(f"roda {roda.id}: raridade desconhecida {sorted(desconhecidas)}")
     faltando = ids_raridade - {f.raridade for f in roda.fatias}
-    if faltando:
+    if faltando and not roda.uniforme:
         raise ValueError(f"roda {roda.id}: sem fatia de {sorted(faltando)}")
 
 

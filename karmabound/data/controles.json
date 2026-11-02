@@ -34,5 +34,6 @@
   "sofrer_dano": "KEY_D",
   "pagar_custo": "KEY_C",
   "sair": "KEY_ESCAPE",
-  "despertar": "KEY_E"
+  "despertar": "KEY_E",
+  "grimorio": "KEY_G"
 }

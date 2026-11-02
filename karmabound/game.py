@@ -12,9 +12,11 @@ from ouroboros.bootstrap.composition_root import CompositionRoot
 from ouroboros.bootstrap.engine_config import EngineConfig
 from ouroboros.bootstrap.game_loop import GameLoop
 
+from karmabound.grimorio import Grimorio
 from karmabound.jornada import Jornada
 from karmabound.mesa import Mesa
 from karmabound.rodas import DADOS
+from karmabound.tela_grimorio import GrimorioScene
 from karmabound.tela_luta import LutaScene
 from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene
 from karmabound.tela_roleta import RoletaScene
@@ -49,6 +51,7 @@ class Fluxo:
         self.loop = loop
         self.seed = seed
         self.jornada: Jornada | None = None
+        self.grimorio = Grimorio.padrao()
 
     @property
     def entrada(self):
@@ -59,10 +62,14 @@ class Fluxo:
 
     def titulo(self) -> None:
         self.jornada = None
-        self._cena(TituloScene(self.entrada, self.comecar, self.loop.stop))
+        self._cena(TituloScene(self.entrada, self.comecar, self.loop.stop, self.abrir_grimorio))
+
+    def abrir_grimorio(self) -> None:
+        self._cena(GrimorioScene(self.grimorio, self.entrada, self.titulo, self.loop.stop))
 
     def comecar(self, modo: str) -> None:
         self.jornada = Jornada.nova(modo, self.seed)
+        self.jornada.grimorio = self.grimorio
         self.passo()
 
     def _roleta(self, roda: str, girar, depois) -> None:

@@ -91,10 +91,13 @@ def test_juramento_abre_o_altar_e_jurar_aplica_o_voto():
     assert j.estado.votos.ativos and j.fase in ("reliquia", "luta", "arco")
 
 
-def test_carma_transbordado_desperta_no_proximo_giro():
+def test_carma_transbordado_espera_a_luta():
+    """O Despertar acontece na luta; o Carma cheio não desperta sozinho num giro."""
     j = Jornada.nova(seed=4)
     j.girar_destino()
     j.carma.valor = j.carma.config.maximo
     giro = j.girar_arco()
-    assert giro.despertar and giro.fatias[0].raridade == j.ctx.ordem[-1]
+    assert not giro.despertar and j.carma.transbordando
+    assert j.luta.pode_despertar()
+    j.luta.despertar()
     assert j.despertares == 1 and j.carma.valor == 0

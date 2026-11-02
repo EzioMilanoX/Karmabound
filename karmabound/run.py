@@ -10,9 +10,10 @@ exatamente o jogo que se joga.
 muitas vezes, com e sem ela, usando as mesmas seeds dos dois lados (números
 aleatórios comuns), e devolve a diferença em lutas vencidas.
 
-Despertar provisório: o Carma transbordado trava, e o próximo giro de qualquer
-roda vira o Despertar (giro Divino garantido). Com o Coração Selado, ao
-transbordar o Carma vira um Despertar guardado e zera.
+Despertar: acontece na luta (`Luta.despertar`), quando o jogador quer ou à beira
+da morte; o tipo sai da Roda do Despertar, e o próximo giro depois da luta vem
+Divino garantido. O Carma cheio fica esperando a luta: não desperta no giro.
+Com o Coração Selado, o Carma que enche vira um Despertar guardado e recomeça.
 """
 
 from __future__ import annotations
@@ -102,7 +103,7 @@ class EstadoRun:
     venceu: bool = False
     transbordos: int = 0  # vezes que o Carma transbordou (Despertar ou guardado)
     despertares: int = 0
-    liberando: bool = False  # um Despertar guardado foi liberado para o próximo giro
+    divino_pendente: int = 0  # giros Divinos garantidos por Despertares feitos na luta
     altares: int = 0
     dom: Fatia | None = None
     arco: Fatia | None = None  # None no começo de cada capítulo: falta girar o Arco
@@ -161,27 +162,19 @@ def atualizar_efeitos(estado: EstadoRun) -> None:
 
 
 def girar(estado: EstadoRun, ctx: Contexto, roda: str) -> Giro:
-    """Gira uma roda da run. Com o Carma transbordado, o giro vira o Despertar."""
-    estado.liberando = False
-    giro = estado.mesa.girar(roda)
-    if giro.despertar:
-        estado.despertares += 1
-        estado.transbordos += 1
-    return giro
-
-
-def liberar_despertar(estado: EstadoRun) -> bool:
-    """Coração Selado: gasta um Despertar guardado; o próximo giro desperta."""
-    carma = estado.mesa.carma
-    if not carma.guardados:
-        return False
-    carma.guardados -= 1
-    carma.valor = carma.config.maximo
-    estado.liberando = True
-    return True
+    """Gira uma roda da run. Depois de um Despertar na luta, o giro vem Divino garantido."""
+    if estado.divino_pendente:
+        estado.divino_pendente -= 1
+        return estado.mesa.girar(roda, forcar_despertar=True)
+    return estado.mesa.girar(roda, permitir_despertar=False)
 
 
 # ----------------------------------------------------------------------- passos
+
+
+def espacos(estado: EstadoRun, ctx: Contexto) -> int:
+    """Espaços de técnica do jogador (a Fruta Proibida dá mais um)."""
+    return ctx.combate["espacos"] + estado.jogador.efeitos.espacos_extra
 
 
 def aplicar_dom(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
@@ -243,17 +236,44 @@ def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
         jogador.dano_extra = rival.dano_extra = regra["dano_todos"]
     if rival.chefe and regra.get("chefe_mult"):  # Arco do Juízo
         rival.dano_mult = regra["chefe_mult"]
-    return Luta(jogador, rival, ctx.basico, rng, ctx.combate["bonus_surpresa"])
+
+    def ao_despertar():
+        estado.despertares += 1
+        estado.transbordos += 1
+        estado.divino_pendente += 1
+        return estado.mesa.girar("despertar").fatias[0]
+
+    def ao_eclipse():  # o preço do Ovo do Eclipse: o Dom
+        estado.dom = None
+        jogador.tecnica_dom = None
+        atualizar_efeitos(estado)
+
+    return Luta(
+        jogador,
+        rival,
+        ctx.basico,
+        rng,
+        ctx.combate["bonus_surpresa"],
+        ao_despertar=ao_despertar,
+        espacos=espacos(estado, ctx),
+        ao_eclipse=ao_eclipse,
+    )
 
 
 def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
     """Fecha a luta: contadores, recompensas, cura, votos e o avanço de capítulo."""
     jogador, carma = estado.jogador, estado.mesa.carma
+    luta.encerrar()
     if luta.vencedor is not jogador:
         estado.derrotado = True
         return False
     estado.lutas_vencidas += 1
     estado.proxima_luta += 1
+    if jogador.efeitos.vida_por_vitoria:  # Manto de Peso: o treino acumula
+        v, n = jogador.efeitos.vida_por_vitoria, estado.lutas_vencidas
+        ganho = int(n * v) - int((n - 1) * v)
+        jogador.base_vida_max += ganho
+        jogador.vida += ganho
     if jogador.efeitos.carma_por_vitoria:
         carma.ganhar(jogador.efeitos.carma_por_vitoria)  # Rosário de Ossos
     if luta.rival.chefe and estado.regra.get("carma_cheio_chefe"):
@@ -290,7 +310,7 @@ def receber_tecnica(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> str:
                 estado.fragmentos[t.id] = 0
                 return "evoluiu"
             return "fragmento"
-    if len(tecnicas) < ctx.combate["espacos"]:
+    if len(tecnicas) < espacos(estado, ctx):
         tecnicas.append(Tecnica.de_fatia(fatia))
         return "equipada"
     return "cheio"
@@ -350,6 +370,8 @@ def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Regist
     vida_antes = jogador.vida
     while not luta.acabou and luta.turnos < ctx.max_turnos:
         if luta.vez is jogador:
+            if luta.pode_despertar() and _desperta_agora(luta):
+                luta.despertar()
             luta.resolver(escolher_jogador_auto(luta))
         else:
             t = luta.intencao_rival
@@ -363,6 +385,13 @@ def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Regist
     if not luta.acabou:  # passou do limite de turnos: conta como derrota
         jogador.vida = 0
     return encerrar_luta(estado, ctx, luta)
+
+
+def _desperta_agora(luta: Luta) -> bool:
+    """O piloto desperta contra um chefe logo de cara, ou quando está mal; senão espera,
+    e a beira da morte dispara sozinha."""
+    j = luta.jogador
+    return (luta.rival.chefe and luta.turnos <= 1) or j.vida < j.vida_max * 0.4
 
 
 def _substituir_auto(estado: EstadoRun, ctx: Contexto, nova: Fatia) -> None:
@@ -387,7 +416,6 @@ def jogar_run(
             aplicar_arco(estado, ctx, girar(estado, ctx, "arco").fatias[0])
         if not jogar_luta(estado, ctx, rng, reg) or estado.venceu:
             break
-        liberar_despertar(estado)  # o piloto libera um Despertar guardado na hora
         giro = girar(estado, ctx, "tecnicas")
         nova = max(giro.fatias, key=lambda f: ctx.ordem.index(f.raridade))
         resultado = receber_tecnica(estado, ctx, nova)

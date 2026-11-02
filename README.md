@@ -4,7 +4,7 @@
 
 Você não escolhe seu poder: **gira por ele**. Dons, técnicas, o arco de cada capítulo e as relíquias saem de rodas de sorteio desenhadas como uma mandala de selos. Todo azar fica preso ao seu **Carma** — e quando o Carma transborda, no pior momento, você **Desperta**.
 
-> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: Dons, técnicas, Relíquias, Arcos, duplicatas que evoluem e o Altar dos Votos, com quatro modos de dificuldade calibrados por simulação. Ainda sem executável, e com o Despertar em versão provisória.
+> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: 59 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos, o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Ainda sem executável.
 
 📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos.
 
@@ -32,10 +32,11 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique. Passo a passo e 
 
 | Onde | Ação | Tecla |
 |---|---|---|
-| Título | Escolher o modo / começar | ↑ ↓ / Enter |
+| Título | Escolher o modo / começar / abrir o Grimório | ↑ ↓ / Enter / G |
+| Grimório | Trocar de roda / de habilidade / voltar | ← → / ↑ ↓ / Backspace |
 | Roleta | Girar / escolher 1 de 3 / continuar | Espaço / 1–3 / Enter |
-| Roleta | Liberar um Despertar guardado (Coração Selado) | E |
 | Luta | Usar a técnica do selo (6 = técnica do Dom) | 1–6 (ou ← → e Enter) |
+| Luta | Despertar (com o Carma cheio; não gasta o turno) | E |
 | Luta | Contrato: escolher a técnica sacrificada / desistir | 1–5 / Backspace |
 | Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
 | Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
@@ -49,6 +50,21 @@ Título → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a
 
 Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada giro ruim aproxima o Despertar, e o jogador passa a torcer pela desgraça quando o medidor está quase cheio.
 
+## Homenagens: todo poder tem uma origem
+
+Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta, na luta e no Grimório: a **Espiral Concentrada** é o Rasengan (Naruto), o **Clarão Negro** é o Kokusen (Jujutsu Kaisen), o **Corte do Mundo** é o corte que divide o mundo do Sukuna, o **Corpo Perfeito** é o Sukuna da Era Heian, o **Instante Suspenso** é The World (JoJo), a **Liberação Final** é o Bankai (Bleach). As obras vão de Naruto, One Piece, Bleach, Dragon Ball e Hunter x Hunter a Jujutsu Kaisen, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling e Attack on Titan. A lista completa, com a origem de cada uma, está no [catálogo](docs/CATALOGO.md).
+
+O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
+
+### O visual
+
+- **Um efeito por habilidade**, em tinta: a esfera que gira do Rasengan, os raios do Hekireki Issen, a lua negra do Getsuga, as correntes do Kurapika, o Domínio que fecha a arena, o tempo parado em sépia, a tela que se parte no Corte do Mundo.
+- **Uma arena por Arco**: o Monte Myoboku, a arena do Torneio, o Eclipse, a vila em chamas, Shibuya sob o Véu e Marineford.
+- **Rivais variados**: Ronin, Monge Errante, Shinobi e Oni, e o chefe é um colosso de quatro braços.
+- **Uma aura por Despertar**, e cartas com moldura da raridade e a linha de origem.
+
+![O Corte do Mundo atravessando a tela contra o chefe, em Marineford](docs/telas/vitrine/06_marineford_corte_do_mundo.png)
+
 ## A roleta: quatro rodas, um destino
 
 | Roda | Decide | Modo |
@@ -57,6 +73,7 @@ Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada g
 | 技 **Técnicas** | Golpes, defesas e técnicas malditas | gira 3, escolhe 1 |
 | 章 **Arco** | A regra do capítulo (Lua de Sangue, Invasão, Maldição Coletiva…) | gira e aceita |
 | 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem | gira e aceita |
+| 覚 **Despertar** | O tipo de Despertar (8), na luta: Bankai, Ultra Instinto, Modo Sábio... | sorteio igual |
 
 Tudo o que a roleta entrega vale na luta: o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
 
@@ -67,9 +84,9 @@ Cada fatia é um **selo com um kanji**, colorido pela raridade: **Cinza** (60%),
 O Carma é um **pity compartilhado entre todas as rodas**. Ele enche com giros ruins, com dano recebido e com o preço dos poderes pagos — sofrer alimenta o Carma.
 
 - **Pity suave:** acima de 60, Malditos e Divinos ficam até 3× mais prováveis. As correntes em volta da mandala racham e avermelham.
-- **Transbordo:** em 100, as correntes tremem e o Carma trava até o Despertar — um giro bom não apaga um Despertar garantido.
-- **Despertar:** as correntes se partem, 覚醒 em dourado, e sai um giro Divino garantido.
-- **Calibrado** por simulação de lutas reais: cerca de **1,3 Despertar por run**, o primeiro perto do meio da run. Algumas runs terminam sem nenhum — nem todo mundo recebe seu momento.
+- **Transbordo:** em 100, as correntes tremem e o Carma fica esperando a luta.
+- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com oito: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio) ou 痣 Marca do Caçador. E o próximo giro depois da luta vem Divino garantido.
+- **Calibrado** por simulação de lutas reais: cerca de **1,2 Despertar por run**. Algumas runs terminam sem nenhum — nem todo mundo recebe seu momento.
 
 ## Lutas: só recarga
 
@@ -87,10 +104,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 4,4 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 4,65 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 4,7 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 5,8 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 5,1 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 5,35 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 5,35 por luta, chefe ×1,25 | 70 |
+| Brutal | ~9% | 12 + 6,55 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
@@ -98,9 +115,15 @@ Os poderes mais raros são quebrados de propósito — e cobram à altura. Cada 
 
 | Poder | Raridade | O que faz | O preço | Vale |
 |---|---|---|---|---|
-| 呪 Marca da Maldição | Maldito | Golpe de 10; o rival sofre 3 por turno, e Marcas se somam | você sofre 1 por turno por Marca | +8 |
-| 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +10 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | ~+5 ⚠️ |
-| 裁 Julgamento | Divino | Dano = 1,3 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +14 |
+| 呪 Marca da Maldição | Maldito | Golpe de 10; o rival sofre 3 por turno, e Marcas se somam | você sofre 1 por turno por Marca | +3 ⚠️ |
+| 幻 Lua Ilusória (Tsukuyomi) | Maldito | O rival perde o próximo turno | 4 de vida: os olhos sangram | +3 ⚠️ |
+| 界 Corte do Mundo (Sukuna) | Divino | 42 de dano que atravessa bloqueio, escudo e esquiva, impossível de perceber | só fica pronto no seu 4º turno | +8 ⚠️ |
+| 宿 Corpo Perfeito (Sukuna Heian) | Divino | Quatro braços: o Golpe acerta 2× com +2 | você nunca defende | +13 |
+| 卵 Ovo do Eclipse (Behelit) | Divino | Desperta à beira da morte, mesmo sem Carma (1×/run) | o seu Dom é sacrificado | +16 |
+| 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +5 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | +5 ⚠️ |
+| 裁 Julgamento | Divino | Dano = 2 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +21 ⚠️ |
+
+⚠️ fora da régua na última medição, a revisitar.
 
 ## Votos vinculativos (o Juramento)
 
@@ -128,7 +151,11 @@ karmabound/
   tela_roleta.py  a mandala, as correntes e o Despertar (IScene da engine)
   tela_luta.py  o duelo frente a frente
   tela_menus.py título, troca de técnica, Altar dos Votos e fim
-  figuras.py    as silhuetas de tinta, feitas de polígonos
+  figuras.py    as silhuetas de tinta (5 estilos), feitas de polígonos
+  vfx.py        um efeito de tinta por habilidade e uma aura por Despertar
+  arenas.py     o cenário de cada Arco
+  grimorio.py   o que já saiu da roleta, salvo entre runs (~/.karmabound)
+  tela_grimorio.py  o Grimório: todas as habilidades, com a origem
   visual.py     paleta, fonte e utilitários de desenho
   game.py       o Fluxo: põe a tela da fase atual da Jornada no topo da engine
   data/         rodas, balanceamento, controles e votos em JSON
@@ -148,6 +175,7 @@ python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitó
 python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale, contra a régua
 python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
+python tools/vitrine.py             # PNG de cada arena, rival e efeito, em docs/telas/vitrine/
 ```
 
 ## Documentação
@@ -155,7 +183,7 @@ python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas d
 - **[docs/index.html](docs/index.html)** — o manual.
 - **[docs/DESIGN.md](docs/DESIGN.md)** — todas as decisões de design, com data e motivo.
 - **[docs/CATALOGO.md](docs/CATALOGO.md)** — todo o conteúdo (rodas, técnicas, votos, modos), gerado dos dados.
-- **[docs/telas/](docs/telas/)** — capturas de cada estado da roleta.
+- **[docs/telas/](docs/telas/)** — capturas de cada estado da roleta; **[docs/telas/vitrine/](docs/telas/vitrine/)**, as arenas e os efeitos.
 
 ## Licença
 

@@ -25,6 +25,7 @@ from karmabound.visual import (  # noqa: F401  (reexporta para quem importava da
     SANGUE_VIVO,
     TINTA,
     Cor,
+    moldura,
 )
 from karmabound.visual import alpha as _alpha
 from karmabound.visual import ease_out as _ease_out
@@ -69,7 +70,7 @@ class RoletaScene(IScene):
         self.girar_fn = girar
         self.ao_concluir = ao_concluir
         self.titulo = titulo
-        self.j = jornada  # para liberar um Despertar guardado (Coração Selado)
+        self.j = jornada
         self.cores = {r.id: _hex(r.cor) for r in mesa.raridades}
         self.cores_claras = {r: _mistura(c, TINTA, 0.25) for r, c in self.cores.items()}
         self.nomes_raridade = {r.id: r.nome for r in mesa.raridades}
@@ -134,15 +135,6 @@ class RoletaScene(IScene):
         if self.jornada:
             if self.estado == "parado" and e.is_action_pressed("girar"):
                 self._comecar_giro()
-                return
-            if (
-                self.estado == "parado"
-                and self.j is not None
-                and e.is_action_pressed("despertar")
-                and self.j.pode_liberar_despertar()
-            ):
-                self.j.liberar_despertar()
-                self.carma_visual = self.mesa.carma.valor
                 return
             if self.estado == "resultado" and e.is_action_pressed("confirmar"):
                 self.ao_concluir(self.escolhida or 0)
@@ -424,9 +416,13 @@ class RoletaScene(IScene):
             self._texto(r, x, y, "Escolha uma técnica", 20, TINTA)
             for j, f in enumerate(self.giro.fatias):
                 cor = self.cores_claras[f.raridade]
-                self._texto(r, x, y + 34 + j * 34, f"{j + 1}", 20, _alpha(TINTA, 140))
-                self._texto(r, x + 22, y + 30 + j * 34, f.kanji, 26, cor)
-                self._texto(r, x + 58, y + 34 + j * 34, f.nome, 18, cor)
+                yj = y + 34 + j * 52
+                self._texto(r, x, yj, f"{j + 1}", 20, _alpha(TINTA, 140))
+                self._texto(r, x + 22, yj - 4, f.kanji, 26, cor)
+                self._texto(r, x + 58, yj, f.nome, 18, cor)
+                if f.origem:
+                    obra = f.origem.split(" · ")[-1]
+                    self._texto(r, x + 58, yj + 22, f"※ {obra}", 13, _alpha(TINTA, 110))
             return
         f = self._escolhida() if self.estado == "resultado" else None
         if f is None:
@@ -434,16 +430,22 @@ class RoletaScene(IScene):
         if self.giro and self.giro.despertar:
             self._texto(r, x, y - 6, "覚醒  Despertar", 22, OURO)
             y += 26
+        divina = f.raridade == self.mesa.raridades[-1].id
+        moldura(r, x - 14, y - 12, LARGURA - 14, ALTURA - 64, self.cores[f.raridade], divina)
         self._texto(r, x, y, f.nome, 24, self.cores_claras[f.raridade])
         self._texto(r, x, y + 30, self.nomes_raridade[f.raridade], 16, self.cores[f.raridade])
-        for j, linha in enumerate(_quebrar(f.texto, 24)):
-            self._texto(r, x, y + 58 + j * 22, linha, 17, TINTA)
+        linhas = _quebrar(f.texto, 24)[:5]
+        for j, linha in enumerate(linhas):
+            self._texto(r, x, y + 56 + j * 21, linha, 16, TINTA)
+        if f.origem:
+            yo = y + 62 + len(linhas) * 21
+            for j, linha in enumerate(_quebrar(f"※ {f.origem}", 28)[:2]):
+                self._texto(r, x, yo + j * 18, linha, 13, _alpha(OURO, 190))
 
     def _controles(self, r: IRenderer) -> None:
         if self.jornada:
-            pode = self.j is not None and self.j.pode_liberar_despertar()
             dica = {
-                "parado": "espaço gira" + (" · E libera um Despertar guardado" if pode else ""),
+                "parado": "espaço gira",
                 "escolhendo": "1, 2 ou 3 escolhe",
                 "resultado": "Enter continua",
             }.get(self.estado, "")

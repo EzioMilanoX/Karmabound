@@ -75,8 +75,9 @@ class _Base(IScene):
 
 
 class TituloScene(_Base):
-    def __init__(self, entrada, ao_escolher, ao_sair) -> None:
+    def __init__(self, entrada, ao_escolher, ao_sair, ao_grimorio=None) -> None:
         super().__init__(entrada, ao_sair)
+        self.ao_grimorio = ao_grimorio
         cfg = carregar_balanceamento()["combate"]
         self.modos = [(m, d) for m, d in cfg["dificuldades"].items() if not m.startswith("_")]
         padrao = cfg["dificuldade_padrao"]
@@ -88,6 +89,9 @@ class TituloScene(_Base):
         if self._sair():
             return
         e = self.entrada
+        if self.ao_grimorio is not None and e.is_action_pressed("grimorio"):
+            self.ao_grimorio()
+            return
         if e.is_action_pressed("cima"):
             self.cursor = (self.cursor - 1) % len(self.modos)
         elif e.is_action_pressed("baixo"):
@@ -119,7 +123,7 @@ class TituloScene(_Base):
             r,
             480,
             ALTURA - 28,
-            "↑ ↓ escolhe · Enter começa · esc sai",
+            "↑ ↓ escolhe · Enter começa · G grimório · esc sai",
             14,
             alpha(TINTA, 100),
             "center",

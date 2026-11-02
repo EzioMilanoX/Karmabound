@@ -11,7 +11,9 @@
   Percepção do jogador decide quanto disso ele vê.
 - Dons e Relíquias entram por `Efeitos` (esquiva, fúria, sombra, escudo...) e
   pela técnica de Dom (`Lutador.tecnica_dom`), que não ocupa espaço.
-- O Despertar ainda não entra aqui (efeito e gatilho em aberto no design).
+- Despertar: com o Carma cheio (ou um Despertar guardado), o jogador desperta
+  quando quiser — não gasta o turno — ou sozinho, quando um golpe do rival o
+  mataria (o golpe é anulado). O tipo sai da Roda do Despertar.
 """
 
 from __future__ import annotations
@@ -53,11 +55,22 @@ class Tecnica:
     pular_depois: bool = False  # preço do Santuário: perde um turno quando ele acaba
     turno_extra: bool = False  # Instante Suspenso
     custo_carma: int = 0  # preço em Carma (consome, mesmo travado)
+    perfura: bool = False  # atravessa bloqueio (Espiral Concentrada)
+    absoluto: bool = False  # atravessa bloqueio, escudo e esquiva (Corte do Mundo)
+    critico: float = 0.0  # chance de o golpe sair ×2,5 (Clarão Negro)
+    sempre_surpresa: bool = False  # todo uso conta como ataque surpresa (Primeiro Trovão)
+    selar: int = 0  # a próxima ação do alvo vai para a recarga (Corrente do Julgamento)
+    cura: int = 0  # cura quem usa (Mão Curadora)
+    dano_por_dor: float = 0.0  # dano extra = fator × a dor que quem usa sofreu na luta
+    teto_dor: int = 0  # o máximo desse extra (0 = sem teto)
+    atordoar: int = 0  # turnos que o alvo perde (Lua Ilusória)
+    inicia_em_recarga: int = 0  # começa cada luta em recarga (Corte do Mundo)
     nivel: int = 1  # duplicatas evoluem a técnica
 
     @classmethod
     def de_dict(cls, d: dict, raridade: str = "cinza") -> Tecnica:
-        return cls(**{"raridade": raridade, **{k: v for k, v in d.items() if k != "raridade"}})
+        dados = {k: v for k, v in d.items() if k not in ("raridade", "origem")}
+        return cls(**{"raridade": raridade, **dados})
 
     @classmethod
     def de_fatia(cls, fatia: Fatia) -> Tecnica:
@@ -94,6 +107,13 @@ class Lutador:
     pular_pendente: bool = False  # perde um turno quando o Santuário acabar
     cego: bool = False  # Percepção 0 até o próximo turno dele
     extras: int = 0  # ações seguidas que ainda restam (Instante Suspenso)
+    forma: int = 0  # turnos de Forma Desperta: dano dobrado, sem recarga
+    retrib_golpes: int = 0  # golpes de Retribuição que ainda restam
+    retrib_por_golpe: int = 0
+    dor: int = 0  # dano sofrido nesta luta (Esfera dos Mil)
+    instinto: int = 0  # ataques do rival que o Instinto Puro ainda pode esquivar
+    percepcao_luta: int = 0  # Percepção extra só nesta luta (Modo Eremita)
+    eclipses: int = 0  # Ovo do Eclipse já usado nesta run
     base_vida_max: int = field(init=False)
     base_velocidade: int = field(init=False)
     base_percepcao: int = field(init=False)
@@ -132,6 +152,8 @@ class Lutador:
         self.santuario = self.pular = 0
         self.pular_pendente = self.cego = False
         self.extras = 0
+        self.forma = self.retrib_golpes = self.retrib_por_golpe = 0
+        self.dor = self.instinto = self.percepcao_luta = 0
         self.dano_extra, self.dano_mult = 0, 1.0
         self.escudos = self.efeitos.escudo_inicial
         if self.efeitos.cura_inicio and not self.efeitos.sem_cura:
@@ -157,6 +179,8 @@ class Lutador:
         return dano
 
 
+CRITICO = 2.5  # o Clarão Negro
+
 # Sem nenhuma técnica permitida pronta (ex.: voto Mãos Atadas), o lutador hesita.
 HESITAR = Tecnica("hesitar", "Hesitar", "defesa")
 
@@ -174,6 +198,12 @@ class Acao:
     sombra: int = 0  # dano da sombra (Sombra Leal)
     copiou: str = ""  # técnica copiada pelo Olho Roubado
     turno_extra: bool = False
+    despertou: str = ""  # Despertar disparado à beira da morte durante esta ação
+    critico: bool = False  # o Clarão Negro saiu
+    curou: int = 0
+    selou: str = ""  # técnica do alvo que a Corrente selou
+    atordoou: bool = False
+    instintos: int = 0  # ataques esquivados pelo Instinto Puro
 
 
 class Luta:
@@ -184,8 +214,24 @@ class Luta:
         basico: Tecnica,
         rng: random.Random,
         bonus_surpresa: float = 0.5,
+        ao_despertar=None,
+        espacos: int = 4,
+        ao_eclipse=None,
     ) -> None:
+        """`ao_despertar()`: gira a Roda do Despertar e devolve a fatia (quem monta a luta
+        cuida dos contadores e do giro Divino depois). Sem ela, não há Despertar.
+        `ao_eclipse()`: cobra o preço do Ovo do Eclipse (o Dom)."""
         self.jogador, self.rival = jogador, rival
+        self.ao_despertar = ao_despertar
+        self.ao_eclipse = ao_eclipse
+        self._antes_da_liberacao: dict[str, Tecnica] = {}  # técnicas antes do Bankai
+        for lutador in (jogador, rival):
+            for t in lutador.tecnicas:
+                if t.inicia_em_recarga:
+                    lutador.recargas[t.id] = max(lutador.recargas.get(t.id, 0), t.inicia_em_recarga)
+        self.espacos = espacos  # para o Tomar o Destino saber se precisa trocar uma técnica
+        self.dano_recebido = 0  # a dor do jogador nesta luta (base da Retribuição)
+        self.ultimo_despertar = None  # a fatia do último Despertar, para a tela
         self.basico = basico
         self.rng = rng
         self.bonus_surpresa = bonus_surpresa
@@ -244,19 +290,117 @@ class Luta:
                 return conhecidas[acao.tecnica]
         return None
 
+    def pode_despertar(self) -> bool:
+        c = self.jogador.carma
+        return (
+            self.ao_despertar is not None
+            and c is not None
+            and not self.acabou
+            and (c.transbordando or c.guardados > 0)
+        )
+
+    def pode_eclipse(self) -> bool:
+        """Ovo do Eclipse: desperta sem Carma, uma vez por run."""
+        j = self.jogador
+        return self.ao_despertar is not None and not self.acabou and j.eclipses < j.efeitos.eclipse
+
+    def despertar(self, eclipse: bool = False):
+        """Desperta: paga o Carma (ou um Despertar guardado), gira a Roda e aplica o tipo.
+        `eclipse`: o Ovo do Eclipse paga no lugar do Carma (e cobra o Dom)."""
+        j, rival, carma = self.jogador, self.rival, self.jogador.carma
+        if eclipse:
+            if not self.pode_eclipse():
+                raise RuntimeError("o Ovo do Eclipse já foi usado")
+            j.eclipses += 1
+            if self.ao_eclipse is not None:
+                self.ao_eclipse()
+        elif not self.pode_despertar():
+            raise RuntimeError("não há Despertar disponível")
+        elif carma.guardados:
+            carma.guardados -= 1
+        else:
+            carma.valor = 0.0
+        fatia = self.ao_despertar()
+        d = fatia.despertar or {}
+        if d.get("retribuicao_golpes") and self.dano_recebido:
+            n = d["retribuicao_golpes"]
+            j.retrib_golpes, j.retrib_por_golpe = n, -(-self.dano_recebido // n)
+        if d.get("roubar"):
+            minhas = {t.id for t in j.tecnicas}
+            alvo = [t for t in rival.tecnicas if t.id not in minhas]
+            if alvo:
+                roubada = max(alvo, key=valor_tecnica)
+                if len(j.tecnicas) >= self.espacos:
+                    j.tecnicas.remove(min(j.tecnicas, key=valor_tecnica))
+                j.tecnicas.append(roubada)
+        if d.get("travar_rival"):
+            for t in rival.tecnicas:
+                rival.recargas[t.id] = max(rival.recargas.get(t.id, 0), d["travar_rival"])
+            self.intencao_rival = escolher_rival(self)
+        if d.get("forma"):
+            j.forma = d["forma"]
+        if d.get("cura_total"):
+            j.vida = j.vida_max
+        j.escudos += d.get("escudos", 0)
+        if d.get("evoluir"):  # Liberação Final: até o fim da luta
+            for i, t in enumerate(j.tecnicas):
+                self._antes_da_liberacao.setdefault(t.id, t)
+                j.tecnicas[i] = evoluir(t)
+        if d.get("instinto"):
+            j.instinto = d["instinto"]
+        if d.get("cura_frac"):
+            j.vida = min(j.vida_max, j.vida + round(j.vida_max * d["cura_frac"]))
+        j.percepcao_luta += d.get("percepcao", 0)
+        j.bonus_dano += d.get("dano", 0)
+        j.dano_mult *= d.get("dano_mult", 1.0)
+        if d.get("perde_vida_max"):  # Marca do Caçador: o preço fica na run
+            j.base_vida_max = max(1, round(j.base_vida_max * (1 - d["perde_vida_max"])))
+            j.aplicar_efeitos(j.efeitos)
+        self.ultimo_despertar = fatia
+        return fatia
+
+    def encerrar(self) -> None:
+        """Desfaz o que só valia nesta luta (a Liberação Final)."""
+        if self._antes_da_liberacao:
+            j = self.jogador
+            j.tecnicas[:] = [self._antes_da_liberacao.get(t.id, t) for t in j.tecnicas]
+            self._antes_da_liberacao = {}
+
+    def _curar(self, lutador: Lutador, quanto: int) -> int:
+        if lutador.efeitos.sem_cura or not lutador.vivo:
+            return 0
+        antes = lutador.vida
+        cura = round(quanto * lutador.efeitos.cura_mult)
+        lutador.vida = min(lutador.vida_max, lutador.vida + cura)
+        return lutador.vida - antes
+
+    def _ferir(self, lutador: Lutador, dano: int) -> int:
+        feito = lutador.sofrer(dano)
+        lutador.dor += feito
+        if lutador is self.jogador:
+            self.dano_recebido += feito
+        return feito
+
+    def _selar(self, alvo: Lutador, turnos: int) -> str:
+        t = _selar_alvo(self, alvo)
+        if t is None:
+            return ""
+        alvo.recargas[t.id] = max(alvo.recargas.get(t.id, 0), turnos)
+        return t.id
+
     def percepcao_contra(self, alvo: Lutador) -> int:
         """Percepção do alvo contra quem o ataca (o Voto Exposto dá Percepção ao rival)."""
         if alvo.cego:
             return 0
         extra = self.jogador.efeitos.percepcao_rival if alvo is self.rival else 0
-        return alvo.percepcao + extra
+        return alvo.percepcao + alvo.percepcao_luta + extra
 
     def outro(self, lutador: Lutador) -> Lutador:
         return self.rival if lutador is self.jogador else self.jogador
 
     def ver_intencao(self) -> str | Tecnica | None:
         """O que o jogador enxerga da próxima ação do rival: nada, o tipo, ou a técnica."""
-        p, t = self.jogador.percepcao, self.intencao_rival
+        p, t = self.jogador.percepcao + self.jogador.percepcao_luta, self.intencao_rival
         if t is None or p <= 0 or self.jogador.cego:
             return None
         return t.tipo if p == 1 else t
@@ -264,7 +408,7 @@ class Luta:
     def turno_rival(self) -> Acao:
         assert self.vez is self.rival
         tecnica = self.intencao_rival
-        if tecnica is None or not (tecnica is self.basico or self.rival.pronta(tecnica)):
+        if tecnica is None or tecnica not in self.prontas(self.rival):
             tecnica = escolher_rival(self)
         return self.resolver(tecnica)
 
@@ -285,6 +429,10 @@ class Luta:
         if t.custo_carma and ator.carma is not None:
             ator.carma.valor = max(0.0, ator.carma.valor - t.custo_carma)
 
+        if ator.efeitos.regen and ator.vida < ator.vida_max * ator.efeitos.regen_ate:
+            self._curar(ator, ator.efeitos.regen)  # Carne que Volta
+        if ator.efeitos.sangria:
+            ator.sofrer(ator.efeitos.sangria)  # o preço dos Portões Abertos
         if ator.marca:
             ator.sofrer(ator.marca)  # Marca da Maldição
         if ator.eco:
@@ -298,21 +446,36 @@ class Luta:
         ator.revide += efetiva.revide
         alvo.marca += efetiva.marca
         ator.eco += efetiva.eco
+        curou = self._curar(ator, efetiva.cura) if efetiva.cura else 0
         ativou_santuario = efetiva.santuario > 0
         if ativou_santuario:
             ator.santuario = efetiva.santuario
             ator.pular_pendente = efetiva.pular_depois
 
-        surpresa, reagiu, total = self.abertura, False, 0
-        esquivas = escudados = sombra = 0
+        surpresa, reagiu, total = self.abertura or efetiva.sempre_surpresa, False, 0
+        esquivas = escudados = sombra = instintos = 0
+        despertou, critico = "", False
+        basico = t is self.basico
         base = efetiva.dano + int(efetiva.dano_por_carma * ator.carma.valor if ator.carma else 0)
+        base += _extra_da_dor(efetiva, ator)  # Esfera dos Mil
+        if basico:
+            base += ator.efeitos.basico_dano  # Corpo Perfeito
         if efetiva.consome_carma and ator.carma is not None:
             ator.carma.valor = 0.0  # a dor vira golpe: o Despertar que vinha se vai junto
         if base > 0 and ator.vivo:
             perdida = 1 - max(0, ator.vida) / ator.vida_max
             fervor = round(ator.efeitos.furia * perdida)  # Sangue Fervente
             base += ator.bonus_dano + ator.efeitos.bonus_dano + fervor + ator.dano_extra
+            if ator.retrib_golpes:  # Retribuição: a dor volta
+                base += ator.retrib_por_golpe
+                ator.retrib_golpes -= 1
+            if ator.forma:  # Forma Desperta
+                base *= 2
             base = round(base * ator.dano_mult * (t.copia_bonus if t.copia_rival else 1.0))
+            if not basico:
+                base = round(base * ator.efeitos.dano_tecnicas_mult)  # Lâmina Adormecida
+            if efetiva.critico and self.rng.random() < efetiva.critico:
+                base, critico = round(base * CRITICO), True  # Clarão Negro
             if alvo.chefe:
                 base = round(base * ator.efeitos.dano_chefe_mult)  # Carrasco
             santuario = ator.santuario > 0 and not ativou_santuario
@@ -329,26 +492,40 @@ class Luta:
             )
 
             def golpear(dano: int) -> int:
-                nonlocal esquivas, escudados
-                if alvo.efeitos.esquiva and self.rng.random() < alvo.efeitos.esquiva:
-                    esquivas += 1  # Reflexo Treinado
-                    return 0
-                if alvo.escudos:
-                    alvo.escudos -= 1  # Pele de Cinzas
-                    escudados += 1
-                    return 0
-                absorvido = min(alvo.bloqueio, dano)
+                nonlocal esquivas, escudados, despertou, instintos
+                if not efetiva.absoluto:
+                    if alvo.instinto and self.rng.random() < 0.6:
+                        instintos += 1  # Instinto Puro: esquiva e devolve um Golpe
+                        self._ferir(ator, self.basico.dano)
+                        return 0
+                    if alvo.efeitos.esquiva and self.rng.random() < alvo.efeitos.esquiva:
+                        esquivas += 1  # Reflexo Treinado
+                        return 0
+                    if alvo.escudos:
+                        alvo.escudos -= 1  # Pele de Cinzas
+                        escudados += 1
+                        return 0
+                fura = efetiva.perfura or efetiva.absoluto
+                absorvido = 0 if fura else min(alvo.bloqueio, dano)
                 alvo.bloqueio -= absorvido
-                feito = alvo.sofrer(dano - absorvido)
+                if alvo is self.jogador and dano - absorvido >= alvo.vida:
+                    if self.pode_despertar():
+                        despertou = self.despertar().id  # à beira da morte: o golpe é anulado
+                        return 0
+                    if self.pode_eclipse():
+                        despertou = self.despertar(eclipse=True).id  # o Ovo do Eclipse
+                        return 0
+                feito = self._ferir(alvo, dano - absorvido)
                 if alvo.revide and dano:
-                    ator.sofrer(alvo.revide)
+                    self._ferir(ator, alvo.revide)
                     alvo.revide = 0
                 return feito
 
             por_golpe = base // 2 if reagiu else base
-            if surpresa and not reagiu:
+            if surpresa and not reagiu and not alvo.efeitos.sem_surpresa:
                 por_golpe = round(por_golpe * (1 + self.bonus_surpresa))
-            for _ in range(efetiva.golpes):
+            golpes = efetiva.golpes + (ator.efeitos.basico_golpes if basico else 0)
+            for _ in range(golpes):
                 total += golpear(por_golpe)
                 if not alvo.vivo:
                     break
@@ -356,13 +533,26 @@ class Luta:
                 sombra = golpear(round(por_golpe * ator.efeitos.sombra))  # Sombra Leal
                 total += sombra
             if reagiu and alvo.vivo:
-                ator.sofrer(self.basico.dano)  # o contra-golpe de quem sentiu o perigo
+                self._ferir(ator, self.basico.dano)  # o contra-golpe de quem sentiu o perigo
+            if alvo.instinto:
+                alvo.instinto -= 1
+
+        selou, atordoou = "", False
+        if efetiva.selar and alvo.vivo:
+            selou = self._selar(alvo, efetiva.selar)
+        if efetiva.atordoar and alvo.vivo:
+            alvo.pular += efetiva.atordoar  # Lua Ilusória
+            atordoou = True
+        if (selou or atordoou) and alvo is self.rival:
+            self.intencao_rival = escolher_rival(self)  # o que ele anunciou não vem mais
 
         for tid in list(ator.recargas):
             if ator.recargas[tid] > 0:
                 ator.recargas[tid] -= 1
-        if t not in (self.basico, HESITAR) and t.recarga:
-            ator.recargas[t.id] = t.recarga
+        if t not in (self.basico, HESITAR) and t.recarga and not ator.forma:
+            ator.recargas[t.id] = t.recarga  # na Forma Desperta, nada entra em recarga
+        if ator.forma:
+            ator.forma -= 1
         if ator.efeitos.revide_permanente:
             ator.revide = max(ator.revide, ator.efeitos.revide_permanente)  # Pele de Espinhos
         if ator.santuario and not ativou_santuario:
@@ -401,6 +591,12 @@ class Luta:
             sombra,
             copiou,
             extra,
+            despertou,
+            critico=critico,
+            curou=curou,
+            selou=selou,
+            atordoou=atordoou,
+            instintos=instintos,
         )
         self.log.append(acao)
         self.abertura = False
@@ -417,14 +613,34 @@ class Luta:
         return acao
 
 
+def _extra_da_dor(t: Tecnica, ator: Lutador) -> int:
+    extra = int(t.dano_por_dor * ator.dor)
+    return min(extra, t.teto_dor) if t.teto_dor else extra
+
+
+def _selar_alvo(luta: Luta, alvo: Lutador) -> Tecnica | None:
+    """O que a Corrente prende: a ação anunciada do rival, ou a melhor técnica pronta."""
+    if alvo is luta.rival:
+        t = luta.intencao_rival
+        return t if t is not None and t in alvo.tecnicas else None
+    prontas = [t for t in alvo.tecnicas if alvo.pronta(t)]
+    return max(prontas, key=valor_tecnica) if prontas else None
+
+
 def _valor_ofensivo(luta: Luta, ator: Lutador, t: Tecnica) -> float:
     if t.copia_rival:
         roubada = luta.ultima_tecnica(luta.outro(ator))
         return _valor_ofensivo(luta, ator, roubada) if roubada else 0.0
     carma = ator.carma.valor if ator.carma else 0.0
-    base = t.dano + t.dano_por_carma * carma
+    base = t.dano + t.dano_por_carma * carma + _extra_da_dor(t, ator)
     extra = ator.bonus_dano + ator.efeitos.bonus_dano
-    return (base + extra) * t.golpes if base > 0 else 0.0
+    if t is luta.basico:
+        extra += ator.efeitos.basico_dano
+        golpes = t.golpes + ator.efeitos.basico_golpes
+    else:
+        golpes = t.golpes
+    valor = (base + extra) * golpes if base > 0 else 0.0
+    return valor * (1 + t.critico * (CRITICO - 1))
 
 
 ROMANOS = ("", "", " II", " III", " IV", " V")
@@ -448,13 +664,15 @@ def evoluir(t: Tecnica, fator: float = 1.3) -> Tecnica:
         revide=cresce(t.revide),
         marca=cresce(t.marca),
         fortalecer=cresce(t.fortalecer),
+        cura=cresce(t.cura),
         recarga=recarga,
     )
 
 
 def valor_tecnica(t: Tecnica) -> float:
     """Valor bruto de uma técnica, para escolher o que um Contrato sacrifica."""
-    return t.dano * t.golpes + t.bloqueio + t.revide + 3 * (t.marca + t.fortalecer)
+    valor = t.dano * t.golpes + t.bloqueio + t.revide + 3 * (t.marca + t.fortalecer)
+    return valor + t.cura + 6 * t.atordoar + 4 * t.selar
 
 
 def _vale_o_preco(luta: Luta, j: Lutador, t: Tecnica) -> bool:
@@ -465,6 +683,10 @@ def _vale_o_preco(luta: Luta, j: Lutador, t: Tecnica) -> bool:
     """
     if t.marca:
         return luta.rival.vida >= 12 and luta.rival.marca < 2 * t.marca
+    if t.atordoar:
+        return luta.rival.vida >= 12 and not luta.rival.pular
+    if t.cura and not t.dano:
+        return j.vida < j.vida_max * 0.6
     if t.santuario:
         return luta.rival.vida >= 20 and j.santuario == 0
     if t.turno_extra:  # sem preço, sempre; com preço em Carma, só se sobra Carma
@@ -495,7 +717,14 @@ def escolher_jogador_auto(luta: Luta) -> Tecnica:
     j = luta.jogador
     prontas = [t for t in luta.prontas(j) if _vale_o_preco(luta, j, t)] or luta.prontas(j)
     vista = luta.ver_intencao()
-    defesas = [t for t in prontas if t.tipo == "defesa"]
+    selos = [t for t in prontas if t.selar]
+    if isinstance(vista, Tecnica) and vista is not luta.basico and selos:
+        if _valor_ofensivo(luta, luta.rival, vista) >= 8:
+            return selos[0]  # prende o golpe que vem
+    curas = [t for t in prontas if t.cura and not t.dano]
+    if curas and j.vida < j.vida_max * 0.45:
+        return max(curas, key=lambda t: t.cura)
+    defesas = [t for t in prontas if t.tipo == "defesa" and not t.cura]
     if isinstance(vista, Tecnica) and vista.perigosa and defesas:
         return max(defesas, key=lambda t: t.bloqueio + t.revide)
     if vista == "ataque" and defesas and j.vida < j.vida_max * 0.35:

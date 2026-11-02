@@ -14,9 +14,12 @@ from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
-from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica
-from karmabound.figuras import desenhar_lutador
+from karmabound import vfx
+from karmabound.arenas import desenhar_arena
+from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica, _extra_da_dor
+from karmabound.figuras import ESTILOS, desenhar_lutador
 from karmabound.jornada import Jornada
+from karmabound.run import espacos
 from karmabound.visual import (
     ALTURA,
     FERRO,
@@ -37,6 +40,7 @@ from karmabound.visual import (
 )
 
 DURACAO_ACAO = 0.6
+DURACAO_DESPERTAR = 1.6
 PAUSA_RIVAL = 0.35
 
 POS_RIVAL = (480, 282)
@@ -50,6 +54,15 @@ KANJI_BASICO = "打"
 KANJI_HESITAR = "躊"
 NOMES_TIPO = {"ataque": "um ATAQUE", "defesa": "uma DEFESA", "maldita": "algo MALDITO"}
 ROMANOS = ("I", "II", "III", "IV", "V")
+ESCALA_JOGADOR = 1.2
+NOME_ESTILO = {"espadachim": "Ronin", "monge": "Monge Errante", "ninja": "Shinobi", "oni": "Oni"}
+COR_ESTILO = {
+    "espadachim": (60, 22, 24, 255),
+    "monge": (62, 44, 24, 255),
+    "ninja": (30, 32, 44, 255),
+    "oni": (74, 18, 16, 255),
+    "colosso": (44, 14, 34, 255),
+}
 
 
 @dataclass
@@ -86,6 +99,13 @@ class LutaScene(IScene):
         }
         self.aviso = ""
         self.aviso_ate = 0.0
+        self.desperto: tuple[object, float] | None = None  # (fatia, início) da cena do Despertar
+        # o efeito tocando: (nome, quem age, quem recebe, início, crítico)
+        self.efeito: tuple[str, Lutador, Lutador, float, bool] | None = None
+        rival = self.luta.rival
+        self.estilo_rival = (
+            "colosso" if rival.chefe else ESTILOS[(jornada.n_luta * 3 + jornada.capitulo) % 4]
+        )
         self.registro = (
             "A luta começa." if self.luta.vez is self.j.jogador else "O rival se move primeiro."
         )
@@ -103,6 +123,9 @@ class LutaScene(IScene):
         self.nomes = {tid: f.nome for tid, f in {**fatias, **dons}.items()}
         self.nomes[jornada.ctx.basico.id] = jornada.ctx.basico.nome
         self.nomes[HESITAR.id] = HESITAR.nome
+        todas = [f for roda in jornada.ctx.rodas.values() for f in roda.fatias]
+        self.origens = {f.id: f.origem for f in todas}
+        self.origens[jornada.ctx.basico.id] = jornada.ctx.combate["golpe_basico"].get("origem", "")
 
     # --------------------------------------------------------------- slots
 
@@ -111,7 +134,7 @@ class LutaScene(IScene):
         prontas = self.luta.prontas(self.j.jogador)
         primeiro = HESITAR if prontas == [HESITAR] else self.luta.basico
         tecnicas = list(self.j.jogador.tecnicas)
-        vazios = [None] * (self.j.ctx.combate["espacos"] - len(tecnicas))
+        vazios = [None] * (espacos(self.j.estado, self.j.ctx) - len(tecnicas))
         dom = [self.j.jogador.tecnica_dom] if self.j.jogador.tecnica_dom else []
         return [primeiro] + tecnicas + vazios + dom
 
@@ -121,7 +144,7 @@ class LutaScene(IScene):
     def _motivo_indisponivel(self, t: Tecnica) -> str:
         j = self.j.jogador
         if j.pular:
-            return "você perde este turno (o preço do Santuário)"
+            return "você perde este turno"
         if t.copia_rival and self.luta.ultima_tecnica(self.luta.rival) is None:
             return "o rival ainda não usou nada para roubar"
         if t.tipo in j.efeitos.proibir_tipos or (
@@ -153,7 +176,14 @@ class LutaScene(IScene):
         ator = j if acao.ator == j.nome else rival
         alvo = rival if ator is j else j
         self.golpe = (ator, self.relogio)
-        self.anim_ate = self.relogio + DURACAO_ACAO
+        tecnica = next(
+            (t for t in [*ator.tecnicas, ator.tecnica_dom] if t and t.id == acao.tecnica), None
+        )
+        nome_efeito = vfx.efeito_de(acao.tecnica, tecnica.tipo if tecnica else "ataque")
+        if acao.copiou:  # o Olho Roubado toca o efeito da técnica roubada, depois do olho
+            nome_efeito = "olho"
+        self.efeito = (nome_efeito, ator, alvo, self.relogio, acao.critico)
+        self.anim_ate = self.relogio + max(DURACAO_ACAO, vfx.duracao(nome_efeito))
         ax, ay = self._centro(alvo)
         bx, by = self._centro(ator)
         nome = self._nome(acao.tecnica)
@@ -195,9 +225,39 @@ class LutaScene(IScene):
         if acao.turno_extra:
             self.textos.append(Texto(bx, by - 150, "刻 ação extra!", OURO, self.relogio, 20))
             partes.append("e age de novo")
+        if acao.critico:
+            self.textos.append(Texto(ax, ay - 150, "黒閃!", SANGUE_VIVO, self.relogio, 30))
+            partes.append("Clarão Negro: ×2,5")
+        if acao.curou:
+            self.textos.append(Texto(bx, by - 120, f"+{acao.curou}", VERDE_JADE, self.relogio, 30))
+            partes.append(f"curou {acao.curou}")
+        if acao.selou:
+            self.textos.append(Texto(ax, ay - 130, "鎖 selado!", OURO, self.relogio, 22))
+            partes.append(f"selou {self._nome(acao.selou)}")
+        if acao.atordoou:
+            self.textos.append(
+                Texto(ax, ay - 130, "幻 perde o turno", SANGUE_VIVO, self.relogio, 20)
+            )
+            partes.append("perde o próximo turno")
+        if acao.instintos:
+            self.textos.append(Texto(ax, ay - 120, "極 esquivou!", TINTA, self.relogio, 22))
+            partes.append("o instinto esquivou e revidou")
+        if acao.despertou:
+            partes.append("o golpe fatal não veio: você despertou")
         self.registro = " · ".join(partes)
+        if acao.despertou:
+            self._celebrar(self.luta.ultimo_despertar)
         if self.luta.vez is rival:
             self.proxima_rival = self.anim_ate + PAUSA_RIVAL
+
+    def _celebrar(self, fatia) -> None:
+        """A cena do Despertar: trava a entrada um pouco mais que uma ação."""
+        self.desperto = (fatia, self.relogio)
+        if self.j.grimorio is not None:
+            self.j.grimorio.ver([fatia])
+        self.anim_ate = max(self.anim_ate, self.relogio + DURACAO_DESPERTAR)
+        self.tremor[id(self.j.jogador)] = self.relogio
+        self.registro = f"覚醒 {fatia.nome}: {fatia.texto}"
 
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
@@ -223,6 +283,9 @@ class LutaScene(IScene):
                 self._animar(self.luta.turno_rival())
             return
 
+        if e.is_action_pressed("despertar") and self.luta.pode_despertar():
+            self._celebrar(self.luta.despertar())  # não gasta o turno
+            return
         slots = self.slots()
         if self.modo == "sacrificio":
             self._escolher_sacrificio(slots)
@@ -288,7 +351,7 @@ class LutaScene(IScene):
 
     def render(self, world, renderer: IRenderer) -> None:
         r = renderer
-        r.draw_ui_rect(0, 0, LARGURA, ALTURA, FUNDO)
+        desenhar_arena(r, self.j.arco.id if self.j.arco else None, self.relogio)
         # ensō atrás do rival
         r.draw_ui_arc(
             POS_RIVAL[0],
@@ -299,12 +362,14 @@ class LutaScene(IScene):
             alpha(TINTA, 18),
             10,
         )
-        self._cabecalho(r)
         self._rival(r)
+        self._jogador(r)
+        self._efeito(r)
+        self._cabecalho(r)
         self._intencao(r)
         self._corrente(r)
-        self._jogador(r)
         self._selos(r)
+        self._origem(r)
         self._rodape(r)
         for t in self.textos:
             k = (self.relogio - t.inicio) / 1.1
@@ -317,8 +382,55 @@ class LutaScene(IScene):
                 alpha(t.cor, 255 * (1 - k**2)),
                 "center",
             )
+        self._cena_despertar(r)
         if self.modo == "fim" and self.relogio >= self.anim_ate:
             self._banner(r)
+
+    def _corpo(self, lutador: Lutador) -> tuple[float, float]:
+        """O centro do corpo (os efeitos saem e chegam aqui), com o deslocamento do golpe."""
+        x, y = self._centro(lutador)
+        dx, dy = self._deslocamento(lutador)
+        escala = ESCALA_JOGADOR if lutador is self.j.jogador else self._escala_rival()
+        return x + dx, y + dy - 66 * escala
+
+    def _efeito(self, r: IRenderer) -> None:
+        if self.efeito is None:
+            return
+        nome, ator, alvo, inicio, forte = self.efeito
+        k = (self.relogio - inicio) / vfx.duracao(nome)
+        vfx.desenhar(r, nome, self._corpo(ator), self._corpo(alvo), k, self.relogio, forte)
+
+    def _origem(self, r: IRenderer) -> None:
+        """A homenagem da técnica sob o cursor, acima dos selos."""
+        slots = self.slots()
+        if (
+            self.modo != "escolher"
+            or not 0 <= self.cursor < len(slots)
+            or slots[self.cursor] is None
+        ):
+            return
+        origem = self.origens.get(slots[self.cursor].id, "")
+        if origem:
+            self._texto(r, 624, 446, f"※ {origem}", 13, alpha(TINTA, 110), "center")
+
+    def _cena_despertar(self, r: IRenderer) -> None:
+        if self.desperto is None:
+            return
+        fatia, inicio = self.desperto
+        k = (self.relogio - inicio) / DURACAO_DESPERTAR
+        if k >= 1:
+            return
+        vfx.aura(r, fatia.id, *self._corpo(self.j.jogador), k, self.relogio)
+        if k < 0.2:
+            r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(OURO, 130 * (1 - k / 0.2)))
+        brilho = 255 * min(1.0, k * 4) * (1 - max(0.0, k - 0.75) / 0.25)
+        r.draw_ui_rect(0, 220, LARGURA, 210, alpha(FUNDO, 200 * brilho / 255))
+        self._texto(r, 480, 262, "覚醒", 70, alpha(OURO, brilho), "center")
+        self._texto(r, 480, 330, f"{fatia.kanji}  {fatia.nome}", 30, alpha(OURO, brilho), "center")
+        for i, linha in enumerate(quebrar(fatia.texto, 70)[:2]):
+            self._texto(r, 480, 370 + i * 22, linha, 16, alpha(TINTA, brilho), "center")
+        if fatia.origem:
+            self._texto(r, 480, 416, f"※ {fatia.origem}", 14, alpha(TINTA, brilho * 0.6), "center")
 
     def _cabecalho(self, r: IRenderer) -> None:
         j = self.j
@@ -352,11 +464,14 @@ class LutaScene(IScene):
             lx = x + largura * lut.efeitos.morte_abaixo
             r.draw_ui_line(lx, y - 3, lx, y + 11, SANGUE_VIVO, 2)
 
+    def _escala_rival(self) -> float:
+        return 1.05 if self.luta.rival.chefe else 0.92
+
     def _rival(self, r: IRenderer) -> None:
         rival = self.luta.rival
         x, y = POS_RIVAL
         dx, dy = self._deslocamento(rival)
-        escala = 1.05 if rival.chefe else 0.92
+        escala = self._escala_rival()
         if rival.chefe:
             r.draw_ui_circle(x, y - 66, 86, alpha(SANGUE_VIVO, 24))
         clarao = 0.0
@@ -368,12 +483,21 @@ class LutaScene(IScene):
             x + dx,
             y + dy,
             escala,
-            (60, 22, 24, 255),
+            COR_ESTILO[self.estilo_rival],
             alpha(TINTA, 230),
+            guarda=1.0 if rival.bloqueio or rival.revide else 0.0,
             clarao=clarao,
             clarao_cor=SANGUE_VIVO,
+            estilo=self.estilo_rival,
+            tempo=self.relogio,
         )
-        nome = "Chefe do capítulo" if rival.chefe else f"Rival {self.j.n_luta}"
+        if rival.pular:  # preso na ilusão
+            self._texto(r, x, y - 200, "幻", 26, alpha(SANGUE_VIVO, 200), "center")
+        nome = (
+            "Chefe do capítulo"
+            if rival.chefe
+            else f"{NOME_ESTILO[self.estilo_rival]} · Rival {self.j.n_luta}"
+        )
         self._texto(r, x, 36, nome, 22, TINTA, "center")
         self._barra(r, x - 120, 72, 240, rival, SANGUE_VIVO)
         self._texto(
@@ -392,7 +516,7 @@ class LutaScene(IScene):
 
     def _intencao(self, r: IRenderer) -> None:
         x, y = 660, 150
-        r.draw_ui_rect(x - 14, y - 14, 276, 88, alpha(LACA, 230))
+        r.draw_ui_rect(x - 14, y - 14, 276, 96, alpha(LACA, 230))
         self._texto(r, x, y - 6, "próxima ação do rival", 14, alpha(TINTA, 120))
         vista = self.luta.ver_intencao()
         if self.j.jogador.cego:
@@ -413,6 +537,9 @@ class LutaScene(IScene):
             if vista.perigosa:
                 detalhe += f" · perigosa · sutil {vista.sutileza}"
             self._texto(r, x + 46, y + 42, detalhe, 14, alpha(TINTA, 140))
+            origem = self.origens.get(vista.id, "")
+            if origem:
+                self._texto(r, x, y + 62, f"※ {origem}", 12, alpha(TINTA, 100))
 
     def _corrente(self, r: IRenderer) -> None:
         carma = self.j.carma
@@ -443,9 +570,24 @@ class LutaScene(IScene):
             else:
                 r.draw_ui_line(x - 13, y, x + 13, y, cor, 3)
         self._texto(r, 24, y - 12, "業", 24, OURO)
-        if cheio:
+        guardados = carma.guardados
+        if (
+            self.luta.pode_despertar()
+            and self.luta.vez is self.j.jogador
+            and self.modo == "escolher"
+        ):
+            brilho = 160 + 95 * pulso
+            extra = f" ({guardados} guardado{'s' if guardados > 1 else ''})" if guardados else ""
+            self._texto(r, 480, y + 14, f"E · DESPERTAR{extra}", 18, alpha(OURO, brilho), "center")
+        elif cheio:
             self._texto(
-                r, 480, y + 16, "transbordando: o próximo giro desperta", 15, SANGUE_VIVO, "center"
+                r,
+                480,
+                y + 16,
+                "transbordando: desperte (E), ou à beira da morte",
+                15,
+                SANGUE_VIVO,
+                "center",
             )
         else:
             self._texto(
@@ -467,22 +609,27 @@ class LutaScene(IScene):
         if inicio is not None and 0 <= self.relogio - inicio < 0.3:
             clarao = 1 - (self.relogio - inicio) / 0.3
         guarda = 1.0 if j.bloqueio or j.revide else 0.0
+        for ativo, aura in ((j.forma, "forma_desperta"), (j.instinto, "instinto_puro")):
+            if ativo:  # a aura fica enquanto o Despertar dura
+                vfx.aura(r, aura, x + dx, y + dy - 66 * ESCALA_JOGADOR, 0.12, self.relogio)
         desenhar_lutador(
             r,
             x + dx,
             y + dy,
-            1.2,
+            ESCALA_JOGADOR,
             TINTA,
             alpha((255, 255, 255, 255), 200),
             guarda=guarda,
             clarao=clarao,
             clarao_cor=SANGUE_VIVO,
+            tempo=self.relogio,
         )
         self._texto(r, 40, 360, "Você", 22, TINTA)
         dom = f"{self.j.dom.kanji} {self.j.dom.nome}" if self.j.dom else ""
         self._texto(r, 106, 365, dom, 15, alpha(TINTA, 130))
         self._barra(r, 40, 394, 250, j, TINTA)
-        info = f"{max(0, j.vida)} / {j.vida_max} · Vel {j.velocidade} · Perc {j.percepcao}"
+        perc = j.percepcao + j.percepcao_luta
+        info = f"{max(0, j.vida)} / {j.vida_max} · Vel {j.velocidade} · Perc {perc}"
         self._texto(r, 40, 406, info, 15, alpha(TINTA, 150))
         estados = []
         if j.bloqueio:
@@ -501,6 +648,14 @@ class LutaScene(IScene):
             estados.append(f"灰 escudo {j.escudos}")
         if self.j.estado.mesa.carma.guardados:
             estados.append(f"封 {self.j.estado.mesa.carma.guardados} guardado")
+        if j.forma:
+            estados.append(f"醒 forma desperta {j.forma}")
+        if j.retrib_golpes:
+            estados.append(f"報 +{j.retrib_por_golpe} × {j.retrib_golpes}")
+        if j.instinto:
+            estados.append(f"極 instinto {j.instinto}")
+        if j.dano_mult > 1:
+            estados.append(f"痣 dano ×{j.dano_mult:.1f}".replace(".", ","))
         self._texto(r, 40, 428, "   ".join(estados), 15, alpha(OURO, 170))
 
     def _selos(self, r: IRenderer) -> None:
@@ -576,10 +731,24 @@ class LutaScene(IScene):
         if t.consome_carma:
             return f"{int(t.dano_por_carma * self.j.carma.valor)} · gasta o Carma"
         partes = []
-        if t.dano:
+        if t.dano_por_dor:
+            partes.append(f"{t.dano + _extra_da_dor(t, j)} · dor")
+        elif t.dano:
             partes.append(
                 f"{t.dano}×{t.golpes}" if t.golpes > 1 else f"{t.dano + j.efeitos.bonus_dano}"
             )
+        if t.absoluto:
+            partes.append("absoluto")
+        elif t.perfura:
+            partes.append("fura")
+        if t.critico:
+            partes.append(f"{t.critico:.0%} ×2,5")
+        if t.cura:
+            partes.append(f"cura {t.cura}")
+        if t.selar:
+            partes.append("sela")
+        if t.atordoar:
+            partes.append("atordoa")
         if t.bloqueio:
             partes.append(f"bloq {t.bloqueio}")
         if t.revide:

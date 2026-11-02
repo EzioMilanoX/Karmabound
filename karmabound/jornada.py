@@ -22,6 +22,7 @@ import random
 from dataclasses import dataclass, field
 
 from karmabound.combate import Luta, Lutador, Tecnica, valor_tecnica
+from karmabound.grimorio import Grimorio
 from karmabound.mesa import Giro, Mesa
 from karmabound.rodas import Fatia
 from karmabound.run import (
@@ -35,7 +36,6 @@ from karmabound.run import (
     comprar_ganhos,
     encerrar_luta,
     girar,
-    liberar_despertar,
     medir_restricoes,
     receber_reliquia,
     receber_tecnica,
@@ -69,6 +69,7 @@ class Jornada:
     aviso: str = ""  # mensagem para a próxima tela (fragmento, evolução)
     sacrificios: dict[str, dict[str, float]] = field(default_factory=dict)  # cache do Altar
     amostras_altar: int = 80
+    grimorio: Grimorio | None = None  # registra o que sai da roleta (só quem joga)
 
     # ------------------------------------------------------------------ começo
 
@@ -129,14 +130,9 @@ class Jornada:
 
     def _girar(self, roda: str) -> Giro:
         self.giro = girar(self.estado, self.ctx, roda)
+        if self.grimorio is not None:
+            self.grimorio.ver(self.giro.fatias)
         return self.giro
-
-    def pode_liberar_despertar(self) -> bool:
-        return self.estado.mesa.carma.guardados > 0 and not self.estado.liberando
-
-    def liberar_despertar(self) -> bool:
-        """Coração Selado: o próximo giro desperta."""
-        return liberar_despertar(self.estado)
 
     # ------------------------------------------------------------------ fases
 

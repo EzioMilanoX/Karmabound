@@ -134,6 +134,12 @@ def capturar_run(destino: Path) -> list[Path]:
     j.jogador.percepcao = 2
     luta = LutaScene(j, ent, nada, nada)
     foto(luta, "run_03_luta", 2.0)
+    j.carma.valor = j.carma.config.maximo
+    while j.luta.vez is not j.jogador and not j.luta.acabou:
+        luta.update(None, 1 / 60)
+    luta.anim_ate = 0
+    foto(luta, "run_03b_luta_despertar_pronto")
+    foto(luta, "run_03c_despertar", 0.5, ["despertar"])
 
     j.jogador.tecnicas.append(Tecnica.de_fatia(tec["julgamento"]))
     j.pendente, j.fase = tec["contrato"], "substituir"

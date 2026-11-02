@@ -112,6 +112,7 @@
       <li><a href="#run">Uma run, tela a tela</a></li>
       <li><a href="#poderes">Quebrados, mas com preço</a></li>
       <li><a href="#roleta-importa">Tudo o que sai da roleta vale</a></li>
+      <li><a href="#homenagens">Todo poder tem uma origem</a></li>
       <li><a href="#modos">Quatro modos, um piloto</a></li>
       <li><a href="#votos">Votos que pesam quem você é</a></li>
       <li><a href="#dados">Tudo que é número é dado</a></li>
@@ -148,7 +149,7 @@
 </table>
 <p>Na tela, cada roda é uma <strong>mandala de selos</strong>: um círculo ritual em que cada fatia é um selo com um kanji. O selo aceso corre pelo círculo, desacelera e para. O resultado já estava decidido antes de a animação começar — o sorteio é feito pela regra, por seed, e a tela só mostra o caminho até ele. Por isso qualquer giro estranho é reproduzível.</p>
 <div class="par">
-  <figure><img src="telas/01_parado.png" alt="A roda do Destino parada, com oito selos e o kanji 命 no centro"><figcaption>A roda do Destino, parada.</figcaption></figure>
+  <figure><img src="telas/01_parado.png" alt="A roda do Destino parada, com catorze selos e o kanji 命 no centro"><figcaption>A roda do Destino, parada.</figcaption></figure>
   <figure><img src="telas/04_escolhendo.png" alt="A roda de Técnicas com três selos sorteados, numerados 1, 2 e 3"><figcaption>Técnicas: três selos sorteados, numerados na mandala; você escolhe um.</figcaption></figure>
 </div>
 
@@ -174,14 +175,13 @@
 </ul>
 <div class="par">
   <figure><img src="telas/06_carma_pity_suave.png" alt="Correntes rachadas e avermelhadas com o Carma em 80"><figcaption>Carma 80: as correntes cedem, as taxas altas sobem.</figcaption></figure>
-  <figure><img src="telas/07_carma_transbordando.png" alt="Correntes vermelhas tremendo com o Carma em 100"><figcaption>Carma 100: o próximo giro desperta.</figcaption></figure>
+  <figure><img src="telas/07_carma_transbordando.png" alt="Correntes vermelhas tremendo com o Carma em 100"><figcaption>Carma 100: o Despertar espera a luta.</figcaption></figure>
 </div>
 
 <h2 id="despertar"><span class="kanji">覚</span>A roda se quebra</h2>
-<p>No Despertar, um clarão dourado cobre a tela, 覚醒 aparece no centro, e os elos voam para fora até sumir. Depois, um giro garantido da raridade máxima. Despertar é se libertar do destino que a roda impunha.</p>
-<figure><img src="telas/09_quebra_meio.png" alt="O kanji 覚醒 dourado no centro e os elos da corrente voando para fora da tela"><figcaption>As correntes se partindo.</figcaption></figure>
-<p>A frequência foi decidida antes de qualquer número: <strong>uma ou duas vezes por run</strong>, para ser um momento lembrado e não uma rotina. Com lutas reais simuladas, o Carma transborda cerca de <strong>1,25 vez por run</strong>. Algumas runs terminam sem nenhum Despertar — nem todo mundo recebe seu momento.</p>
-<div class="nota">O que o Despertar <em>faz</em> dentro da luta ainda está em aberto. A decisão é que haverá variedade — a dor da luta voltando ao rival, um destino roubado — e que o gatilho ainda será escolhido.</div>
+<p>O Despertar acontece <strong>na luta</strong>. Com o Carma cheio, você desperta quando quiser — sem gastar o turno — ou ele dispara sozinho quando um golpe ia te matar, e o golpe não vem. O tipo sai de uma roda própria, a <strong>Roda do Despertar</strong>, com oito: 報 Retribuição (a dor que você levou na luta volta ao rival), 奪 Tomar o Destino (você rouba a melhor técnica dele e trava as outras), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e dois golpes que não ferem), 卍 Liberação Final (o Bankai: suas técnicas sobem um nível na luta), 極 Instinto Puro (o Ultra Instinto: 60% de esquiva, com revide), 仙 Modo Eremita (o Modo Sábio) e 痣 Marca do Caçador (+50% de dano, ao preço de vida máxima para sempre). E o giro seguinte, depois da luta, vem Divino garantido.</p>
+<figure><img src="telas/run_03c_despertar.png" alt="Na luta, 覚醒 em dourado e o tipo sorteado, Tomar o Destino, com as correntes douradas em volta do jogador"><figcaption>Um Despertar na luta: saiu Tomar o Destino, e a Investida do rival virou sua.</figcaption></figure>
+<p>A frequência foi decidida antes de qualquer número: <strong>uma ou duas vezes por run</strong>, para ser um momento lembrado e não uma rotina. Com lutas reais simuladas, o jogador desperta cerca de <strong>1,2 vez por run</strong>. Algumas runs terminam sem nenhum Despertar — nem todo mundo recebe seu momento.</p>
 
 <h2 id="luta"><span class="kanji">闘</span>Uma luta que cabe na cabeça</h2>
 <p>Duelo 1v1, turnos alternados, e a regra mais simples que ainda gera decisões: <strong>só recarga</strong>.</p>
@@ -215,9 +215,9 @@
 <table>
   <thead><tr><th></th><th>Poder</th><th>O que faz</th><th>O preço</th><th class="num">Vale</th></tr></thead>
   <tbody>
-    <tr><td class="k r-maldito">呪</td><td>Marca da Maldição</td><td>Golpe de 10; o rival sofre 3 a cada turno, e as Marcas se somam</td><td>você sofre 1 por turno por Marca</td><td class="num">+8</td></tr>
-    <tr><td class="k r-divino">契</td><td>Contrato</td><td>Golpe de 40, uma vez por luta; o demônio cresce +10 a cada técnica consumida</td><td>cada uso destrói uma das suas outras técnicas, para sempre</td><td class="num">~+5</td></tr>
-    <tr><td class="k r-divino">裁</td><td>Julgamento</td><td>Dano igual a 1,3 × o seu Carma</td><td>consome todo o Carma — e o Despertar que vinha com ele</td><td class="num">+14</td></tr>
+    <tr><td class="k r-maldito">呪</td><td>Marca da Maldição</td><td>Golpe de 10; o rival sofre 3 a cada turno, e as Marcas se somam</td><td>você sofre 1 por turno por Marca</td><td class="num">+3</td></tr>
+    <tr><td class="k r-divino">契</td><td>Contrato</td><td>Golpe de 40, uma vez por luta; o demônio cresce +5 a cada técnica consumida</td><td>cada uso destrói uma das suas outras técnicas, para sempre</td><td class="num">+5</td></tr>
+    <tr><td class="k r-divino">裁</td><td>Julgamento</td><td>Dano igual a 2 × o seu Carma</td><td>consome todo o Carma — e o Despertar que vinha com ele</td><td class="num">+21</td></tr>
   </tbody>
 </table>
 <p>O Julgamento é a escolha mais temática do jogo: a dor acumulada pode virar um golpe agora ou esperar o Despertar. Não dá para ter os dois.</p>
@@ -226,15 +226,30 @@
 <p>O <strong>Dom</strong> do Destino muda a run inteira: alguns são passivos (Corpo Resistente, Sangue Fervente, Sombra Leal, Pele de Cinzas; Reflexo Treinado é a única sorte dentro da luta, uma chance de esquiva), outros são uma técnica própria num sexto selo (Olho Roubado, Santuário, Instante Suspenso). As <strong>Relíquias</strong> se acumulam e repetidas se somam. O <strong>Arco</strong> muda a regra do capítulo para os dois lados — a Invasão chega a acrescentar uma luta. E uma técnica que sai de novo vira <strong>fragmento</strong>: dois fragmentos fazem ela evoluir para o nível II.</p>
 <p>Cada item foi medido do mesmo jeito que os poderes, contra uma régua por raridade: Cinza +1 a +3, Sangue +3 a +5, Maldito +5 a +10, Divino +10 a +20. Dois achados vieram da medição, não do papel: o Instante Suspenso gastava o próprio turno e devolvia um (ganho zero) até virar "duas ações depois dele"; e qualquer preço em Carma pesa demais enquanto o Carma cheio garante um Divino — por isso o Instante custa vida.</p>
 
+<h2 id="homenagens"><span class="kanji">源</span>Todo poder tem uma origem</h2>
+<p>Cada uma das 59 habilidades é uma <strong>homenagem com nome próprio</strong>: o jogo não usa o nome do original, mas escreve a origem na carta — <em>※ Rasengan · Naruto</em>. Ela aparece na roleta, sob o selo escolhido na luta, na leitura da intenção do rival e no <strong>Grimório</strong>, que guarda entre runs tudo o que já saiu da roleta.</p>
+<p>A homenagem não é só o nome: a mecânica vem da cena original. A <strong>Espiral Concentrada</strong> (Rasengan) atravessa o bloqueio. O <strong>Clarão Negro</strong> (Kokusen) tem 20% de chance de sair ×2,5, e ninguém controla quando. A <strong>Corrente do Julgamento</strong> (Kurapika) prende a ação que o rival anunciou. A <strong>Esfera dos Mil</strong> (Genki Dama) cresce com toda a dor que você sofreu. O <strong>Corte do Mundo</strong> (Sukuna) atravessa tudo e não pode ser percebido, mas só fica pronto no quarto turno, como o corte que precisou ver a adaptação antes. O <strong>Corpo Perfeito</strong> (Sukuna da Era Heian) dá quatro braços e tira a defesa. E o <strong>Ovo do Eclipse</strong> (Behelit) desperta à beira da morte, mesmo sem Carma — ao preço do seu Dom.</p>
+<div class="par">
+  <figure><img src="telas/vitrine/01_montanha_espiral.png" alt="A Espiral Concentrada, uma esfera azul girando, atingindo um rival no Monte Myoboku"><figcaption>A Espiral, no Monte Myoboku.</figcaption></figure>
+  <figure><img src="telas/vitrine/03_eclipse_clarao_negro.png" alt="Raios negros de borda vermelha no rival, diante de um sol negro com coroa vermelha"><figcaption>O Clarão Negro saindo, sob o Eclipse.</figcaption></figure>
+  <figure><img src="telas/vitrine/05_shibuya_dominio.png" alt="O Domínio cobrindo a cidade à noite, com um portal vermelho e 領域展開"><figcaption>Santuário: o Domínio fecha Shibuya.</figcaption></figure>
+  <figure><img src="telas/vitrine/06_marineford_corte_do_mundo.png" alt="Uma fenda negra atravessa a tela inteira na frente do chefe de quatro braços, em Marineford"><figcaption>O Corte do Mundo contra o chefe, em Marineford.</figcaption></figure>
+</div>
+<p>Cada Arco tem a sua <strong>arena</strong>, cada rival uma silhueta (Ronin, Monge Errante, Shinobi, Oni; o chefe é um colosso de quatro braços), e cada Despertar a sua aura.</p>
+<div class="par">
+  <figure><img src="telas/vitrine/15_despertar_liberacao.png" alt="O Despertar Liberação Final na luta, com anéis de pressão negra e vermelha em volta do jogador"><figcaption>Liberação Final (Bankai): todas as técnicas sobem um nível.</figcaption></figure>
+  <figure><img src="telas/vitrine/13_grimorio.png" alt="O Grimório: lista de técnicas à esquerda, algumas como ???, e a carta da Corrente do Julgamento com a origem"><figcaption>O Grimório.</figcaption></figure>
+</div>
+
 <h2 id="modos"><span class="kanji">章</span>Quatro modos, um piloto</h2>
 <p>Os modos não foram ajustados no olho. Um <strong>piloto automático</strong> — uma IA simples que defende o que vê chegando e bate forte no resto — joga milhares de runs inteiras, e a vida dos rivais e a sua são ajustadas até cada modo bater na sua promessa.</p>
 <table>
   <thead><tr><th>Modo</th><th class="num">Vitória do piloto</th><th>Rivais</th><th class="num">Sua vida</th></tr></thead>
   <tbody>
-    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 4,4 por luta, chefe ×1,2</td><td class="num">80</td></tr>
-    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 4,65 por luta, chefe ×1,2</td><td class="num">76</td></tr>
-    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 4,7 por luta, chefe ×1,25</td><td class="num">70</td></tr>
-    <tr><td>Brutal</td><td class="num">~10%</td><td>12 + 5,8 por luta, chefe ×1,25</td><td class="num">68</td></tr>
+    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 5,1 por luta, chefe ×1,2</td><td class="num">80</td></tr>
+    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 5,35 por luta, chefe ×1,2</td><td class="num">76</td></tr>
+    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 5,35 por luta, chefe ×1,25</td><td class="num">70</td></tr>
+    <tr><td>Brutal</td><td class="num">~9%</td><td>12 + 6,55 por luta, chefe ×1,25</td><td class="num">68</td></tr>
   </tbody>
 </table>
 <p>O primeiro rival tem sempre 12 de vida: um modo fácil não deveria significar lutas vazias. O piloto é propositalmente simples — um jogador de verdade, lendo o rival, vence mais.</p>
@@ -282,8 +297,7 @@ python tools/gerar_catalogo.py      # docs/CATALOGO.md a partir dos dados</code>
 <h2 id="falta"><span class="kanji">未</span>O que ainda não existe</h2>
 <ul>
   <li>A compra manual de ganhos no Altar (hoje o Altar compra por você).</li>
-  <li>O efeito do Despertar dentro da luta (variedade e gatilho em aberto).</li>
-  <li>Rever Santuário e Contrato, que ficaram abaixo da régua dos Divinos.</li>
+  <li>Rever o que ficou fora da régua na última medição: Contrato, Lua Ilusória, Marca, Pele de Cinzas e Bandagem abaixo; Julgamento, Sangue de Soldado e Sentir a Intenção acima.</li>
   <li>A progressão entre runs e o estilo de arte definitivo dos personagens.</li>
   <li>Um executável que dispense o Python.</li>
 </ul>

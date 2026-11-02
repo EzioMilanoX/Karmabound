@@ -134,13 +134,33 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **Ritmo animado e rápido:** ~0,6 s por ação, número de dano subindo, "percebeu!" em verde e "surpresa!" em dourado; o rival age sozinho depois de uma pausa curta.
 - **Run completa jogável:** título com escolha de modo → Destino → Arco de cada capítulo → lutas → giro de Técnicas entre lutas (troca quando os 4 espaços estão cheios) → Relíquias às vezes → Altar quando sai o Juramento → fim. `jornada.py` é a run fase a fase, sem tela; `game.py` só troca de tela conforme a fase.
 - **Altar simples:** você escolhe até 3 restrições e a duração; o Altar mede cada uma contra o seu build, compra os ganhos e mostra a estimativa de lutas a mais ou a menos antes de você jurar. A compra manual de ganhos fica para depois.
-- **Despertar provisório:** enquanto o efeito na luta não é decidido, o Carma transbordado fica travado e o próximo giro de qualquer roda vira o Despertar (giro Divino garantido), como na roleta. O Julgamento ainda pode gastar esse Carma.
+
+### O Despertar (decidido e implementado em 2026-11-02)
+
+- **Gatilho:** com o Carma cheio (ou um Despertar guardado pelo Coração Selado), o jogador desperta **quando quiser** — tecla E na luta, e não gasta o turno. Se um golpe do rival for matá-lo antes, o Despertar **dispara sozinho e anula o golpe**.
+- **Variedade:** o tipo sai da **Roda do Despertar** (sorteio igual, fora do Carma), girada no momento:
+  - 報 **Retribuição:** a dor recebida na luta volta ao rival, dividida nos seus próximos 3 golpes.
+  - 奪 **Tomar o Destino:** rouba a melhor técnica do rival para o resto da run; as dele entram em recarga por 2 turnos.
+  - 醒 **Forma Desperta:** por 3 turnos, dano dobrado e nada entra em recarga.
+  - 鳳 **Renascer das Cinzas:** cura total, e os próximos 2 golpes do rival não ferem.
+- **O Divino garantido continua:** o próximo giro depois da luta vem Divino. O Carma cheio fica esperando a luta — não desperta mais no giro.
+- Frequência com o piloto (que desperta contra chefes ou com pouca vida): **~1,2 Despertar por run**.
+- O Despertar de verdade fez o jogo ~12 pontos mais fácil e mudou o valor de tudo que mexe com Carma (Santuário subiu de +6 para +14; Julgamento caiu para +3, Coração e Rosário subiram demais) — itens e modos recalibrados de novo.
+
+### Homenagens e visual (decidido e implementado em 2026-11-02)
+
+- **Toda habilidade é uma homenagem com nome próprio**, e a origem fica escrita (`origem` no JSON: "técnica · obra") na carta da roleta, sob o selo na luta, na intenção do rival e no Grimório. Fontes: shonen amplo (Naruto, One Piece, Bleach, Dragon Ball, HxH, JoJo, JJK, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling, Attack on Titan).
+- **24 habilidades novas** (10 técnicas, 6 Dons, 4 Relíquias, 4 Despertares), com mecânicas novas quando a referência pedia: atravessar bloqueio (Rasengan), golpe absoluto que espera o 4º turno (Corte do Mundo), crítico ×2,5 (Kokusen), surpresa sempre (Hekireki Issen), selar a ação anunciada (Corrente do Kurapika), cura (Ninjutsu Médico), dano pela dor sofrida (Genki Dama), atordoar (Tsukuyomi), Golpe duplo (Sukuna Heian), regeneração abaixo de 40% (Oni), espaço extra (Akuma no Mi), Despertar sem Carma (Behelit), e quatro Despertares (Bankai: técnicas +1 nível na luta; Ultra Instinto: 60% de esquiva com revide; Modo Sábio; Marca do Caçador: +50% de dano, −10% de vida para sempre).
+- **Medidas na régua.** Lições da medição: **ser perigosa** pesa muito numa técnica do jogador (o rival que percebe leva metade e devolve um Golpe) — a Espiral com 17 e perigosa valia menos que sem perigo; **Percepção e Velocidade valem demais** (+1 de Percepção num Cinza deu +9; +1 de Velocidade, +7) — o Sentir a Intenção virou "a surpresa do rival não ganha bônus", e o Sangue de Soldado subiu para Maldito.
+- **Os rivais também sorteiam as técnicas novas** (a Esfera dos Mil cresce com a dor deles), o que endureceu o jogo; os modos foram recalibrados.
+- **Visual:** um efeito por habilidade (`vfx.py`, funções puras do progresso da animação), uma arena por Arco (`arenas.py`), cinco silhuetas de rival (Ronin, Monge, Shinobi, Oni e o colosso dos chefes), uma aura por Despertar e cartas com moldura de raridade.
+- **A fonte de pincel (Yuji Syuku) não tem mácron nem setas** (ō, ū, ↳ viram um quadrado): as romanizações vão sem mácron (Myoboku, Tensho) e um teste confere todo texto do jogo contra a fonte.
+- **Grimório:** guarda os ids já vistos em `~/.karmabound/grimorio.json` (pasta trocável por `KARMABOUND_SAVE`; os testes usam uma temporária). Só a Jornada registra — o simulador nunca toca no arquivo.
 
 ### Ainda não implementado no combate
 
-- **Despertar:** vai ter **variedade** (ideias: Retribuição — a dor da luta volta ao rival; Tomar o destino — roubar uma técnica e travar as dele). **Gatilho em aberto** (assim que transborda, à beira da morte, ou quando o jogador quiser). Hoje a simulação só conta onde ele cairia.
 - Percepção 3 (ver duas à frente) ainda não existe.
-- Números das técnicas são rascunho; os poderes Malditos e Divinos têm efeito provisório até a conversa sobre o custo de cada um.
+- Números das técnicas comuns são rascunho.
 
 ## Votos vinculativos — o Juramento (blueprint GAM-11 O.A.T.H.)
 
@@ -180,36 +200,59 @@ Medidos com `python tools/medir_poder.py`: o jogador começa com o poder no 3º 
 
 Decidido: as três rodas que eram só texto passam a valer na luta; **sorte é permitida nos Dons** (a esquiva é a única sorte dentro da luta); os sistemas que faltavam foram criados (duplicatas, lutas extras, Despertar guardado). Régua estendida: **Cinza +1 a +3, Sangue +3 a +5** (Maldito +5 a +10, Divino +10 a +20).
 
-Valores medidos com `python tools/medir_poder.py` (Difícil, 7.500 runs por item; ruído ~±2 pontos):
+Valores medidos com `python tools/medir_poder.py` na dificuldade final (Difícil, 6.000 runs por item; ruído ~±2 pontos), depois das 24 habilidades-homenagem. O valor de um item depende da força do resto do jogo (o tamanho das rodas, o que os rivais sorteiam, os Divinos que todo Despertar entrega), então itens e modos foram recalibrados juntos.
 
 | Item | Raridade | Efeito | Valor |
 |---|---|---|---|
-| 体 Corpo Resistente (Dom) | Cinza | +3 de vida máxima | +3,1 |
-| 速 Reflexo Treinado (Dom) | Cinza | 4% de chance de esquivar um golpe | +3,1 |
-| 沸 Sangue Fervente (Dom) | Sangue | até +2 de dano, pela vida perdida | +4,8 |
-| 影 Sombra Leal (Dom) | Sangue | a sombra repete 8% de cada golpe | +5,0 |
-| 眼 Olho Roubado (Dom, técnica) | Maldito | usa a última técnica do rival com +40%; preço: cego até o próximo turno | +9,6 |
-| 灰 Pele de Cinzas (Dom) | Maldito | o 1º golpe de cada luta não fere; preço: cura em 55% | +12,4 ⚠️ |
-| 域 Santuário (Dom, técnica) | Divino | 1×/luta: 4 turnos de golpes imperceptíveis e +50%; preço: perde um turno | +6,3 ⚠️ |
-| 刻 Instante Suspenso (Dom, técnica) | Divino | 1×/luta: duas ações seguidas; preço: 3 de vida | +15,2 |
-| 布 Bandagem | Cinza | cura 2 no início de cada luta | +3,9 |
-| 符 Amuleto Rachado | Cinza | 1×/run, golpe fatal deixa com 1 de vida | +3,1 |
-| 骨 Rosário de Ossos | Sangue | +8 de Carma por rival derrotado | +7,5 ⚠️ |
-| 鬼 Máscara de Oni | Sangue | +1 de dano; preço: bloqueios pela metade | +4,2 |
-| 封 Coração Selado | Maldito | ao encher, o Carma vira um Despertar guardado (libera com E na roleta), e o Carma enche 50% mais rápido | +9,7 |
-| 神 Fragmento do Deus Cego | Divino | duplicatas evoluem na hora, ×1,5 | +13,2 |
-| 契 Contrato (técnica) | Divino | golpe de 40, 1×/luta, destrói outra técnica sua; o demônio cresce +10 por técnica consumida | +0,6 a +5 ⚠️ |
-| 裁 Julgamento (técnica) | Divino | dano = 1,3 × Carma, consome o Carma | +13,6 |
-| 呪 Marca da Maldição (técnica) | Maldito | golpe de 10 que amaldiçoa | +6,9 |
+| 体 Corpo Resistente (Dom) | Cinza | +3 de vida máxima | +3,8 |
+| 速 Reflexo Treinado (Dom) | Cinza | 4% de chance de esquivar | +3,8 |
+| 見 Sentir a Intenção (Dom) | Sangue | a surpresa do rival não ganha bônus | +7,7 ⚠️ |
+| 沸 Sangue Fervente (Dom) | Sangue | até +1,5 de dano, pela vida perdida | +3,2 |
+| 影 Sombra Leal (Dom) | Sangue | a sombra repete 8% de cada golpe | +5,2 |
+| 再 Carne que Volta (Dom) | Sangue | abaixo de 30% da vida, cura 1 por turno | +5,8 |
+| 兵 Sangue de Soldado (Dom) | Maldito | +1 de Velocidade | +13,2 ⚠️ |
+| 眼 Olho Roubado (Dom, técnica) | Maldito | usa a última técnica do rival com +25%; cego até o próximo turno | +9,0 |
+| 灰 Pele de Cinzas (Dom) | Maldito | o 1º golpe de cada luta não fere; cura em 55% | +2,2 ⚠️ |
+| 六 Olhos que Tudo Veem (Dom) | Maldito | +2 de Percepção; −10% de vida | +8,3 |
+| 門 Portões Abertos (Dom) | Maldito | +5 de dano; 1 de vida por turno | +7,5 |
+| 域 Santuário (Dom, técnica) | Divino | 4 turnos imperceptíveis e +50%; perde um turno | +19,7 |
+| 刻 Instante Suspenso (Dom, técnica) | Divino | duas ações seguidas; 8 de vida | +18,0 |
+| 宿 Corpo Perfeito (Dom) | Divino | Golpe 2× com +2; nunca defende | +12,7 |
+| 布 Bandagem | Cinza | cura 1 no início de cada luta | +0,8 ⚠️ |
+| 符 Amuleto Rachado | Cinza | 1×/run, golpe fatal deixa com 1 | +3,9 |
+| 重 Manto de Peso | Cinza | +1 de vida máxima a cada 2 vitórias | +2,8 |
+| 骨 Rosário de Ossos | Sangue | +3 de Carma por vitória | +2,9 |
+| 鬼 Máscara de Oni | Sangue | +1 de dano; bloqueios pela metade | +2,6 |
+| 刀 Lâmina Adormecida | Sangue | técnicas com +8% de dano | +3,8 |
+| 封 Coração Selado | Maldito | o Carma cheio vira um Despertar guardado; Carma +20% | +7,9 |
+| 果 Fruta Proibida | Maldito | +1 espaço de técnica e +1 de dano | +7,5 |
+| 神 Fragmento do Deus Cego | Divino | duplicatas evoluem na hora, ×1,8 | +10,4 |
+| 卵 Ovo do Eclipse | Divino | desperta sem Carma, 1×/run; perde o Dom | +15,5 |
+| 雷 Primeiro Trovão | Cinza | 6, sempre surpresa | +1,2 |
+| 分 Clones de Sombra | Cinza | 3 golpes de 3 | +2,8 |
+| 癒 Mão Curadora | Cinza | cura 5 | +1,3 |
+| 螺 Espiral Concentrada | Sangue | 14 que atravessa bloqueio | +4,0 |
+| 黒 Clarão Negro | Sangue | 8, 20% de sair ×2,5 | +3,1 |
+| 牙 Presa da Lua | Sangue | 12, sutileza 4 | +3,4 |
+| 鎖 Corrente do Julgamento | Sangue | 7 e sela a ação anunciada | +2,8 |
+| 元 Esfera dos Mil | Maldito | 10 + a dor sofrida, até +20 | +6,8 |
+| 幻 Lua Ilusória | Maldito | o rival perde o turno; 4 de vida | +3,4 ⚠️ |
+| 呪 Marca da Maldição | Maldito | golpe de 10 que amaldiçoa | +2,9 ⚠️ |
+| 契 Contrato | Divino | golpe de 40, 1×/luta, destrói outra técnica; +5 por técnica consumida | +4,9 ⚠️ |
+| 裁 Julgamento | Divino | dano = 2 × Carma, consome o Carma | +20,8 ⚠️ |
+| 界 Corte do Mundo | Divino | 42 absoluto, pronto no 4º turno | +8,2 ⚠️ |
 
-⚠️ fora da régua, a revisitar: **Santuário e Contrato** abaixo do piso do Divino; **Pele de Cinzas e Rosário** um pouco acima. O Contrato, mesmo crescendo, não passa de ~+5 com o piloto: perder técnicas pesa mais do que o golpe.
+⚠️ fora da régua, a revisitar. Abaixo: **Contrato, Corte do Mundo, Lua Ilusória, Marca, Pele de Cinzas, Bandagem**. Acima: **Julgamento, Sangue de Soldado, Sentir a Intenção**.
+
+- **O Contrato e o tamanho da roda.** Com 10 técnicas, os giros traziam muita repetida (fragmento) e o Contrato ficava sem o que consumir. Com 20, quase todo giro traz uma técnica nova, e o Contrato (+15 por técnica consumida) virava uma bola de neve: +45 pontos. Agora cresce +5. A mesma causa derrubou o Fragmento do Deus Cego (que vive de repetidas), que passou a ×1,8.
+- **A Esfera dos Mil nos rivais.** Os rivais também sorteiam as técnicas novas; uma Esfera sem teto num rival que já apanhou 60 devolvia 70 de dano e empurrava o jogo inteiro para matar rápido. O bônus da dor tem teto de +20.
 
 - **Duplicatas:** tirar de novo uma técnica que você tem dá 1 fragmento; 2 fragmentos evoluem a técnica (efeitos ×1,3, recarga −1, nome com II, III…). O Fragmento do Deus Cego evolui na hora, ×1,5. Relíquias repetidas se somam.
 - **Arcos** (para os dois lados, o capítulo inteiro): Treino na Montanha (cura 50%), Torneio Regular (nada), Lua de Sangue (+3 de dano para todos), **Invasão (+1 luta no capítulo e Relíquia garantida a cada luta — a run fica com 12 ou mais)**, Maldição Coletiva (seu Carma ×2, rivais +20% de vida), Arco do Juízo (chefe +50% de vida e dano; vencê-lo enche o Carma).
-- **Carma vale muito:** com o Despertar provisório (Carma cheio = Divino garantido), todo preço em Carma pesa demais. Por isso o Instante custa vida em vez de Carma (decisão de 2026-11-02).
+- **Carma vale muito:** cheio, ele é um Despertar na luta e um Divino depois. Todo preço em Carma pesa demais — por isso o Instante custa vida (decisão de 2026-11-02), e o Julgamento precisa de um golpe enorme para compensar.
 - **Achados que eram defeito de regra, não de número:** o Instante gastava o turno e devolvia um (ganho zero) — agora são duas ações de verdade depois dele; o Coração Selado guardava só no giro (nada ganhava) — agora guarda no instante em que o Carma enche.
 - **Arquitetura:** as regras da run são passos em `run.py` (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`, `receber_tecnica`, `receber_reliquia`, `girar`). O piloto automático e a Jornada do jogador usam os mesmos passos: o simulador mede exatamente o jogo que se joga.
-- **Modos recalibrados** depois disso: o jogador ficou bem mais forte, então os rivais crescem +4,4 / +4,65 / +4,7 / +5,8 de vida por luta (antes +2 a +2,5). Resultado: 45,0% / 37,5% / 25,8% / 8,5%.
+- **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a **+5,1 / +5,35 / +5,35 / +6,55** (o Equilibrado e o Difícil se separam pela sua vida e pelo chefe). Resultado: **45,9% / 35,9% / 27,4% / 8,7%**.
 
 ## Poderes impossíveis de balancear
 
@@ -228,7 +271,7 @@ Ferramentas para calibrar os custos:
 ## Em aberto
 
 - **Despertar:** quais variedades e qual gatilho.
-- Revisitar **Santuário, Contrato, Pele de Cinzas e Rosário** (fora da régua).
+- Revisitar o que ficou fora da régua (tabela acima).
 - **Conteúdo das rodas:** nomes e textos atuais são rascunho.
 - **Progressão entre runs:** desbloquear fatias novas nas rodas? Carma residual?
 - **Estilo de arte** definitivo.

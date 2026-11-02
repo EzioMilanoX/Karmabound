@@ -7,14 +7,20 @@
       "kanji": "命",
       "modo": "aceita",
       "fatias": [
-        { "id": "corpo_resistente", "nome": "Corpo Resistente", "kanji": "体", "raridade": "cinza", "texto": "+15 de vida máxima.", "efeito": {"vida_max": 3} },
-        { "id": "reflexo_treinado", "nome": "Reflexo Treinado", "kanji": "速", "raridade": "cinza", "texto": "15% de chance de esquivar um golpe inteiro.", "efeito": {"esquiva": 0.04} },
-        { "id": "sangue_fervente", "nome": "Sangue Fervente", "kanji": "沸", "raridade": "sangue", "texto": "Até +6 de dano, proporcional à vida que você já perdeu.", "efeito": {"furia": 2} },
-        { "id": "sombra_leal", "nome": "Sombra Leal", "kanji": "影", "raridade": "sangue", "texto": "Sua sombra repete cada golpe seu com 50% do dano.", "efeito": {"sombra": 0.08} },
-        { "id": "olho_roubado", "nome": "Olho Roubado", "kanji": "眼", "raridade": "maldito", "texto": "Técnica: usa a última técnica do rival como se fosse sua. Preço: Percepção 0 até o seu próximo turno.", "tecnica": {"tipo": "maldita", "copia_rival": true, "copia_bonus": 1.4, "cega_proprio": true, "recarga": 2} },
-        { "id": "pele_de_cinzas", "nome": "Pele de Cinzas", "kanji": "灰", "raridade": "maldito", "texto": "O primeiro golpe de cada luta não te fere. Preço: você nunca é curado.", "efeito": {"escudo_inicial": 1, "cura_mult": 0.55} },
-        { "id": "santuario", "nome": "Santuário", "kanji": "域", "raridade": "divino", "texto": "Técnica, uma vez por luta: por 3 turnos seus golpes não são percebidos e causam +50%. Preço: depois você perde um turno.", "tecnica": {"tipo": "maldita", "santuario": 4, "pular_depois": true, "recarga": 99} },
-        { "id": "instante_suspenso", "nome": "Instante Suspenso", "kanji": "刻", "raridade": "divino", "texto": "Técnica: um turno extra. Preço: 25 de Carma.", "tecnica": {"tipo": "maldita", "turno_extra": true, "custo_vida": 3, "recarga": 99} }
+        { "id": "corpo_resistente", "nome": "Corpo Resistente", "kanji": "体", "raridade": "cinza", "texto": "+3 de vida máxima.", "origem": "O treino do Saitama · One Punch Man", "efeito": {"vida_max": 3} },
+        { "id": "reflexo_treinado", "nome": "Reflexo Treinado", "kanji": "速", "raridade": "cinza", "texto": "4% de chance de esquivar um golpe inteiro.", "origem": "Shunpo · Bleach", "efeito": {"esquiva": 0.04} },
+        { "id": "sentir_a_intencao", "nome": "Sentir a Intenção", "kanji": "見", "raridade": "sangue", "texto": "Você sente a emboscada: o ataque surpresa do rival não ganha bônus contra você.", "origem": "Haki da Observação · One Piece", "efeito": {"sem_surpresa": true} },
+        { "id": "sangue_fervente", "nome": "Sangue Fervente", "kanji": "沸", "raridade": "sangue", "texto": "Até +1,5 de dano, proporcional à vida que você já perdeu.", "origem": "A fúria do Guts · Berserk", "efeito": {"furia": 1.5} },
+        { "id": "sombra_leal", "nome": "Sombra Leal", "kanji": "影", "raridade": "sangue", "texto": "Sua sombra repete cada golpe seu com 8% do dano.", "origem": "Exército das Sombras · Solo Leveling", "efeito": {"sombra": 0.08} },
+        { "id": "sangue_de_soldado", "nome": "Sangue de Soldado", "kanji": "兵", "raridade": "maldito", "texto": "+1 de Velocidade: você quase sempre ataca primeiro.", "origem": "Sangue Ackerman · Attack on Titan", "efeito": {"velocidade": 1} },
+        { "id": "carne_que_volta", "nome": "Carne que Volta", "kanji": "再", "raridade": "sangue", "texto": "Abaixo de 30% da vida, você cura 1 a cada turno seu.", "origem": "Regeneração de Oni · Demon Slayer", "efeito": {"regen": 1, "regen_ate": 0.3} },
+        { "id": "olho_roubado", "nome": "Olho Roubado", "kanji": "眼", "raridade": "maldito", "texto": "Técnica: usa a última técnica do rival como se fosse sua, com +25%. Preço: Percepção 0 até o seu próximo turno.", "origem": "Sharingan · Naruto", "tecnica": {"tipo": "maldita", "copia_rival": true, "copia_bonus": 1.25, "cega_proprio": true, "recarga": 2} },
+        { "id": "pele_de_cinzas", "nome": "Pele de Cinzas", "kanji": "灰", "raridade": "maldito", "texto": "O primeiro golpe de cada luta não te fere. Preço: toda cura vale 55%.", "origem": "Hierro · Bleach", "efeito": {"escudo_inicial": 1, "cura_mult": 0.55} },
+        { "id": "olhos_que_tudo_veem", "nome": "Olhos que Tudo Veem", "kanji": "六", "raridade": "maldito", "texto": "+2 de Percepção: você lê a técnica do rival e reage a quase tudo. Preço: −10% de vida máxima.", "origem": "Seis Olhos (Gojo) · Jujutsu Kaisen", "efeito": {"percepcao": 2, "vida_max_mult": 0.9} },
+        { "id": "portoes_abertos", "nome": "Portões Abertos", "kanji": "門", "raridade": "maldito", "texto": "+5 de dano em todo golpe. Preço: você perde 1 de vida a cada turno seu.", "origem": "Oito Portões (Hachimon) · Naruto", "efeito": {"bonus_dano": 5, "sangria": 1} },
+        { "id": "santuario", "nome": "Santuário", "kanji": "域", "raridade": "divino", "texto": "Técnica, uma vez por luta: por 4 turnos seus golpes não são percebidos e causam +50%. Preço: depois você perde um turno.", "origem": "Expansão de Domínio · Jujutsu Kaisen", "tecnica": {"tipo": "maldita", "santuario": 4, "pular_depois": true, "recarga": 99} },
+        { "id": "instante_suspenso", "nome": "Instante Suspenso", "kanji": "刻", "raridade": "divino", "texto": "Técnica, uma vez por luta: duas ações seguidas. Preço: 8 de vida.", "origem": "The World (Za Warudo) · JoJo's Bizarre Adventure", "tecnica": {"tipo": "maldita", "turno_extra": true, "custo_vida": 8, "recarga": 99} },
+        { "id": "corpo_perfeito", "nome": "Corpo Perfeito", "kanji": "宿", "raridade": "divino", "texto": "Quatro braços: o Golpe acerta duas vezes e com +2 de dano. Preço: você nunca defende.", "origem": "Sukuna da Era Heian · Jujutsu Kaisen", "efeito": {"basico_golpes": 1, "basico_dano": 2, "proibir_tipo": "defesa"} }
       ]
     },
     {
@@ -24,16 +30,26 @@
       "modo": "escolha",
       "opcoes": 3,
       "fatias": [
-        { "id": "golpe_direto", "nome": "Golpe Direto", "kanji": "拳", "raridade": "cinza", "texto": "Dano simples.", "combate": {"tipo": "ataque", "dano": 7, "recarga": 1, "sutileza": 2} },
-        { "id": "guarda_alta", "nome": "Guarda Alta", "kanji": "守", "raridade": "cinza", "texto": "Reduz o próximo dano recebido.", "combate": {"tipo": "defesa", "bloqueio": 8, "recarga": 2} },
-        { "id": "investida", "nome": "Investida", "kanji": "突", "raridade": "cinza", "texto": "Dano maior, defesa menor no turno.", "combate": {"tipo": "ataque", "dano": 11, "recarga": 2, "sutileza": 1, "perigosa": true} },
-        { "id": "corte_em_cruz", "nome": "Corte em Cruz", "kanji": "十", "raridade": "sangue", "texto": "Dois golpes fracos.", "combate": {"tipo": "ataque", "dano": 5, "golpes": 2, "recarga": 2, "sutileza": 3} },
-        { "id": "contra_ataque", "nome": "Contra-ataque", "kanji": "返", "raridade": "sangue", "texto": "Devolve parte do próximo golpe.", "combate": {"tipo": "defesa", "bloqueio": 5, "revide": 6, "recarga": 3} },
-        { "id": "lamina_de_sangue", "nome": "Lâmina de Sangue", "kanji": "刃", "raridade": "sangue", "texto": "Gasta vida para causar muito dano.", "combate": {"tipo": "ataque", "dano": 16, "custo_vida": 4, "recarga": 3, "sutileza": 3, "perigosa": true} },
-        { "id": "juramento", "nome": "Juramento", "kanji": "誓", "raridade": "maldito", "texto": "Abre o Altar dos Votos: monte um voto vinculativo (restrições viram poder).", "evento": "altar" },
-        { "id": "marca_da_maldicao", "nome": "Marca da Maldição", "kanji": "呪", "raridade": "maldito", "texto": "Golpe que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Você sofre 1 por turno por Marca aplicada.", "combate": {"tipo": "maldita", "dano": 10, "marca": 3, "eco": 1, "recarga": 2, "sutileza": 3} },
-        { "id": "contrato", "nome": "Contrato", "kanji": "契", "raridade": "divino", "texto": "Golpe devastador, uma vez por luta. A cada uso, uma das suas outras técnicas é destruída para o resto da run.", "combate": {"tipo": "maldita", "dano": 40, "recarga": 99, "sutileza": 2, "perigosa": true, "consome_tecnica": true, "cresce_ao_consumir": 10} },
-        { "id": "julgamento", "nome": "Julgamento", "kanji": "裁", "raridade": "divino", "texto": "Dano igual ao Carma acumulado, e consome todo o Carma: a dor vira golpe agora, ou espera o Despertar.", "combate": {"tipo": "maldita", "dano_por_carma": 1.3, "consome_carma": true, "recarga": 4, "sutileza": 3, "perigosa": true} }
+        { "id": "golpe_direto", "nome": "Golpe Direto", "kanji": "拳", "raridade": "cinza", "texto": "Dano simples.", "origem": "Gomu Gomu no Pistol · One Piece", "combate": {"tipo": "ataque", "dano": 7, "recarga": 1, "sutileza": 2} },
+        { "id": "guarda_alta", "nome": "Guarda Alta", "kanji": "守", "raridade": "cinza", "texto": "Reduz o próximo dano recebido.", "origem": "Ken (Nen) · Hunter x Hunter", "combate": {"tipo": "defesa", "bloqueio": 8, "recarga": 2} },
+        { "id": "investida", "nome": "Investida", "kanji": "突", "raridade": "cinza", "texto": "Dano maior, defesa menor no turno.", "origem": "Dynamic Entry (Gai) · Naruto", "combate": {"tipo": "ataque", "dano": 11, "recarga": 2, "sutileza": 1, "perigosa": true} },
+        { "id": "primeiro_trovao", "nome": "Primeiro Trovão", "kanji": "雷", "raridade": "cinza", "texto": "Um passo e um corte: todo uso conta como ataque surpresa.", "origem": "Hekireki Issen · Demon Slayer", "combate": {"tipo": "ataque", "dano": 6, "recarga": 2, "sutileza": 2, "sempre_surpresa": true} },
+        { "id": "clones_de_sombra", "nome": "Clones de Sombra", "kanji": "分", "raridade": "cinza", "texto": "Três golpes de 3.", "origem": "Kage Bunshin no Jutsu · Naruto", "combate": {"tipo": "ataque", "dano": 3, "golpes": 3, "recarga": 2, "sutileza": 2} },
+        { "id": "mao_curadora", "nome": "Mão Curadora", "kanji": "癒", "raridade": "cinza", "texto": "Cura 5.", "origem": "Ninjutsu Médico · Naruto", "combate": {"tipo": "defesa", "cura": 5, "recarga": 3} },
+        { "id": "corte_em_cruz", "nome": "Corte em Cruz", "kanji": "十", "raridade": "sangue", "texto": "Dois golpes fracos.", "origem": "Nitoryu (Zoro) · One Piece", "combate": {"tipo": "ataque", "dano": 5, "golpes": 2, "recarga": 2, "sutileza": 3} },
+        { "id": "contra_ataque", "nome": "Contra-ataque", "kanji": "返", "raridade": "sangue", "texto": "Devolve parte do próximo golpe.", "origem": "Kaiten (Neji) · Naruto", "combate": {"tipo": "defesa", "bloqueio": 5, "revide": 6, "recarga": 3} },
+        { "id": "lamina_de_sangue", "nome": "Lâmina de Sangue", "kanji": "刃", "raridade": "sangue", "texto": "Gasta vida para causar muito dano.", "origem": "Manipulação de Sangue (Choso) · Jujutsu Kaisen", "combate": {"tipo": "ataque", "dano": 16, "custo_vida": 4, "recarga": 3, "sutileza": 3, "perigosa": true} },
+        { "id": "espiral_concentrada", "nome": "Espiral Concentrada", "kanji": "螺", "raridade": "sangue", "texto": "Uma esfera que gira: 14 de dano que atravessa qualquer bloqueio.", "origem": "Rasengan · Naruto", "combate": {"tipo": "ataque", "dano": 14, "recarga": 2, "sutileza": 2, "perfura": true} },
+        { "id": "clarao_negro", "nome": "Clarão Negro", "kanji": "黒", "raridade": "sangue", "texto": "Golpe com 20% de chance de sair ×2,5. Ninguém controla quando ele vem.", "origem": "Kokusen (Black Flash) · Jujutsu Kaisen", "combate": {"tipo": "ataque", "dano": 8, "recarga": 1, "sutileza": 2, "critico": 0.2} },
+        { "id": "presa_da_lua", "nome": "Presa da Lua", "kanji": "牙", "raridade": "sangue", "texto": "Uma lâmina de energia que quase ninguém percebe chegando.", "origem": "Getsuga Tensho · Bleach", "combate": {"tipo": "ataque", "dano": 12, "recarga": 2, "sutileza": 4, "perigosa": true} },
+        { "id": "corrente_do_julgamento", "nome": "Corrente do Julgamento", "kanji": "鎖", "raridade": "sangue", "texto": "Golpe de 7 que prende a ação que o rival anunciou: ela vai para a recarga por 2 turnos.", "origem": "Corrente do Julgamento (Kurapika) · Hunter x Hunter", "combate": {"tipo": "ataque", "dano": 7, "selar": 2, "recarga": 3, "sutileza": 2} },
+        { "id": "juramento", "nome": "Juramento", "kanji": "誓", "raridade": "maldito", "texto": "Abre o Altar dos Votos: monte um voto vinculativo (restrições viram poder).", "origem": "Restrições e Juramentos (Kurapika) · Hunter x Hunter", "evento": "altar" },
+        { "id": "marca_da_maldicao", "nome": "Marca da Maldição", "kanji": "呪", "raridade": "maldito", "texto": "Golpe que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Você sofre 1 por turno por Marca aplicada.", "origem": "Selo Amaldiçoado · Naruto", "combate": {"tipo": "maldita", "dano": 10, "marca": 3, "eco": 1, "recarga": 2, "sutileza": 3} },
+        { "id": "esfera_dos_mil", "nome": "Esfera dos Mil", "kanji": "元", "raridade": "maldito", "texto": "Dano de 10 mais toda a dor que você sofreu nesta luta, até +20.", "origem": "Genki Dama · Dragon Ball", "combate": {"tipo": "maldita", "dano": 10, "dano_por_dor": 1.0, "recarga": 4, "sutileza": 3, "teto_dor": 20} },
+        { "id": "lua_ilusoria", "nome": "Lua Ilusória", "kanji": "幻", "raridade": "maldito", "texto": "O rival perde o próximo turno preso numa ilusão. Preço: 4 de vida (os olhos sangram).", "origem": "Tsukuyomi (Itachi) · Naruto", "combate": {"tipo": "maldita", "atordoar": 1, "custo_vida": 4, "recarga": 4} },
+        { "id": "contrato", "nome": "Contrato", "kanji": "契", "raridade": "divino", "texto": "Golpe de 40, uma vez por luta. A cada uso, uma das suas outras técnicas é destruída para o resto da run, e o golpe cresce +5.", "origem": "Contrato com o Demônio · Chainsaw Man", "combate": {"tipo": "maldita", "recarga": 99, "sutileza": 2, "perigosa": true, "consome_tecnica": true, "dano": 40, "cresce_ao_consumir": 5} },
+        { "id": "julgamento", "nome": "Julgamento", "kanji": "裁", "raridade": "divino", "texto": "Dano igual a 2 × o Carma acumulado, e consome todo o Carma: a dor vira golpe agora, ou espera o Despertar.", "origem": "Shinra Tensei (Pain, a dor) · Naruto", "combate": {"tipo": "maldita", "consome_carma": true, "recarga": 4, "sutileza": 3, "perigosa": true, "dano_por_carma": 2.0} },
+        { "id": "corte_do_mundo", "nome": "Corte do Mundo", "kanji": "界", "raridade": "divino", "texto": "42 de dano que atravessa bloqueio, escudo e esquiva, e não pode ser percebido. Preço: só fica pronto no seu 4º turno da luta.", "origem": "O corte que divide o mundo (Sukuna) · Jujutsu Kaisen", "combate": {"tipo": "maldita", "dano": 42, "absoluto": true, "sutileza": 99, "recarga": 99, "inicia_em_recarga": 3} }
       ]
     },
     {
@@ -42,12 +58,12 @@
       "kanji": "章",
       "modo": "aceita",
       "fatias": [
-        { "id": "treino_na_montanha", "nome": "Treino na Montanha", "kanji": "山", "raridade": "cinza", "texto": "Cura entre lutas sobe de 30% para 50%.", "regra": {"cura_entre_lutas": 0.5} },
-        { "id": "torneio_regular", "nome": "Torneio Regular", "kanji": "闘", "raridade": "cinza", "texto": "Sem regra especial.", "regra": {} },
-        { "id": "lua_de_sangue", "nome": "Lua de Sangue", "kanji": "月", "raridade": "sangue", "texto": "Todos, você e os rivais, causam +3 de dano.", "regra": {"dano_todos": 3} },
-        { "id": "invasao", "nome": "Invasão", "kanji": "侵", "raridade": "sangue", "texto": "+1 luta neste capítulo, e um giro de Relíquia garantido depois de cada luta.", "regra": {"luta_extra": 1, "reliquia_garantida": true} },
-        { "id": "maldicao_coletiva", "nome": "Maldição Coletiva", "kanji": "禍", "raridade": "maldito", "texto": "Seu Carma enche em dobro, e os rivais têm +20% de vida.", "regra": {"carma_mult": 2.0, "vida_rival_mult": 1.2} },
-        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo.", "regra": {"chefe_mult": 1.5, "carma_cheio_chefe": true} }
+        { "id": "treino_na_montanha", "nome": "Treino na Montanha", "kanji": "山", "raridade": "cinza", "texto": "Cura entre lutas sobe de 30% para 50%.", "origem": "Treino no Monte Myoboku · Naruto", "regra": {"cura_entre_lutas": 0.5} },
+        { "id": "torneio_regular", "nome": "Torneio Regular", "kanji": "闘", "raridade": "cinza", "texto": "Sem regra especial.", "origem": "Torneio de Artes Marciais · Dragon Ball", "regra": {} },
+        { "id": "lua_de_sangue", "nome": "Lua de Sangue", "kanji": "月", "raridade": "sangue", "texto": "Todos, você e os rivais, causam +3 de dano.", "origem": "O Eclipse · Berserk", "regra": {"dano_todos": 3} },
+        { "id": "invasao", "nome": "Invasão", "kanji": "侵", "raridade": "sangue", "texto": "+1 luta neste capítulo, e um giro de Relíquia garantido depois de cada luta.", "origem": "Invasão de Konoha · Naruto", "regra": {"luta_extra": 1, "reliquia_garantida": true} },
+        { "id": "maldicao_coletiva", "nome": "Maldição Coletiva", "kanji": "禍", "raridade": "maldito", "texto": "Seu Carma enche em dobro, e os rivais têm +20% de vida.", "origem": "Incidente de Shibuya · Jujutsu Kaisen", "regra": {"carma_mult": 2.0, "vida_rival_mult": 1.2} },
+        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo.", "origem": "Marineford · One Piece", "regra": {"chefe_mult": 1.5, "carma_cheio_chefe": true} }
       ]
     },
     {
@@ -56,12 +72,33 @@
       "kanji": "宝",
       "modo": "aceita",
       "fatias": [
-        { "id": "bandagem", "nome": "Bandagem", "kanji": "布", "raridade": "cinza", "texto": "Cura 4 no início de cada luta.", "efeito": {"cura_inicio": 2} },
-        { "id": "amuleto_rachado", "nome": "Amuleto Rachado", "kanji": "符", "raridade": "cinza", "texto": "Uma vez por run, um golpe fatal te deixa com 1 de vida.", "efeito": {"salvacao": 1} },
-        { "id": "rosario_de_ossos", "nome": "Rosário de Ossos", "kanji": "骨", "raridade": "sangue", "texto": "Cada rival derrotado dá +10 de Carma.", "efeito": {"carma_por_vitoria": 8} },
-        { "id": "mascara_de_oni", "nome": "Máscara de Oni", "kanji": "鬼", "raridade": "sangue", "texto": "+3 de dano em todo golpe. Preço: seus bloqueios valem metade.", "efeito": {"bonus_dano": 1, "bloqueio_mult": 0.5} },
-        { "id": "coracao_selado", "nome": "Coração Selado", "kanji": "封", "raridade": "maldito", "texto": "Ao transbordar, o Carma vira um Despertar guardado e zera. Você libera o Despertar no giro que quiser.", "efeito": {"guarda_despertar": true, "carma_mult": 1.5} },
-        { "id": "fragmento_do_deus_cego", "nome": "Fragmento do Deus Cego", "kanji": "神", "raridade": "divino", "texto": "Técnicas repetidas evoluem na hora, em vez de virar fragmento.", "efeito": {"evolucao_imediata": true, "fator_evolucao": 1.5} }
+        { "id": "bandagem", "nome": "Bandagem", "kanji": "布", "raridade": "cinza", "texto": "Cura 1 no início de cada luta.", "origem": "As faixas do Rock Lee · Naruto", "efeito": {"cura_inicio": 1} },
+        { "id": "amuleto_rachado", "nome": "Amuleto Rachado", "kanji": "符", "raridade": "cinza", "texto": "Uma vez por run, um golpe fatal te deixa com 1 de vida.", "origem": "O colar do Primeiro Hokage · Naruto", "efeito": {"salvacao": 1} },
+        { "id": "manto_de_peso", "nome": "Manto de Peso", "kanji": "重", "raridade": "cinza", "texto": "+1 de vida máxima a cada 2 rivais derrotados.", "origem": "As roupas com peso do Piccolo · Dragon Ball", "efeito": {"vida_por_vitoria": 0.5} },
+        { "id": "rosario_de_ossos", "nome": "Rosário de Ossos", "kanji": "骨", "raridade": "sangue", "texto": "Cada rival derrotado dá +3 de Carma.", "origem": "O rosário do Gyomei · Demon Slayer", "efeito": {"carma_por_vitoria": 3} },
+        { "id": "mascara_de_oni", "nome": "Máscara de Oni", "kanji": "鬼", "raridade": "sangue", "texto": "+1 de dano em todo golpe. Preço: seus bloqueios valem metade.", "origem": "Máscara de Hollow · Bleach", "efeito": {"bonus_dano": 1, "bloqueio_mult": 0.5} },
+        { "id": "lamina_adormecida", "nome": "Lâmina Adormecida", "kanji": "刀", "raridade": "sangue", "texto": "Suas técnicas (não o Golpe) causam +8% de dano.", "origem": "Zanpakuto · Bleach", "efeito": {"dano_tecnicas_mult": 1.08} },
+        { "id": "coracao_selado", "nome": "Coração Selado", "kanji": "封", "raridade": "maldito", "texto": "Ao encher, o Carma vira um Despertar guardado e volta a encher: você acumula Despertares para usar na luta. O Carma enche 20% mais rápido.", "origem": "O selo da Kurama · Naruto", "efeito": {"guarda_despertar": true, "carma_mult": 1.2} },
+        { "id": "fruta_proibida", "nome": "Fruta Proibida", "kanji": "果", "raridade": "maldito", "texto": "+1 espaço de técnica e +1 de dano: o poder da fruta.", "origem": "Akuma no Mi · One Piece", "efeito": {"espacos_extra": 1, "bonus_dano": 1} },
+        { "id": "fragmento_do_deus_cego", "nome": "Fragmento do Deus Cego", "kanji": "神", "raridade": "divino", "texto": "Técnicas repetidas evoluem na hora, e mais forte (×1,8), em vez de virar fragmento.", "origem": "Dedos do Sukuna · Jujutsu Kaisen", "efeito": {"evolucao_imediata": true, "fator_evolucao": 1.8} },
+        { "id": "ovo_do_eclipse", "nome": "Ovo do Eclipse", "kanji": "卵", "raridade": "divino", "texto": "Uma vez por run, à beira da morte e sem Carma, você desperta mesmo assim. Preço: o seu Dom é sacrificado.", "origem": "Behelit · Berserk", "efeito": {"eclipse": 1} }
+      ]
+    },
+    {
+      "id": "despertar",
+      "nome": "Despertar",
+      "kanji": "覚",
+      "modo": "aceita",
+      "uniforme": true,
+      "fatias": [
+        { "id": "retribuicao", "nome": "Retribuição", "kanji": "報", "raridade": "divino", "texto": "A dor que você recebeu nesta luta volta ao rival, dividida nos seus próximos 3 golpes.", "origem": "O ritual de Jashin (Hidan) · Naruto", "despertar": {"retribuicao_golpes": 3} },
+        { "id": "tomar_o_destino", "nome": "Tomar o Destino", "kanji": "奪", "raridade": "divino", "texto": "Você rouba a melhor técnica do rival para o resto da run, e todas as dele entram em recarga por 2 turnos.", "origem": "Skill Hunter (Chrollo) · Hunter x Hunter", "despertar": {"roubar": true, "travar_rival": 2} },
+        { "id": "forma_desperta", "nome": "Forma Desperta", "kanji": "醒", "raridade": "divino", "texto": "Por 3 turnos, seus golpes causam o dobro e nada entra em recarga.", "origem": "Super Saiyajin · Dragon Ball", "despertar": {"forma": 3} },
+        { "id": "renascer_das_cinzas", "nome": "Renascer das Cinzas", "kanji": "鳳", "raridade": "divino", "texto": "Cura total, e os próximos 2 golpes do rival não te ferem.", "origem": "Chamas da Fênix (Marco) · One Piece", "despertar": {"cura_total": true, "escudos": 2} },
+        { "id": "liberacao_final", "nome": "Liberação Final", "kanji": "卍", "raridade": "divino", "texto": "Todas as suas técnicas sobem um nível até o fim da luta.", "origem": "Bankai · Bleach", "despertar": {"evoluir": true} },
+        { "id": "instinto_puro", "nome": "Instinto Puro", "kanji": "極", "raridade": "divino", "texto": "Os próximos 3 ataques do rival têm 60% de chance de errar, e cada erro devolve um Golpe.", "origem": "Ultra Instinto · Dragon Ball", "despertar": {"instinto": 3} },
+        { "id": "modo_eremita", "nome": "Modo Eremita", "kanji": "仙", "raridade": "divino", "texto": "Cura metade da vida, e até o fim da luta +3 de Percepção e +3 de dano.", "origem": "Modo Sábio · Naruto", "despertar": {"cura_frac": 0.5, "percepcao": 3, "dano": 3} },
+        { "id": "marca_do_cacador", "nome": "Marca do Caçador", "kanji": "痣", "raridade": "divino", "texto": "+50% de dano até o fim da luta. Preço: −10% de vida máxima pelo resto da run.", "origem": "A Marca do Caçador de Onis · Demon Slayer", "despertar": {"dano_mult": 1.5, "perde_vida_max": 0.1} }
       ]
     }
   ]

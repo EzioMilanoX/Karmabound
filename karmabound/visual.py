@@ -54,3 +54,19 @@ def quebrar(texto: str, largura: int) -> list[str]:
         else:
             atual = f"{atual} {palavra}".strip()
     return linhas + ([atual] if atual else [])
+
+
+def moldura(r, x0, y0, x1, y1, cor: Cor, divina: bool = False) -> None:
+    """Moldura de carta: borda fina, cantos em L e, no Divino, uma segunda borda dourada."""
+    r.draw_ui_polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], alpha(cor, 150), 2)
+    c = 18
+    for cx, cy, sx, sy in ((x0, y0, 1, 1), (x1, y0, -1, 1), (x0, y1, 1, -1), (x1, y1, -1, -1)):
+        r.draw_ui_line(cx, cy, cx + sx * c, cy, cor, 4)
+        r.draw_ui_line(cx, cy, cx, cy + sy * c, cor, 4)
+    if divina:
+        m = 7
+        r.draw_ui_polygon(
+            [(x0 + m, y0 + m), (x1 - m, y0 + m), (x1 - m, y1 - m), (x0 + m, y1 - m)],
+            alpha(OURO, 110),
+            1,
+        )

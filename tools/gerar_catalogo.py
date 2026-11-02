@@ -27,6 +27,16 @@ CAMPOS_COMBATE = [
     ("dano_por_carma", "dano × Carma"),
     ("consome_carma", "consome o Carma"),
     ("consome_tecnica", "destrói outra técnica sua"),
+    ("cresce_ao_consumir", "cresce por técnica consumida"),
+    ("perfura", "atravessa bloqueio"),
+    ("absoluto", "atravessa bloqueio, escudo e esquiva"),
+    ("critico", "chance de ×2,5"),
+    ("sempre_surpresa", "sempre surpresa"),
+    ("selar", "sela a ação do rival por"),
+    ("cura", "cura"),
+    ("dano_por_dor", "dano × dor sofrida"),
+    ("atordoar", "o rival perde turnos:"),
+    ("inicia_em_recarga", "começa a luta em recarga"),
 ]
 
 
@@ -74,11 +84,11 @@ def gerar() -> str:
         tecnicas = any("combate" in f for f in roda["fatias"])
         if tecnicas:
             out += [
-                "| | Técnica | Raridade | Tipo | Efeito | Recarga | Sutileza | Perigosa |",
-                "|---|---|---|---|---|---|---|---|",
+                "| | Técnica | Raridade | Tipo | Efeito | Recarga | Sutileza | Perigosa | Origem |",
+                "|---|---|---|---|---|---|---|---|---|",
             ]
         else:
-            out += ["| | Nome | Raridade | Texto |", "|---|---|---|---|"]
+            out += ["| | Nome | Raridade | Texto | Origem |", "|---|---|---|---|---|"]
         for f in roda["fatias"]:
             rar = raridades[f["raridade"]]["nome"]
             if tecnicas:
@@ -87,10 +97,13 @@ def gerar() -> str:
                 out.append(
                     f"| {f['kanji']} | {f['nome']} | {rar} | {c.get('tipo', '')} | {efeito} | "
                     f"{c.get('recarga', 0)} | {c.get('sutileza', 0)} | "
-                    f"{'sim' if c.get('perigosa') else ''} |"
+                    f"{'sim' if c.get('perigosa') else ''} | {f.get('origem', '')} |"
                 )
             else:
-                out.append(f"| {f['kanji']} | {f['nome']} | {rar} | {f.get('texto', '')} |")
+                out.append(
+                    f"| {f['kanji']} | {f['nome']} | {rar} | {f.get('texto', '')} | "
+                    f"{f.get('origem', '')} |"
+                )
 
     b = votos["bonus"]
     out += [
