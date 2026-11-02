@@ -18,6 +18,7 @@ from pathlib import Path
 
 from karmabound.grimorio import caminho_padrao
 from karmabound.jornada import Jornada
+from karmabound.run import Contexto
 
 VERSAO = 1
 
@@ -49,6 +50,7 @@ def carregar() -> Jornada | None:
             return None
     except Exception:  # sem arquivo, estragado ou de outra versão do código
         return None
+    j.ctx = Contexto.padrao(j.modo)  # os dados de agora: um ajuste de balanceamento vale já
     if j.fase == "luta":
         j._comecar_luta()  # da foto de antes da luta: o mesmo rival
     return j

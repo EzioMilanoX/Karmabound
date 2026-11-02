@@ -60,6 +60,12 @@ def carregar_raridades(balanceamento: dict) -> list[Raridade]:
     return [Raridade(**r) for r in balanceamento["raridades"]]
 
 
+def carregar_chefes(caminho: Path | None = None) -> tuple[Fatia, ...]:
+    """As técnicas-assinatura dos chefes (data/chefes.json): Fatias com `combate`."""
+    bruto = json.loads((caminho or DADOS / "chefes.json").read_text(encoding="utf-8"))
+    return tuple(Fatia(**f) for f in bruto["tecnicas"])
+
+
 def carregar_rodas(raridades: list[Raridade], caminho: Path | None = None) -> dict[str, Roda]:
     bruto = json.loads((caminho or DADOS / "rodas.json").read_text(encoding="utf-8"))
     ids_raridade = {r.id for r in raridades}

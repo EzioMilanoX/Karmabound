@@ -61,6 +61,7 @@ class Tecnica:
     sempre_surpresa: bool = False  # todo uso conta como ataque surpresa (Primeiro Trovão)
     selar: int = 0  # a próxima ação do alvo vai para a recarga (Corrente do Julgamento)
     cura: int = 0  # cura quem usa (Mão Curadora)
+    escudo: int = 0  # golpes recebidos que passam através (Desvio Dimensional)
     dano_por_dor: float = 0.0  # dano extra = fator × a dor que quem usa sofreu na luta
     teto_dor: int = 0  # o máximo desse extra (0 = sem teto)
     atordoar: int = 0  # turnos que o alvo perde (Lua Ilusória)
@@ -444,6 +445,7 @@ class Luta:
         ator.bonus_dano += efetiva.fortalecer
         ator.bloqueio += round(efetiva.bloqueio * ator.efeitos.bloqueio_mult)
         ator.revide += efetiva.revide
+        ator.escudos += efetiva.escudo
         alvo.marca += efetiva.marca
         ator.eco += efetiva.eco
         curou = self._curar(ator, efetiva.cura) if efetiva.cura else 0
@@ -672,7 +674,7 @@ def evoluir(t: Tecnica, fator: float = 1.3) -> Tecnica:
 def valor_tecnica(t: Tecnica) -> float:
     """Valor bruto de uma técnica, para escolher o que um Contrato sacrifica."""
     valor = t.dano * t.golpes + t.bloqueio + t.revide + 3 * (t.marca + t.fortalecer)
-    return valor + t.cura + 6 * t.atordoar + 4 * t.selar
+    return valor + t.cura + 6 * t.atordoar + 4 * t.selar + 8 * t.escudo
 
 
 def _vale_o_preco(luta: Luta, j: Lutador, t: Tecnica) -> bool:

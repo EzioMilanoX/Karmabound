@@ -139,6 +139,9 @@ class TituloScene(_Base):
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
         t = self.relogio
+        for k in range(6):  # a lua de sangue atrás do ensō
+            r.draw_ui_circle(480, 250, 150 - k * 8, alpha((120, 14, 18, 255), 10 + k * 4))
+        r.draw_ui_circle(480, 250, 104, alpha((90, 10, 14, 255), 120))
         _particulas(r, t, 26, alpha(TINTA, 40), sobe=False, tam=1.8, vel=14, deriva=24, semente=3)
         self._gotas(r, t)
         # o ensō se desenha no primeiro segundo e depois gira devagar
@@ -191,6 +194,8 @@ class TituloScene(_Base):
             alpha(TINTA, 100),
             "center",
         )
+        vfx.vinheta(r, 0.9)
+        vfx.grao(r, t, 140)
         vfx.revelar(r, t)
 
     def _gotas(self, r: IRenderer, t: float) -> None:

@@ -40,6 +40,7 @@ from karmabound.rodas import (
     Raridade,
     Roda,
     carregar_balanceamento,
+    carregar_chefes,
     carregar_raridades,
     carregar_rodas,
 )
@@ -60,6 +61,7 @@ class Contexto:
     lutas_por_capitulo: int = 4
     chance_reliquia: float = 1 / 3
     max_turnos: int = 80
+    chefes: tuple[Fatia, ...] = ()  # técnicas-assinatura: cada chefe recebe uma
 
     @property
     def lutas(self) -> int:
@@ -86,6 +88,7 @@ class Contexto:
             combate=cfg,
             catalogo=carregar_catalogo(),
             basico=Tecnica.de_dict(cfg["golpe_basico"]),
+            chefes=carregar_chefes(),
         )
 
 
@@ -213,12 +216,15 @@ def gerar_rival(
     pool = [f for f in ctx.tecnicas.values() if f.raridade in raridades and f.combate]
     n_tec = min(len(pool), cfg["tecnicas_base"] + indice * cfg["tecnicas_por_capitulo"])
     vida = cfg["vida_base"] + cfg["vida_por_luta"] * n_luta
+    tecnicas = [Tecnica.de_fatia(f) for f in rng.sample(pool, n_tec)]
+    if chefe and ctx.chefes:  # a técnica-assinatura do chefe
+        tecnicas.append(Tecnica.de_fatia(rng.choice(ctx.chefes)))
     return Lutador(
         nome=f"Rival {n_luta}" + (" (chefe)" if chefe else ""),
         vida_max=round(vida * (cfg["chefe_multiplicador"] if chefe else 1)),
         velocidade=rng.randint(*cfg["velocidade"]),
         percepcao=rng.randint(*cfg["percepcao"]) + (cfg["chefe_percepcao_extra"] if chefe else 0),
-        tecnicas=[Tecnica.de_fatia(f) for f in rng.sample(pool, n_tec)],
+        tecnicas=tecnicas,
         chefe=chefe,
     )
 
@@ -235,6 +241,9 @@ def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
     jogador.nova_luta()
     if regra.get("dano_todos"):  # Lua de Sangue: vale para os dois
         jogador.dano_extra = rival.dano_extra = regra["dano_todos"]
+    if regra.get("dano_por_vitoria"):  # Torre Celestial: sobe um andar a cada vitória
+        jogador.dano_extra += regra["dano_por_vitoria"] * (estado.luta_no_capitulo - 1)
+    rival.percepcao += regra.get("percepcao_rivais", 0)  # Hueco Mundo
     if rival.chefe and regra.get("chefe_mult"):  # Arco do Juízo
         rival.dano_mult = regra["chefe_mult"]
 
@@ -279,6 +288,8 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
         carma.ganhar(jogador.efeitos.carma_por_vitoria)  # Rosário de Ossos
     if luta.rival.chefe and estado.regra.get("carma_cheio_chefe"):
         carma.ganhar(carma.config.maximo)  # Arco do Juízo
+    if luta.rival.chefe and estado.regra.get("despertar_chefe"):
+        carma.guardados += 1  # Torneio do Poder: um Despertar guardado
     if not jogador.efeitos.sem_cura:
         fracao = estado.regra.get("cura_entre_lutas", ctx.combate["cura_entre_lutas"])
         fracao *= jogador.efeitos.cura_mult

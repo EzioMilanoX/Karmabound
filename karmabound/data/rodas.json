@@ -60,10 +60,14 @@
       "fatias": [
         { "id": "treino_na_montanha", "nome": "Treino na Montanha", "kanji": "山", "raridade": "cinza", "texto": "Cura entre lutas sobe de 30% para 50%.", "origem": "Treino no Monte Myoboku · Naruto", "regra": {"cura_entre_lutas": 0.5} },
         { "id": "torneio_regular", "nome": "Torneio Regular", "kanji": "闘", "raridade": "cinza", "texto": "Sem regra especial.", "origem": "Torneio de Artes Marciais · Dragon Ball", "regra": {} },
+        { "id": "torre_celestial", "nome": "Torre Celestial", "kanji": "塔", "raridade": "cinza", "texto": "Cada vitória neste capítulo é um andar a mais: +1 de dano, acumulando até o chefe.", "origem": "Torre Celestial · Hunter x Hunter", "regra": {"dano_por_vitoria": 1} },
         { "id": "lua_de_sangue", "nome": "Lua de Sangue", "kanji": "月", "raridade": "sangue", "texto": "Todos, você e os rivais, causam +3 de dano.", "origem": "O Eclipse · Berserk", "regra": {"dano_todos": 3} },
         { "id": "invasao", "nome": "Invasão", "kanji": "侵", "raridade": "sangue", "texto": "+1 luta neste capítulo, e um giro de Relíquia garantido depois de cada luta.", "origem": "Invasão de Konoha · Naruto", "regra": {"luta_extra": 1, "reliquia_garantida": true} },
+        { "id": "floresta_da_morte", "nome": "Floresta da Morte", "kanji": "森", "raridade": "sangue", "texto": "Sem cura entre lutas neste capítulo, mas toda vitória dá uma Relíquia.", "origem": "Exame Chunin · Naruto", "regra": {"cura_entre_lutas": 0.0, "reliquia_garantida": true} },
         { "id": "maldicao_coletiva", "nome": "Maldição Coletiva", "kanji": "禍", "raridade": "maldito", "texto": "Seu Carma enche em dobro, e os rivais têm +20% de vida.", "origem": "Incidente de Shibuya · Jujutsu Kaisen", "regra": {"carma_mult": 2.0, "vida_rival_mult": 1.2} },
-        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo.", "origem": "Marineford · One Piece", "regra": {"chefe_mult": 1.5, "carma_cheio_chefe": true} }
+        { "id": "hueco_mundo", "nome": "Hueco Mundo", "kanji": "虚", "raridade": "maldito", "texto": "Seu Carma enche 50% mais rápido, e os rivais têm +1 de Percepção.", "origem": "Hueco Mundo · Bleach", "regra": {"carma_mult": 1.5, "percepcao_rivais": 1} },
+        { "id": "arco_do_juizo", "nome": "Arco do Juízo", "kanji": "審", "raridade": "divino", "texto": "O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo.", "origem": "Marineford · One Piece", "regra": {"chefe_mult": 1.5, "carma_cheio_chefe": true} },
+        { "id": "torneio_do_poder", "nome": "Torneio do Poder", "kanji": "力", "raridade": "divino", "texto": "Uma luta a menos neste capítulo, e o chefe é 60% mais forte; vencê-lo dá um Despertar guardado.", "origem": "Torneio do Poder · Dragon Ball Super", "regra": {"luta_extra": -1, "chefe_mult": 1.6, "despertar_chefe": true} }
       ]
     },
     {

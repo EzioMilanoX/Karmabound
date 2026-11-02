@@ -28,7 +28,8 @@ from karmabound.visual import (
     quebrar,
 )
 
-ORDEM_RODAS = ("destino", "tecnicas", "arco", "reliquias", "despertar")
+ORDEM_RODAS = ("destino", "tecnicas", "arco", "reliquias", "despertar", "chefes")
+NOMES_ABA = {"chefes": ("魔", "Chefes")}  # abas que não são rodas
 LINHA = 22
 TOPO_LISTA = 118
 
@@ -47,7 +48,7 @@ def entradas(ctx: Contexto) -> dict[str, list[Entrada]]:
     """As habilidades de cada roda, na ordem da roda (o Golpe abre as Técnicas)."""
     por_roda = {}
     for rid in ORDEM_RODAS:
-        fatias = ctx.rodas[rid].fatias
+        fatias = ctx.chefes if rid == "chefes" else ctx.rodas[rid].fatias
         por_roda[rid] = [
             Entrada(f.id, f.nome, f.kanji, f.raridade, f.texto, f.origem) for f in fatias
         ]
@@ -134,11 +135,14 @@ class GrimorioScene(_Base):
     def _abas(self, r: IRenderer) -> None:
         x = 36
         for k, rid in enumerate(ORDEM_RODAS):
-            roda = self.ctx.rodas[rid]
+            kanji, nome = NOMES_ABA.get(rid) or (
+                self.ctx.rodas[rid].kanji,
+                self.ctx.rodas[rid].nome,
+            )
             atual = k == self.i_roda
             cor = TINTA if atual else alpha(TINTA, 90)
-            self._t(r, x, 70, f"{roda.kanji} {roda.nome}", 17, cor)
-            largura = 30 + len(roda.nome) * 10
+            self._t(r, x, 70, f"{kanji} {nome}", 16, cor)
+            largura = 28 + len(nome) * 9
             if atual:
                 r.draw_ui_line(x, 94, x + largura, 94, OURO, 2)
             x += largura + 26

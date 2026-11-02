@@ -215,6 +215,8 @@ class RoletaScene(IScene):
         self._painel(r)
         self._controles(r)
         self._despertar(r)
+        vfx.vinheta(r, 0.8)
+        vfx.grao(r, self.relogio, 120)
         vfx.revelar(r, self.relogio)
 
     def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:

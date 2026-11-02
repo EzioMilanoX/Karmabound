@@ -480,6 +480,13 @@ POR_HABILIDADE = {
     "esfera_dos_mil": "esfera",
     "lua_ilusoria": "ilusao",
     "corte_do_mundo": "corte_mundo",
+    # técnicas-assinatura dos chefes
+    "mil_laminas": "corte_x",
+    "guerreiro_esqueleto": "rotacao",
+    "estrela_que_prende": "esfera",
+    "desvio_dimensional": "tempo",
+    "lua_sem_fim": "presa",
+    "disparo_espiritual": "espiral",
 }
 TELA_CHEIA = {"dominio", "tempo", "ilusao", "corte_mundo", "demonio", "repulsao"}
 
@@ -638,3 +645,48 @@ def dissolver(r: IRenderer, x: float, y: float, k: float, cor: Cor) -> None:
         py = y + oy - sobe
         clara = mistura(cor, TINTA, 0.55)  # a tinta do rival, clara o bastante para o fundo escuro
         r.draw_ui_circle(px, py, 4.5 * (1 - k) + 1.5, alpha(clara, 240 * (1 - k)))
+
+
+# ----------------------------------------------------------------------- clima sombrio
+
+
+def vinheta(r: IRenderer, forca: float = 1.0) -> None:
+    """Bordas que afundam no escuro: o olho vai para o centro."""
+    passo = 12
+    for i in range(14):
+        a = (14 - i) * 7 * forca
+        cor = alpha(PRETO, a)
+        d = i * passo
+        r.draw_ui_rect(0, d, LARGURA, passo, cor)
+        r.draw_ui_rect(0, ALTURA - d - passo, LARGURA, passo, cor)
+        r.draw_ui_rect(d, 0, passo, ALTURA, cor)
+        r.draw_ui_rect(LARGURA - d - passo, 0, passo, ALTURA, cor)
+
+
+def grao(r: IRenderer, relogio: float, n: int = 220) -> None:
+    """Grão de papel e tinta: pontos que mudam a cada quadro de filme (12 por segundo)."""
+    quadro = math.floor(relogio * 12)
+    for i in range(n):
+        s = i * 12.9898 + quadro * 78.233
+        x = (math.sin(s) * 43758.5453) % 1 * LARGURA
+        y = (math.sin(s * 1.37) * 24634.6345) % 1 * ALTURA
+        r.draw_ui_rect(x, y, 2, 2, alpha(PRETO if i % 3 else TINTA, 26))
+
+
+def mancha_de_sangue(r: IRenderer, x: float, y: float, tam: float, semente: float) -> None:
+    """Uma mancha de tinta-sangue no chão (fica até o fim da luta)."""
+    cor = (70, 6, 8, 170)
+    r.draw_ui_polygon(
+        [
+            (
+                x + math.cos(a) * tam * (0.6 + 0.4 * math.sin(semente + a * 3)),
+                y + math.sin(a) * tam * 0.35,
+            )
+            for a in (k * math.pi / 8 for k in range(16))
+        ],
+        cor,
+    )
+    for k in range(5):  # respingos
+        a = semente + k * 1.3
+        d = tam * (1.1 + 0.5 * math.sin(semente * 2 + k))
+        r.draw_ui_circle(x + math.cos(a) * d, y + math.sin(a) * d * 0.35, 2 + (k % 3), cor)

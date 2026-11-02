@@ -15,7 +15,7 @@ from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
 from karmabound import som, vfx
-from karmabound.arenas import desenhar_arena
+from karmabound.arenas import desenhar_arena, desenhar_frente
 from karmabound.combate import HESITAR, Acao, Luta, Lutador, Tecnica, _extra_da_dor
 from karmabound.figuras import ESTILOS, desenhar_lutador
 from karmabound.jornada import Jornada
@@ -59,14 +59,31 @@ KANJI_HESITAR = "躊"
 NOMES_TIPO = {"ataque": "um ATAQUE", "defesa": "uma DEFESA", "maldita": "algo MALDITO"}
 ROMANOS = ("I", "II", "III", "IV", "V")
 ESCALA_JOGADOR = 1.2
-NOME_ESTILO = {"espadachim": "Ronin", "monge": "Monge Errante", "ninja": "Shinobi", "oni": "Oni"}
-KANJI_ESTILO = {"espadachim": "浪", "monge": "僧", "ninja": "忍", "oni": "鬼", "colosso": "魔"}
+NOME_ESTILO = {
+    "espadachim": "Ronin",
+    "monge": "Monge Errante",
+    "ninja": "Shinobi",
+    "oni": "Oni",
+    "hollow": "Hollow",
+    "tita": "Titã",
+}
+KANJI_ESTILO = {
+    "espadachim": "浪",
+    "monge": "僧",
+    "ninja": "忍",
+    "oni": "鬼",
+    "hollow": "虚",
+    "tita": "巨",
+    "colosso": "魔",
+}
 COR_ESTILO = {
     "espadachim": (60, 22, 24, 255),
     "monge": (62, 44, 24, 255),
     "ninja": (30, 32, 44, 255),
     "oni": (74, 18, 16, 255),
     "colosso": (44, 14, 34, 255),
+    "hollow": (40, 40, 46, 255),
+    "tita": (110, 62, 54, 255),
 }
 
 
@@ -97,6 +114,7 @@ class LutaScene(IScene):
         self.anim_ate = self.entrada_ate  # ninguém age durante a entrada do rival
         self.proxima_rival = self.entrada_ate + PAUSA_RIVAL
         self.fim_inicio: float | None = None
+        self.manchas: list[tuple[float, float, float, float]] = []  # o sangue no chão, até o fim
         self.primeiro_quadro = True
         self.cursor = 1 if self.j.jogador.tecnicas else 0
         self.modo = "escolher"  # escolher | sacrificio | fim
@@ -115,7 +133,9 @@ class LutaScene(IScene):
         self.efeito: tuple[str, Lutador, Lutador, float, bool] | None = None
         rival = self.luta.rival
         self.estilo_rival = (
-            "colosso" if rival.chefe else ESTILOS[(jornada.n_luta * 3 + jornada.capitulo) % 4]
+            "colosso"
+            if rival.chefe
+            else ESTILOS[(jornada.n_luta * 5 + jornada.capitulo) % len(ESTILOS)]
         )
         self.registro = (
             "A luta começa." if self.luta.vez is self.j.jogador else "O rival se move primeiro."
@@ -135,7 +155,14 @@ class LutaScene(IScene):
         self.nomes[jornada.ctx.basico.id] = jornada.ctx.basico.nome
         self.nomes[HESITAR.id] = HESITAR.nome
         todas = [f for roda in jornada.ctx.rodas.values() for f in roda.fatias]
+        todas += list(jornada.ctx.chefes)
         self.origens = {f.id: f.origem for f in todas}
+        for f in jornada.ctx.chefes:  # a técnica-assinatura do chefe
+            self.kanji[f.id], self.nomes[f.id] = f.kanji, f.nome
+        ids = {t.id for t in self.luta.rival.tecnicas}
+        self.assinatura = next((f for f in jornada.ctx.chefes if f.id in ids), None)
+        if self.assinatura is not None and jornada.grimorio is not None:
+            jornada.grimorio.ver([self.assinatura])
         self.origens[jornada.ctx.basico.id] = jornada.ctx.combate["golpe_basico"].get("origem", "")
 
     # --------------------------------------------------------------- slots
@@ -203,6 +230,11 @@ class LutaScene(IScene):
             som.tocar("defesa")
         if acao.dano and alvo is j:
             som.tocar("dano", 0.6)
+        if acao.dano and len(self.manchas) < 24:  # o golpe deixa a sua marca no chão
+            px, py = self._centro(alvo)
+            semente = self.relogio * 7.3
+            tam = min(34, 10 + acao.dano * 0.8)
+            self.manchas.append((px + math.sin(semente) * 30, py + 4, tam, semente))
         self.anim_ate = self.relogio + max(DURACAO_ACAO, vfx.duracao(nome_efeito))
         ax, ay = self._centro(alvo)
         bx, by = self._centro(ator)
@@ -386,12 +418,34 @@ class LutaScene(IScene):
             dx += math.sin(self.relogio * 90) * forca
         return dx, dy
 
+    def _pose_ataque(self, lutador: Lutador) -> float:
+        if self.golpe and self.golpe[0] is lutador:
+            k = (self.relogio - self.golpe[1]) / DURACAO_ACAO
+            if 0 <= k < 1:
+                return math.sin(k * math.pi)
+        return 0.0
+
+    def _pose_dano(self, lutador: Lutador) -> float:
+        inicio = self.tremor.get(id(lutador))
+        if inicio is not None and 0 <= self.relogio - inicio < 0.35:
+            return 1 - (self.relogio - inicio) / 0.35
+        return 0.0
+
+    def _abalo(self) -> float:
+        """O tremor da cena quando um golpe acerta."""
+        forca = max(self._pose_dano(self.luta.rival), self._pose_dano(self.j.jogador))
+        return math.sin(self.relogio * 70) * 6 * forca
+
     def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:
         r.draw_text(x, y, texto, tam, cor, anchor=anchor, font_id=FONTE_PINCEL)
 
     def render(self, world, renderer: IRenderer) -> None:
         r = renderer
-        desenhar_arena(r, self.j.arco.id if self.j.arco else None, self.relogio)
+        arco = self.j.arco.id if self.j.arco else None
+        abalo = self._abalo()
+        desenhar_arena(r, arco, self.relogio, abalo)
+        for mx, my, tam, semente in self.manchas:
+            vfx.mancha_de_sangue(r, mx, my, tam, semente)
         # ensō atrás do rival
         r.draw_ui_arc(
             POS_RIVAL[0],
@@ -405,6 +459,9 @@ class LutaScene(IScene):
         self._rival(r)
         self._jogador(r)
         self._efeito(r)
+        desenhar_frente(r, arco, self.relogio, abalo)
+        vfx.vinheta(r, 1.0)
+        vfx.grao(r, self.relogio)
         self._cabecalho(r)
         self._intencao(r)
         self._corrente(r)
@@ -469,6 +526,9 @@ class LutaScene(IScene):
             cor = SANGUE_VIVO if rival.chefe else OURO
             self._texto(r, 300, y0 + 6, kanji, 70, alpha(cor, brilho), "center")
             self._texto(r, 360, y0 + 18, nome, 36, alpha(TINTA, brilho))
+            if self.assinatura is not None:
+                a = self.assinatura
+                sub = f"{sub} · {a.kanji} {a.nome}"
             self._texto(r, 362, y0 + 62, sub, 16, alpha(TINTA, brilho * 0.6))
 
     def _corpo(self, lutador: Lutador) -> tuple[float, float]:
@@ -588,6 +648,8 @@ class LutaScene(IScene):
             clarao_cor=SANGUE_VIVO,
             estilo=self.estilo_rival,
             tempo=self.relogio,
+            ataque=self._pose_ataque(rival),
+            dano=self._pose_dano(rival),
         )
         if rival.pular:  # preso na ilusão
             self._texto(r, x, y - 200, "幻", 26, alpha(SANGUE_VIVO, 200), "center")
@@ -723,6 +785,9 @@ class LutaScene(IScene):
             clarao=clarao,
             clarao_cor=SANGUE_VIVO,
             tempo=self.relogio,
+            ataque=self._pose_ataque(j),
+            dano=max(self._pose_dano(j), cai),
+            costas=True,
         )
         if cai:
             vfx.correntes_fechando(r, x, y - 66 * ESCALA_JOGADOR, cai)
