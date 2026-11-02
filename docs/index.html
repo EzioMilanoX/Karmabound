@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de Karmabound</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+  /* ---------------------------------------------------------------
+     A mesma tinta do jogo: clara sobre laca escura. O tema claro é o
+     papel onde a tinta seria preta. As quatro cores de raridade são as
+     do balanceamento.json; o dourado é só do Divino e do Despertar.
+     --------------------------------------------------------------- */
+  :root {
+    --fundo:   #141210;
+    --laca:    #1f1c19;
+    --laca-2:  #2a2622;
+    --linha:   #3a3530;
+    --tinta:   #d8cfc0;
+    --suave:   #a39a8c;
+    --fraca:   #6f675c;
+    --sangue:  #c41e24;
+    --cinza:   #8a8a8a;
+    --rar-sangue: #c43a3e;
+    --maldito: #9d5ce0;
+    --ouro:    #e9c46a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --fundo:   #efe8da;
+      --laca:    #f7f2e8;
+      --laca-2:  #e6dccb;
+      --linha:   #cbbfa9;
+      --tinta:   #1c1915;
+      --suave:   #4f483e;
+      --fraca:   #81786a;
+      --sangue:  #9e1418;
+      --cinza:   #6b6b6b;
+      --rar-sangue: #a4161a;
+      --maldito: #6a2fb0;
+      --ouro:    #8a6113;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--tinta);
+    font: 18px/1.65 "Source Serif 4", Georgia, serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 0 20px 96px; }
+  h1, h2, h3, .kanji { font-family: "Yuji Syuku", serif; font-weight: 400; }
+  h1 { font-size: clamp(48px, 9vw, 84px); line-height: 1; margin: 0; letter-spacing: .02em; }
+  h2 { font-size: 30px; line-height: 1.25; margin: 72px 0 8px; }
+  h2 .kanji { color: var(--sangue); margin-right: .35em; }
+  h3 { font-size: 21px; margin: 32px 0 4px; color: var(--suave); }
+  p { margin: 12px 0; }
+  a { color: var(--ouro); }
+  strong { font-weight: 600; }
+  code, .mono { font: 14px/1.5 "IBM Plex Mono", Consolas, monospace; }
+  code { background: var(--laca-2); padding: 1px 6px; border-radius: 4px; }
+  pre { background: var(--laca); border: 1px solid var(--linha); border-radius: 8px; padding: 14px 16px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  .lead { font-size: 21px; color: var(--suave); }
+  .heroi { padding: 72px 0 24px; border-bottom: 1px solid var(--linha); }
+  .heroi .selo { font-size: 26px; color: var(--ouro); letter-spacing: .3em; }
+  .heroi p.lead { max-width: 34em; }
+  figure { margin: 28px 0; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--linha); }
+  figcaption { font-size: 15px; color: var(--fraca); margin-top: 8px; }
+  .par { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .par { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 16px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--linha); vertical-align: top; }
+  th { font-weight: 600; color: var(--suave); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .k { font-family: "Yuji Syuku", serif; font-size: 22px; }
+  .r-cinza { color: var(--cinza); } .r-sangue { color: var(--rar-sangue); }
+  .r-maldito { color: var(--maldito); } .r-divino { color: var(--ouro); }
+  .nota {
+    background: var(--laca); border-left: 3px solid var(--sangue);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 20px 0; color: var(--suave);
+  }
+  .formula { text-align: center; font: 17px/1.6 "IBM Plex Mono", monospace; background: var(--laca); padding: 14px; border-radius: 8px; }
+  nav.indice { columns: 2; column-gap: 32px; font-size: 16px; margin: 28px 0 0; padding: 0; list-style: none; }
+  nav.indice li { margin: 4px 0; break-inside: avoid; }
+  nav.indice a { color: var(--suave); text-decoration: none; }
+  nav.indice a:hover { color: var(--tinta); }
+  @media (max-width: 640px) { nav.indice { columns: 1; } }
+  footer { margin-top: 96px; padding-top: 20px; border-top: 1px solid var(--linha); font-size: 15px; color: var(--fraca); }
+</style>
+</head>
+<body>
+<main>
+
+<header class="heroi">
+  <div class="selo">業 · 命 · 覚醒</div>
+  <h1>Karmabound</h1>
+  <p class="lead">Um torneio dark fantasy por turnos em que você não escolhe seu poder — gira por ele. Todo azar fica preso ao seu Carma, e quando o Carma transborda, no pior momento, você desperta.</p>
+  <nav>
+    <ul class="indice">
+      <li><a href="#azar">O azar como suspense</a></li>
+      <li><a href="#rodas">Quatro rodas, um destino</a></li>
+      <li><a href="#tinta">As raridades são tinta</a></li>
+      <li><a href="#carma">O Carma é uma corrente</a></li>
+      <li><a href="#despertar">A roda se quebra</a></li>
+      <li><a href="#luta">Uma luta que cabe na cabeça</a></li>
+      <li><a href="#percepcao">Perceber é sentir o perigo</a></li>
+      <li><a href="#modos">Quatro modos, um piloto</a></li>
+      <li><a href="#votos">Votos que pesam quem você é</a></li>
+      <li><a href="#dados">Tudo que é número é dado</a></li>
+      <li><a href="#medir">Medir em vez de adivinhar</a></li>
+      <li><a href="#falta">O que ainda não existe</a></li>
+    </ul>
+  </nav>
+</header>
+
+<figure>
+  <img src="telas/10_despertar_resultado.png" alt="A mandala de selos depois de um Despertar: o selo Divino aceso no lugar do Santuário, com raios dourados no centro">
+  <figcaption>Depois de um Despertar: o selo Divino aceso e o painel com as taxas publicadas ao lado das reais.</figcaption>
+</figure>
+
+<h2 id="azar"><span class="kanji">運</span>O azar como suspense</h2>
+<p>Num roguelite, a sorte costuma ser o inimigo: o giro ruim é só frustração. Karmabound inverte isso. Cada giro abaixo de raro, cada golpe recebido, cada preço pago por um poder enche um medidor — o <strong>Carma</strong>. Quando ele está quase cheio, o jogador passa a <em>torcer</em> pela desgraça, porque ela traz o Despertar mais perto.</p>
+<p>Três pilares seguram o resto do jogo:</p>
+<ul>
+  <li><strong>O azar é suspense, não frustração.</strong></li>
+  <li><strong>Todo poder tem um preço.</strong> Poderes absurdos existem e são a recompensa — mas cobram à altura, e o jogador decide se vale pagar.</li>
+  <li><strong>A roleta é o jogo.</strong> As decisões importantes acontecem entre girar e escolher; a luta é onde você descobre se escolheu bem.</li>
+</ul>
+
+<h2 id="rodas"><span class="kanji">命</span>Quatro rodas, um destino</h2>
+<p>Toda decisão aleatória passa pela mesma roleta. Cada propósito é só uma roda diferente, definida em dados:</p>
+<table>
+  <thead><tr><th></th><th>Roda</th><th>Decide</th><th>Modo</th></tr></thead>
+  <tbody>
+    <tr><td class="k">命</td><td>Destino</td><td>O Dom inato e a origem do personagem</td><td>gira e aceita</td></tr>
+    <tr><td class="k">技</td><td>Técnicas</td><td>Golpes, defesas e técnicas malditas</td><td>gira 3, escolhe 1</td></tr>
+    <tr><td class="k">章</td><td>Arco</td><td>A regra do capítulo</td><td>gira e aceita</td></tr>
+    <tr><td class="k">宝</td><td>Relíquias</td><td>Itens; duplicatas evoluem o que você já tem</td><td>gira e aceita</td></tr>
+  </tbody>
+</table>
+<p>Na tela, cada roda é uma <strong>mandala de selos</strong>: um círculo ritual em que cada fatia é um selo com um kanji. O selo aceso corre pelo círculo, desacelera e para. O resultado já estava decidido antes de a animação começar — o sorteio é feito pela regra, por seed, e a tela só mostra o caminho até ele. Por isso qualquer giro estranho é reproduzível.</p>
+<div class="par">
+  <figure><img src="telas/01_parado.png" alt="A roda do Destino parada, com oito selos e o kanji 命 no centro"><figcaption>A roda do Destino, parada.</figcaption></figure>
+  <figure><img src="telas/04_escolhendo.png" alt="A roda de Técnicas com três selos sorteados, numerados 1, 2 e 3"><figcaption>Técnicas: três selos sorteados, numerados na mandala; você escolhe um.</figcaption></figure>
+</div>
+
+<h2 id="tinta"><span class="kanji">墨</span>As raridades são tinta</h2>
+<p>Quatro raridades, cada uma com uma cor que é também identidade visual. A ordem é a ordem de valor.</p>
+<table>
+  <thead><tr><th>Raridade</th><th class="num">Chance publicada</th><th class="num">Carma por giro</th></tr></thead>
+  <tbody>
+    <tr><td class="r-cinza">Cinza</td><td class="num">60%</td><td class="num">+8</td></tr>
+    <tr><td class="r-sangue">Sangue</td><td class="num">28%</td><td class="num">+4</td></tr>
+    <tr><td class="r-maldito">Maldito</td><td class="num">10%</td><td class="num">0</td></tr>
+    <tr><td class="r-divino">Divino</td><td class="num">2%</td><td class="num">−40</td></tr>
+  </tbody>
+</table>
+<p>Um Divino que vem por sorte <strong>consome</strong> 40 de Carma: a boa sorte paga o carma. E a tela sempre mostra a taxa publicada ao lado da taxa de agora, já com o pity aplicado. Não há dinheiro no jogo, e nunca vai haver.</p>
+
+<h2 id="carma"><span class="kanji">業</span>O Carma é uma corrente</h2>
+<p>O Carma é um pity <strong>compartilhado entre todas as rodas</strong>: azar numa Relíquia ajuda o próximo Destino. Na tela ele não é uma barra — são 44 elos de corrente em volta da mandala.</p>
+<ul>
+  <li><strong>Enche</strong> com giros ruins, com dano recebido e com o preço dos poderes pagos. Sofrer alimenta o Carma; perder uma luta, não — a derrota acaba a run, e ninguém deve ganhar nada perdendo de propósito.</li>
+  <li><strong>Pity suave:</strong> acima de 60, Malditos e Divinos ficam mais prováveis, até três vezes. Os elos racham e avermelham.</li>
+  <li><strong>Transbordo:</strong> em 100, as correntes tremem em vermelho vivo e o Carma trava. Um giro bom não apaga um Despertar já garantido.</li>
+</ul>
+<div class="par">
+  <figure><img src="telas/06_carma_pity_suave.png" alt="Correntes rachadas e avermelhadas com o Carma em 80"><figcaption>Carma 80: as correntes cedem, as taxas altas sobem.</figcaption></figure>
+  <figure><img src="telas/07_carma_transbordando.png" alt="Correntes vermelhas tremendo com o Carma em 100"><figcaption>Carma 100: o próximo giro desperta.</figcaption></figure>
+</div>
+
+<h2 id="despertar"><span class="kanji">覚</span>A roda se quebra</h2>
+<p>No Despertar, um clarão dourado cobre a tela, 覚醒 aparece no centro, e os elos voam para fora até sumir. Depois, um giro garantido da raridade máxima. Despertar é se libertar do destino que a roda impunha.</p>
+<figure><img src="telas/09_quebra_meio.png" alt="O kanji 覚醒 dourado no centro e os elos da corrente voando para fora da tela"><figcaption>As correntes se partindo.</figcaption></figure>
+<p>A frequência foi decidida antes de qualquer número: <strong>uma ou duas vezes por run</strong>, para ser um momento lembrado e não uma rotina. Com lutas reais simuladas, o Carma transborda cerca de <strong>1,3 vez por run</strong>. Algumas runs terminam sem nenhum Despertar — nem todo mundo recebe seu momento.</p>
+<div class="nota">O que o Despertar <em>faz</em> dentro da luta ainda está em aberto. A decisão é que haverá variedade — a dor da luta voltando ao rival, um destino roubado — e que o gatilho ainda será escolhido.</div>
+
+<h2 id="luta"><span class="kanji">闘</span>Uma luta que cabe na cabeça</h2>
+<p>Duelo 1v1, turnos alternados, e a regra mais simples que ainda gera decisões: <strong>só recarga</strong>.</p>
+<ul>
+  <li>No seu turno, você usa <strong>uma técnica pronta</strong>. Ela fica fora por alguns turnos seus. O <strong>Golpe básico</strong> nunca entra em recarga: ninguém fica sem ação.</li>
+  <li><strong>Quatro espaços</strong> de técnica. Uma técnica nova ganha na roleta substitui uma antiga.</li>
+  <li><strong>A vida persiste</strong> pela run, com 30% de cura entre lutas. Cada luta desgasta a próxima.</li>
+  <li><strong>Velocidade</strong> decide quem começa — e quem começa tenta um <strong>ataque surpresa</strong>: se não for percebido, causa 50% a mais.</li>
+  <li><strong>O rival anuncia e cumpre.</strong> Ele decide a próxima ação ao fim do turno dele, antes de você escolher.</li>
+</ul>
+
+<h2 id="percepcao"><span class="kanji">察</span>Perceber é sentir o perigo</h2>
+<p>Percepção não decide quem age primeiro. Ela é o instinto de quem já esteve perto da morte.</p>
+<p>Todo golpe tem uma <strong>Sutileza</strong>, de 0 a 3. Contra um golpe perigoso (ou contra a surpresa), se a sua Percepção for <strong>maior ou igual</strong> à Sutileza dele, você reage: leva metade e devolve um golpe. Não há dado nessa regra — a sorte já está toda na roleta, e a luta precisa ser legível. Calibrada, a Percepção salva o jogador em cerca de <strong>um terço</strong> dos golpes perigosos.</p>
+<p>A mesma Percepção decide o quanto você lê do rival: com 0, nada; com 1, o tipo da próxima ação (ataque, defesa, maldita); com 2, a técnica exata.</p>
+
+<h2 id="modos"><span class="kanji">章</span>Quatro modos, um piloto</h2>
+<p>Os modos não foram ajustados no olho. Um <strong>piloto automático</strong> — uma IA simples que defende o que vê chegando e bate forte no resto — joga milhares de runs inteiras, e a vida dos rivais e a sua são ajustadas até cada modo bater na sua promessa.</p>
+<table>
+  <thead><tr><th>Modo</th><th class="num">Vitória do piloto</th><th>Rivais</th><th class="num">Sua vida</th></tr></thead>
+  <tbody>
+    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 2 por luta, chefe ×1,2</td><td class="num">80</td></tr>
+    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 2 por luta, chefe ×1,2</td><td class="num">76</td></tr>
+    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 2 por luta, chefe ×1,25</td><td class="num">72</td></tr>
+    <tr><td>Brutal</td><td class="num">~10%</td><td>12 + 2,5 por luta, chefe ×1,25</td><td class="num">70</td></tr>
+  </tbody>
+</table>
+<p>O primeiro rival tem sempre 12 de vida: um modo fácil não deveria significar lutas vazias. O piloto é propositalmente simples — um jogador de verdade, lendo o rival, vence mais.</p>
+
+<h2 id="votos"><span class="kanji">誓</span>Votos que pesam quem você é</h2>
+<p>Tirar o <strong>Juramento</strong> na roleta abre o <strong>Altar dos Votos</strong>. Como nos animes, você escolhe as restrições que se impõe, e quanto mais severo o voto, maior o poder.</p>
+<h3>Restrições e ganhos</h3>
+<p>Restrições vêm em quatro categorias: <strong>simples</strong> (−25% de vida, sem cura entre lutas), <strong>conduta</strong> (nunca usar defesa, nunca usar o Golpe básico), <strong>revelação</strong> (o rival te lê melhor) e <strong>risco</strong> (lutas com prazo, ou morrer abaixo de 20% da vida). Os pontos compram ganhos: <strong>simples</strong> em até cinco níveis (Força, Vigor, Percepção, Velocidade), <strong>especiais</strong> (Golpe Oculto, Pele de Espinhos, Primeiro Sangue…) e <strong>exclusivos</strong> (Segunda Vida, Carrasco, Sangue Frio).</p>
+<h3>O valor vem do que você sacrifica</h3>
+<p>Aqui está o que torna o sistema diferente: <strong>o valor de uma restrição não está numa tabela</strong>. O Altar pega a sua run do jeito que ela está — vida, técnicas, Carma — e simula o resto dela centenas de vezes, com e sem a restrição, usando os mesmos sorteios dos dois lados. A diferença em lutas vencidas é o sacrifício. Proibir a defesa vale muito para quem tem ótimas defesas e quase nada para quem não tem nenhuma.</p>
+<p class="formula">pontos = S × (1 + S ÷ 2) × duração × categoria</p>
+<ul>
+  <li><strong>S</strong> é o sacrifício, em lutas vencidas a menos. O termo <code>1 + S ÷ 2</code> faz sacrifícios maiores renderem bem mais que a soma.</li>
+  <li><strong>Duração:</strong> só esta luta ×1, até o fim do capítulo ×1,3, o resto da run ×1,75.</li>
+  <li><strong>Categoria:</strong> simples ×1, conduta e revelação ×1,15, risco ×1,4.</li>
+  <li><strong>Retorno decrescente por restrição:</strong> cada uma credita no máximo 1,5 luta. Uma restrição devastadora sozinha não passa disso; para ir além, é preciso juntar restrições diferentes.</li>
+  <li><strong>Preço crescente:</strong> o segundo nível de um ganho custa o dobro do primeiro, o terceiro o triplo. Um câmbio único escala o preço de tudo — é a alavanca que coloca o Juramento no lugar.</li>
+</ul>
+<p>Calibrado assim, o Juramento vale cerca de <strong>+13 pontos de vitória</strong> para quem o tira depois do primeiro chefe — o poder mais forte entre os Malditos, de propósito, porque é o que mais exige do jogador.</p>
+<h3>Quebrar</h3>
+<p>Até três votos ao mesmo tempo. Quebrar um é possível — num momento de desespero — mas você perde os ganhos dele, metade da vida atual e todo o Carma, e precisa jurar um <strong>voto de quebra</strong>, só de restrições. Quebrar o voto de quebra encerra a run.</p>
+<div class="nota">O conceito virou um blueprint reutilizável da biblioteca, <strong>GAM-11 O.A.T.H.</strong> (<em>Obligations Amplified Through Hardship</em>), porque serve a qualquer jogo que queira handicaps auto-impostos com recompensa justa.</div>
+
+<h2 id="dados"><span class="kanji">理</span>Tudo que é número é dado</h2>
+<p>O jogo é híbrido: <strong>regras em Python puro</strong>, sem tela, e <strong>apresentação pela Ouroboros Engine</strong>.</p>
+<ul>
+  <li><code>rodas.py</code>, <code>carma.py</code>, <code>mesa.py</code>, <code>combate.py</code>, <code>efeitos.py</code>, <code>votos.py</code> e <code>run.py</code> não importam pygame. A tela e o simulador giram pela mesma <code>Mesa</code>: o que a simulação mede é o que o jogador vê.</li>
+  <li>Raridades, Carma, técnicas, modos e votos vivem em JSON, em <code>karmabound/data/</code>. O <a href="CATALOGO.md">catálogo</a> mostra todo esse conteúdo em forma legível e é gerado a partir dos dados.</li>
+  <li>A tela é uma <code>IScene</code> da engine e desenha só pela API do <code>IRenderer</code>. A mandala precisava de círculos, arcos, polígonos e kanji — e a engine não tinha nenhum dos quatro. O <strong>marco M16</strong> da engine nasceu deste jogo: <code>draw_ui_line</code>, <code>draw_ui_circle</code>, <code>draw_ui_arc</code>, <code>draw_ui_polygon</code> e <code>load_font</code>, agora disponíveis para todos os jogos dela.</li>
+  <li>A fonte é a <strong>Yuji Syuku</strong>, caligrafia a pincel com licença livre (OFL). Ela cobre todos os kanji e os acentos do português — um teste garante que nenhum kanji novo vire um quadrado vazio.</li>
+</ul>
+
+<h2 id="medir"><span class="kanji">測</span>Medir em vez de adivinhar</h2>
+<p>Quase toda decisão de balanceamento deste jogo saiu de uma simulação, e algumas simulações corrigiram decisões anteriores. Dois exemplos:</p>
+<ul>
+  <li>A primeira calibração dos modos estava errada porque o piloto equipava uma versão provisória do Juramento que o machucava em toda luta. Quando o Juramento virou o Altar, as vitórias saltaram — e os modos foram recalibrados.</li>
+  <li>A primeira versão dos votos dava pontos demais para gastar com de menos: as restrições custavam mais do que todo o catálogo de ganhos devolvia. Daí vieram os ganhos em níveis, os exclusivos e o teto por restrição.</li>
+</ul>
+<pre><code>pytest                              # regras, tela, votos e calibração, sem janela
+python tools/simular.py --combate   # vitórias, Carma e Percepção por modo
+python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitória
+python tools/capturar_telas.py      # as imagens deste manual
+python tools/gerar_catalogo.py      # docs/CATALOGO.md a partir dos dados</code></pre>
+
+<h2 id="falta"><span class="kanji">未</span>O que ainda não existe</h2>
+<ul>
+  <li>A tela de luta e a tela do Altar dos Votos.</li>
+  <li>O efeito do Despertar dentro da luta (variedade e gatilho em aberto).</li>
+  <li>O efeito dos Dons e das Relíquias na luta.</li>
+  <li>O custo definitivo dos poderes Malditos e Divinos — a regra já está decidida: quebrados, mas com preço.</li>
+  <li>A progressão entre runs e o estilo de arte definitivo dos personagens.</li>
+  <li>Um executável que dispense o Python.</li>
+</ul>
+
+<footer>
+  Karmabound · © 2026 Enzo Lai · uso para testes e avaliação (ver LICENSE) · fonte Yuji Syuku sob SIL OFL 1.1.
+  Decisões completas, com data e motivo, em <a href="DESIGN.md">DESIGN.md</a>.
+</footer>
+
+</main>
+</body>
+</html>

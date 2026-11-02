@@ -1,0 +1,4 @@
+pygame-ce>=2.5
+# OuroborosEngine clonada ao lado (precisa do M16); traz numpy e librosa.
+# Sem clone: pip install "ouroboros-engine @ git+https://github.com/EzioMilanoX/OuroborosEngine.git"
+-e ../OuroborosEngine

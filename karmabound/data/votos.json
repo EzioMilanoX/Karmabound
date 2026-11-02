@@ -1,0 +1,245 @@
+{
+  "_nota": "Votos vinculativos (blueprint GAM-11 O.A.T.H.). O valor de cada restrição não está aqui: é medido contra o build do jogador, na hora, por simulação. Aqui ficam o catálogo e os multiplicadores do bônus.",
+  "limite_ativos": 3,
+  "bonus": {
+    "_formula": "pontos = S × (1 + S / K) × duração × categoria; S = sacrifício creditado: o sacrifício medido do voto, limitado à soma de min(sacrifício de cada restrição, teto)",
+    "K": 2,
+    "duracao": {
+      "luta": {
+        "nome": "Momentâneo (esta luta)",
+        "multiplicador": 1.0
+      },
+      "capitulo": {
+        "nome": "Até o fim do capítulo",
+        "multiplicador": 1.3
+      },
+      "run": {
+        "nome": "Permanente (resto da run)",
+        "multiplicador": 1.75
+      }
+    },
+    "categoria": {
+      "simples": 1.0,
+      "conduta": 1.15,
+      "revelacao": 1.15,
+      "risco": 1.4
+    },
+    "teto_por_restricao": 1.5
+  },
+  "quebra": {
+    "_nota": "Quebrar um voto: perde os ganhos dele, sofre a punição e jura um voto de quebra. Quebrar o voto de quebra encerra a run. O voto quebrado libera o espaço.",
+    "vida_atual_perdida": 0.5,
+    "zera_carma": true
+  },
+  "restricoes": [
+    {
+      "id": "corpo_ofertado",
+      "nome": "Corpo Ofertado",
+      "kanji": "身",
+      "categoria": "simples",
+      "texto": "Vida máxima −25%.",
+      "efeito": {
+        "vida_max_mult": 0.75
+      }
+    },
+    {
+      "id": "passos_pesados",
+      "nome": "Passos Pesados",
+      "kanji": "重",
+      "categoria": "simples",
+      "texto": "Velocidade −1.",
+      "efeito": {
+        "velocidade": -1
+      }
+    },
+    {
+      "id": "sem_descanso",
+      "nome": "Sem Descanso",
+      "kanji": "眠",
+      "categoria": "simples",
+      "texto": "Sem cura entre lutas.",
+      "efeito": {
+        "sem_cura": true
+      }
+    },
+    {
+      "id": "sem_guarda",
+      "nome": "Sem Guarda",
+      "kanji": "盾",
+      "categoria": "conduta",
+      "texto": "Nunca usar técnicas de defesa.",
+      "efeito": {
+        "proibir_tipo": "defesa"
+      }
+    },
+    {
+      "id": "maos_atadas",
+      "nome": "Mãos Atadas",
+      "kanji": "縛",
+      "categoria": "conduta",
+      "texto": "Nunca usar o Golpe básico; sem técnica pronta, você hesita e perde o turno.",
+      "efeito": {
+        "proibir_basico": true
+      }
+    },
+    {
+      "id": "voto_exposto",
+      "nome": "Voto Exposto",
+      "kanji": "晒",
+      "categoria": "revelacao",
+      "texto": "O rival tem +2 de Percepção contra você.",
+      "efeito": {
+        "percepcao_rival": 2
+      }
+    },
+    {
+      "id": "prazo",
+      "nome": "Prazo",
+      "kanji": "限",
+      "categoria": "risco",
+      "texto": "Luta com mais de 10 turnos é derrota.",
+      "efeito": {
+        "limite_turnos": 10
+      }
+    },
+    {
+      "id": "fio_da_navalha",
+      "nome": "Fio da Navalha",
+      "kanji": "刃",
+      "categoria": "risco",
+      "texto": "Cair abaixo de 20% da vida máxima é morte.",
+      "efeito": {
+        "morte_abaixo": 0.2
+      }
+    }
+  ],
+  "ganhos": [
+    {
+      "id": "forca",
+      "nome": "Força",
+      "kanji": "力",
+      "categoria": "simples",
+      "texto": "+2 de dano em todo golpe.",
+      "efeito": {
+        "bonus_dano": 2
+      },
+      "niveis": 5
+    },
+    {
+      "id": "vigor",
+      "nome": "Vigor",
+      "kanji": "活",
+      "categoria": "simples",
+      "texto": "+15 de vida máxima.",
+      "efeito": {
+        "vida_max": 15
+      },
+      "niveis": 5
+    },
+    {
+      "id": "olhar_agucado",
+      "nome": "Olhar Aguçado",
+      "kanji": "察",
+      "categoria": "simples",
+      "texto": "+1 de Percepção.",
+      "efeito": {
+        "percepcao": 1
+      },
+      "niveis": 5
+    },
+    {
+      "id": "passo_leve",
+      "nome": "Passo Leve",
+      "kanji": "軽",
+      "categoria": "simples",
+      "texto": "+1 de Velocidade.",
+      "efeito": {
+        "velocidade": 1
+      },
+      "niveis": 5
+    },
+    {
+      "id": "golpe_oculto",
+      "nome": "Golpe Oculto",
+      "kanji": "隠",
+      "categoria": "especial",
+      "texto": "Seus golpes perigosos não podem ser percebidos.",
+      "efeito": {
+        "imperceptivel": true
+      },
+      "niveis": 1
+    },
+    {
+      "id": "pele_de_espinhos",
+      "nome": "Pele de Espinhos",
+      "kanji": "棘",
+      "categoria": "especial",
+      "texto": "Revide 3 que se rearma a cada turno seu.",
+      "efeito": {
+        "revide_permanente": 3
+      },
+      "niveis": 1
+    },
+    {
+      "id": "carma_faminto",
+      "nome": "Carma Faminto",
+      "kanji": "餓",
+      "categoria": "especial",
+      "texto": "O Carma enche 50% mais rápido.",
+      "efeito": {
+        "carma_mult": 1.5
+      },
+      "niveis": 1
+    },
+    {
+      "id": "primeiro_sangue",
+      "nome": "Primeiro Sangue",
+      "kanji": "先",
+      "categoria": "especial",
+      "texto": "Você sempre começa a luta, e a surpresa nunca é percebida.",
+      "efeito": {
+        "primeiro_sangue": true
+      },
+      "niveis": 1
+    },
+    {
+      "id": "segunda_vida",
+      "nome": "Segunda Vida",
+      "kanji": "蘇",
+      "categoria": "exclusivo",
+      "niveis": 1,
+      "texto": "Uma vez na run, ao cair, volta com 30% da vida.",
+      "efeito": {
+        "reviver": 1
+      }
+    },
+    {
+      "id": "carrasco",
+      "nome": "Carrasco",
+      "kanji": "斬",
+      "categoria": "exclusivo",
+      "niveis": 1,
+      "texto": "+50% de dano contra chefes.",
+      "efeito": {
+        "dano_chefe_mult": 1.5
+      }
+    },
+    {
+      "id": "sangue_frio",
+      "nome": "Sangue Frio",
+      "kanji": "冷",
+      "categoria": "exclusivo",
+      "niveis": 1,
+      "texto": "Você sempre reage ao ataque surpresa.",
+      "efeito": {
+        "sangue_frio": true
+      }
+    }
+  ],
+  "precos": {
+    "_nota": "Preço de um nível de ganho = benefício medido do 1º nível × número do nível × exclusivo × câmbio. O câmbio escala o poder total dos votos sem tirar o bônus de severidade; calibrado com tools/medir_juramento.py.",
+    "minimo": 0.05,
+    "exclusivo": 1.25,
+    "cambio": 4.0
+  }
+}

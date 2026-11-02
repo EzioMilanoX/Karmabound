@@ -1,0 +1,10 @@
+{
+  "girar": "KEY_SPACE",
+  "trocar_roda": "KEY_TAB",
+  "escolher_1": "KEY_1",
+  "escolher_2": "KEY_2",
+  "escolher_3": "KEY_3",
+  "sofrer_dano": "KEY_D",
+  "pagar_custo": "KEY_C",
+  "sair": "KEY_ESCAPE"
+}

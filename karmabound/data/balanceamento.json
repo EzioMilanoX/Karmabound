@@ -1,0 +1,147 @@
+{
+  "raridades": [
+    {
+      "id": "cinza",
+      "nome": "Cinza",
+      "peso": 60,
+      "cor": "#8a8a8a"
+    },
+    {
+      "id": "sangue",
+      "nome": "Sangue",
+      "peso": 28,
+      "cor": "#a4161a"
+    },
+    {
+      "id": "maldito",
+      "nome": "Maldito",
+      "peso": 10,
+      "cor": "#7b2cbf"
+    },
+    {
+      "id": "divino",
+      "nome": "Divino",
+      "peso": 2,
+      "cor": "#e9c46a"
+    }
+  ],
+  "carma": {
+    "maximo": 100,
+    "por_giro": {
+      "cinza": 8,
+      "sangue": 4,
+      "maldito": 0,
+      "divino": -40
+    },
+    "por_dano_total": 32,
+    "por_custo": 6,
+    "pity_suave_inicio": 60,
+    "pity_suave_multiplicador": 3.0,
+    "pity_suave_raridades": [
+      "maldito",
+      "divino"
+    ]
+  },
+  "combate": {
+    "_nota": "Rascunho para a simulação medir; poderes Malditos/Divinos com efeito provisório até a conversa sobre custos.",
+    "espacos": 4,
+    "cura_entre_lutas": 0.3,
+    "golpe_basico": {
+      "id": "golpe_basico",
+      "nome": "Golpe",
+      "tipo": "ataque",
+      "dano": 4,
+      "recarga": 0,
+      "sutileza": 0
+    },
+    "bonus_surpresa": 0.5,
+    "jogador": {
+      "vida": 72,
+      "velocidade": 2,
+      "percepcao": 1,
+      "tecnicas": [
+        "golpe_direto",
+        "guarda_alta"
+      ]
+    },
+    "rivais": {
+      "vida_base": 12,
+      "vida_por_luta": 2,
+      "chefe_multiplicador": 1.25,
+      "tecnicas_base": 2,
+      "tecnicas_por_capitulo": 1,
+      "velocidade": [
+        1,
+        3
+      ],
+      "percepcao": [
+        0,
+        2
+      ],
+      "chefe_percepcao_extra": 1,
+      "raridades_por_capitulo": [
+        [
+          "cinza",
+          "sangue"
+        ],
+        [
+          "cinza",
+          "sangue",
+          "maldito"
+        ],
+        [
+          "sangue",
+          "maldito"
+        ]
+      ]
+    },
+    "dificuldade_padrao": "dificil",
+    "dificuldades": {
+      "_nota": "Vitória do piloto automático em 12 lutas (tools/simular.py --combate). Um jogador de verdade vence mais.",
+      "acessivel": {
+        "nome": "Acessível",
+        "alvo_vitoria": 0.45,
+        "rivais": {
+          "vida_por_luta": 2,
+          "chefe_multiplicador": 1.2
+        },
+        "jogador": {
+          "vida": 80
+        }
+      },
+      "equilibrado": {
+        "nome": "Equilibrado",
+        "alvo_vitoria": 0.36,
+        "rivais": {
+          "vida_por_luta": 2,
+          "chefe_multiplicador": 1.2
+        },
+        "jogador": {
+          "vida": 76
+        }
+      },
+      "dificil": {
+        "nome": "Difícil",
+        "alvo_vitoria": 0.25,
+        "rivais": {
+          "vida_por_luta": 2,
+          "chefe_multiplicador": 1.25
+        },
+        "jogador": {
+          "vida": 72
+        }
+      },
+      "brutal": {
+        "nome": "Brutal",
+        "alvo_vitoria": 0.1,
+        "rivais": {
+          "vida_por_luta": 2.5,
+          "chefe_multiplicador": 1.25
+        },
+        "jogador": {
+          "vida": 70
+        }
+      }
+    }
+  }
+}

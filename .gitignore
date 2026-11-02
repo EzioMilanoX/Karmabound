@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+build/
+dist/
+
+# ferramentas locais de IA (não publicadas)
+CLAUDE.md
+.claude/
