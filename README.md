@@ -115,9 +115,9 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
 | Acessível | ~45% | 12 + 4,57 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 4,95 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 4,95 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 6,05 por luta, chefe ×1,25 | 68 |
+| Equilibrado | ~36% | 12 + 4,72 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 4,81 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 5,92 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
