@@ -82,8 +82,10 @@ class TituloScene(_Base):
         ao_continuar=None,
         ao_diaria=None,
         recorde_diaria: int | None = None,
+        ao_cronica=None,
     ) -> None:
         super().__init__(entrada, ao_sair)
+        self.ao_cronica = ao_cronica
         self.ao_grimorio = ao_grimorio
         self.ao_opcoes = ao_opcoes
         self.ao_continuar = ao_continuar
@@ -118,6 +120,9 @@ class TituloScene(_Base):
             return
         if self.ao_opcoes is not None and e.is_action_pressed("opcoes"):
             self.ao_opcoes()
+            return
+        if self.ao_cronica is not None and e.is_action_pressed("cronica"):
+            self.ao_cronica()
             return
         som.musica("titulo")
         if e.is_action_pressed("cima"):
@@ -189,7 +194,7 @@ class TituloScene(_Base):
             r,
             480,
             ALTURA - 28,
-            "↑ ↓ escolhe · Enter começa · G grimório · O opções · esc sai",
+            "↑ ↓ escolhe · Enter começa · G grimório · C crônica · O opções · esc sai",
             14,
             alpha(TINTA, 100),
             "center",
@@ -563,11 +568,14 @@ class AltarScene(_Base):
 
 
 class FimScene(_Base):
-    def __init__(self, jornada: Jornada, entrada, ao_reiniciar, ao_sair, recorde=None) -> None:
+    def __init__(
+        self, jornada: Jornada, entrada, ao_reiniciar, ao_sair, recorde=None, feitos=()
+    ) -> None:
         super().__init__(entrada, ao_sair)
         self.j = jornada
         self.ao_reiniciar = ao_reiniciar
         self.recorde = recorde  # o melhor da semente do dia, se era uma
+        self.feitos = list(feitos)  # os Feitos conquistados nesta run
 
     def update(self, world, delta_time: float) -> None:
         if self.relogio == 0.0:
@@ -611,6 +619,17 @@ class FimScene(_Base):
         ]
         for k, linha in enumerate(x for x in linhas if x):
             self._t(r, 480, 400 + k * 28, linha, 17, alpha(TINTA, 170), "center")
+        for k, f in enumerate(self.feitos[:3]):  # os Feitos novos, no alto
+            brilho = 255 * min(1.0, max(0.0, (t - 0.8 - k * 0.3) / 0.4))
+            self._t(
+                r,
+                480,
+                24 + k * 26,
+                f"{f.kanji}  Feito: {f.nome}",
+                18,
+                alpha(OURO, brilho),
+                "center",
+            )
         self._t(
             r, 480, ALTURA - 30, "Enter volta ao título · esc sai", 15, alpha(TINTA, 110), "center"
         )

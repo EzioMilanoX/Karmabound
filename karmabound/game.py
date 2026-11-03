@@ -17,11 +17,13 @@ from ouroboros.bootstrap.engine_config import EngineConfig
 from ouroboros.bootstrap.game_loop import GameLoop
 
 from karmabound import opcoes, salvar
+from karmabound.cronica import Cronica
 from karmabound.grimorio import Grimorio
 from karmabound.jornada import Jornada
 from karmabound.mesa import Mesa
 from karmabound.rodas import DADOS
 from karmabound.som import SOM
+from karmabound.tela_cronica import CronicaScene
 from karmabound.tela_grimorio import GrimorioScene
 from karmabound.tela_luta import LutaScene
 from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene
@@ -66,6 +68,7 @@ class Fluxo:
         self.seed = seed
         self.jornada: Jornada | None = None
         self.grimorio = Grimorio.padrao()
+        self.cronica = Cronica.padrao()
 
     @property
     def entrada(self):
@@ -88,8 +91,12 @@ class Fluxo:
                 ao_continuar=self.continuar,
                 ao_diaria=self.semente_do_dia,
                 recorde_diaria=salvar.melhor_diaria(hoje),
+                ao_cronica=self.abrir_cronica,
             )
         )
+
+    def abrir_cronica(self) -> None:
+        self._cena(CronicaScene(self.cronica, self.entrada, self.titulo, self.titulo))
 
     def abrir_grimorio(self) -> None:
         self._cena(GrimorioScene(self.grimorio, self.entrada, self.titulo, self.titulo))
@@ -187,7 +194,9 @@ class Fluxo:
             recorde = (
                 salvar.registrar_diaria(j.diaria, j.estado.lutas_vencidas) if j.diaria else None
             )
-            self._cena(FimScene(j, self.entrada, self.titulo, self.loop.stop, recorde))
+            total = sum(len(r.fatias) for r in j.ctx.rodas.values()) + len(j.ctx.chefes)
+            feitos = self.cronica.registrar(j, len(self.grimorio.vistos), total)
+            self._cena(FimScene(j, self.entrada, self.titulo, self.loop.stop, recorde, feitos))
             return
         salvar.salvar(j)
         dica = {

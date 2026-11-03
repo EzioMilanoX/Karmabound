@@ -33,7 +33,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 | Onde | Ação | Tecla |
 |---|---|---|
 | **Controle** (Xbox/XInput) | Mover · confirmar · voltar · pausa · Despertar | direcional/analógico · A · B · Start · Y |
-| Título | Escolher o modo / começar / Grimório / opções | ↑ ↓ / Enter / G / O |
+| Título | Escolher o modo / começar / Grimório / Crônica / opções | ↑ ↓ / Enter / G / C / O |
 | Durante a run | Pausa: continuar, opções, quebrar um voto, voltar ao título | Esc |
 | Opções | Música, efeitos, silenciar, tela cheia, velocidade, dicas | ↑ ↓ / ← → |
 | Grimório | Trocar de roda / de habilidade / voltar | ← → / ↑ ↓ / Backspace |
@@ -58,7 +58,7 @@ Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada g
 
 Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta, na luta e no Grimório: a **Espiral Concentrada** é o Rasengan (Naruto), o **Clarão Negro** é o Kokusen (Jujutsu Kaisen), o **Corte do Mundo** é o corte que divide o mundo do Sukuna, o **Corpo Perfeito** é o Sukuna da Era Heian, o **Instante Suspenso** é The World (JoJo), a **Liberação Final** é o Bankai (Bleach). As obras vão de Naruto, One Piece, Bleach, Dragon Ball e Hunter x Hunter a Jujutsu Kaisen, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling e Attack on Titan. A lista completa, com a origem de cada uma, está no [catálogo](docs/CATALOGO.md).
 
-O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
+A **Crônica** (C, no título) guarda o histórico das suas runs e doze **Feitos** (vencer no Brutal, vencer sem Relíquias, quebrar um voto e vencer, completar o Grimório...). O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
 
 A run **fica salva** a cada fase: o título oferece **Continuar a run** (no meio de uma luta, ela recomeça igual — mesmo rival, mesma sorte). A **Semente do dia** dá a todo mundo a mesma sorte no Difícil, e o título mostra o seu melhor resultado do dia.
 

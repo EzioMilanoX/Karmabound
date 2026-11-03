@@ -62,5 +62,9 @@
   "opcoes": [
     "KEY_O",
     "PAD_X"
+  ],
+  "cronica": [
+    "KEY_C",
+    "PAD_LB"
   ]
 }

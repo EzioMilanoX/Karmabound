@@ -195,6 +195,10 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 
 - Joga-se inteiro de controle (XInput: Xbox, e DualShock/genéricos pelo mapeamento do SDL): direcional ou analógico move, A confirma e gira, B volta, Start pausa, Y desperta, X abre as opções e Back o Grimório no título. A engine já resolvia `PAD_*`; o que faltava era cursor nas telas que só aceitavam números (escolher 1 de 3 na roleta, o sacrifício do Contrato, a troca de técnica).
 
+### Crônica e Feitos (2026-11-02)
+
+- `cronica.py` guarda cada run terminada (modo, lutas, Dom, Despertares, votos, Relíquias) e doze Feitos, avaliados do estado final — sem contadores espalhados pelo jogo. Um Feito novo aparece no fim da run; a tela da Crônica (C / LB no título) mostra os Feitos e as últimas runs.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.

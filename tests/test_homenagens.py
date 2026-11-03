@@ -289,6 +289,8 @@ def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
         "tela_menus",
         "tela_grimorio",
         "tela_pausa",
+        "tela_cronica",
+        "cronica",
         "dicas",
         "vfx",
         "arenas",
