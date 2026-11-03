@@ -1,4 +1,11 @@
 {
+  "regua": {
+    "_nota": "Quanto um item de cada raridade deve valer, em pontos de vitória (tools/calibrar.py itens).",
+    "cinza": [1, 3],
+    "sangue": [3, 5],
+    "maldito": [5, 10],
+    "divino": [10, 20]
+  },
   "raridades": [
     {
       "id": "cinza",

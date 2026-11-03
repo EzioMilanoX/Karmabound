@@ -187,6 +187,10 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **4 Arcos** (Torre Celestial: +1 de dano por vitória no capítulo; Floresta da Morte: sem cura, Relíquia a cada vitória; Hueco Mundo: Carma ×1,5 e rivais +1 de Percepção; Torneio do Poder: uma luta a menos, chefe ×1,6, vencê-lo guarda um Despertar) e **técnicas-assinatura dos chefes** (`data/chefes.json`).
 - Continuar uma run recarrega os dados atuais (`Contexto.padrao`): um ajuste de balanceamento vale também para a run salva.
 
+### Calibrador automático (2026-11-02)
+
+- `tools/calibrar.py` faz sozinho o ciclo que era manual: para cada modo mede a vitória em três valores de vida dos rivais, ajusta uma reta, acha o valor do alvo, confere e (com `--aplicar`) grava. Para os itens, compara com a **régua**, que agora é dado (`balanceamento.json` → `regua`), e só aponta o lado — o que mexer em cada item é decisão de design.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.

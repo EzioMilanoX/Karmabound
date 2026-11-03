@@ -184,6 +184,7 @@ ruff check .                        # lint
 python tools/simular.py --combate   # vitórias, Carma e Percepção por modo
 python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitória
 python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale, contra a régua
+python tools/calibrar.py tudo       # o ciclo inteiro: modos no alvo (--aplicar grava) e itens contra a régua
 python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
 python tools/vitrine.py             # PNG de cada arena, rival e efeito, em docs/telas/vitrine/
