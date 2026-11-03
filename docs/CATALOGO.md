@@ -38,7 +38,7 @@
 | 守 | Guarda Alta | Cinza | defesa | bloqueio 8 | 2 | 0 |  | Ken (Nen) · Hunter x Hunter |
 | 突 | Investida | Cinza | ataque | dano 11 | 2 | 1 | sim | Dynamic Entry (Gai) · Naruto |
 | 雷 | Primeiro Trovão | Cinza | ataque | dano 6, sempre surpresa | 2 | 1 |  | Hekireki Issen · Demon Slayer |
-| 分 | Clones de Sombra | Cinza | ataque | dano 3, golpes 3 | 3 | 2 |  | Kage Bunshin no Jutsu · Naruto |
+| 分 | Clones de Sombra | Cinza | ataque | dano 2, golpes 3 | 2 | 2 |  | Kage Bunshin no Jutsu · Naruto |
 | 癒 | Mão Curadora | Cinza | defesa | cura 5 | 3 | 0 |  | Ninjutsu Médico · Naruto |
 | 十 | Corte em Cruz | Sangue | ataque | dano 5, golpes 2 | 2 | 3 |  | Nitoryu (Zoro) · One Piece |
 | 返 | Contra-ataque | Sangue | defesa | bloqueio 5, revide 6 | 3 | 0 |  | Kaiten (Neji) · Naruto |
@@ -154,7 +154,7 @@ Até 3 votos ativos; quebrar um voto libera o espaço. O valor de cada restriç�
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 12 +4.8 | ×1.2 | 80 |
-| Equilibrado | 36% | 12 +4.95 | ×1.2 | 76 |
-| Difícil (padrão) | 25% | 12 +4.95 | ×1.25 | 70 |
-| Brutal | 10% | 12 +6.05 | ×1.25 | 68 |
+| Acessível | 45% | 12 +4.57 | ×1.2 | 80 |
+| Equilibrado | 36% | 12 +4.72 | ×1.2 | 76 |
+| Difícil (padrão) | 25% | 12 +4.81 | ×1.25 | 70 |
+| Brutal | 10% | 12 +5.92 | ×1.25 | 68 |
