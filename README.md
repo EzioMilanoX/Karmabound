@@ -32,6 +32,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 | Onde | Ação | Tecla |
 |---|---|---|
+| **Controle** (Xbox/XInput) | Mover · confirmar · voltar · pausa · Despertar | direcional/analógico · A · B · Start · Y |
 | Título | Escolher o modo / começar / Grimório / opções | ↑ ↓ / Enter / G / O |
 | Durante a run | Pausa: continuar, opções, quebrar um voto, voltar ao título | Esc |
 | Opções | Música, efeitos, silenciar, tela cheia, velocidade, dicas | ↑ ↓ / ← → |

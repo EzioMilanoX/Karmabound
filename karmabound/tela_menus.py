@@ -239,6 +239,7 @@ class SubstituirScene(_Base):
         self.j = jornada
         self.ao_concluir = ao_concluir
         self.cores = {r.id: hex_cor(r.cor) for r in jornada.ctx.raridades}
+        self.cursor = 0  # para jogar de controle: ↑ ↓ e confirmar
 
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
@@ -252,6 +253,17 @@ class SubstituirScene(_Base):
                 self.j.substituir(t)
                 self.ao_concluir()
                 return
+        if e.is_action_pressed("cima"):
+            self.cursor = (self.cursor - 1) % len(tecnicas)
+            som.tocar("mover")
+        elif e.is_action_pressed("baixo"):
+            self.cursor = (self.cursor + 1) % len(tecnicas)
+            som.tocar("mover")
+        elif e.is_action_pressed("confirmar"):
+            som.tocar("confirmar")
+            self.j.substituir(tecnicas[self.cursor])
+            self.ao_concluir()
+            return
         if e.is_action_pressed("cancelar"):
             self.j.substituir(None)
             self.ao_concluir()
@@ -274,12 +286,17 @@ class SubstituirScene(_Base):
         self._linha(r, 124, Tecnica.de_fatia(nova), nova)
         self._t(r, 220, 214, "Qual sai?", 16, alpha(TINTA, 150))
         for i, t in enumerate(self.j.jogador.tecnicas):
+            if i == self.cursor:
+                r.draw_ui_rect(200, 234 + i * 74, 560, 68, LACA)
+                r.draw_ui_polygon(
+                    [(206, 252 + i * 74), (214, 258 + i * 74), (206, 264 + i * 74)], OURO
+                )
             self._linha(r, 240 + i * 74, t, fatias.get(t.id), str(i + 1))
         self._t(
             r,
             480,
             ALTURA - 32,
-            "1–4 troca · Backspace descarta a nova",
+            "1–4 (ou ↑ ↓ e Enter) troca · Backspace descarta a nova",
             15,
             alpha(TINTA, 110),
             "center",

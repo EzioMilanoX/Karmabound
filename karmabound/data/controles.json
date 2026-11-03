@@ -1,6 +1,12 @@
 {
-  "girar": "KEY_SPACE",
-  "trocar_roda": "KEY_TAB",
+  "girar": [
+    "KEY_SPACE",
+    "PAD_A"
+  ],
+  "trocar_roda": [
+    "KEY_TAB",
+    "PAD_RB"
+  ],
   "escolher_1": "KEY_1",
   "escolher_2": "KEY_2",
   "escolher_3": "KEY_3",
@@ -12,29 +18,49 @@
   "tecnica_6": "KEY_6",
   "esquerda": [
     "KEY_LEFT",
-    "KEY_A"
+    "KEY_A",
+    "PAD_LEFT"
   ],
   "direita": [
     "KEY_RIGHT",
-    "KEY_D"
+    "KEY_D",
+    "PAD_RIGHT"
   ],
   "cima": [
     "KEY_UP",
-    "KEY_W"
+    "KEY_W",
+    "PAD_UP"
   ],
   "baixo": [
     "KEY_DOWN",
-    "KEY_S"
+    "KEY_S",
+    "PAD_DOWN"
   ],
   "confirmar": [
     "KEY_RETURN",
-    "KEY_SPACE"
+    "KEY_SPACE",
+    "PAD_A"
   ],
-  "cancelar": "KEY_BACKSPACE",
+  "cancelar": [
+    "KEY_BACKSPACE",
+    "PAD_B"
+  ],
   "sofrer_dano": "KEY_D",
   "pagar_custo": "KEY_C",
-  "sair": "KEY_ESCAPE",
-  "despertar": "KEY_E",
-  "grimorio": "KEY_G",
-  "opcoes": "KEY_O"
+  "sair": [
+    "KEY_ESCAPE",
+    "PAD_START"
+  ],
+  "despertar": [
+    "KEY_E",
+    "PAD_Y"
+  ],
+  "grimorio": [
+    "KEY_G",
+    "PAD_BACK"
+  ],
+  "opcoes": [
+    "KEY_O",
+    "PAD_X"
+  ]
 }

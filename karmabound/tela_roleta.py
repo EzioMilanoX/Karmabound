@@ -86,6 +86,7 @@ class RoletaScene(IScene):
         self.inicio = 0  # selo aceso quando o giro atual começou
         self.aceso = 0
         self.escolhida: int | None = None
+        self.cursor_escolha = 0  # para jogar de controle: ← → e confirmar
         self.carma_visual = mesa.carma.valor  # o que a tela mostra; acompanha a Mesa no fim do giro
         ordem = list(range(ELOS))
         random.Random(7).shuffle(ordem)  # elos racham numa ordem fixa, espalhada pela corrente
@@ -192,12 +193,23 @@ class RoletaScene(IScene):
                         self._ir("resultado")
 
         elif self.estado == "escolhendo":
-            for i in range(len(self.alvos)):
-                if e.is_action_pressed(f"escolher_{i + 1}"):
+            n = len(self.alvos)
+            if e.is_action_pressed("esquerda") or e.is_action_pressed("cima"):
+                self.cursor_escolha = (self.cursor_escolha - 1) % n
+                self.aceso = self.alvos[self.cursor_escolha]
+                som.tocar("mover")
+            elif e.is_action_pressed("direita") or e.is_action_pressed("baixo"):
+                self.cursor_escolha = (self.cursor_escolha + 1) % n
+                self.aceso = self.alvos[self.cursor_escolha]
+                som.tocar("mover")
+            for i in range(n):
+                apertou = e.is_action_pressed(f"escolher_{i + 1}")
+                if apertou or (e.is_action_pressed("confirmar") and i == self.cursor_escolha):
                     som.tocar("confirmar")
                     self.escolhida = i
                     self.aceso = self.alvos[i]
                     self._ir("resultado")
+                    break
 
     # ------------------------------------------------------------- desenho
 
@@ -531,6 +543,8 @@ class RoletaScene(IScene):
             for j, f in enumerate(self.giro.fatias):
                 cor = self.cores_claras[f.raridade]
                 yj = y + 34 + j * 52
+                if j == self.cursor_escolha:
+                    r.draw_ui_rect(x - 10, yj - 8, 256, 46, _alpha(TINTA, 18))
                 self._texto(r, x, yj, f"{j + 1}", 20, _alpha(TINTA, 140))
                 self._texto(r, x + 22, yj - 4, f.kanji, 26, cor)
                 self._texto(r, x + 58, yj, f.nome, 18, cor)
@@ -563,7 +577,7 @@ class RoletaScene(IScene):
         if self.jornada:
             dica = {
                 "parado": "espaço gira",
-                "escolhendo": "1, 2 ou 3 escolhe",
+                "escolhendo": "1–3, ou ← → e Enter",
                 "resultado": "Enter continua",
             }.get(self.estado, "")
             linhas = [dica, "esc sai"]

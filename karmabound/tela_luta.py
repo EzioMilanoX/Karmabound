@@ -385,19 +385,34 @@ class LutaScene(IScene):
             self._executar(t)
 
     def _escolher_sacrificio(self, slots: list[Tecnica | None]) -> None:
+        """O Contrato pede a técnica que leva: pelo número, ou pelo cursor (controle)."""
         e = self.entrada
         if e.is_action_pressed("cancelar"):
             self.contrato, self.modo = None, "escolher"
             return
-        for i, t in enumerate(slots):
-            if e.is_action_pressed(f"tecnica_{i + 1}"):
-                dom = self.j.jogador.tecnica_dom
-                if t is None or t is self.contrato or t in (self.luta.basico, HESITAR, dom):
-                    self._avisar("escolha outra das suas técnicas")
-                    return
-                contrato, self.contrato, self.modo = self.contrato, None, "escolher"
-                self._executar(contrato, sacrificio=t)
+        escolhida = next(
+            (t for i, t in enumerate(slots) if e.is_action_pressed(f"tecnica_{i + 1}")), False
+        )
+        if escolhida is False:
+            if e.is_action_pressed("esquerda"):
+                self.cursor = (self.cursor - 1) % len(slots)
                 return
+            if e.is_action_pressed("direita"):
+                self.cursor = (self.cursor + 1) % len(slots)
+                return
+            if not e.is_action_pressed("confirmar"):
+                return
+            escolhida = slots[self.cursor]
+        dom = self.j.jogador.tecnica_dom
+        if (
+            escolhida is None
+            or escolhida is self.contrato
+            or escolhida in (self.luta.basico, HESITAR, dom)
+        ):
+            self._avisar("escolha outra das suas técnicas")
+            return
+        contrato, self.contrato, self.modo = self.contrato, None, "escolher"
+        self._executar(contrato, sacrificio=escolhida)
 
     # --------------------------------------------------------------- desenho
 
@@ -851,7 +866,7 @@ class LutaScene(IScene):
                 )
                 cor = OURO if alvo_ok else alpha(FERRO, 140)
                 pronta = alvo_ok
-            selecionado = i == self.cursor and not sac
+            selecionado = i == self.cursor
             if selecionado:
                 r.draw_ui_circle(x, y, RAIO_SELO + 10, alpha(cor, 60))
             r.draw_ui_circle(x, y, RAIO_SELO, LACA)
@@ -932,7 +947,7 @@ class LutaScene(IScene):
                 r,
                 624,
                 606,
-                "契 Qual técnica o pacto leva? (número) · Backspace desiste",
+                "契 Qual técnica o pacto leva? (número, ou ← → e Enter) · Backspace desiste",
                 16,
                 OURO,
                 "center",

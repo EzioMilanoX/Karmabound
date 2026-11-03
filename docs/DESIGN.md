@@ -191,6 +191,10 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 
 - `tools/calibrar.py` faz sozinho o ciclo que era manual: para cada modo mede a vitória em três valores de vida dos rivais, ajusta uma reta, acha o valor do alvo, confere e (com `--aplicar`) grava. Para os itens, compara com a **régua**, que agora é dado (`balanceamento.json` → `regua`), e só aponta o lado — o que mexer em cada item é decisão de design.
 
+### Controle (2026-11-02)
+
+- Joga-se inteiro de controle (XInput: Xbox, e DualShock/genéricos pelo mapeamento do SDL): direcional ou analógico move, A confirma e gira, B volta, Start pausa, Y desperta, X abre as opções e Back o Grimório no título. A engine já resolvia `PAD_*`; o que faltava era cursor nas telas que só aceitavam números (escolher 1 de 3 na roleta, o sacrifício do Contrato, a troca de técnica).
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.
