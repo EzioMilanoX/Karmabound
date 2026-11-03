@@ -56,3 +56,34 @@ def test_o_grimorio_lista_todas_as_habilidades_com_origem(ctx):
     assert total == fatias + 1 + len(ctx.chefes)  # + o Golpe e os chefes
     assert por_roda["tecnicas"][0].id == "golpe_basico"
     assert all(e.origem for v in por_roda.values() for e in v)
+
+
+def test_as_telas_de_menu_desenham_de_verdade(ctx):
+    """Cada tela do título desenha pelo menos uma vez num renderer nulo."""
+    from ouroboros.interfaces.null.null_renderer import NullRenderer
+
+    from karmabound.tela_grimorio import GrimorioScene
+    from karmabound.tela_menus import TituloScene
+
+    class Entrada:
+        def is_action_pressed(self, acao):
+            return False
+
+    r = NullRenderer()
+    g = Grimorio()
+    for i in range(6):
+        tela = GrimorioScene(g, Entrada(), lambda: None, lambda: None, ctx=ctx)
+        tela.i_roda = i
+        tela.render(None, r)
+    titulo = TituloScene(
+        Entrada(),
+        lambda m: None,
+        lambda: None,
+        continuar="Difícil · capítulo 1 · luta 2",
+        ao_continuar=lambda: None,
+        ao_diaria=lambda: None,
+        recorde_diaria=4,
+        ao_cronica=lambda: None,
+    )
+    titulo.relogio = 3.0
+    titulo.render(None, r)

@@ -43,3 +43,21 @@ def test_arquivo_estragado_recomeca(tmp_path):
 def test_doze_feitos_com_nome_e_kanji():
     assert len(FEITOS) == 12 and len({f.id for f in FEITOS}) == 12
     assert all(f.kanji and f.nome and f.texto for f in FEITOS)
+
+
+def test_a_tela_da_cronica_desenha_com_e_sem_runs(tmp_path):
+    """Desenhar de verdade: um nome não importado só aparece aqui."""
+    from ouroboros.interfaces.null.null_renderer import NullRenderer
+
+    from karmabound.tela_cronica import CronicaScene
+
+    class Entrada:
+        def is_action_pressed(self, acao):
+            return False
+
+    c = Cronica(tmp_path / "c.json")
+    tela = CronicaScene(c, Entrada(), lambda: None, lambda: None)
+    tela.render(None, NullRenderer())
+    c.registrar(_fim())
+    c.registrar(_fim(venceu=False))
+    tela.render(None, NullRenderer())

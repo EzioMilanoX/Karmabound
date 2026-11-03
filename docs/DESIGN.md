@@ -232,7 +232,7 @@ Medidos com `python tools/medir_poder.py`: o jogador começa com o poder no 3º 
 | **Marca da Maldição** | Maldito | Golpe de 10 que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Preço: você sofre 1 por turno por Marca aplicada. | **+8,4** |
 | **Contrato** | Divino | Golpe de 60, uma vez por luta. Preço: cada uso destrói uma das suas outras técnicas para o resto da run (a mais fraca, ou a que você escolher). Sem outra técnica para sacrificar, fica indisponível. | **+11,3** |
 | **Julgamento** | Divino | Dano = 0,8 × Carma, e consome todo o Carma — até um Carma transbordando. A dor vira golpe agora, ou espera o Despertar. | **+14,2** |
-| Juramento | Maldito | Abre o Altar dos Votos (ver acima). | **+13,4** |
+| Juramento | Maldito | Abre o Altar dos Votos (ver acima). | **+13,0** (re-medido em 2026-11-02, com o Altar manual, a força guardada e o bug dos efeitos corrigido) |
 
 - A Marca como "só maldição" (sem dano) ficou negativa em todas as versões: as lutas duram ~4 turnos seus, e um turno sem atacar custa mais do que a maldição devolve. Virou golpe que amaldiçoa.
 - O piloto usa os poderes caros como um jogador sensato: Contrato só para fechar a luta ou num chefe; Julgamento só para fechar a luta ou com Carma ≥ 60; Marca só em rival com vida e sem empilhar além de duas.

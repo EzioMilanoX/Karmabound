@@ -8,7 +8,18 @@ from karmabound import som, vfx
 from karmabound.cronica import FEITOS, Cronica
 from karmabound.rodas import carregar_balanceamento
 from karmabound.tela_menus import _Base
-from karmabound.visual import ALTURA, FERRO, LACA, LARGURA, OURO, SANGUE_VIVO, TINTA, alpha, moldura
+from karmabound.visual import (
+    ALTURA,
+    FERRO,
+    LACA,
+    LARGURA,
+    OURO,
+    SANGUE_VIVO,
+    TINTA,
+    alpha,
+    moldura,
+    quebrar,
+)
 
 
 class CronicaScene(_Base):
