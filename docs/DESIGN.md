@@ -179,6 +179,14 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 - **Semente do dia**: Difícil, seed tirada da data (todo mundo gira a mesma sorte); o melhor resultado de cada dia fica em `recordes.json` e aparece no título e no fim da run.
 - A pausa não pede mais confirmação para voltar ao título: a run fica salva.
 
+### Visual de verdade e conteúdo novo (2026-11-02)
+
+- **Lutadores articulados** (`figuras.py`): juntas montadas de uma `Pose` (inclinação, agachamento, ombros, cotovelos, arma, cabeça); as poses se misturam (parado → guarda → ataque → golpe recebido) e o corpo respira. Por estilo: kimono e hakama com dobras, manto, juba, chifres, máscara de osso, músculos, vapor. O jogador é visto de costas (sem rosto).
+- **Arenas em camadas** (`arenas.py`): uma câmera que deriva desloca cada camada pela profundidade; brilhos de luz, névoa, primeiro plano nas bordas (na frente dos lutadores, longe da interface) e `abalo` nos golpes.
+- **Sombrio** (pedido de 2026-11-02): vinheta, grão de tinta, céu mais escuro, sangue que fica no chão, espadas fincadas e corvos.
+- **4 Arcos** (Torre Celestial: +1 de dano por vitória no capítulo; Floresta da Morte: sem cura, Relíquia a cada vitória; Hueco Mundo: Carma ×1,5 e rivais +1 de Percepção; Torneio do Poder: uma luta a menos, chefe ×1,6, vencê-lo guarda um Despertar) e **técnicas-assinatura dos chefes** (`data/chefes.json`).
+- Continuar uma run recarrega os dados atuais (`Contexto.padrao`): um ajuste de balanceamento vale também para a run salva.
+
 ### Ainda não implementado no combate
 
 - Percepção 3 (ver duas à frente) ainda não existe.
@@ -274,7 +282,7 @@ Todos dentro da régua (±2 de ruído) depois da segunda rodada de ajustes (2026
 - **Carma vale muito:** cheio, ele é um Despertar na luta e um Divino depois. Todo preço em Carma pesa demais — por isso o Instante custa vida (decisão de 2026-11-02), e o Julgamento precisa de um golpe enorme para compensar.
 - **Achados que eram defeito de regra, não de número:** o Instante gastava o turno e devolvia um (ganho zero) — agora são duas ações de verdade depois dele; o Coração Selado guardava só no giro (nada ganhava) — agora guarda no instante em que o Carma enche.
 - **Arquitetura:** as regras da run são passos em `run.py` (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`, `receber_tecnica`, `receber_reliquia`, `girar`). O piloto automático e a Jornada do jogador usam os mesmos passos: o simulador mede exatamente o jogo que se joga.
-- **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a **+5,25 / +5,5 / +5,55 / +6,7** (com a força do Altar guardada entre votos). Resultado: **45,1% / 35,2% / 24,9% / 10,0%**, reação 26–31%.
+- **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a +5,25 / +5,5 / +5,55 / +6,7 (com a força do Altar guardada entre votos) e, com os Arcos novos e as técnicas de chefe (já suavizadas: Floresta com metade da cura, Torneio do Poder com chefe ×1,4), a **+4,8 / +4,95 / +4,95 / +6,05**. Resultado: **43,5% / 35,0% / 24,1% / 10,8%**, reação 24–27%.
 
 ## Poderes impossíveis de balancear
 

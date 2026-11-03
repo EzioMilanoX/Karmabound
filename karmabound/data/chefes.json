@@ -1,11 +1,11 @@
 {
   "_nota": "A técnica-assinatura de cada chefe: uma é sorteada e somada às técnicas dele. Toda homenagem tem nome próprio e a origem escrita.",
   "tecnicas": [
-    { "id": "mil_laminas", "nome": "Mil Lâminas de Cerejeira", "kanji": "乱", "raridade": "maldito", "texto": "Uma nuvem de pétalas-lâmina: 6 golpes de 3.", "origem": "Senbonzakura Kageyoshi · Bleach", "combate": {"tipo": "ataque", "dano": 3, "golpes": 6, "recarga": 3, "sutileza": 3} },
-    { "id": "guerreiro_esqueleto", "nome": "Guerreiro Esqueleto", "kanji": "骸", "raridade": "maldito", "texto": "Um gigante de chakra o envolve: bloqueio 20 e revide 8.", "origem": "Susanoo · Naruto", "combate": {"tipo": "defesa", "bloqueio": 20, "revide": 8, "recarga": 4} },
-    { "id": "estrela_que_prende", "nome": "Estrela que Prende", "kanji": "星", "raridade": "maldito", "texto": "10 de dano, e o alvo perde o próximo turno preso na pedra.", "origem": "Chibaku Tensei · Naruto", "combate": {"tipo": "maldita", "dano": 10, "atordoar": 1, "recarga": 4, "sutileza": 2, "perigosa": true} },
-    { "id": "desvio_dimensional", "nome": "Desvio Dimensional", "kanji": "歪", "raridade": "maldito", "texto": "O próximo golpe que ele recebe passa através dele.", "origem": "Kamui · Naruto", "combate": {"tipo": "defesa", "escudo": 1, "recarga": 3} },
-    { "id": "lua_sem_fim", "nome": "Lua Sem Fim", "kanji": "月", "raridade": "divino", "texto": "30 de dano, quase impossível de perceber, uma vez por luta.", "origem": "Mugetsu · Bleach", "combate": {"tipo": "maldita", "dano": 30, "recarga": 99, "sutileza": 4, "perigosa": true} },
-    { "id": "disparo_espiritual", "nome": "Disparo Espiritual", "kanji": "霊", "raridade": "sangue", "texto": "Um tiro do dedo: 18 de dano.", "origem": "Leigan · Yu Yu Hakusho", "combate": {"tipo": "ataque", "dano": 18, "recarga": 3, "sutileza": 2, "perigosa": true} }
+    {"id": "mil_laminas", "nome": "Mil Lâminas de Cerejeira", "kanji": "乱", "raridade": "maldito", "texto": "Uma nuvem de pétalas-lâmina: 5 golpes de 3.", "origem": "Senbonzakura Kageyoshi · Bleach", "combate": {"tipo": "ataque", "dano": 3, "golpes": 5, "recarga": 3, "sutileza": 3}},
+    {"id": "guerreiro_esqueleto", "nome": "Guerreiro Esqueleto", "kanji": "骸", "raridade": "maldito", "texto": "Um gigante de chakra o envolve: bloqueio 14 e revide 6.", "origem": "Susanoo · Naruto", "combate": {"tipo": "defesa", "bloqueio": 14, "revide": 6, "recarga": 4}},
+    {"id": "estrela_que_prende", "nome": "Estrela que Prende", "kanji": "星", "raridade": "maldito", "texto": "6 de dano, e o alvo perde o próximo turno preso na pedra.", "origem": "Chibaku Tensei · Naruto", "combate": {"tipo": "maldita", "dano": 6, "atordoar": 1, "recarga": 4, "sutileza": 2, "perigosa": true}},
+    {"id": "desvio_dimensional", "nome": "Desvio Dimensional", "kanji": "歪", "raridade": "maldito", "texto": "O próximo golpe que ele recebe passa através dele.", "origem": "Kamui · Naruto", "combate": {"tipo": "defesa", "escudo": 1, "recarga": 3}},
+    {"id": "lua_sem_fim", "nome": "Lua Sem Fim", "kanji": "月", "raridade": "divino", "texto": "22 de dano, quase impossível de perceber, uma vez por luta.", "origem": "Mugetsu · Bleach", "combate": {"tipo": "maldita", "dano": 22, "recarga": 99, "sutileza": 4, "perigosa": true}},
+    {"id": "disparo_espiritual", "nome": "Disparo Espiritual", "kanji": "霊", "raridade": "sangue", "texto": "Um tiro do dedo: 14 de dano.", "origem": "Leigan · Yu Yu Hakusho", "combate": {"tipo": "ataque", "dano": 14, "recarga": 3, "sutileza": 2, "perigosa": true}}
   ]
 }

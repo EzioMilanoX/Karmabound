@@ -64,11 +64,11 @@
 | 塔 | Torre Celestial | Cinza | Cada vitória neste capítulo é um andar a mais: +1 de dano, acumulando até o chefe. | Torre Celestial · Hunter x Hunter |
 | 月 | Lua de Sangue | Sangue | Todos, você e os rivais, causam +3 de dano. | O Eclipse · Berserk |
 | 侵 | Invasão | Sangue | +1 luta neste capítulo, e um giro de Relíquia garantido depois de cada luta. | Invasão de Konoha · Naruto |
-| 森 | Floresta da Morte | Sangue | Sem cura entre lutas neste capítulo, mas toda vitória dá uma Relíquia. | Exame Chunin · Naruto |
+| 森 | Floresta da Morte | Sangue | A cura entre lutas cai pela metade neste capítulo, mas toda vitória dá uma Relíquia. | Exame Chunin · Naruto |
 | 禍 | Maldição Coletiva | Maldito | Seu Carma enche em dobro, e os rivais têm +20% de vida. | Incidente de Shibuya · Jujutsu Kaisen |
 | 虚 | Hueco Mundo | Maldito | Seu Carma enche 50% mais rápido, e os rivais têm +1 de Percepção. | Hueco Mundo · Bleach |
 | 審 | Arco do Juízo | Divino | O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo. | Marineford · One Piece |
-| 力 | Torneio do Poder | Divino | Uma luta a menos neste capítulo, e o chefe é 60% mais forte; vencê-lo dá um Despertar guardado. | Torneio do Poder · Dragon Ball Super |
+| 力 | Torneio do Poder | Divino | Uma luta a menos neste capítulo, e o chefe é 40% mais forte; vencê-lo dá um Despertar guardado. | Torneio do Poder · Dragon Ball Super |
 
 ## 宝 Relíquias (gira e aceita)
 
@@ -154,7 +154,7 @@ Até 3 votos ativos; quebrar um voto libera o espaço. O valor de cada restriç�
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 12 +5.25 | ×1.2 | 80 |
-| Equilibrado | 36% | 12 +5.5 | ×1.2 | 76 |
-| Difícil (padrão) | 25% | 12 +5.55 | ×1.25 | 70 |
-| Brutal | 10% | 12 +6.7 | ×1.25 | 68 |
+| Acessível | 45% | 12 +4.8 | ×1.2 | 80 |
+| Equilibrado | 36% | 12 +4.95 | ×1.2 | 76 |
+| Difícil (padrão) | 25% | 12 +4.95 | ×1.25 | 70 |
+| Brutal | 10% | 12 +6.05 | ×1.25 | 68 |

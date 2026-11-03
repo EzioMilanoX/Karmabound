@@ -66,8 +66,9 @@ Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparec
 ### O visual
 
 - **Um efeito por habilidade**, em tinta: a esfera que gira do Rasengan, os raios do Hekireki Issen, a lua negra do Getsuga, as correntes do Kurapika, o Domínio que fecha a arena, o tempo parado em sépia, a tela que se parte no Corte do Mundo.
-- **Uma arena por Arco**: o Monte Myoboku, a arena do Torneio, o Eclipse, a vila em chamas, Shibuya sob o Véu e Marineford.
-- **Rivais variados**: Ronin, Monge Errante, Shinobi e Oni, e o chefe é um colosso de quatro braços.
+- **Lutadores articulados**: um esqueleto com poses (parado respirando, guarda, ataque, golpe recebido), roupa e rosto por estilo. Rivais: Ronin, Monge Errante, Shinobi, Oni, Hollow e Titã; o chefe é um colosso de quatro braços, com uma **técnica-assinatura** (Senbonzakura, Susanoo, Chibaku Tensei, Kamui, Mugetsu, Leigan).
+- **Arenas com profundidade**: camadas em parallax, luz, névoa, um primeiro plano na frente dos lutadores e a cena tremendo nos golpes. Dez Arcos, cada um com a sua (entre eles a Torre Celestial, a Floresta da Morte, Hueco Mundo e o Torneio do Poder).
+- **Sombrio**: vinheta, grão de tinta, o sangue dos golpes que fica no chão, espadas quebradas fincadas e corvos no céu.
 - **Uma aura por Despertar**, e cartas com moldura da raridade e a linha de origem.
 - **Cinema**: o rival entra numa pincelada de tinta com o nome em caligrafia (o chefe escurece a tela antes); na vitória ele se desfaz em tinta, na derrota as correntes se fecham sobre você; o título respira (ensō, corrente do Carma, tinta escorrendo); entre telas, a tinta cobre e recolhe.
 - **Som e música sintetizados em código** (`python tools/gerar_sons.py`): taiko, gongo, sinos, shamisen, koto, correntes e cortes, em escalas japonesas. Uma faixa para o título, a roleta, a luta e o chefe; a música da luta acelera quando o Carma enche.
@@ -113,10 +114,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 5,25 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 5,5 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 5,55 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 6,7 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 4,8 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 4,95 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 4,95 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 6,05 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
