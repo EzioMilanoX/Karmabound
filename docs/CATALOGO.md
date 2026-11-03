@@ -97,6 +97,10 @@
 | 極 | Instinto Puro | Divino | Os próximos 3 ataques do rival têm 60% de chance de errar, e cada erro devolve um Golpe. | Ultra Instinto · Dragon Ball |
 | 仙 | Modo Eremita | Divino | Cura metade da vida, e até o fim da luta +3 de Percepção e +3 de dano. | Modo Sábio · Naruto |
 | 痣 | Marca do Caçador | Divino | +50% de dano até o fim da luta. Preço: −10% de vida máxima pelo resto da run. | A Marca do Caçador de Onis · Demon Slayer |
+| 獣 | Fera Interior | Divino | Por 3 turnos, todo ataque seu acerta uma vez a mais. | Modo Kurama · Naruto |
+| 無 | Vazio Infinito | Divino | O próximo turno do rival não te fere, e você lê toda técnica dele até o fim da luta. | Infinito (Gojo) · Jujutsu Kaisen |
+| 竜 | Dragão Negro | Divino | Um golpe imediato de 40 que atravessa tudo. | Kokuryuha (Hiei) · Yu Yu Hakusho |
+| 戻 | Retorno pela Morte | Divino | Você volta com a vida que tinha no começo da luta. | Retorno pela Morte (Subaru) · Re:Zero |
 
 ## 誓 Votos vinculativos (Juramento)
 
@@ -154,7 +158,7 @@ Até 3 votos ativos; quebrar um voto libera o espaço. O valor de cada restriç�
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 12 +4.57 | ×1.2 | 80 |
-| Equilibrado | 36% | 12 +4.72 | ×1.2 | 76 |
-| Difícil (padrão) | 25% | 12 +4.81 | ×1.25 | 70 |
-| Brutal | 10% | 12 +5.92 | ×1.25 | 68 |
+| Acessível | 45% | 12 +4.6 | ×1.2 | 80 |
+| Equilibrado | 36% | 12 +4.77 | ×1.2 | 76 |
+| Difícil (padrão) | 25% | 12 +4.77 | ×1.25 | 70 |
+| Brutal | 10% | 12 +5.9 | ×1.25 | 68 |

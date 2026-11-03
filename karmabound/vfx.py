@@ -520,6 +520,10 @@ AURAS = {  # id do Despertar -> (cor, estilo)
     "instinto_puro": ((210, 220, 240, 255), "brilho"),
     "modo_eremita": ((240, 150, 60, 255), "aneis"),
     "marca_do_cacador": (SANGUE_VIVO, "marca"),
+    "fera_interior": ((255, 140, 40, 255), "chamas"),
+    "vazio_infinito": ((200, 225, 255, 255), "aneis"),
+    "dragao_negro": ((120, 60, 200, 255), "pressao"),
+    "retorno_pela_morte": ((160, 120, 200, 255), "correntes"),
 }
 
 

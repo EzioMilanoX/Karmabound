@@ -260,7 +260,7 @@ def test_toda_habilidade_tem_a_sua_origem(ctx):
 
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
-    assert contagem == {"destino": 14, "tecnicas": 20, "arco": 10, "reliquias": 10, "despertar": 8}
+    assert contagem == {"destino": 14, "tecnicas": 20, "arco": 10, "reliquias": 10, "despertar": 12}
 
 
 def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
@@ -332,3 +332,44 @@ def test_os_efeitos_desenham_em_qualquer_ponto_da_animacao():
         vfx.aura(r, aura, 150, 547, 0.5, 2.0)
     for arco in ARENAS:
         desenhar_arena(r, arco, 3.3)
+
+
+def test_fera_interior_acerta_uma_vez_a_mais():
+    lt, j, _ = _desperta({"fera": 2})
+    assert lt.resolver(DIRETO).dano == 20  # 10 × 2 golpes
+
+
+def test_vazio_infinito_o_turno_do_rival_nao_fere():
+    lt, j, r = _desperta({"intocavel": 1, "percepcao": 5}, rival=(LANCA,))
+    lt.vez, lt.intencao_rival = r, LANCA
+    assert lt.turno_rival().dano == 0 and j.intocavel == 0
+    assert lt.percepcao_contra(j) >= 5
+
+
+def test_dragao_negro_fere_na_hora():
+    lt, _, r = _desperta({"golpe_imediato": 40})
+    assert r.vida == 999 - 40
+
+
+def test_retorno_pela_morte_volta_a_vida_do_comeco():
+    j = lut("J", [DIRETO], vel=3, carma=carma_cheio())
+    j.vida = 80
+    lt = luta(j, lut("R", vida=999), ao_despertar=lambda: tipo(retorno=True))
+    j.vida = 15
+    lt.despertar()
+    assert j.vida == 80
+
+
+def test_dragao_negro_pode_encerrar_a_luta_no_despertar(ctx):
+    """O piloto automático não pode agir numa luta que o Despertar já encerrou."""
+    import karmabound.run as run_mod
+
+    e = _run(ctx)
+    lt = comecar_luta(e, ctx, random.Random(3))
+    dragao = next(f for f in ctx.rodas["despertar"].fatias if f.id == "dragao_negro")
+    lt.ao_despertar = lambda: dragao
+    lt.rival.vida = 10
+    e.mesa.carma.valor = e.mesa.carma.config.maximo
+    lt.despertar()
+    assert lt.acabou and lt.vencedor is e.jogador
+    assert run_mod.encerrar_luta(e, ctx, lt)

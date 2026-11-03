@@ -102,7 +102,11 @@
         { "id": "liberacao_final", "nome": "Liberação Final", "kanji": "卍", "raridade": "divino", "texto": "Todas as suas técnicas sobem um nível até o fim da luta.", "origem": "Bankai · Bleach", "despertar": {"evoluir": true} },
         { "id": "instinto_puro", "nome": "Instinto Puro", "kanji": "極", "raridade": "divino", "texto": "Os próximos 3 ataques do rival têm 60% de chance de errar, e cada erro devolve um Golpe.", "origem": "Ultra Instinto · Dragon Ball", "despertar": {"instinto": 3} },
         { "id": "modo_eremita", "nome": "Modo Eremita", "kanji": "仙", "raridade": "divino", "texto": "Cura metade da vida, e até o fim da luta +3 de Percepção e +3 de dano.", "origem": "Modo Sábio · Naruto", "despertar": {"cura_frac": 0.5, "percepcao": 3, "dano": 3} },
-        { "id": "marca_do_cacador", "nome": "Marca do Caçador", "kanji": "痣", "raridade": "divino", "texto": "+50% de dano até o fim da luta. Preço: −10% de vida máxima pelo resto da run.", "origem": "A Marca do Caçador de Onis · Demon Slayer", "despertar": {"dano_mult": 1.5, "perde_vida_max": 0.1} }
+        { "id": "marca_do_cacador", "nome": "Marca do Caçador", "kanji": "痣", "raridade": "divino", "texto": "+50% de dano até o fim da luta. Preço: −10% de vida máxima pelo resto da run.", "origem": "A Marca do Caçador de Onis · Demon Slayer", "despertar": {"dano_mult": 1.5, "perde_vida_max": 0.1} },
+        { "id": "fera_interior", "nome": "Fera Interior", "kanji": "獣", "raridade": "divino", "texto": "Por 3 turnos, todo ataque seu acerta uma vez a mais.", "origem": "Modo Kurama · Naruto", "despertar": {"fera": 3} },
+        { "id": "vazio_infinito", "nome": "Vazio Infinito", "kanji": "無", "raridade": "divino", "texto": "O próximo turno do rival não te fere, e você lê toda técnica dele até o fim da luta.", "origem": "Infinito (Gojo) · Jujutsu Kaisen", "despertar": {"intocavel": 1, "percepcao": 5} },
+        { "id": "dragao_negro", "nome": "Dragão Negro", "kanji": "竜", "raridade": "divino", "texto": "Um golpe imediato de 40 que atravessa tudo.", "origem": "Kokuryuha (Hiei) · Yu Yu Hakusho", "despertar": {"golpe_imediato": 40} },
+        { "id": "retorno_pela_morte", "nome": "Retorno pela Morte", "kanji": "戻", "raridade": "divino", "texto": "Você volta com a vida que tinha no começo da luta.", "origem": "Retorno pela Morte (Subaru) · Re:Zero", "despertar": {"retorno": true} }
       ]
     }
   ]

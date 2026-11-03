@@ -115,6 +115,8 @@ class Lutador:
     instinto: int = 0  # ataques do rival que o Instinto Puro ainda pode esquivar
     percepcao_luta: int = 0  # Percepção extra só nesta luta (Modo Eremita)
     eclipses: int = 0  # Ovo do Eclipse já usado nesta run
+    fera: int = 0  # turnos de Fera Interior: todo ataque acerta uma vez a mais
+    intocavel: int = 0  # turnos do rival que não ferem (Vazio Infinito)
     base_vida_max: int = field(init=False)
     base_velocidade: int = field(init=False)
     base_percepcao: int = field(init=False)
@@ -155,6 +157,7 @@ class Lutador:
         self.extras = 0
         self.forma = self.retrib_golpes = self.retrib_por_golpe = 0
         self.dor = self.instinto = self.percepcao_luta = 0
+        self.fera = self.intocavel = 0
         self.dano_extra, self.dano_mult = 0, 1.0
         self.escudos = self.efeitos.escudo_inicial
         if self.efeitos.cura_inicio and not self.efeitos.sem_cura:
@@ -232,6 +235,7 @@ class Luta:
                     lutador.recargas[t.id] = max(lutador.recargas.get(t.id, 0), t.inicia_em_recarga)
         self.espacos = espacos  # para o Tomar o Destino saber se precisa trocar uma técnica
         self.dano_recebido = 0  # a dor do jogador nesta luta (base da Retribuição)
+        self.vida_inicial = jogador.vida  # Retorno pela Morte volta para cá
         self.ultimo_despertar = None  # a fatia do último Despertar, para a tela
         self.basico = basico
         self.rng = rng
@@ -354,6 +358,12 @@ class Luta:
         j.percepcao_luta += d.get("percepcao", 0)
         j.bonus_dano += d.get("dano", 0)
         j.dano_mult *= d.get("dano_mult", 1.0)
+        j.fera += d.get("fera", 0)
+        j.intocavel += d.get("intocavel", 0)
+        if d.get("golpe_imediato"):  # Dragão Negro: atravessa tudo, agora
+            self._ferir(rival, d["golpe_imediato"])
+        if d.get("retorno"):  # Retorno pela Morte: a vida do começo da luta
+            j.vida = max(j.vida, min(j.vida_max, self.vida_inicial))
         if d.get("perde_vida_max"):  # Marca do Caçador: o preço fica na run
             j.base_vida_max = max(1, round(j.base_vida_max * (1 - d["perde_vida_max"])))
             j.aplicar_efeitos(j.efeitos)
@@ -495,6 +505,9 @@ class Luta:
 
             def golpear(dano: int) -> int:
                 nonlocal esquivas, escudados, despertou, instintos
+                if alvo.intocavel:  # Vazio Infinito: o golpe para no ar
+                    escudados += 1
+                    return 0
                 if not efetiva.absoluto:
                     if alvo.instinto and self.rng.random() < 0.6:
                         instintos += 1  # Instinto Puro: esquiva e devolve um Golpe
@@ -527,6 +540,7 @@ class Luta:
             if surpresa and not reagiu and not alvo.efeitos.sem_surpresa:
                 por_golpe = round(por_golpe * (1 + self.bonus_surpresa))
             golpes = efetiva.golpes + (ator.efeitos.basico_golpes if basico else 0)
+            golpes += 1 if ator.fera else 0  # Fera Interior
             for _ in range(golpes):
                 total += golpear(por_golpe)
                 if not alvo.vivo:
@@ -555,6 +569,10 @@ class Luta:
             ator.recargas[t.id] = t.recarga  # na Forma Desperta, nada entra em recarga
         if ator.forma:
             ator.forma -= 1
+        if ator.fera:
+            ator.fera -= 1
+        if alvo.intocavel and t is not HESITAR:
+            alvo.intocavel -= 1  # o turno do rival passou
         if ator.efeitos.revide_permanente:
             ator.revide = max(ator.revide, ator.efeitos.revide_permanente)  # Pele de Espinhos
         if ator.santuario and not ativou_santuario:

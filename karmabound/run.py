@@ -384,6 +384,8 @@ def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Regist
         if luta.vez is jogador:
             if luta.pode_despertar() and _desperta_agora(luta):
                 luta.despertar()
+                if luta.acabou:  # o Dragão Negro pode encerrar a luta no próprio Despertar
+                    break
             luta.resolver(escolher_jogador_auto(luta))
         else:
             t = luta.intencao_rival

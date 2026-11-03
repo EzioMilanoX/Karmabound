@@ -84,7 +84,7 @@ Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparec
 | 技 **Técnicas** | Golpes, defesas e técnicas malditas | gira 3, escolhe 1 |
 | 章 **Arco** | A regra do capítulo (Lua de Sangue, Invasão, Maldição Coletiva…) | gira e aceita |
 | 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem | gira e aceita |
-| 覚 **Despertar** | O tipo de Despertar (8), na luta: Bankai, Ultra Instinto, Modo Sábio... | sorteio igual |
+| 覚 **Despertar** | O tipo de Despertar (12), na luta: Bankai, Ultra Instinto, Modo Sábio, Infinito... | sorteio igual |
 
 Tudo o que a roleta entrega vale na luta: o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
 
@@ -96,7 +96,7 @@ O Carma é um **pity compartilhado entre todas as rodas**. Ele enche com giros r
 
 - **Pity suave:** acima de 60, Malditos e Divinos ficam até 3× mais prováveis. As correntes em volta da mandala racham e avermelham.
 - **Transbordo:** em 100, as correntes tremem e o Carma fica esperando a luta.
-- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com oito: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio) ou 痣 Marca do Caçador. E o próximo giro depois da luta vem Divino garantido.
+- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com doze: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio), 痣 Marca do Caçador, 獣 Fera Interior (Modo Kurama), 無 Vazio Infinito (o Infinito do Gojo), 竜 Dragão Negro (Kokuryuha) ou 戻 Retorno pela Morte (Re:Zero). E o próximo giro depois da luta vem Divino garantido.
 - **Calibrado** por simulação de lutas reais: cerca de **1,2 Despertar por run**. Algumas runs terminam sem nenhum — nem todo mundo recebe seu momento.
 
 ## Lutas: só recarga
@@ -115,10 +115,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 4,57 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 4,72 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 4,81 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 5,92 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 4,6 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 4,77 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 4,77 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 5,9 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
