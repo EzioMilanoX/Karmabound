@@ -15,15 +15,15 @@
 
 | | Nome | Raridade | Texto | Origem |
 |---|---|---|---|---|
-| 体 | Corpo Resistente | Cinza | +3 de vida máxima. | O treino do Saitama · One Punch Man |
+| 体 | Corpo Resistente | Cinza | +2 de vida máxima. | O treino do Saitama · One Punch Man |
 | 速 | Reflexo Treinado | Cinza | 4% de chance de esquivar um golpe inteiro. | Shunpo · Bleach |
 | 見 | Sentir a Intenção | Maldito | Você sente a emboscada: o ataque surpresa do rival não ganha bônus contra você. | Haki da Observação · One Piece |
-| 沸 | Sangue Fervente | Sangue | Até +1,5 de dano, proporcional à vida que você já perdeu. | A fúria do Guts · Berserk |
+| 沸 | Sangue Fervente | Sangue | Até +2,5 de dano, proporcional à vida que você já perdeu. | A fúria do Guts · Berserk |
 | 影 | Sombra Leal | Sangue | Sua sombra repete cada golpe seu com 8% do dano. | Exército das Sombras · Solo Leveling |
 | 兵 | Sangue de Soldado | Maldito | +1 de Velocidade: você quase sempre ataca primeiro. Preço: −6 de vida máxima. | Sangue Ackerman · Attack on Titan |
 | 再 | Carne que Volta | Sangue | Abaixo de 30% da vida, você cura 1 a cada turno seu. | Regeneração de Oni · Demon Slayer |
 | 眼 | Olho Roubado | Maldito | Técnica: usa a última técnica do rival como se fosse sua, com +25%. Preço: Percepção 0 até o seu próximo turno. | Sharingan · Naruto |
-| 灰 | Pele de Cinzas | Maldito | O primeiro golpe de cada luta não te fere. Preço: toda cura vale 63%. | Hierro · Bleach |
+| 灰 | Pele de Cinzas | Maldito | O primeiro golpe de cada luta não te fere. Preço: toda cura vale 58%. | Hierro · Bleach |
 | 六 | Olhos que Tudo Veem | Maldito | +2 de Percepção: você lê a técnica do rival e reage a quase tudo. Preço: −10% de vida máxima. | Seis Olhos (Gojo) · Jujutsu Kaisen |
 | 門 | Portões Abertos | Maldito | +5 de dano em todo golpe. Preço: você perde 1 de vida a cada turno seu. | Oito Portões (Hachimon) · Naruto |
 | 域 | Santuário | Divino | Técnica, uma vez por luta: por 4 turnos seus golpes não são percebidos e causam +50%. Preço: depois você perde um turno. | Expansão de Domínio · Jujutsu Kaisen |
@@ -38,7 +38,7 @@
 | 守 | Guarda Alta | Cinza | defesa | bloqueio 8 | 2 | 0 |  | Ken (Nen) · Hunter x Hunter |
 | 突 | Investida | Cinza | ataque | dano 11 | 2 | 1 | sim | Dynamic Entry (Gai) · Naruto |
 | 雷 | Primeiro Trovão | Cinza | ataque | dano 6, sempre surpresa | 2 | 1 |  | Hekireki Issen · Demon Slayer |
-| 分 | Clones de Sombra | Cinza | ataque | dano 3, golpes 3 | 2 | 2 |  | Kage Bunshin no Jutsu · Naruto |
+| 分 | Clones de Sombra | Cinza | ataque | dano 3, golpes 3 | 3 | 2 |  | Kage Bunshin no Jutsu · Naruto |
 | 癒 | Mão Curadora | Cinza | defesa | cura 5 | 3 | 0 |  | Ninjutsu Médico · Naruto |
 | 十 | Corte em Cruz | Sangue | ataque | dano 5, golpes 2 | 2 | 3 |  | Nitoryu (Zoro) · One Piece |
 | 返 | Contra-ataque | Sangue | defesa | bloqueio 5, revide 6 | 3 | 0 |  | Kaiten (Neji) · Naruto |
@@ -53,7 +53,7 @@
 | 幻 | Lua Ilusória | Maldito | maldita | custo de vida 2, o rival perde turnos: 1 | 4 | 0 |  | Tsukuyomi (Itachi) · Naruto |
 | 契 | Contrato | Divino | maldita | dano 40, destrói outra técnica sua, cresce por técnica consumida 7 | 99 | 2 | sim | Contrato com o Demônio · Chainsaw Man |
 | 裁 | Julgamento | Divino | maldita | dano × Carma 1.8, consome o Carma | 4 | 3 | sim | Shinra Tensei (Pain, a dor) · Naruto |
-| 界 | Corte do Mundo | Divino | maldita | dano 50, atravessa bloqueio, escudo e esquiva, começa a luta em recarga 3 | 99 | 99 |  | O corte que divide o mundo (Sukuna) · Jujutsu Kaisen |
+| 界 | Corte do Mundo | Divino | maldita | dano 58, atravessa bloqueio, escudo e esquiva, começa a luta em recarga 3 | 99 | 99 |  | O corte que divide o mundo (Sukuna) · Jujutsu Kaisen |
 
 ## 章 Arco (gira e aceita)
 
@@ -75,11 +75,11 @@
 | | Nome | Raridade | Texto | Origem |
 |---|---|---|---|---|
 | 布 | Bandagem | Cinza | Cura 1 no início de cada luta. | As faixas do Rock Lee · Naruto |
-| 符 | Amuleto Rachado | Cinza | Uma vez por run, um golpe fatal te deixa com 1 de vida. | O colar do Primeiro Hokage · Naruto |
-| 重 | Manto de Peso | Cinza | +1 de vida máxima a cada 2 rivais derrotados. | As roupas com peso do Piccolo · Dragon Ball |
+| 重 | Manto de Peso | Cinza | +1 de vida máxima a cada 3 rivais derrotados. | As roupas com peso do Piccolo · Dragon Ball |
 | 骨 | Rosário de Ossos | Sangue | Cada rival derrotado dá +3 de Carma. | O rosário do Gyomei · Demon Slayer |
 | 鬼 | Máscara de Oni | Sangue | +1 de dano em todo golpe. Preço: seus bloqueios valem metade. | Máscara de Hollow · Bleach |
 | 刀 | Lâmina Adormecida | Sangue | Suas técnicas (não o Golpe) causam +8% de dano. | Zanpakuto · Bleach |
+| 符 | Amuleto Rachado | Maldito | Uma vez por run, um golpe fatal te deixa com 1 de vida. | O colar do Primeiro Hokage · Naruto |
 | 封 | Coração Selado | Maldito | Ao encher, o Carma vira um Despertar guardado e volta a encher: você acumula Despertares para usar na luta. O Carma enche 20% mais rápido. | O selo da Kurama · Naruto |
 | 果 | Fruta Proibida | Maldito | +1 espaço de técnica e +1 de dano: o poder da fruta. | Akuma no Mi · One Piece |
 | 神 | Fragmento do Deus Cego | Divino | Técnicas repetidas evoluem na hora, e mais forte (×1,8), em vez de virar fragmento. | Dedos do Sukuna · Jujutsu Kaisen |

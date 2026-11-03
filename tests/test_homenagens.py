@@ -164,11 +164,11 @@ def _run(ctx, seed=1):
     return e
 
 
-def test_manto_de_peso_cresce_a_cada_duas_vitorias(ctx):
+def test_manto_de_peso_cresce_a_cada_tres_vitorias(ctx):
     e = _run(ctx)
     receber_reliquia(e, _fatia(ctx, "reliquias", "manto_de_peso"))
     antes = e.jogador.vida_max
-    for esperado in (antes, antes + 1, antes + 1, antes + 2):
+    for esperado in (antes, antes, antes + 1, antes + 1):  # +1 a cada 3 vitórias
         lt = comecar_luta(e, ctx, random.Random(1))
         lt.rival.vida = 0
         encerrar_luta(e, ctx, lt)

@@ -204,9 +204,12 @@ class RoletaScene(IScene):
     def render(self, world, renderer: IRenderer) -> None:
         r = renderer
         r.draw_ui_rect(0, 0, LARGURA, ALTURA, FUNDO)
+        self._fundo(r)
         self._enso(r)
         self._corrente(r)
+        self._rastro(r)
         self._mandala(r)
+        self._revelacao(r)
         self._centro(r)
         if self.jornada:
             self._texto(r, 36, 16, f"{self.roda.kanji} {self.titulo or self.roda.nome}", 26, TINTA)
@@ -221,6 +224,99 @@ class RoletaScene(IScene):
 
     def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:
         r.draw_text(x, y, texto, tam, cor, anchor=anchor, font_id=FONTE_PINCEL)
+
+    def _fundo(self, r: IRenderer) -> None:
+        """O santuário da roda: luz de sangue, incenso, um anel de kanji e correntes do alto."""
+        cx, cy = CENTRO
+        t = self.relogio
+        frac = min(1.0, self.carma_visual / self.mesa.carma.config.maximo)
+        for k in range(8):  # a luz cresce com o Carma
+            r.draw_ui_circle(
+                cx, cy, 330 - k * 26, _alpha((110, 12, 16, 255), (5 + k * 2) * (0.6 + frac))
+            )
+        fatias = self.roda.fatias
+        for i in range(36):  # um anel de kanji girando devagar, ao fundo
+            a = 2 * math.pi * i / 36 + t * 0.03
+            f = fatias[i % len(fatias)]
+            self._texto(
+                r,
+                cx + math.cos(a) * 300,
+                cy + math.sin(a) * 300,
+                f.kanji,
+                15,
+                _alpha(TINTA, 18),
+                "center",
+            )
+        for k in range(3):  # fumaça de incenso subindo dos dois lados
+            for j in range(6):
+                fase = (t * 0.12 + j / 6 + k * 0.33) % 1.0
+                x = (40 if k % 2 else 660) + math.sin(fase * 6 + k) * 18 + k * 8
+                y = ALTURA - fase * (ALTURA - 40)
+                r.draw_ui_circle(x, y, 6 + fase * 22, _alpha(TINTA, 10 * (1 - fase)))
+        for x in (24, 646):  # correntes pendendo do alto
+            for j in range(9):
+                y = 4 + j * 16 + math.sin(t * 1.1 + x) * 2
+                if j % 2 == 0:
+                    r.draw_ui_circle(x, y, 5, _alpha(FERRO, 90), 2)
+                else:
+                    r.draw_ui_line(x, y - 7, x, y + 7, _alpha(FERRO, 90), 3)
+
+    def _rastro(self, r: IRenderer) -> None:
+        """Enquanto gira, o selo aceso deixa um rastro nos selos por onde passou."""
+        if self.estado != "girando":
+            return
+        n = len(self.roda.fatias)
+        for k in range(1, 5):
+            x, y = self._pos_selo((self.aceso - k) % n, n)
+            r.draw_ui_circle(x, y, RAIO_SELO + 12 - k * 2, _alpha(TINTA, 46 - k * 10))
+
+    def _revelacao(self, r: IRenderer) -> None:
+        """O momento em que o selo para: cada raridade se revela do seu jeito."""
+        f = self._escolhida() if self.estado == "resultado" else None
+        if f is None or self.t > 1.4:
+            return
+        k = self.t / 1.4
+        n = len(self.roda.fatias)
+        x, y = self._pos_selo(self.aceso, n)
+        cor = self.cores[f.raridade]
+        ordem = [rr.id for rr in self.mesa.raridades]
+        nivel = ordem.index(f.raridade)
+        if nivel == 0:  # cinza: uma onda de tinta
+            r.draw_ui_circle(x, y, RAIO_SELO + 60 * k, _alpha(TINTA, 120 * (1 - k)), 2)
+        elif nivel == 1:  # sangue: um respingo
+            for i in range(10):
+                a = i * 0.63 + 0.4
+                d = RAIO_SELO + 70 * _ease_out(k)
+                r.draw_ui_circle(
+                    x + math.cos(a) * d,
+                    y + math.sin(a) * d,
+                    5 * (1 - k) + 2,
+                    _alpha(cor, 230 * (1 - k)),
+                )
+            r.draw_ui_circle(x, y, RAIO_SELO + 30 * k, _alpha(cor, 150 * (1 - k)), 3)
+        elif nivel == 2:  # maldito: fumaça roxa subindo em espiral
+            for i in range(12):
+                a = i * 0.52 + self.relogio * 2
+                d = RAIO_SELO + 40 * k
+                r.draw_ui_circle(
+                    x + math.cos(a) * d,
+                    y + math.sin(a) * d - 60 * k,
+                    8 + 10 * k,
+                    _alpha(cor, 120 * (1 - k)),
+                )
+        else:  # divino: um clarão e raios dourados que atravessam a mandala
+            if k < 0.15:
+                r.draw_ui_rect(0, 0, LARGURA, ALTURA, _alpha(OURO, 90 * (1 - k / 0.15)))
+            for i in range(20):
+                a = 2 * math.pi * i / 20 + self.relogio * 0.4
+                r.draw_ui_line(
+                    x + math.cos(a) * RAIO_SELO,
+                    y + math.sin(a) * RAIO_SELO,
+                    x + math.cos(a) * (RAIO_SELO + 240 * _ease_out(k)),
+                    y + math.sin(a) * (RAIO_SELO + 240 * _ease_out(k)),
+                    _alpha(OURO, 160 * (1 - k)),
+                    2,
+                )
 
     def _enso(self, r: IRenderer) -> None:
         """O círculo de pincel atrás da mandala: aberto, como no zen."""
@@ -452,12 +548,15 @@ class RoletaScene(IScene):
         moldura(r, x - 14, y - 12, LARGURA - 14, ALTURA - 64, self.cores[f.raridade], divina)
         self._texto(r, x, y, f.nome, 24, self.cores_claras[f.raridade])
         self._texto(r, x, y + 30, self.nomes_raridade[f.raridade], 16, self.cores[f.raridade])
-        linhas = _quebrar(f.texto, 24)[:5]
+        linhas = _quebrar(f.texto, 24)
+        maximo = 3 if self.giro and self.giro.despertar else 5  # o título do Despertar ocupa espaço
+        if len(linhas) > maximo:
+            linhas = linhas[: maximo - 1] + [linhas[maximo - 1].rstrip(" ,.;:") + "…"]
         for j, linha in enumerate(linhas):
             self._texto(r, x, y + 56 + j * 21, linha, 16, TINTA)
         if f.origem:
             yo = y + 62 + len(linhas) * 21
-            for j, linha in enumerate(_quebrar(f"※ {f.origem}", 28)[:2]):
+            for j, linha in enumerate(_quebrar(f"※ {f.origem}", 28)[: 1 if maximo == 3 else 2]):
                 self._texto(r, x, yo + j * 18, linha, 13, _alpha(OURO, 190))
 
     def _controles(self, r: IRenderer) -> None:
