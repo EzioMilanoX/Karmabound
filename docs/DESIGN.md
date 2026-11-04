@@ -123,12 +123,14 @@ Calibrados por simulação com o piloto automático (`python tools/simular.py --
 
 | Modo | Vitória (piloto) | Rival | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | ~45% | 12 +3,21/luta | ×1,2 | 80 |
-| Equilibrado | ~36% | 12 +3,44/luta | ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 +3,64/luta | ×1,25 | 70 |
-| Brutal | ~10% | 12 +4,44/luta | ×1,25 | 68 |
+| Acessível | ~45% | 12 +3,19/luta | ×1,2 | 80 |
+| Equilibrado | ~36% | 12 +3,46/luta | ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 +3,87/luta | ×1,25 | 70 |
+| Brutal | ~10% | 12 +5,21/luta | ×1,25 | 68 |
 
 Valores de 2026-11-04, recalibrados depois da expansão (`python tools/calibrar.py modos --aplicar`): os rivais crescem menos por luta do que antes (eram 4,6–5,9). Mesmo com o Altar garantido e o voto de luta do lado do jogador, foi preciso baixar a vida deles. Os rivais sorteiam técnicas da mesma roda, e as novas (gravidade, sangramento, bomba) pesam mais na mão deles.
+
+Recalibrados de novo depois da Leva 3: o jogador ficou mais forte com as formas, os clones e as invocações, e o Difícil e o Brutal subiram (3,64 → 3,87 e 4,44 → 5,21 por luta); o Acessível e o Equilibrado quase não mudaram.
 
 Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a calibração feita com dano aleatório se confirmou.
 
@@ -343,6 +345,52 @@ Preços e raridades mudados à mão: Explosão Final 20 → 10 de vida; Lua sem 
 | Técnicas Sangue | Muralha de Terra, Névoa Venenosa, Luz Cegante, Olhos do Futuro, Pistola a Jato, Dança dos Ossos, Pele de Diamante, Rajada de Dempsey, Bomba-Relógio, Selo da Força de Cem, Enxame, Gaiola de Fios, Sombra que Prende | +0 a +2 | A técnica entra no 3º espaço, que pesa pouco: até a Investida com 30 de dano mede só +4. |
 
 O que fica em aberto: medir esses grupos com um piloto que guarda poderes para o chefe, ou mudar a régua das técnicas (que hoje compara só o 3º espaço).
+
+## Leva 3: fidelidade, transformações e modos de jogo (2026-11-04)
+
+Pedido do Enzo: a wiki também por anime; mais técnicas e habilidades pensadas, com mais suporte e dano contínuo; explorar o que cada poder faz na obra ("a Amaterasu: o fogo que nunca apaga até incinerar"); transformações e modos de jogo. Decidido com ele: ~80 itens novos mais a revisão de fidelidade dos antigos, e equilibrar os animes (aprofundar os que tinham pouco e trazer novos).
+
+- **Wiki por anime:** a wiki (`docs/wiki.html`, gerada por `tools/gerar_catalogo.py`) agrupa por roda ou por anime, com filtro de anime. O anime sai do fim da origem (`… · Naruto`); um teste garante que toda origem o diga.
+- **Mecânicas novas de combate** (`combate.py`, campos de `Tecnica`):
+  - `chama_eterna`: a chama negra não apaga e cresce 1 a cada turno, até o fim da luta. Basta o olhar: não há esquiva, escudo ou espelho, e purificar não apaga.
+  - `veneno`: doses que se somam, ferem e caem 1 por turno. Em golpe, só entra se ferir; sem golpe (névoa, gás), entra direto.
+  - `congelar`: o alvo perde N turnos, e o próximo golpe nele causa ×2 e quebra o gelo.
+  - `clones`: cada clone ataca junto (40% do golpe, até 3) e absorve um golpe recebido.
+  - `invocar` (+ `invocar_turnos`): uma invocação que fere sozinha a cada turno seu.
+  - `vinculo` (o ritual do Hidan): por N turnos seus, toda dor que você sofre o alvo também sofre — o ritual vem antes do preço, então a estocada em si mesmo já é dividida.
+  - `purificar`: tira sangramento, veneno, Marca, cegueira, selos, bombas e o que enfraquecia.
+  - `custo_percepcao` (o Mangekyou): −N de Percepção pelo resto da run, a cada uso.
+  - Efeitos passivos novos: `dot_mult` (o que você aplica fere mais), `veneno_ao_ferir`, `veneno_espinhos` (quem te fere é envenenado), `clones_inicio`, `invocar_inicio`, `modo_extra` (formas mais longas). Despertares ganharam `chama`, `veneno`, `clones`, `invocar` e `purificar`.
+- **Transformações** (`Modo`, tipo de técnica `modo`): por `turnos` turnos seus, +dano, ×dano, golpes a mais, Percepção, Sutileza, cura ou sangria por turno, esquiva, bloqueio renovado, dano recebido ×, roubo de vida, `inabalavel` (não cai abaixo de 1; o dano fica adiado), `absoluto`, `sem_recarga`. O preço vem quando a forma acaba: `exausto` (turnos perdidos), `travar` (todas as técnicas em recarga), `perde_vida_frac`, `vida_max_run`, `adiado` (a Armadura cobra tudo de uma vez). Uma forma por vez; trocar cobra a anterior. Os textos usam `{modo_turnos}`, `{modo_dano_mult+%}` etc.
+- **Transformar não gasta o turno.** A primeira medição mostrou de novo o que a expansão ensinou: com lutas de 1 a 3 turnos, uma forma que gasta o turno mede negativo (o Cabelo Dourado deu −8,5). Toda transformação e as Chamas Negras são `livre`; o custo fica no preço, que é o da obra.
+- **Revisões de fidelidade:** Chamas Negras (chama eterna + Mangekyou, virou Maldita), Lua Ilusória (atordoa, enfraquece, cobra Percepção), Punho Carmesim/Kaioken e Deus do Sol/Gear Fifth (viraram transformações), Quarta Marcha (forma com bloqueio e sem Haki depois), Berserker (a Armadura: inabalável e o dano adiado), Clones de Sombra (clones de verdade), Agulhas de Veneno (Shizune, veneno), Enxame (os insetos comem chakra: drenar), Névoa Venenosa (veneno), Lança de Gelo e Era do Gelo (congelar), Marionetes (veneno do Sasori), Mão Curadora (tira o veneno), Veneno de Glicínia (veneno a cada golpe).
+- **Itens novos:** 60 técnicas, 8 Dons, 7 Relíquias, 6 Linhagens, 3 Despertares, 2 Arcos (com arena) e 3 técnicas de chefe. Animes novos: Frieren, Mob Psycho 100, Fate, Dandadan e My Hero Academia; e mais de JJK, JoJo, Berserk, FMA, Hellsing, Black Clover, Demon Slayer, Chainsaw Man, SAO e Solo Leveling. "Dragon Ball Super" virou "Dragon Ball", para o agrupamento.
+- **Modos de jogo** (`Contexto.padrao(jogo=…)`, escolhidos no título com ← →): Clássico; **Torre sem fim** (capítulos sem fim; o Altar e o piloto projetam um horizonte de 12 lutas; o recorde por dificuldade fica em `recordes.json`); **Desfile de chefes** (3 capítulos de 2 lutas, todas contra chefes); **Mundo de um anime** (as rodas filtradas por anime, para animes com 10+ técnicas; uma raridade que o anime não tem numa roda entra com os convidados de fora, e as técnicas iniciais ficam sempre). A run salva lembra o modo.
+- **Telas:** as listas de voto (Altar e quebra) rolam com barra de rolagem (`rolagem.py`); a luta mostra 炎 chama, 毒 veneno, 氷 gelo, 影 clones, 召 invocação, 儀 ritual, 鎧 dano adiado e 変 a forma ativa, com aura própria por transformação (`vfx.AURAS_MODO`).
+
+### O balanceamento da Leva 3 (2026-11-04)
+
+Três passadas do afinador (que aprendeu as transformações: mexe no multiplicador, no dano, na esquiva, no bloqueio ou na cura da forma, senão na duração), ajustes à mão e uma medição final (2000 runs × 3 seeds, no Difícil, antes da recalibração das dificuldades). Dos 97 itens novos e revisados, **57 ficaram na régua** (folga de 1 ponto).
+
+O que a medição ensinou:
+
+- **Transformar tem que ser livre** (acima). E o piloto só se transforma com preço (sangria, exaustão, travar, vida máxima, Armadura) em luta que vale: chefe ou rival com 30 de vida ou mais. Antes ele pagava a sangria em toda luta.
+- **Clones absorvendo golpes inteiros** eram fortes demais (um clone grátis por luta valia +35). Agora o golpe acha um clone em N de N+1 vezes ("quem sabe qual é o verdadeiro?"), e o Dom dos clones virou uma técnica de Dom (2 clones, gasta o turno).
+- **Invocações chegavam tarde:** com lutas de 1 a 3 turnos, uma invocação que só atacava a partir do turno seguinte quase não lutava. Agora ela ataca ao chegar (o mesmo total de ataques, antes).
+- **Degraus de novo:** a Espada da Vitória Prometida mediu +14 com 40 de dano e +42 com 52 (passa a matar o chefe de uma vez); ficou em 40. O Soco que Quebra o Braço e a Lança do Coração têm o mesmo degrau.
+- **Golpes de muitos acertos e bônus fixo** continuam valendo mais do que parecem: a Espada Grande Demais (+1 de dano em todo golpe) mede como Maldita, e virou Maldita.
+- **Números que o afinador infla sem efeito:** Caixão Negro chegou a 94 de dano, O Indomável a 34 por turno, o Punho Carmesim a ×3,84, sem sair do negativo. Voltaram a números razoáveis à mão: não vale deformar o jogo para agradar um piloto que só usa esses poderes no chefe.
+
+**Ainda fora da régua (medição final):**
+
+| Grupo | Itens | Medem | Por quê |
+|---|---|---|---|
+| Suporte | Mão Curadora, Punhado de Sal, Arraia Curandeira, Diamante que Conserta, Barreira de Mana, Olhar que Apaga, Disco Cortante | −0,5 a 0 | Cura e defesa no 3º espaço quase não aparecem na régua (o mesmo limite da expansão). |
+| Controle e preparo | O Indomável, Era do Gelo, Caixão Negro, Lua Ilusória, Chamas Negras, Ritual de Sangue, Sete Pétalas, Chiclete Elástico, Levantem-se, Apagar o Tempo, Mãos Invisíveis, Lótus de Gelo, Punho Carmesim | −8 a −1,5 | Insensíveis ao número com o piloto de hoje; as que cobram Percepção ou vida na run ele só usa contra chefe. |
+| Sangue abaixo de +2 | Sangue Acelerado, Ponto Monstro, Chacal, Olhar de Pedra, Mil Clones, Sapo Chefe, Névoa Venenosa, Máscara de Pedra | 0 a +1,5 | O 3º espaço pesa pouco. |
+| Malditas abaixo de +4 | Velocidade Divina, Caixão da Montanha, Cabelo Dourado, Tempo do Imperador | +0,8 a +3,7 | Formas: medidas com o piloto que só se transforma em luta grande. |
+
+Remedidos depois dos ajustes à mão: Motosserra +2,7, Casa dos Feiticeiros +3,1, Mana Escondida +2,4, Mundo de Lâminas +13,6, Espada da Vitória +14,2.
 
 ## Poderes impossíveis de balancear
 

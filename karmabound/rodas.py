@@ -75,6 +75,11 @@ def _numero(v: float) -> str:
     return f"{v:g}".replace(".", ",")
 
 
+def anime_de(origem: str) -> str:
+    """A obra de uma homenagem: 'Amaterasu (Itachi) · Naruto' -> 'Naruto'."""
+    return origem.rsplit(" · ", 1)[1].strip() if " · " in origem else ""
+
+
 def preencher(texto: str, valores: dict) -> str:
     """Troca os marcadores do texto pelos números dos dados, para o texto nunca mentir.
 
@@ -105,6 +110,9 @@ def _valores(f: dict) -> dict:
     valores = dict(padrao)
     for chave in ("combate", "tecnica", "efeito", "despertar", "regra"):
         valores.update(f.get(chave) or {})
+    modo = valores.get("modo")
+    if isinstance(modo, dict):  # a transformação: {modo_turnos}, {modo_dano_mult+%}...
+        valores.update({f"modo_{k}": v for k, v in modo.items()})
     return valores
 
 

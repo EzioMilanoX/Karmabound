@@ -22,7 +22,7 @@ import copy
 import random
 from collections import Counter
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from karmabound.carma import ConfigCarma
 from karmabound.combate import (
@@ -40,6 +40,7 @@ from karmabound.rodas import (
     Fatia,
     Raridade,
     Roda,
+    anime_de,
     carregar_balanceamento,
     carregar_chefes,
     carregar_raridades,
@@ -65,11 +66,20 @@ class Contexto:
     max_turnos: int = 80
     chefes: tuple[Fatia, ...] = ()  # técnicas-assinatura: cada chefe recebe uma
     votos_luta: tuple[VotoDeLuta, ...] = ()  # a roleta oferece um por luta
+    jogo: str = "classico"  # o modo de jogo (JOGOS)
+    anime: str = ""  # no Mundo de um anime: de qual
+    todos_chefes: bool = False  # Desfile de chefes: toda luta é contra um chefe
 
     @property
     def lutas(self) -> int:
         """Lutas de uma run sem Invasão."""
         return self.capitulos * self.lutas_por_capitulo
+
+    def restantes(self, proxima_luta: int) -> int:
+        """Lutas que ainda faltam (na Torre sem fim, um horizonte de 12)."""
+        if self.jogo == "torre":
+            return HORIZONTE_TORRE
+        return max(1, self.lutas - proxima_luta + 1)
 
     @property
     def ordem(self) -> list[str]:
@@ -80,20 +90,82 @@ class Contexto:
         return {f.id: f for f in self.rodas["tecnicas"].fatias}
 
     @classmethod
-    def padrao(cls, dificuldade: str | None = None, balanceamento: dict | None = None) -> Contexto:
+    def padrao(
+        cls,
+        dificuldade: str | None = None,
+        balanceamento: dict | None = None,
+        jogo: str = "classico",
+        anime: str = "",
+    ) -> Contexto:
+        if jogo not in JOGOS:
+            raise ValueError(f"modo de jogo '{jogo}' não existe (use: {', '.join(JOGOS)})")
         bal = balanceamento or carregar_balanceamento()
         raridades = carregar_raridades(bal)
         cfg = config_combate(bal, dificuldade)
+        rodas, chefes = carregar_rodas(raridades), carregar_chefes()
+        forma: dict = {}
+        if jogo == "torre":
+            forma = {"capitulos": CAPITULOS_TORRE}
+        elif jogo == "chefes":
+            forma = {"capitulos": 3, "lutas_por_capitulo": 2, "todos_chefes": True}
+        elif jogo == "anime":
+            if not anime:
+                raise ValueError("o Mundo de um anime precisa do anime")
+            fixas = set(cfg["jogador"]["tecnicas"])
+            fixas |= {f.inicial for f in rodas["linhagem"].fatias if f.inicial}
+            rodas = filtrar_anime(rodas, anime, frozenset(fixas))
+            chefes = tuple(c for c in chefes if anime_de(c.origem) == anime) or chefes
         return cls(
-            rodas=carregar_rodas(raridades),
+            rodas=rodas,
             raridades=raridades,
             config_carma=ConfigCarma.de_dict(bal["carma"]),
             combate=cfg,
             catalogo=carregar_catalogo(),
             basico=Tecnica.de_dict(cfg["golpe_basico"]),
-            chefes=carregar_chefes(),
+            chefes=chefes,
             votos_luta=carregar_votos_luta(),
+            jogo=jogo,
+            anime=anime if jogo == "anime" else "",
+            **forma,
         )
+
+
+# ----------------------------------------------------------------------- modos de jogo
+
+JOGOS = {
+    "classico": "Clássico",
+    "torre": "Torre sem fim",
+    "chefes": "Desfile de chefes",
+    "anime": "Mundo de um anime",
+}
+DESCRICAO_JOGO = {
+    "classico": "3 capítulos, 12 lutas",
+    "torre": "até onde você sobe?",
+    "chefes": "6 lutas, só chefes",
+    "anime": "um anime só",
+}
+CAPITULOS_TORRE = 10_000
+HORIZONTE_TORRE = 12  # o Altar e o piloto projetam a Torre como uma run de 12 lutas
+MINIMO_ANIME = 10  # técnicas de um anime para ele ter o próprio Mundo
+
+
+def filtrar_anime(rodas: dict[str, Roda], anime: str, manter=frozenset()) -> dict[str, Roda]:
+    """As rodas só com o anime. Uma raridade que ele não tem numa roda volta inteira
+    (os convidados), para nenhuma roda ficar sem o que sortear."""
+    novas = {}
+    for rid, roda in rodas.items():
+        do_anime = [f for f in roda.fatias if anime_de(f.origem) == anime or f.id in manter]
+        tem = {f.raridade for f in do_anime}
+        convidados = [f for f in roda.fatias if f.raridade not in tem]
+        novas[rid] = replace(roda, fatias=tuple(do_anime + convidados))
+    return novas
+
+
+def animes_jogaveis(rodas: dict[str, Roda]) -> list[str]:
+    """Os animes com técnicas suficientes para um Mundo próprio (o mais rico primeiro)."""
+    conta = Counter(anime_de(f.origem) for f in rodas["tecnicas"].fatias)
+    conta.pop("", None)
+    return sorted((a for a, n in conta.items() if n >= MINIMO_ANIME), key=lambda a: -conta[a])
 
 
 @dataclass
@@ -257,7 +329,8 @@ def gerar_rival(
 
 
 def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
-    rival = gerar_rival(ctx, estado.proxima_luta, rng, estado.capitulo, estado.chefe)
+    chefe = estado.chefe or ctx.todos_chefes
+    rival = gerar_rival(ctx, estado.proxima_luta, rng, estado.capitulo, chefe)
     regra = estado.regra
     mult = regra.get("vida_rival_mult", 1.0) * (
         regra.get("chefe_mult", 1.0) if rival.chefe else 1.0
@@ -500,7 +573,7 @@ def medir(
     joga só as próximas N lutas e projeta a diferença para o resto da run (o Altar da
     tela usa, para não fazer o jogador esperar).
     """
-    restantes = max(1, ctx.lutas - estado.proxima_luta + 1)
+    restantes = ctx.restantes(estado.proxima_luta)
     ate = None
     escala = 1.0
     if horizonte is not None and horizonte < restantes:
@@ -693,7 +766,7 @@ def altar_rapido(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> None:
     if not estado.votos.pode_jurar():
         return
     cat = ctx.catalogo
-    restantes = max(1, ctx.lutas - estado.proxima_luta + 1)
+    restantes = ctx.restantes(estado.proxima_luta)
     tipico = {r.id: r.tipico * restantes for r in cat.restricoes.values()}
     candidatas = sorted(
         (r for r in cat.restricoes.values() if tipico[r.id] > 0),

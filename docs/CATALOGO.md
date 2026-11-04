@@ -20,7 +20,7 @@
 | 砂 | Povo da Areia | Cinza | Começa cada luta com 1 de bloqueio. | Aldeia da Areia · Naruto |
 | 漁 | Vila de Pescadores | Cinza | +4 de vida máxima. | Vila Cocoyasi · One Piece |
 | 鍛 | Família de Ferreiros | Cinza | Suas técnicas causam +4% e evoluem ×1,4. | Vila dos Ferreiros · Demon Slayer |
-| 蜂 | Clã dos Insetos | Cinza | Começa com as Agulhas de Veneno, e +26% contra rival que sangra. | Clã Aburame · Naruto |
+| 蜂 | Clã dos Insetos | Cinza | Começa com as Agulhas de Veneno, e +37% contra rival que sangra, queima ou está envenenado. | Clã Aburame · Naruto |
 | 犬 | Clã dos Cães | Sangue | Começa com a Presa sobre Presa, e o primeiro ataque de cada luta causa +5%. | Clã Inuzuka · Naruto |
 | 剣 | Dojo de Espadachins | Cinza | Começa com o Corte Rápido, e +1 de dano no Golpe. | Dojo Shimotsuki (Zoro) · One Piece |
 | 鯨 | Ilha da Baleia | Cinza | Criado na mata: +1 de vida máxima e +10% de chance de Relíquia. | Ilha da Baleia (Gon) · Hunter x Hunter |
@@ -45,6 +45,12 @@
 | 意 | Vontade do D. | Divino | Uma vez por run um golpe fatal te deixa com 1 de vida, +5 de dano abaixo de 30% da vida e toda cura vale +20%. Preço: o Carma enche 20% mais devagar. | A Vontade do D. · One Piece |
 | 皇 | Clã Celestial | Divino | +2 de Percepção e todo dano +15%. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Clã Otsutsuki · Naruto |
 | 始 | Sangue de Ymir | Divino | +24 de vida máxima. Técnica, uma vez por luta: vira titã, bloqueia 10 e +4 de dano até o fim da luta. Não gasta o turno. Preço: 8 de vida. | Sangue de Ymir · Attack on Titan |
+| 禪 | Casa dos Feiticeiros | Sangue | Começa com os Cães de Sombra. | Clã Zen'in · Jujutsu Kaisen |
+| 舘 | Casa das Borboletas | Cinza | Começa com o Ferrão da Borboleta, e +20% contra rival envenenado, queimando ou sangrando. | Mansão Borboleta (Família Kocho) · Demon Slayer |
+| 術 | Alquimistas do Estado | Cinza | Começa com a Parede de Lanças e 2 de bloqueio no início de cada luta. | Alquimistas Federais · Fullmetal Alchemist |
+| 耳 | Os Elfos | Sangue | Vivem mil anos: começa com o Raio que Mata Homens, +4 de vida máxima e +1 de Percepção. | Elfos (Frieren) · Frieren |
+| 森 | Clã da Floresta | Sangue | +6 de vida máxima e cura 1 por turno. | Clã Senju · Naruto |
+| 継 | Herdeiros do Poder | Maldito | O poder passa de mão em mão: começa com o Cinco Por Cento, suas transformações duram 1 turno a mais e +1 de dano. | One For All · My Hero Academia |
 
 ## 命 Destino (gira e aceita)
 
@@ -77,7 +83,7 @@
 | 律 | Esquentar | Cinza | +0,2 de dano a cada turno seu na luta (acumula; vale a parte inteira). | Goku esquentando · Dragon Ball |
 | 刺 | Agulhas do Corpo | Cinza | Revide 1 que se rearma a cada turno seu. | Hari Jizo (Jiraiya) · Naruto |
 | 渇 | Sede de Sangue | Sangue | Cura 31% de todo dano que você causa. | Seras Victoria · Hellsing |
-| 蝕 | Veneno de Glicínia | Sangue | Todo ataque que fere faz o rival sangrar 1 por 3 turnos. | Veneno de glicínia (Shinobu) · Demon Slayer |
+| 蝕 | Veneno de Glicínia | Sangue | Todo ataque que fere injeta 1 doses de veneno (ferem e caem 1 por turno; as doses se somam). | Veneno de glicínia (Shinobu) · Demon Slayer |
 | 狩 | Instinto de Caçador | Sangue | +101% de dano contra rival que sangra ou tem Marca. | Os sentidos do Inosuke · Demon Slayer |
 | 穿 | Punho Perfurante | Sangue | O Golpe atravessa bloqueio e causa +2. | Punho de Haki (Garp) · One Piece |
 | 石 | Pele de Pedra | Sangue | Todo dano que você sofre cai 16%. Preço: −1 de Velocidade. | Titã Encouraçado (Reiner) · Attack on Titan |
@@ -87,7 +93,7 @@
 | 智 | QI de Duzentos | Sangue | +1 de Percepção. Preço: −5 de vida máxima. | Shikamaru · Naruto |
 | 絹 | Fio Invisível | Sangue | Técnica: 9 de dano quase impossível de perceber, e o rival sangra 1. | Fios de Nen (Kurapika) · Hunter x Hunter |
 | 呼 | Respiração Constante | Maldito | As recargas das suas técnicas são 1 menores (mínimo 1). Preço: vida máxima −5%. | Respiração Total Constante · Demon Slayer |
-| 狂 | Berserker | Maldito | Todo o seu dano +25%. Preço: todo dano que você sofre +20%. | Armadura do Berserker (Guts) · Berserk |
+| 狂 | Berserker | Maldito | Técnica, uma vez por luta: veste a Armadura por 3 turnos — todo o seu dano +115%, e você não cai abaixo de 1 de vida enquanto ela veste. Quando ela abre, você sofre todo o dano que ela segurou. Não gasta o turno. | Armadura do Berserker (Guts) · Berserk |
 | 鱗 | Escamas de Dragão | Maldito | +16 de vida máxima e, abaixo de metade da vida, cura 2 por turno. Preço: o Carma enche 15% mais devagar. | Dragon Slayer · Fairy Tail |
 | 波 | Onda Solar | Maldito | Técnica: 10 de dano; cura 30% do dano e mais 1 por turno até o fim da luta. | Hamon (Jonathan) · JoJo's Bizarre Adventure |
 | 抹 | Mão que Apaga | Maldito | Técnica: 12 de dano que apaga bloqueio, revide e escudos. Preço: 2 de vida. | The Hand (Okuyasu) · JoJo's Bizarre Adventure |
@@ -98,7 +104,15 @@
 | 巨 | Corpo de Titã | Divino | Vida máxima +73%. Preço: −1 de Velocidade e −1 de Percepção. | Titã Colossal · Attack on Titan |
 | 瞳 | Olho em Anéis | Divino | +2 de Percepção e +2 de Sutileza. Preço: o Carma enche 20% mais devagar. | Rinnegan · Naruto |
 | 永 | Imortal | Maldito | Uma vez por run, ao cair, volta com 30% da vida; abaixo de 40% da vida, cura 6 por turno. Preço: toda cura vale 85%. | Hidan · Naruto |
-| 膨 | Quarta Marcha | Divino | Técnica: suas técnicas em recarga descem 2 e, por 2 turnos, todo ataque acerta uma vez a mais. Não gasta o turno. Preço: 3 de vida. | Gear Fourth (Luffy) · One Piece |
+| 膨 | Quarta Marcha | Divino | Técnica, uma vez por luta: o corpo infla de Haki — por 3 turnos, +13 de dano e bloqueio 6 renovado a cada turno. Não gasta o turno. Preço: 3 de vida, e quando acaba suas técnicas ficam 3 turnos em recarga (sem Haki). | Gear Fourth (Luffy) · One Piece |
+| 隊 | Exército de Um Só | Sangue | Técnica (não ocupa espaço): 2 clones — cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes). | Kage Bunshin (Naruto) · Naruto |
+| 十 | Dez Sombras | Sangue | Começa cada luta com um cão de sombra: fere 1 a cada turno seu, por 3 turnos. | Técnica das Dez Sombras (Megumi) · Jujutsu Kaisen |
+| 気 | Controle do Ki | Cinza | Suas transformações duram 1 turno a mais, e +1 de vida máxima. | O controle de ki do Goku · Dragon Ball |
+| 薬 | Mestre dos Venenos | Sangue | O sangramento, o veneno e a chama que você aplica ferem +77%. | Sasori da Areia Vermelha · Naruto |
+| 藤 | Corpo Envenenado | Maldito | Anos bebendo glicínia: quem te fere recebe 2 doses de veneno, e todo ataque seu que fere injeta 1. Preço: −4 de vida máxima. | O corpo da Shinobu · Demon Slayer |
+| 秘 | Mana Escondida | Sangue | Mil anos escondendo a mana: o rival te subestima — o primeiro ataque de cada luta causa +7%. | Ocultar a mana (Frieren) · Frieren |
+| 婆 | Maldição que Corre | Cinza | Uma maldição veloz: +2 de Velocidade e 2% de chance de esquivar. | Turbo Vovó (Okarun) · Dandadan |
+| 念 | Mãos Invisíveis | Sangue | Técnica: mãos de energia prendem o rival — ele não pode defender por 2 turnos, e o próximo golpe nele causa +50%. | Psicocinese (Momo) · Dandadan |
 
 ## 技 Técnicas (gira 3, escolhe 1)
 
@@ -108,8 +122,8 @@
 | 守 | Guarda Alta | Cinza | defesa | Reduz o próximo dano recebido. | 2 | 0 |  | Ken (Nen) · Hunter x Hunter |
 | 突 | Investida | Cinza | ataque | Dano maior, defesa menor no turno. | 2 | 1 | sim | Dynamic Entry (Gai) · Naruto |
 | 雷 | Primeiro Trovão | Cinza | ataque | Um passo e um corte: todo uso conta como ataque surpresa. Fácil de sentir chegando (sutileza 1). | 2 | 1 |  | Hekireki Issen · Demon Slayer |
-| 分 | Clones de Sombra | Cinza | ataque | Três golpes de 2. | 2 | 2 |  | Kage Bunshin no Jutsu · Naruto |
-| 癒 | Mão Curadora | Cinza | defesa | Cura 5. | 3 | 0 |  | Ninjutsu Médico · Naruto |
+| 分 | Clones de Sombra | Cinza | maldita | 2 clones: cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes). | 2 | 0 |  | Kage Bunshin no Jutsu · Naruto |
+| 癒 | Mão Curadora | Cinza | defesa | Cura 5 e tira de você sangramento, veneno, Marca e selos. | 3 | 0 |  | Ninjutsu Médico · Naruto |
 | 十 | Corte em Cruz | Sangue | ataque | Dois golpes fracos. | 2 | 3 |  | Nitoryu (Zoro) · One Piece |
 | 返 | Contra-ataque | Sangue | defesa | Devolve parte do próximo golpe. | 3 | 0 |  | Kaiten (Neji) · Naruto |
 | 刃 | Lâmina de Sangue | Sangue | ataque | Gasta vida para causar muito dano. | 3 | 3 | sim | Manipulação de Sangue (Choso) · Jujutsu Kaisen |
@@ -119,13 +133,13 @@
 | 鎖 | Corrente do Julgamento | Sangue | ataque | Golpe de 7 que prende a ação que o rival anunciou: ela vai para a recarga por 2 turnos. | 3 | 2 |  | Corrente do Julgamento (Kurapika) · Hunter x Hunter |
 | 呪 | Marca da Maldição | Maldito | maldita | Golpe que amaldiçoa: o rival sofre 4 a cada turno dele, e cada nova Marca soma +4. Você sofre 1 por turno por Marca aplicada. | 2 | 3 |  | Selo Amaldiçoado · Naruto |
 | 元 | Esfera dos Mil | Maldito | maldita | Dano de 10 mais toda a dor que você sofreu nesta luta, até +20. | 4 | 3 |  | Genki Dama · Dragon Ball |
-| 幻 | Lua Ilusória | Maldito | maldita | O rival perde o próximo turno preso numa ilusão. Preço: 2 de vida (os olhos sangram). | 4 | 0 |  | Tsukuyomi (Itachi) · Naruto |
+| 幻 | Lua Ilusória | Maldito | maldita | Três dias de tortura num segundo: o rival perde 2 turnos e causa −1 em todo golpe até o fim da luta. Preço: −1 de Percepção pelo resto da run (o Mangekyou cega). | 4 | 0 |  | Tsukuyomi (Itachi) · Naruto |
 | 契 | Contrato | Divino | maldita | Golpe de 40, uma vez por luta. A cada uso, uma das suas outras técnicas é destruída para o resto da run, e o golpe cresce +7. | 99 | 2 | sim | Contrato com o Demônio · Chainsaw Man |
 | 裁 | Julgamento | Divino | maldita | Dano igual a 1,8 × o Carma acumulado, e consome todo o Carma: a dor vira golpe agora, ou espera o Despertar. | 4 | 3 | sim | Shinra Tensei (Pain, a dor) · Naruto |
 | 界 | Corte do Mundo | Divino | maldita | 58 de dano que atravessa bloqueio, escudo e esquiva, e não pode ser percebido. Preço: só fica pronto no seu 4º turno da luta. | 99 | 99 |  | O corte que divide o mundo (Sukuna) · Jujutsu Kaisen |
 | 葉 | Folha Cortante | Cinza | ataque | Dois chutes de 4. | 1 | 2 |  | Konoha Senpu (Rock Lee) · Naruto |
 | 爪 | Garra do Tigre | Cinza | ataque | 6 de dano, e o rival sangra 2 por 3 turnos. | 2 | 2 |  | Tora Gari (Zoro) · One Piece |
-| 針 | Agulhas de Veneno | Cinza | ataque | Agulhas de 3 que fazem o rival sangrar 3 por 3 turnos. | 2 | 3 |  | Senbon (Haku) · Naruto |
+| 針 | Agulhas de Veneno | Cinza | ataque | Agulhas de 2 com 4 doses de veneno (ferem e caem 1 por turno; as doses se somam). | 2 | 3 |  | Agulhas envenenadas (Shizune) · Naruto |
 | 閃 | Passo Relâmpago | Cinza | ataque | 7 de dano; o próximo ataque do rival tem 60% de chance de errar (e você devolve um Golpe). | 2 | 1 |  | Soru (Rokushiki) · One Piece |
 | 鉄 | Corpo de Ferro | Cinza | defesa | Bloqueia 12. | 3 | 0 |  | Tekkai (Rokushiki) · One Piece |
 | 爆 | Selo Explosivo | Cinza | ataque | Planta uma etiqueta que explode em 13 depois de 2 turnos do rival. | 3 | 0 |  | Kibaku Fuda · Naruto |
@@ -139,7 +153,7 @@
 | 凪 | Calmaria | Cinza | defesa | Bloqueia 17; o próximo ataque do rival tem 60% de chance de errar (e você devolve um Golpe). | 2 | 0 |  | Nagi (Giyu) · Demon Slayer |
 | 吼 | Grito de Guerra | Cinza | defesa | +2 de dano em todos os seus golpes até o fim da luta. | 3 | 0 |  | O grito do Kenpachi · Bleach |
 | 指 | Tiro de Dedo | Cinza | ataque | 6 de dano que atravessa bloqueio. | 2 | 2 |  | Shigan (Rokushiki) · One Piece |
-| 氷 | Lança de Gelo | Cinza | ataque | 4 de dano; o rival congela e só pode usar o Golpe no próximo turno dele. | 3 | 2 |  | Hyorinmaru (Toshiro) · Bleach |
+| 氷 | Lança de Gelo | Cinza | ataque | 4 de dano e o rival congela: perde o próximo turno, e o próximo golpe nele causa ×2 e quebra o gelo. | 5 | 2 |  | Hyorinmaru (Toshiro) · Bleach |
 | 迅 | Corte Rápido | Cinza | ataque | 5 de dano, e suas outras técnicas em recarga descem 1. | 1 | 1 |  | Iaido (Brook) · One Piece |
 | 岩 | Punho que Cresce | Cinza | ataque | 5 de dano, e +2 a cada uso nesta luta. | 1 | 1 |  | Punho do Amor (Garp) · One Piece |
 | 火 | Grande Bola de Fogo | Cinza | ataque | 15 de dano, e o rival queima 1 por 3 turnos. | 2 | 1 | sim | Katon Goukakyu · Naruto |
@@ -161,7 +175,7 @@
 | 縫 | Sombra que Prende | Sangue | maldita | O rival só pode usar o Golpe nos próximos 2 turnos dele. | 1 | 0 |  | Kagemane no Jutsu (Shikamaru) · Naruto |
 | 疾 | Ferida do Vento | Sangue | ataque | 14 de dano que desfaz bloqueio, revide e escudos do rival. | 3 | 3 | sim | Kaze no Kizu (InuYasha) · InuYasha |
 | 龍 | Dragão d'Água | Sangue | ataque | Dois golpes de 8. | 2 | 2 | sim | Suiryudan · Naruto |
-| 炎 | Chamas Negras | Sangue | ataque | 10 de dano, e o rival queima 4 por turno, por 3 turnos. | 3 | 3 |  | Amaterasu (Itachi) · Naruto |
+| 炎 | Chamas Negras | Maldito | maldita | Basta olhar: uma chama negra que não apaga — o rival queima 11 por turno, e a chama cresce 1 a cada turno, até o fim da luta. Nada a apaga. Uma vez por luta; não gasta o turno. Preço: −1 de Percepção pelo resto da run (o olho sangra e cega). | 99 | 0 |  | Amaterasu (Itachi) · Naruto |
 | 咆 | Rugido do Dragão | Sangue | ataque | 13 de dano, e o rival queima 2 por 3 turnos. | 3 | 2 | sim | Rugido do Dragão de Fogo (Natsu) · Fairy Tail |
 | 武 | Punho Armado | Sangue | ataque | 16 de dano que atravessa bloqueio. | 2 | 1 |  | Haki do Armamento · One Piece |
 | 殺 | Último Corte | Sangue | ataque | 13 de dano; dobra contra rival abaixo de 35% da vida. | 2 | 3 | sim | Shishi Sonson (Zoro) · One Piece |
@@ -169,7 +183,7 @@
 | 光 | Luz Cegante | Sangue | ataque | 3 de dano, e o rival não percebe os seus próximos 3 golpes. | 3 | 0 |  | Taiyoken (Kuririn) · Dragon Ball |
 | 吸 | Mordida | Sangue | ataque | 13 de dano; você cura 60% do dano causado. | 2 | 2 |  | A mordida do Alucard · Hellsing |
 | 時 | Bomba-Relógio | Sangue | maldita | Planta uma bomba de 35 que explode depois de 2 turnos do rival. | 4 | 0 |  | Killer Queen (Kira) · JoJo's Bizarre Adventure |
-| 蟲 | Enxame | Sangue | ataque | Três picadas de 2; o rival sangra 2 por 3 turnos. | 3 | 2 |  | Kikaichu (Shino) · Naruto |
+| 蟲 | Enxame | Sangue | ataque | Três picadas de 3; os insetos devoram o chakra: você cura 50% do dano. | 3 | 2 |  | Kikaichu (Shino) · Naruto |
 | 壁 | Muralha de Terra | Sangue | defesa | Bloqueia 21. | 3 | 0 |  | Doryuheki · Naruto |
 | 弾 | Disparo Certeiro | Sangue | ataque | 8 de dano, e os próximos 2 golpes contra o rival causam +50%. | 2 | 4 | sim | Mira da Ilha (Yasopp) · One Piece |
 | 稲 | Seis Trovões | Sangue | ataque | Quatro golpes de 3, sempre como surpresa. | 3 | 2 |  | Hekireki Issen Rokuren · Demon Slayer |
@@ -179,12 +193,12 @@
 | 鏡 | Espelho Sagrado | Sangue | defesa | O próximo golpe que você receber volta inteiro para quem golpeou. | 4 | 0 |  | Yata no Kagami (Itachi) · Naruto |
 | 圧 | Pressão Gravitacional | Sangue | ataque | 8 de dano, +20% da vida atual do rival (até 25). | 3 | 2 |  | Gravidade (Fujitora) · One Piece |
 | 舞 | Dança da Lua Branca | Sangue | ataque | Dois cortes de 6 e +1 de dano até o fim da luta. | 2 | 2 |  | Sode no Shirayuki (Rukia) · Bleach |
-| 毒 | Névoa Venenosa | Sangue | maldita | O rival sangra 7 por turno, por 3 turnos. | 3 | 0 |  | Hydra (Magellan) · One Piece |
+| 毒 | Névoa Venenosa | Sangue | maldita | 10 doses de veneno: ferem e caem 1 por turno. | 3 | 0 |  | Hydra (Magellan) · One Piece |
 | 避 | Olhos do Futuro | Sangue | defesa | Os próximos 2 ataques do rival têm 60% de chance de errar; cada erro devolve um Golpe. | 2 | 0 |  | Haki da Observação · One Piece |
 | 九 | Nove Cabeças do Dragão | Sangue | ataque | 6 golpes de 2. | 4 | 2 |  | Kuzu Ryu Sen (Kenshin) · Rurouni Kenshin |
 | 剛 | Pele de Diamante | Sangue | defesa | Bloqueia 9, e o próximo golpe que você receber não fere. | 4 | 0 |  | Corpo de Diamante (Jozu) · One Piece |
 | 細 | Selo da Força de Cem | Sangue | defesa | Cura 9 e mais 1 a cada turno seu até o fim da luta. | 4 | 0 |  | Byakugo (Tsunade) · Naruto |
-| 傀 | Marionetes | Sangue | ataque | Dois golpes de 7, difíceis de perceber. | 2 | 4 | sim | Marionetes (Sasori) · Naruto |
+| 傀 | Marionetes | Sangue | ataque | Dois golpes de 4, difíceis de perceber, com 2 doses de veneno. | 2 | 4 | sim | Marionetes (Sasori) · Naruto |
 | 貫 | Mil Pássaros | Sangue | ataque | 14 de dano que atravessa bloqueio; dobra contra rival abaixo de 25% da vida. | 2 | 2 | sim | Chidori (Sasuke) · Naruto |
 | 怨 | Lâmina do Inferno | Maldito | ataque | 16 de dano, e o rival sangra 3 por 3 turnos. Preço: 5 de vida. | 3 | 3 | sim | Enma (Zoro) · One Piece |
 | 喰 | Banquete | Maldito | maldita | 24 de dano, e você cura todo o dano causado. Preço: −1 de vida máxima pelo resto da run. | 3 | 2 |  | Gula (Homúnculo) · Fullmetal Alchemist |
@@ -200,19 +214,79 @@
 | 憑 | Possessão | Maldito | maldita | O rival perde o próximo turno e causa −2 até o fim da luta. Preço: 4 de vida. | 4 | 0 |  | Shintenshin (Ino) · Naruto |
 | 肉 | Carne Maldita | Maldito | defesa | Cura 8 e mais 4 a cada turno seu até o fim da luta. Preço: −1 de vida máxima pelo resto da run. | 4 | 0 |  | Técnica Reversa · Jujutsu Kaisen |
 | 枷 | Grilhão de Chakra | Maldito | maldita | O rival só usa o Golpe e não defende por 2 turnos. Preço: 3 de vida. | 3 | 0 |  | Correntes de Chakra (Kushina) · Naruto |
-| 蒸 | Punho Carmesim | Maldito | maldita | +7 de dano até o fim da luta. Não gasta o turno. Preço: 6 de vida. | 99 | 0 |  | Kaioken · Dragon Ball |
+| 蒸 | Punho Carmesim | Maldito | modo | Por 3 turnos, todo o seu dano +150%. Não gasta o turno. Preço: 2 de vida por turno (o corpo não aguenta). | 99 | 0 |  | Kaioken · Dragon Ball |
 | 響 | Lua Cruzada | Maldito | ataque | Dois golpes de 8, +2 por técnica em recarga. Preço: 2 de vida. | 2 | 3 | sim | Getsuga Jujisho · Bleach |
 | 晶 | Prisão de Cristal | Maldito | maldita | 8 de dano, e o rival perde o próximo turno. Preço: 3 de vida. | 5 | 0 |  | Shoton (Guren) · Naruto |
 | 鳴 | Lâmina que Ecoa | Maldito | ataque | 15 de dano, +4 a cada uso; cura 30% do dano. Preço: 2 de vida. | 2 | 3 |  | Benihime (Urahara) · Bleach |
 | 紫 | Vazio Púrpura | Divino | maldita | Uma vez por luta: 60 de dano que desfaz toda defesa e atravessa bloqueio. Preço: −3 de vida máxima pelo resto da run. | 99 | 99 |  | Murasaki (Gojo) · Jujutsu Kaisen |
-| 陽 | Deus do Sol | Divino | maldita | Uma vez por luta: por 3 turnos todo ataque acerta uma vez a mais, e +8 de dano até o fim da luta. Não gasta o turno. | 99 | 0 |  | Gear Fifth (Luffy) · One Piece |
+| 陽 | Deus do Sol | Divino | modo | Uma vez por luta, o corpo vira desenho animado: por 3 turnos, todo ataque acerta uma vez a mais, todo o seu dano +44% e 25% de esquiva. Não gasta o turno. Preço: perde 2 turnos quando passa. | 99 | 0 |  | Gear Fifth (Luffy) · One Piece |
 | 覇 | Vontade do Rei | Divino | maldita | Uma vez por luta: o rival perde o próximo turno, causa −4 até o fim da luta e não percebe 2 golpes. Não gasta o turno. | 99 | 0 |  | Haki do Rei · One Piece |
 | 闇 | Lua Sem Luz | Divino | maldita | Uma vez por luta: 60 de dano absoluto. Preço: −3 de vida máxima pelo resto da run. | 99 | 99 |  | Mugetsu (Ichigo) · Bleach |
-| 凍 | Era do Gelo | Divino | maldita | Uma vez por luta: 30 de dano, o rival perde o próximo turno e depois só usa o Golpe por 2 turnos. | 99 | 3 |  | Hyoten Hyakkaso (Toshiro) · Bleach |
+| 凍 | Era do Gelo | Divino | maldita | Uma vez por luta: 59 de dano, e as flores de gelo prendem o rival por 2 turnos; o próximo golpe nele causa ×2 e o estilhaça. | 99 | 3 |  | Hyoten Hyakkaso (Toshiro) · Bleach |
 | 終 | Explosão Final | Divino | ataque | Uma vez por luta: 50 de dano. Preço: 10 de vida. | 99 | 2 | sim | Explosion (Megumin) · Konosuba |
 | 須 | Guerreiro Espectral | Divino | defesa | Uma vez por luta: bloqueia 28, devolve 10 e +3 de dano até o fim da luta. | 99 | 0 |  | Susanoo (Itachi) · Naruto |
 | 渦 | Shuriken Espiral | Divino | ataque | 44 de dano, e o rival sangra 6 por 3 turnos. Preço: 8 de vida. | 4 | 2 | sim | Rasenshuriken · Naruto |
 | 天 | Céu Acelerado | Divino | maldita | Uma vez por luta: todas as suas técnicas ficam prontas e por 2 turnos todo ataque acerta uma vez a mais. Não gasta o turno. Preço: −3 de vida máxima pelo resto da run. | 99 | 0 |  | Made in Heaven (Pucci) · JoJo's Bizarre Adventure |
+| 魔 | Raio que Mata Homens | Cinza | ataque | A magia mais comum do mundo, feita para matar: 8 de dano, atravessa bloqueio. | 2 | 2 |  | Zoltraak (Frieren) · Frieren |
+| 障 | Barreira de Mana | Cinza | defesa | Bloqueio 11: a defesa que nasceu para parar o Raio que Mata Homens. | 2 | 0 |  | Magia defensiva · Frieren |
+| 塩 | Punhado de Sal | Cinza | defesa | Um punhado de sal: tira de você sangramento, veneno, Marca e selos, e cura 3. | 2 | 0 |  | Sal (Reigen) · Mob Psycho 100 |
+| 砲 | Braço de Ferro | Cinza | ataque | Um canhão escondido na prótese: 13 de dano, sempre como ataque surpresa. | 3 | 1 | sim | Canhão do braço (Guts) · Berserk |
+| 投 | Facas de Arremesso | Cinza | ataque | 3 facas de 2, rápidas demais para ver. | 1 | 3 |  | Facas de arremesso (Guts) · Berserk |
+| 翔 | Manobra Tridimensional | Cinza | ataque | Dois cortes de 5 na nuca, voando. | 2 | 3 |  | Equipamento de Manobra 3D · Attack on Titan |
+| 汗 | Suor Explosivo | Cinza | ataque | 6 de dano, e +3 a cada uso na luta: quanto mais ele sua, maior a explosão. | 1 | 1 |  | Explosion (Bakugo) · My Hero Academia |
+| 消 | Olhar que Apaga | Cinza | maldita | Enquanto você encara, o rival só pode usar o Golpe: por 1 turno dele. | 1 | 0 |  | Erasure (Aizawa) · My Hero Academia |
+| 蝶 | Ferrão da Borboleta | Cinza | ataque | Não corta cabeças: injeta 6 doses de veneno, que ferem e caem 1 por turno. | 2 | 4 |  | Dança do Inseto (Shinobu) · Demon Slayer |
+| 雷 | Nuvem de Trovão | Cinza | ataque | A nuvem se forma sobre o rival: no próximo turno dele, o raio cai (17). | 2 | 0 |  | Thunderbolt Tempo (Nami) · One Piece |
+| 芽 | Sementes de Combate | Cinza | ataque | Plantas brotam do chão: ferem 4 agora e a cada turno seu, 3 vezes. | 3 | 0 |  | Pop Green (Usopp) · One Piece |
+| 鵺 | Coruja-Trovão | Cinza | ataque | 6 de dano, e a coruja ataca também: 3 agora e a cada turno seu, 2 vezes. | 3 | 2 |  | Nue (Megumi) · Jujutsu Kaisen |
+| 闇 | Trevas | Cinza | maldita | Uma névoa negra: o rival não percebe seus próximos 2 golpes, e o próximo golpe dele passa através de você. | 3 | 0 |  | Shamak (Subaru) · Re:Zero |
+| 波 | Respiração do Sol | Cinza | ataque | 7 de dano, e a energia do sol tira de você sangramento, veneno, Marca e selos. | 2 | 1 |  | Overdrive do Hamon (Jonathan) · JoJo's Bizarre Adventure |
+| 錬 | Parede de Lanças | Cinza | defesa | Palmas no chão: bloqueio 8 e revide 4. | 2 | 0 |  | Transmutação (Ed) · Fullmetal Alchemist |
+| 円 | Disco Cortante | Cinza | ataque | Corta qualquer coisa: 14 de dano, atravessa bloqueio. Quem percebe, desvia. | 3 | 1 | sim | Kienzan (Kuririn) · Dragon Ball |
+| 仙 | Energia da Natureza | Sangue | modo | Junta a energia da natureza num instante: por 3 turnos, +4 de dano e +2 de Percepção. Não gasta o turno. | 99 | 0 |  | Modo Sábio (Naruto) · Naruto |
+| 速 | Sangue Acelerado | Sangue | modo | O sangue bombeado mais rápido: por 5 turnos, todo ataque acerta uma vez a mais. Não gasta o turno. Preço: 2 de vida por turno. | 99 | 0 |  | Gear Second (Luffy) · One Piece |
+| 群 | Mil Clones | Sangue | maldita | 6 clones: cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes). | 4 | 0 |  | Tajuu Kage Bunshin (Naruto) · Naruto |
+| 蛙 | Sapo Chefe | Sangue | maldita | Uma vez por luta, com o próprio sangue: o sapo fere 14 agora e a cada turno seu, 3 vezes. Preço: 2 de vida. | 99 | 0 |  | Kuchiyose: Gamabunta (Jiraiya) · Naruto |
+| 狗 | Cães de Sombra | Sangue | ataque | 10 de dano, e os cães atacam também: 4 agora e a cada turno seu, 2 vezes. | 3 | 2 |  | Cães Divinos (Megumi) · Jujutsu Kaisen |
+| 脚 | Perna em Brasa | Sangue | ataque | 10 de dano, e o rival queima 3 por turno, por 3 turnos. | 2 | 1 |  | Diable Jambe (Sanji) · One Piece |
+| 石 | Olhar de Pedra | Sangue | maldita | Quem se encanta vira pedra: perde o próximo turno, e o próximo golpe nele causa ×2 e o estilhaça. | 3 | 0 |  | Mero Mero Mellow (Hancock) · One Piece |
+| 焔 | Estalo de Chamas | Sangue | ataque | Um estalo de dedos: 9 de dano, e o rival queima 3 por turno, por 3 turnos. | 3 | 3 | sim | Alquimia das Chamas (Roy Mustang) · Fullmetal Alchemist |
+| 銃 | Chacal | Sangue | ataque | Balas de prata explosivas: 2 tiros de 7, atravessam bloqueio. | 2 | 1 | sim | Jackal (Alucard) · Hellsing |
+| 聖 | Baionetas Bentas | Sangue | ataque | 4 lâminas de 3; e você regenera 1 por turno até o fim da luta. | 3 | 2 |  | Baionetas (Anderson) · Hellsing |
+| 舞 | Explosão Estelar | Sangue | ataque | 5 cortes de 2 com duas espadas. | 4 | 2 |  | Starburst Stream (Kirito) · Sword Art Online |
+| 反 | Espada sem Magia | Sangue | ataque | 12 de dano; desfaz bloqueio, revide, escudos e espelho do rival antes de cortar. | 2 | 1 |  | Antimagia (Asta) · Black Clover |
+| 言 | Voz Amaldiçoada | Sangue | maldita | “Não se mexa!”: o rival perde o próximo turno. Preço: 3 de vida (a garganta sangra). | 2 | 0 |  | Fala Amaldiçoada (Inumaki) · Jujutsu Kaisen |
+| 海 | Arraia Curandeira | Sangue | defesa | Engolido pela arraia: cura 13 e tira de você sangramento, veneno, Marca e selos. | 4 | 0 |  | Minazuki (Unohana) · Bleach |
+| 翠 | Respingo Esmeralda | Sangue | ataque | 5 esmeraldas de 2, quase impossíveis de perceber. | 2 | 4 | sim | Emerald Splash (Kakyoin) · JoJo's Bizarre Adventure |
+| 粘 | Chiclete Elástico | Sangue | maldita | Gruda no rival: ele não pode defender por 1 turno, e seus próximos 3 golpes nele causam +50%. | 1 | 0 |  | Bungee Gum (Hisoka) · Hunter x Hunter |
+| 岩 | Pedra! | Sangue | ataque | Carrega o Nen no punho: 11 de dano, mais até 12 de sorte. | 2 | 1 | sim | Jajanken (Gon) · Hunter x Hunter |
+| 纏 | Cinco Por Cento | Sangue | modo | O poder espalhado pelo corpo todo: por 4 turnos, +6 de dano e 15% de chance de esquivar. Não gasta o turno. | 99 | 0 |  | Full Cowl (Deku) · My Hero Academia |
+| 冷 | Metade Fria | Sangue | ataque | 7 de dano e o rival congela: perde o próximo turno, e o próximo golpe nele causa ×2. | 4 | 2 |  | Meio Frio Meio Quente (Todoroki) · My Hero Academia |
+| 獣 | Ponto Monstro | Sangue | modo | Por 3 turnos: +6 de dano e todo dano que você sofre −20%. Não gasta o turno. Preço: perde 1 turno quando passa. | 99 | 0 |  | Monster Point (Chopper) · One Piece |
+| 鋸 | Motosserra | Sangue | ataque | 3 cortes de 2: o rival sangra 1 por 3 turnos, e você bebe 20% do sangue. | 2 | 1 |  | Diabo Motosserra (Denji) · Chainsaw Man |
+| 治 | Diamante que Conserta | Sangue | defesa | Conserta o que quebrou: cura 10 e tira de você sangramento, veneno, Marca e selos. | 3 | 0 |  | Crazy Diamond (Josuke) · JoJo's Bizarre Adventure |
+| 金 | Cabelo Dourado | Maldito | modo | A fúria acorda o sangue: por 4 turnos, todo o seu dano +150% e +1 de Percepção. Não gasta o turno. Preço: 1 de vida por turno. | 99 | 0 |  | Super Saiyajin · Dragon Ball |
+| 卍 | Lâmina Negra Liberada | Maldito | modo | A espada encolhe e você some: por 3 turnos, todo ataque acerta uma vez a mais, +1 de dano e +2 de Sutileza. Não gasta o turno. | 99 | 0 |  | Bankai: Tensa Zangetsu (Ichigo) · Bleach |
+| 閃 | Velocidade Divina | Maldito | modo | O corpo vira relâmpago: por 3 turnos, 35% de chance de esquivar e todo ataque acerta uma vez a mais. Não gasta o turno. | 99 | 0 |  | Godspeed (Killua) · Hunter x Hunter |
+| 巨 | Mordida na Mão | Maldito | modo | Morde a mão e vira titã: por 3 turnos, +13 de dano, bloqueio 6 renovado a cada turno, e todo dano que você sofre −20%. Não gasta o turno. Preço: 3 de vida, e perde 1 turno quando sai. | 99 | 0 |  | Transformação em Titã (Eren) · Attack on Titan |
+| 棺 | Caixão da Montanha | Maldito | modo | Expande o domínio: por 2 turnos, todo golpe acerta com certeza (atravessa bloqueio, escudo e esquiva) e +13 de dano. Não gasta o turno. Preço: quando acaba, todas as suas técnicas ficam 3 turnos em recarga. | 99 | 0 |  | Expansão de Domínio (Jogo) · Jujutsu Kaisen |
+| 黒 | Forma do Demônio Negro | Maldito | modo | O demônio do grimório empresta o braço: por 3 turnos, todo golpe atravessa bloqueio, escudo e esquiva, e +18 de dano. Não gasta o turno. Preço: 2 de vida por turno. | 99 | 0 |  | Black Asta · Black Clover |
+| 儀 | Ritual de Sangue | Maldito | maldita | Desenha o círculo com o sangue do rival: por 4 turnos seus, toda dor que você sofre ele sofre junto, a começar pela estocada em si mesmo (3). | 99 | 0 |  | Ritual de Jashin (Hidan) · Naruto |
+| 蓮 | Lótus de Gelo | Maldito | maldita | O frio entra nos pulmões: o rival congela (perde o próximo turno; o próximo golpe nele causa ×2) e recebe 12 doses de veneno. | 3 | 0 |  | Lótus Congelada (Doma) · Demon Slayer |
+| 痺 | Lâmina que Paralisa | Maldito | ataque | 2 de dano: o veneno entra (4 doses) e o rival só pode usar o Golpe no próximo turno. | 4 | 3 |  | Ashisogi Jizo (Mayuri) · Bleach |
+| 柩 | Caixão Negro | Maldito | maldita | Um caixão de gravidade se fecha: 34 de dano, e o rival causa −2 em todo golpe até o fim da luta. | 4 | 3 | sim | Hado #90 Kurohitsugi (Aizen) · Bleach |
+| 起 | Levantem-se | Maldito | maldita | Os mortos levantam como sombras: ferem 11 agora e a cada turno seu, 4 vezes. Uma vez por luta. | 99 | 0 |  | Arise (Sung Jinwoo) · Solo Leveling |
+| 槍 | Lança do Coração | Maldito | ataque | A lança já acertou antes de ser lançada: 12 de dano, atravessa bloqueio, escudo e esquiva. | 4 | 4 | sim | Gáe Bolg (Lancer) · Fate |
+| 弁 | Sete Pétalas | Maldito | defesa | O escudo de sete camadas: os próximos 2 golpes passam através de você, e bloqueio 20. | 5 | 0 |  | Rho Aias (Archer) · Fate |
+| 帝 | Tempo do Imperador | Maldito | modo | Os olhos ficam escarlates: por 3 turnos, +9 de dano, +2 de Percepção e +2 de Sutileza. Não gasta o turno. Preço: −3 de vida máxima pelo resto da run (cada segundo encurta a vida). | 99 | 0 |  | Emperor Time (Kurapika) · Hunter x Hunter |
+| 抹 | Apagar o Tempo | Maldito | maldita | O tempo some: o próximo turno do rival não fere, e você viu o futuro — seus próximos 4 golpes nele causam +50%. | 3 | 0 |  | King Crimson (Diavolo) · JoJo's Bizarre Adventure |
+| 砕 | Soco que Quebra o Braço | Maldito | ataque | Todo o poder num soco: 38 de dano. Preço: 7 de vida (o braço quebra). | 3 | 1 | sim | Detroit Smash 100% (Deku) · My Hero Academia |
+| 鬣 | Juba Dourada | Divino | modo | O cabelo desce até as costas: por 3 turnos, todo o seu dano +161% e todo ataque acerta uma vez a mais. Não gasta o turno. Preço: 4 de vida por turno e 1 turno perdido quando passa. | 99 | 0 |  | Super Saiyajin 3 · Dragon Ball |
+| 未 | O Preço do Futuro | Divino | modo | Troca todo o potencial da vida por este momento: por 2 turnos, todo o seu dano +204%. Não gasta o turno. Preço: −10 de vida máxima pelo resto da run. | 99 | 0 |  | Gon adulto · Hunter x Hunter |
+| 溢 | Transbordar | Divino | modo | As emoções transbordam: por 2 turnos, todo o seu dano +203% e todo golpe atravessa bloqueio, escudo e esquiva. Não gasta o turno. Preço: perde 2 turnos quando passa (desmaia). | 99 | 0 |  | ???% (Mob) · Mob Psycho 100 |
+| 輪 | O Indomável | Divino | maldita | Invoca o que ninguém domou: fere 16 agora e a cada turno seu, 4 vezes. Uma vez por luta. Preço: 4 de vida. | 99 | 0 |  | Mahoraga (Megumi) · Jujutsu Kaisen |
+| 鋼 | Mundo de Lâminas | Divino | modo | A realidade vira um campo de espadas: por 2 turnos, todo ataque acerta 2 vezes a mais e +1 de dano. Não gasta o turno. Preço: quando acaba, suas técnicas ficam 2 turnos em recarga. | 99 | 0 |  | Unlimited Blade Works (Archer) · Fate |
+| 覇 | Espada da Vitória Prometida | Divino | ataque | Uma vez por luta: 40 de dano, um feixe de luz. Preço: 6 de vida. | 99 | 2 | sim | Excalibur (Saber) · Fate |
 
 ## 章 Arco (gira e aceita)
 
@@ -227,7 +301,9 @@
 | 禍 | Maldição Coletiva | Maldito | Seu Carma enche em dobro, e os rivais têm +20% de vida. | Incidente de Shibuya · Jujutsu Kaisen |
 | 虚 | Hueco Mundo | Maldito | Seu Carma enche 50% mais rápido, e os rivais têm +1 de Percepção. | Hueco Mundo · Bleach |
 | 審 | Arco do Juízo | Divino | O chefe tem +50% de vida e dano; derrotá-lo enche o seu Carma ao máximo. | Marineford · One Piece |
-| 力 | Torneio do Poder | Divino | Uma luta a menos neste capítulo, e o chefe é 40% mais forte; vencê-lo dá um Despertar guardado. | Torneio do Poder · Dragon Ball Super |
+| 力 | Torneio do Poder | Divino | Uma luta a menos neste capítulo, e o chefe é 40% mais forte; vencê-lo dá um Despertar guardado. | Torneio do Poder · Dragon Ball |
+| 試 | Exame de Primeira Classe | Sangue | Os rivais são magos atentos (+1 de Percepção), mas toda vitória dá uma Relíquia. | Exame de Magos de Primeira Classe · Frieren |
+| 杯 | Guerra do Cálice | Maldito | O chefe deste capítulo vem 30% mais forte, mas vencê-lo dá um Despertar guardado. | Guerra do Santo Graal · Fate |
 
 ## 宝 Relíquias (gira e aceita)
 
@@ -268,6 +344,13 @@
 | 錠 | Selo de Restrição | Maldito | As recargas das suas técnicas são 1 menores (mínimo 1). Preço: vida máxima −5%. | Selo de Restrição (Alucard) · Hellsing |
 | 帽 | Chapéu de Palha | Divino | Uma vez por run, um golpe fatal te deixa com 1 de vida; toda cura vale +30%; +4 de dano abaixo de 30% da vida. | O chapéu de palha · One Piece |
 | 魔 | Grimório de Cinco Folhas | Divino | +1 espaço de técnica e todo o seu dano +15%. Preço: o Carma enche 30% mais devagar. | Grimório de cinco folhas (Asta) · Black Clover |
+| 瓶 | Frasco de Glicínia | Cinza | Todo ataque que fere injeta 1 dose de veneno. | Veneno de glicínia (Esquadrão de Caçadores) · Demon Slayer |
+| 巻 | Pergaminho de Invocação | Sangue | Começa cada luta com uma invocação pequena: fere 1 a cada turno seu, por 3 turnos. | Pergaminho de contrato (Kuchiyose) · Naruto |
+| 丸 | Pílula de Rumble | Cinza | Suas transformações duram 1 turno a mais. | Rumble Ball (Chopper) · One Piece |
+| 玉 | Joia que Evolui | Maldito | Responde ao desejo de quem a carrega: suas transformações duram 1 turno a mais e todo o seu dano +5%. | Hogyoku (Aizen) · Bleach |
+| 鞘 | Bainha Sagrada | Divino | A bainha que cura tudo: cura 4 por turno; uma vez por run um golpe fatal deixa você com 1 de vida, e uma vez por run, ao cair, você volta com 30% da vida. | Avalon (Saber) · Fate |
+| 鉄 | Espada Grande Demais | Maldito | Grande demais para ser uma espada: +1 de dano em todo golpe. Preço: −1 de Velocidade. | Dragonslayer (Guts) · Berserk |
+| 面 | Máscara de Pedra | Sangue | Quem a veste vira vampiro: cura 39% de todo dano que causa. Preço: as outras curas valem 80%. | Máscara de Pedra (Dio) · JoJo's Bizarre Adventure |
 
 ## 覚 Despertar (gira e aceita)
 
@@ -315,6 +398,9 @@
 | 停 | Tempo Parado | Divino | Quatro ações seguidas. Preço: depois você perde um turno. | Star Platinum: The World (Jotaro) · JoJo's Bizarre Adventure |
 | 貪 | Gula Sem Fim | Divino | Rouba a melhor técnica do rival para o resto da run, e cura 50% do dano causado até o fim da luta. | Gula (Homúnculo) · Fullmetal Alchemist |
 | 祖 | Sangue que Desperta | Divino | +1 de dano e +5 de vida máxima pelo resto da run, e por 1 turno dano dobrado. | O despertar Ackerman · Attack on Titan |
+| 獄 | Inferno Negro | Divino | As chamas negras saem do olho: o rival queima 4 por turno, e a chama cresce 1 a cada turno, até o fim da luta. | Enton: Kagutsuchi (Sasuke) · Naruto |
+| 勇 | O que o Herói Faria | Divino | Você lembra do herói: cura 40% da vida, tira sangramento, veneno e Marca, e os próximos 2 golpes passam através de você. | Himmel, o herói · Frieren |
+| 妖 | Lei das Fadas | Divino | Uma luz que só fere quem você vê como inimigo: 30 de dano agora, que atravessa tudo, e o rival causa −2 em todo golpe. | Fairy Law (Makarov) · Fairy Tail |
 
 ## 誓 Votos vinculativos (o Altar)
 
@@ -414,7 +500,7 @@ Toda luta oferece um, sorteado; jurar não gasta o turno (uma vez por luta).
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 12 +3.21 | ×1.2 | 80 |
-| Equilibrado | 36% | 12 +3.44 | ×1.2 | 76 |
-| Difícil (padrão) | 25% | 12 +3.64 | ×1.25 | 70 |
-| Brutal | 10% | 12 +4.44 | ×1.25 | 68 |
+| Acessível | 45% | 12 +3.19 | ×1.2 | 80 |
+| Equilibrado | 36% | 12 +3.46 | ×1.2 | 76 |
+| Difícil (padrão) | 25% | 12 +3.87 | ×1.25 | 70 |
+| Brutal | 10% | 12 +5.21 | ×1.25 | 68 |

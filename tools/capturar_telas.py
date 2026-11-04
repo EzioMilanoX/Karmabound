@@ -151,6 +151,17 @@ def capturar_run(destino: Path) -> list[Path]:
         luta.modo = "voto"
         foto(luta, "run_03d_voto_de_luta")
         luta.modo = "escolher"
+    # Leva 3: uma transformação ativa, e o rival queimando na chama negra e envenenado
+    if not j.luta.acabou:
+        cabelo = Tecnica.de_fatia(tec["cabelo_dourado"])
+        j.jogador.entrar_no_modo(cabelo)
+        j.jogador.clones = 2
+        rival = j.luta.rival
+        rival.chama, rival.veneno = 6, 4
+        luta.anim_ate = 0
+        foto(luta, "run_03e_transformacao")
+        j.jogador.modo, j.jogador.modo_id, j.jogador.clones = None, "", 0
+        rival.chama = rival.veneno = 0
 
     j.jogador.tecnicas.append(Tecnica.de_fatia(tec["julgamento"]))
     j.pendente, j.fase = tec["contrato"], "substituir"

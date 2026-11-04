@@ -70,10 +70,10 @@
           "nome": "Clã dos Insetos",
           "kanji": "蜂",
           "raridade": "cinza",
-          "texto": "Começa com as Agulhas de Veneno, e +{dano_marcado%} contra rival que sangra.",
+          "texto": "Começa com as Agulhas de Veneno, e +{dano_marcado%} contra rival que sangra, queima ou está envenenado.",
           "origem": "Clã Aburame · Naruto",
           "efeito": {
-            "dano_marcado": 0.256
+            "dano_marcado": 0.371
           },
           "inicial": "agulhas_de_veneno"
         },
@@ -393,6 +393,78 @@
             "recarga": 99,
             "livre": true
           }
+        },
+        {
+          "id": "casa_dos_feiticeiros",
+          "nome": "Casa dos Feiticeiros",
+          "kanji": "禪",
+          "raridade": "sangue",
+          "texto": "Começa com os Cães de Sombra.",
+          "origem": "Clã Zen'in · Jujutsu Kaisen",
+          "efeito": {},
+          "inicial": "caes_divinos"
+        },
+        {
+          "id": "casa_das_borboletas",
+          "nome": "Casa das Borboletas",
+          "kanji": "舘",
+          "raridade": "cinza",
+          "texto": "Começa com o Ferrão da Borboleta, e +{dano_marcado%} contra rival envenenado, queimando ou sangrando.",
+          "origem": "Mansão Borboleta (Família Kocho) · Demon Slayer",
+          "efeito": {
+            "dano_marcado": 0.196
+          },
+          "inicial": "danca_do_inseto"
+        },
+        {
+          "id": "alquimistas",
+          "nome": "Alquimistas do Estado",
+          "kanji": "術",
+          "raridade": "cinza",
+          "texto": "Começa com a Parede de Lanças e {bloqueio_inicio} de bloqueio no início de cada luta.",
+          "origem": "Alquimistas Federais · Fullmetal Alchemist",
+          "efeito": {
+            "bloqueio_inicio": 2
+          },
+          "inicial": "parede_transmutada"
+        },
+        {
+          "id": "elfos",
+          "nome": "Os Elfos",
+          "kanji": "耳",
+          "raridade": "sangue",
+          "texto": "Vivem mil anos: começa com o Raio que Mata Homens, +{vida_max} de vida máxima e +{percepcao} de Percepção.",
+          "origem": "Elfos (Frieren) · Frieren",
+          "efeito": {
+            "vida_max": 4,
+            "percepcao": 1
+          },
+          "inicial": "zoltraak"
+        },
+        {
+          "id": "cla_da_floresta",
+          "nome": "Clã da Floresta",
+          "kanji": "森",
+          "raridade": "sangue",
+          "texto": "+{vida_max} de vida máxima e cura {regen} por turno.",
+          "origem": "Clã Senju · Naruto",
+          "efeito": {
+            "vida_max": 6,
+            "regen": 1
+          }
+        },
+        {
+          "id": "herdeiros_do_poder",
+          "nome": "Herdeiros do Poder",
+          "kanji": "継",
+          "raridade": "maldito",
+          "texto": "O poder passa de mão em mão: começa com o Cinco Por Cento, suas transformações duram {modo_extra} turno a mais e +{bonus_dano} de dano.",
+          "origem": "One For All · My Hero Academia",
+          "efeito": {
+            "modo_extra": 1,
+            "bonus_dano": 1
+          },
+          "inicial": "corpo_inteiro"
         }
       ]
     },
@@ -721,10 +793,10 @@
           "nome": "Veneno de Glicínia",
           "kanji": "蝕",
           "raridade": "sangue",
-          "texto": "Todo ataque que fere faz o rival sangrar {sangrar} por 3 turnos.",
+          "texto": "Todo ataque que fere injeta {veneno_ao_ferir} doses de veneno (ferem e caem 1 por turno; as doses se somam).",
           "origem": "Veneno de glicínia (Shinobu) · Demon Slayer",
           "efeito": {
-            "sangrar": 1
+            "veneno_ao_ferir": 1
           }
         },
         {
@@ -842,11 +914,18 @@
           "nome": "Berserker",
           "kanji": "狂",
           "raridade": "maldito",
-          "texto": "Todo o seu dano {dano_mult+%}. Preço: todo dano que você sofre {dano_recebido_mult+%}.",
+          "texto": "Técnica, uma vez por luta: veste a Armadura por {modo_turnos} turnos — todo o seu dano {modo_dano_mult+%}, e você não cai abaixo de 1 de vida enquanto ela veste. Quando ela abre, você sofre todo o dano que ela segurou. Não gasta o turno.",
           "origem": "Armadura do Berserker (Guts) · Berserk",
-          "efeito": {
-            "dano_mult": 1.25,
-            "dano_recebido_mult": 1.2
+          "tecnica": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano_mult": 2.15,
+              "inabalavel": true,
+              "adiado": true
+            }
           }
         },
         {
@@ -991,15 +1070,116 @@
           "nome": "Quarta Marcha",
           "kanji": "膨",
           "raridade": "divino",
-          "texto": "Técnica: suas técnicas em recarga descem {acelerar} e, por {fera} turnos, todo ataque acerta uma vez a mais. Não gasta o turno. Preço: {custo_vida} de vida.",
+          "texto": "Técnica, uma vez por luta: o corpo infla de Haki — por {modo_turnos} turnos, +{modo_dano} de dano e bloqueio {modo_bloqueio} renovado a cada turno. Não gasta o turno. Preço: {custo_vida} de vida, e quando acaba suas técnicas ficam {modo_travar} turnos em recarga (sem Haki).",
           "origem": "Gear Fourth (Luffy) · One Piece",
           "tecnica": {
-            "tipo": "maldita",
-            "acelerar": 2,
-            "fera": 2,
+            "tipo": "modo",
             "custo_vida": 3,
-            "recarga": 3,
-            "livre": true
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 13,
+              "bloqueio": 6,
+              "travar": 3
+            }
+          }
+        },
+        {
+          "id": "exercito_de_um",
+          "nome": "Exército de Um Só",
+          "kanji": "隊",
+          "raridade": "sangue",
+          "texto": "Técnica (não ocupa espaço): {clones} clones — cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes).",
+          "origem": "Kage Bunshin (Naruto) · Naruto",
+          "tecnica": {
+            "tipo": "maldita",
+            "clones": 2,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "dez_sombras",
+          "nome": "Dez Sombras",
+          "kanji": "十",
+          "raridade": "sangue",
+          "texto": "Começa cada luta com um cão de sombra: fere {invocar_inicio} a cada turno seu, por 3 turnos.",
+          "origem": "Técnica das Dez Sombras (Megumi) · Jujutsu Kaisen",
+          "efeito": {
+            "invocar_inicio": 1
+          }
+        },
+        {
+          "id": "controle_do_ki",
+          "nome": "Controle do Ki",
+          "kanji": "気",
+          "raridade": "cinza",
+          "texto": "Suas transformações duram {modo_extra} turno a mais, e +{vida_max} de vida máxima.",
+          "origem": "O controle de ki do Goku · Dragon Ball",
+          "efeito": {
+            "modo_extra": 1,
+            "vida_max": 1
+          }
+        },
+        {
+          "id": "mestre_dos_venenos",
+          "nome": "Mestre dos Venenos",
+          "kanji": "薬",
+          "raridade": "sangue",
+          "texto": "O sangramento, o veneno e a chama que você aplica ferem {dot_mult+%}.",
+          "origem": "Sasori da Areia Vermelha · Naruto",
+          "efeito": {
+            "dot_mult": 1.773
+          }
+        },
+        {
+          "id": "corpo_envenenado",
+          "nome": "Corpo Envenenado",
+          "kanji": "藤",
+          "raridade": "maldito",
+          "texto": "Anos bebendo glicínia: quem te fere recebe {veneno_espinhos} doses de veneno, e todo ataque seu que fere injeta {veneno_ao_ferir}. Preço: −4 de vida máxima.",
+          "origem": "O corpo da Shinobu · Demon Slayer",
+          "efeito": {
+            "veneno_espinhos": 2,
+            "veneno_ao_ferir": 1,
+            "vida_max": -4
+          }
+        },
+        {
+          "id": "mana_escondida",
+          "nome": "Mana Escondida",
+          "kanji": "秘",
+          "raridade": "sangue",
+          "texto": "Mil anos escondendo a mana: o rival te subestima — o primeiro ataque de cada luta causa +{primeiro_golpe%}.",
+          "origem": "Ocultar a mana (Frieren) · Frieren",
+          "efeito": {
+            "primeiro_golpe": 0.07
+          }
+        },
+        {
+          "id": "maldicao_que_corre",
+          "nome": "Maldição que Corre",
+          "kanji": "婆",
+          "raridade": "cinza",
+          "texto": "Uma maldição veloz: +{velocidade} de Velocidade e {esquiva%} de chance de esquivar.",
+          "origem": "Turbo Vovó (Okarun) · Dandadan",
+          "efeito": {
+            "velocidade": 2,
+            "esquiva": 0.025
+          }
+        },
+        {
+          "id": "maos_invisiveis",
+          "nome": "Mãos Invisíveis",
+          "kanji": "念",
+          "raridade": "sangue",
+          "texto": "Técnica: mãos de energia prendem o rival — ele não pode defender por {desarmar} turnos, e o próximo golpe nele causa +50%.",
+          "origem": "Psicocinese (Momo) · Dandadan",
+          "tecnica": {
+            "tipo": "maldita",
+            "desarmar": 2,
+            "expor": 1,
+            "recarga": 2
           }
         }
       ]
@@ -1073,14 +1253,12 @@
           "nome": "Clones de Sombra",
           "kanji": "分",
           "raridade": "cinza",
-          "texto": "Três golpes de 2.",
+          "texto": "{clones} clones: cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes).",
           "origem": "Kage Bunshin no Jutsu · Naruto",
           "combate": {
-            "tipo": "ataque",
-            "dano": 2,
-            "golpes": 3,
-            "recarga": 2,
-            "sutileza": 2
+            "tipo": "maldita",
+            "clones": 2,
+            "recarga": 2
           }
         },
         {
@@ -1088,11 +1266,12 @@
           "nome": "Mão Curadora",
           "kanji": "癒",
           "raridade": "cinza",
-          "texto": "Cura 5.",
+          "texto": "Cura {cura} e tira de você sangramento, veneno, Marca e selos.",
           "origem": "Ninjutsu Médico · Naruto",
           "combate": {
             "tipo": "defesa",
             "cura": 5,
+            "purificar": true,
             "recarga": 3
           }
         },
@@ -1238,12 +1417,13 @@
           "nome": "Lua Ilusória",
           "kanji": "幻",
           "raridade": "maldito",
-          "texto": "O rival perde o próximo turno preso numa ilusão. Preço: 2 de vida (os olhos sangram).",
+          "texto": "Três dias de tortura num segundo: o rival perde {atordoar} turnos e causa −{enfraquecer} em todo golpe até o fim da luta. Preço: −{custo_percepcao} de Percepção pelo resto da run (o Mangekyou cega).",
           "origem": "Tsukuyomi (Itachi) · Naruto",
           "combate": {
             "tipo": "maldita",
-            "atordoar": 1,
-            "custo_vida": 2,
+            "atordoar": 2,
+            "enfraquecer": 1,
+            "custo_percepcao": 1,
             "recarga": 4
           }
         },
@@ -1331,12 +1511,12 @@
           "nome": "Agulhas de Veneno",
           "kanji": "針",
           "raridade": "cinza",
-          "texto": "Agulhas de {dano} que fazem o rival sangrar {sangrar} por 3 turnos.",
-          "origem": "Senbon (Haku) · Naruto",
+          "texto": "Agulhas de {dano} com {veneno} doses de veneno (ferem e caem 1 por turno; as doses se somam).",
+          "origem": "Agulhas envenenadas (Shizune) · Naruto",
           "combate": {
             "tipo": "ataque",
-            "dano": 3,
-            "sangrar": 3,
+            "dano": 2,
+            "veneno": 4,
             "recarga": 2,
             "sutileza": 3
           }
@@ -1534,13 +1714,13 @@
           "nome": "Lança de Gelo",
           "kanji": "氷",
           "raridade": "cinza",
-          "texto": "{dano} de dano; o rival congela e só pode usar o Golpe no próximo turno dele.",
+          "texto": "{dano} de dano e o rival congela: perde o próximo turno, e o próximo golpe nele causa ×2 e quebra o gelo.",
           "origem": "Hyorinmaru (Toshiro) · Bleach",
           "combate": {
             "tipo": "ataque",
             "dano": 4,
-            "silenciar": 1,
-            "recarga": 3,
+            "congelar": 1,
+            "recarga": 5,
             "sutileza": 2
           }
         },
@@ -1858,15 +2038,15 @@
           "id": "chamas_negras",
           "nome": "Chamas Negras",
           "kanji": "炎",
-          "raridade": "sangue",
-          "texto": "{dano} de dano, e o rival queima {sangrar} por turno, por 3 turnos.",
+          "raridade": "maldito",
+          "texto": "Basta olhar: uma chama negra que não apaga — o rival queima {chama_eterna} por turno, e a chama cresce 1 a cada turno, até o fim da luta. Nada a apaga. Uma vez por luta; não gasta o turno. Preço: −{custo_percepcao} de Percepção pelo resto da run (o olho sangra e cega).",
           "origem": "Amaterasu (Itachi) · Naruto",
           "combate": {
-            "tipo": "ataque",
-            "dano": 10,
-            "sangrar": 4,
-            "recarga": 3,
-            "sutileza": 3
+            "tipo": "maldita",
+            "chama_eterna": 11,
+            "custo_percepcao": 1,
+            "recarga": 99,
+            "livre": true
           }
         },
         {
@@ -1978,13 +2158,13 @@
           "nome": "Enxame",
           "kanji": "蟲",
           "raridade": "sangue",
-          "texto": "Três picadas de {dano}; o rival sangra {sangrar} por 3 turnos.",
+          "texto": "Três picadas de {dano}; os insetos devoram o chakra: você cura {drenar%} do dano.",
           "origem": "Kikaichu (Shino) · Naruto",
           "combate": {
             "tipo": "ataque",
-            "dano": 2,
+            "dano": 3,
             "golpes": 3,
-            "sangrar": 2,
+            "drenar": 0.5,
             "recarga": 3,
             "sutileza": 2
           }
@@ -2127,11 +2307,11 @@
           "nome": "Névoa Venenosa",
           "kanji": "毒",
           "raridade": "sangue",
-          "texto": "O rival sangra {sangrar} por turno, por 3 turnos.",
+          "texto": "{veneno} doses de veneno: ferem e caem 1 por turno.",
           "origem": "Hydra (Magellan) · One Piece",
           "combate": {
             "tipo": "maldita",
-            "sangrar": 7,
+            "veneno": 10,
             "recarga": 3
           }
         },
@@ -2196,12 +2376,13 @@
           "nome": "Marionetes",
           "kanji": "傀",
           "raridade": "sangue",
-          "texto": "Dois golpes de {dano}, difíceis de perceber.",
+          "texto": "Dois golpes de {dano}, difíceis de perceber, com {veneno} doses de veneno.",
           "origem": "Marionetes (Sasori) · Naruto",
           "combate": {
             "tipo": "ataque",
-            "dano": 7,
+            "dano": 4,
             "golpes": 2,
+            "veneno": 2,
             "recarga": 2,
             "sutileza": 4,
             "perigosa": true
@@ -2449,14 +2630,17 @@
           "nome": "Punho Carmesim",
           "kanji": "蒸",
           "raridade": "maldito",
-          "texto": "+{fortalecer} de dano até o fim da luta. Não gasta o turno. Preço: {custo_vida} de vida.",
+          "texto": "Por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%}. Não gasta o turno. Preço: {modo_sangria} de vida por turno (o corpo não aguenta).",
           "origem": "Kaioken · Dragon Ball",
           "combate": {
-            "tipo": "maldita",
-            "fortalecer": 7,
-            "custo_vida": 6,
+            "tipo": "modo",
             "recarga": 99,
-            "livre": true
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano_mult": 2.5,
+              "sangria": 2
+            }
           }
         },
         {
@@ -2531,14 +2715,19 @@
           "nome": "Deus do Sol",
           "kanji": "陽",
           "raridade": "divino",
-          "texto": "Uma vez por luta: por {fera} turnos todo ataque acerta uma vez a mais, e +{fortalecer} de dano até o fim da luta. Não gasta o turno.",
+          "texto": "Uma vez por luta, o corpo vira desenho animado: por {modo_turnos} turnos, todo ataque acerta uma vez a mais, todo o seu dano {modo_dano_mult+%} e {modo_esquiva%} de esquiva. Não gasta o turno. Preço: perde {modo_exausto} turnos quando passa.",
           "origem": "Gear Fifth (Luffy) · One Piece",
           "combate": {
-            "tipo": "maldita",
-            "fera": 3,
-            "fortalecer": 8,
+            "tipo": "modo",
             "recarga": 99,
-            "livre": true
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "golpes": 1,
+              "dano_mult": 1.44,
+              "esquiva": 0.25,
+              "exausto": 2
+            }
           }
         },
         {
@@ -2578,13 +2767,12 @@
           "nome": "Era do Gelo",
           "kanji": "凍",
           "raridade": "divino",
-          "texto": "Uma vez por luta: {dano} de dano, o rival perde o próximo turno e depois só usa o Golpe por {silenciar} turnos.",
+          "texto": "Uma vez por luta: {dano} de dano, e as flores de gelo prendem o rival por {congelar} turnos; o próximo golpe nele causa ×2 e o estilhaça.",
           "origem": "Hyoten Hyakkaso (Toshiro) · Bleach",
           "combate": {
             "tipo": "maldita",
-            "dano": 30,
-            "atordoar": 1,
-            "silenciar": 2,
+            "dano": 59,
+            "congelar": 2,
             "recarga": 99,
             "sutileza": 3
           }
@@ -2651,6 +2839,961 @@
             "custo_vida_max": 3,
             "recarga": 99,
             "livre": true
+          }
+        },
+        {
+          "id": "zoltraak",
+          "nome": "Raio que Mata Homens",
+          "kanji": "魔",
+          "raridade": "cinza",
+          "texto": "A magia mais comum do mundo, feita para matar: {dano} de dano, atravessa bloqueio.",
+          "origem": "Zoltraak (Frieren) · Frieren",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 8,
+            "perfura": true,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "defesa_magica",
+          "nome": "Barreira de Mana",
+          "kanji": "障",
+          "raridade": "cinza",
+          "texto": "Bloqueio {bloqueio}: a defesa que nasceu para parar o Raio que Mata Homens.",
+          "origem": "Magia defensiva · Frieren",
+          "combate": {
+            "tipo": "defesa",
+            "bloqueio": 11,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "sal_purificador",
+          "nome": "Punhado de Sal",
+          "kanji": "塩",
+          "raridade": "cinza",
+          "texto": "Um punhado de sal: tira de você sangramento, veneno, Marca e selos, e cura {cura}.",
+          "origem": "Sal (Reigen) · Mob Psycho 100",
+          "combate": {
+            "tipo": "defesa",
+            "purificar": true,
+            "cura": 3,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "canhao_do_braco",
+          "nome": "Braço de Ferro",
+          "kanji": "砲",
+          "raridade": "cinza",
+          "texto": "Um canhão escondido na prótese: {dano} de dano, sempre como ataque surpresa.",
+          "origem": "Canhão do braço (Guts) · Berserk",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 13,
+            "sempre_surpresa": true,
+            "recarga": 3,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "facas_de_arremesso",
+          "nome": "Facas de Arremesso",
+          "kanji": "投",
+          "raridade": "cinza",
+          "texto": "{golpes} facas de {dano}, rápidas demais para ver.",
+          "origem": "Facas de arremesso (Guts) · Berserk",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "golpes": 3,
+            "recarga": 1,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "manobra_3d",
+          "nome": "Manobra Tridimensional",
+          "kanji": "翔",
+          "raridade": "cinza",
+          "texto": "Dois cortes de {dano} na nuca, voando.",
+          "origem": "Equipamento de Manobra 3D · Attack on Titan",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 5,
+            "golpes": 2,
+            "recarga": 2,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "suor_explosivo",
+          "nome": "Suor Explosivo",
+          "kanji": "汗",
+          "raridade": "cinza",
+          "texto": "{dano} de dano, e +{acumula} a cada uso na luta: quanto mais ele sua, maior a explosão.",
+          "origem": "Explosion (Bakugo) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 6,
+            "acumula": 3,
+            "recarga": 1,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "olhar_que_apaga",
+          "nome": "Olhar que Apaga",
+          "kanji": "消",
+          "raridade": "cinza",
+          "texto": "Enquanto você encara, o rival só pode usar o Golpe: por {silenciar} turno dele.",
+          "origem": "Erasure (Aizawa) · My Hero Academia",
+          "combate": {
+            "tipo": "maldita",
+            "silenciar": 1,
+            "recarga": 1
+          }
+        },
+        {
+          "id": "danca_do_inseto",
+          "nome": "Ferrão da Borboleta",
+          "kanji": "蝶",
+          "raridade": "cinza",
+          "texto": "Não corta cabeças: injeta {veneno} doses de veneno, que ferem e caem 1 por turno.",
+          "origem": "Dança do Inseto (Shinobu) · Demon Slayer",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 1,
+            "veneno": 6,
+            "recarga": 2,
+            "sutileza": 4
+          }
+        },
+        {
+          "id": "nuvem_de_trovao",
+          "nome": "Nuvem de Trovão",
+          "kanji": "雷",
+          "raridade": "cinza",
+          "texto": "A nuvem se forma sobre o rival: no próximo turno dele, o raio cai ({bomba}).",
+          "origem": "Thunderbolt Tempo (Nami) · One Piece",
+          "combate": {
+            "tipo": "ataque",
+            "bomba": 17,
+            "bomba_turnos": 1,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "sementes_de_combate",
+          "nome": "Sementes de Combate",
+          "kanji": "芽",
+          "raridade": "cinza",
+          "texto": "Plantas brotam do chão: ferem {invocar} agora e a cada turno seu, {invocar_turnos} vezes.",
+          "origem": "Pop Green (Usopp) · One Piece",
+          "combate": {
+            "tipo": "ataque",
+            "invocar": 4,
+            "invocar_turnos": 3,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "coruja_trovao",
+          "nome": "Coruja-Trovão",
+          "kanji": "鵺",
+          "raridade": "cinza",
+          "texto": "{dano} de dano, e a coruja ataca também: {invocar} agora e a cada turno seu, {invocar_turnos} vezes.",
+          "origem": "Nue (Megumi) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 6,
+            "invocar": 3,
+            "invocar_turnos": 2,
+            "recarga": 3,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "trevas",
+          "nome": "Trevas",
+          "kanji": "闇",
+          "raridade": "cinza",
+          "texto": "Uma névoa negra: o rival não percebe seus próximos {cegar} golpes, e o próximo golpe dele passa através de você.",
+          "origem": "Shamak (Subaru) · Re:Zero",
+          "combate": {
+            "tipo": "maldita",
+            "cegar": 2,
+            "escudo": 1,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "respiracao_do_sol",
+          "nome": "Respiração do Sol",
+          "kanji": "波",
+          "raridade": "cinza",
+          "texto": "{dano} de dano, e a energia do sol tira de você sangramento, veneno, Marca e selos.",
+          "origem": "Overdrive do Hamon (Jonathan) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 7,
+            "purificar": true,
+            "recarga": 2,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "parede_transmutada",
+          "nome": "Parede de Lanças",
+          "kanji": "錬",
+          "raridade": "cinza",
+          "texto": "Palmas no chão: bloqueio {bloqueio} e revide {revide}.",
+          "origem": "Transmutação (Ed) · Fullmetal Alchemist",
+          "combate": {
+            "tipo": "defesa",
+            "bloqueio": 8,
+            "revide": 4,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "disco_cortante",
+          "nome": "Disco Cortante",
+          "kanji": "円",
+          "raridade": "cinza",
+          "texto": "Corta qualquer coisa: {dano} de dano, atravessa bloqueio. Quem percebe, desvia.",
+          "origem": "Kienzan (Kuririn) · Dragon Ball",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 14,
+            "perfura": true,
+            "recarga": 3,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "energia_natural",
+          "nome": "Energia da Natureza",
+          "kanji": "仙",
+          "raridade": "sangue",
+          "texto": "Junta a energia da natureza num instante: por {modo_turnos} turnos, +{modo_dano} de dano e +{modo_percepcao} de Percepção. Não gasta o turno.",
+          "origem": "Modo Sábio (Naruto) · Naruto",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 3,
+              "dano": 4,
+              "percepcao": 2
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "segunda_marcha",
+          "nome": "Sangue Acelerado",
+          "kanji": "速",
+          "raridade": "sangue",
+          "texto": "O sangue bombeado mais rápido: por {modo_turnos} turnos, todo ataque acerta uma vez a mais. Não gasta o turno. Preço: {modo_sangria} de vida por turno.",
+          "origem": "Gear Second (Luffy) · One Piece",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 5,
+              "golpes": 1,
+              "sangria": 2
+            }
+          }
+        },
+        {
+          "id": "mil_clones",
+          "nome": "Mil Clones",
+          "kanji": "群",
+          "raridade": "sangue",
+          "texto": "{clones} clones: cada um ataca junto (40% do golpe), e o golpe que vem em você pode acertar um clone no seu lugar (com 2 clones, 2 em 3 vezes).",
+          "origem": "Tajuu Kage Bunshin (Naruto) · Naruto",
+          "combate": {
+            "tipo": "maldita",
+            "clones": 6,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "sapo_chefe",
+          "nome": "Sapo Chefe",
+          "kanji": "蛙",
+          "raridade": "sangue",
+          "texto": "Uma vez por luta, com o próprio sangue: o sapo fere {invocar} agora e a cada turno seu, {invocar_turnos} vezes. Preço: {custo_vida} de vida.",
+          "origem": "Kuchiyose: Gamabunta (Jiraiya) · Naruto",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 14,
+            "invocar_turnos": 3,
+            "custo_vida": 2,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "caes_divinos",
+          "nome": "Cães de Sombra",
+          "kanji": "狗",
+          "raridade": "sangue",
+          "texto": "{dano} de dano, e os cães atacam também: {invocar} agora e a cada turno seu, {invocar_turnos} vezes.",
+          "origem": "Cães Divinos (Megumi) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 10,
+            "invocar": 4,
+            "invocar_turnos": 2,
+            "recarga": 3,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "perna_em_brasa",
+          "nome": "Perna em Brasa",
+          "kanji": "脚",
+          "raridade": "sangue",
+          "texto": "{dano} de dano, e o rival queima {sangrar} por turno, por 3 turnos.",
+          "origem": "Diable Jambe (Sanji) · One Piece",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 10,
+            "sangrar": 3,
+            "recarga": 2,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "olhar_de_pedra",
+          "nome": "Olhar de Pedra",
+          "kanji": "石",
+          "raridade": "sangue",
+          "texto": "Quem se encanta vira pedra: perde o próximo turno, e o próximo golpe nele causa ×2 e o estilhaça.",
+          "origem": "Mero Mero Mellow (Hancock) · One Piece",
+          "combate": {
+            "tipo": "maldita",
+            "congelar": 1,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "estalo_de_chamas",
+          "nome": "Estalo de Chamas",
+          "kanji": "焔",
+          "raridade": "sangue",
+          "texto": "Um estalo de dedos: {dano} de dano, e o rival queima {sangrar} por turno, por 3 turnos.",
+          "origem": "Alquimia das Chamas (Roy Mustang) · Fullmetal Alchemist",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 9,
+            "sangrar": 3,
+            "recarga": 3,
+            "sutileza": 3,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "chacal",
+          "nome": "Chacal",
+          "kanji": "銃",
+          "raridade": "sangue",
+          "texto": "Balas de prata explosivas: {golpes} tiros de {dano}, atravessam bloqueio.",
+          "origem": "Jackal (Alucard) · Hellsing",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 7,
+            "golpes": 2,
+            "perfura": true,
+            "recarga": 2,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "baionetas_bentas",
+          "nome": "Baionetas Bentas",
+          "kanji": "聖",
+          "raridade": "sangue",
+          "texto": "{golpes} lâminas de {dano}; e você regenera {regenerar} por turno até o fim da luta.",
+          "origem": "Baionetas (Anderson) · Hellsing",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 4,
+            "regenerar": 1,
+            "recarga": 3,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "explosao_estelar",
+          "nome": "Explosão Estelar",
+          "kanji": "舞",
+          "raridade": "sangue",
+          "texto": "{golpes} cortes de {dano} com duas espadas.",
+          "origem": "Starburst Stream (Kirito) · Sword Art Online",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "golpes": 5,
+            "recarga": 4,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "espada_sem_magia",
+          "nome": "Espada sem Magia",
+          "kanji": "反",
+          "raridade": "sangue",
+          "texto": "{dano} de dano; desfaz bloqueio, revide, escudos e espelho do rival antes de cortar.",
+          "origem": "Antimagia (Asta) · Black Clover",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 12,
+            "dissipar": true,
+            "perfura": true,
+            "recarga": 2,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "voz_amaldicoada",
+          "nome": "Voz Amaldiçoada",
+          "kanji": "言",
+          "raridade": "sangue",
+          "texto": "“Não se mexa!”: o rival perde o próximo turno. Preço: {custo_vida} de vida (a garganta sangra).",
+          "origem": "Fala Amaldiçoada (Inumaki) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "maldita",
+            "atordoar": 1,
+            "custo_vida": 3,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "arraia_curandeira",
+          "nome": "Arraia Curandeira",
+          "kanji": "海",
+          "raridade": "sangue",
+          "texto": "Engolido pela arraia: cura {cura} e tira de você sangramento, veneno, Marca e selos.",
+          "origem": "Minazuki (Unohana) · Bleach",
+          "combate": {
+            "tipo": "defesa",
+            "cura": 13,
+            "purificar": true,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "respingo_esmeralda",
+          "nome": "Respingo Esmeralda",
+          "kanji": "翠",
+          "raridade": "sangue",
+          "texto": "{golpes} esmeraldas de {dano}, quase impossíveis de perceber.",
+          "origem": "Emerald Splash (Kakyoin) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "golpes": 5,
+            "recarga": 2,
+            "sutileza": 4,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "chiclete_elastico",
+          "nome": "Chiclete Elástico",
+          "kanji": "粘",
+          "raridade": "sangue",
+          "texto": "Gruda no rival: ele não pode defender por {desarmar} turno, e seus próximos {expor} golpes nele causam +50%.",
+          "origem": "Bungee Gum (Hisoka) · Hunter x Hunter",
+          "combate": {
+            "tipo": "maldita",
+            "desarmar": 1,
+            "expor": 3,
+            "recarga": 1
+          }
+        },
+        {
+          "id": "pedra_carregada",
+          "nome": "Pedra!",
+          "kanji": "岩",
+          "raridade": "sangue",
+          "texto": "Carrega o Nen no punho: {dano} de dano, mais até {variacao} de sorte.",
+          "origem": "Jajanken (Gon) · Hunter x Hunter",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 11,
+            "variacao": 12,
+            "recarga": 2,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "corpo_inteiro",
+          "nome": "Cinco Por Cento",
+          "kanji": "纏",
+          "raridade": "sangue",
+          "texto": "O poder espalhado pelo corpo todo: por {modo_turnos} turnos, +{modo_dano} de dano e {modo_esquiva%} de chance de esquivar. Não gasta o turno.",
+          "origem": "Full Cowl (Deku) · My Hero Academia",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 4,
+              "dano": 6,
+              "esquiva": 0.15
+            }
+          }
+        },
+        {
+          "id": "metade_fria",
+          "nome": "Metade Fria",
+          "kanji": "冷",
+          "raridade": "sangue",
+          "texto": "{dano} de dano e o rival congela: perde o próximo turno, e o próximo golpe nele causa ×2.",
+          "origem": "Meio Frio Meio Quente (Todoroki) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 7,
+            "congelar": 1,
+            "recarga": 4,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "ponto_monstro",
+          "nome": "Ponto Monstro",
+          "kanji": "獣",
+          "raridade": "sangue",
+          "texto": "Por {modo_turnos} turnos: +{modo_dano} de dano e todo dano que você sofre {modo_recebido_mult+%}. Não gasta o turno. Preço: perde {modo_exausto} turno quando passa.",
+          "origem": "Monster Point (Chopper) · One Piece",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 6,
+              "recebido_mult": 0.8,
+              "exausto": 1
+            }
+          }
+        },
+        {
+          "id": "motosserra",
+          "nome": "Motosserra",
+          "kanji": "鋸",
+          "raridade": "sangue",
+          "texto": "{golpes} cortes de {dano}: o rival sangra {sangrar} por 3 turnos, e você bebe {drenar%} do sangue.",
+          "origem": "Diabo Motosserra (Denji) · Chainsaw Man",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "golpes": 3,
+            "sangrar": 1,
+            "drenar": 0.2,
+            "recarga": 2,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "diamante_que_conserta",
+          "nome": "Diamante que Conserta",
+          "kanji": "治",
+          "raridade": "sangue",
+          "texto": "Conserta o que quebrou: cura {cura} e tira de você sangramento, veneno, Marca e selos.",
+          "origem": "Crazy Diamond (Josuke) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "defesa",
+            "cura": 10,
+            "purificar": true,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "cabelo_dourado",
+          "nome": "Cabelo Dourado",
+          "kanji": "金",
+          "raridade": "maldito",
+          "texto": "A fúria acorda o sangue: por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%} e +{modo_percepcao} de Percepção. Não gasta o turno. Preço: {modo_sangria} de vida por turno.",
+          "origem": "Super Saiyajin · Dragon Ball",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 4,
+              "dano_mult": 2.5,
+              "percepcao": 1,
+              "sangria": 1
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "lamina_negra_liberada",
+          "nome": "Lâmina Negra Liberada",
+          "kanji": "卍",
+          "raridade": "maldito",
+          "texto": "A espada encolhe e você some: por {modo_turnos} turnos, todo ataque acerta uma vez a mais, +{modo_dano} de dano e +{modo_sutileza} de Sutileza. Não gasta o turno.",
+          "origem": "Bankai: Tensa Zangetsu (Ichigo) · Bleach",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "golpes": 1,
+              "dano": 1,
+              "sutileza": 2
+            }
+          }
+        },
+        {
+          "id": "velocidade_divina",
+          "nome": "Velocidade Divina",
+          "kanji": "閃",
+          "raridade": "maldito",
+          "texto": "O corpo vira relâmpago: por {modo_turnos} turnos, {modo_esquiva%} de chance de esquivar e todo ataque acerta uma vez a mais. Não gasta o turno.",
+          "origem": "Godspeed (Killua) · Hunter x Hunter",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "esquiva": 0.35,
+              "golpes": 1
+            }
+          }
+        },
+        {
+          "id": "mordida_na_mao",
+          "nome": "Mordida na Mão",
+          "kanji": "巨",
+          "raridade": "maldito",
+          "texto": "Morde a mão e vira titã: por {modo_turnos} turnos, +{modo_dano} de dano, bloqueio {modo_bloqueio} renovado a cada turno, e todo dano que você sofre {modo_recebido_mult+%}. Não gasta o turno. Preço: {custo_vida} de vida, e perde {modo_exausto} turno quando sai.",
+          "origem": "Transformação em Titã (Eren) · Attack on Titan",
+          "combate": {
+            "tipo": "modo",
+            "custo_vida": 3,
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 13,
+              "bloqueio": 6,
+              "recebido_mult": 0.8,
+              "exausto": 1
+            }
+          }
+        },
+        {
+          "id": "caixao_da_montanha",
+          "nome": "Caixão da Montanha",
+          "kanji": "棺",
+          "raridade": "maldito",
+          "texto": "Expande o domínio: por {modo_turnos} turnos, todo golpe acerta com certeza (atravessa bloqueio, escudo e esquiva) e +{modo_dano} de dano. Não gasta o turno. Preço: quando acaba, todas as suas técnicas ficam {modo_travar} turnos em recarga.",
+          "origem": "Expansão de Domínio (Jogo) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 2,
+              "absoluto": true,
+              "dano": 13,
+              "travar": 3
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "forma_do_demonio_negro",
+          "nome": "Forma do Demônio Negro",
+          "kanji": "黒",
+          "raridade": "maldito",
+          "texto": "O demônio do grimório empresta o braço: por {modo_turnos} turnos, todo golpe atravessa bloqueio, escudo e esquiva, e +{modo_dano} de dano. Não gasta o turno. Preço: {modo_sangria} de vida por turno.",
+          "origem": "Black Asta · Black Clover",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "absoluto": true,
+              "dano": 18,
+              "sangria": 2
+            }
+          }
+        },
+        {
+          "id": "ritual_de_sangue",
+          "nome": "Ritual de Sangue",
+          "kanji": "儀",
+          "raridade": "maldito",
+          "texto": "Desenha o círculo com o sangue do rival: por {vinculo} turnos seus, toda dor que você sofre ele sofre junto, a começar pela estocada em si mesmo ({custo_vida}).",
+          "origem": "Ritual de Jashin (Hidan) · Naruto",
+          "combate": {
+            "tipo": "maldita",
+            "vinculo": 4,
+            "custo_vida": 3,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "lotus_de_gelo",
+          "nome": "Lótus de Gelo",
+          "kanji": "蓮",
+          "raridade": "maldito",
+          "texto": "O frio entra nos pulmões: o rival congela (perde o próximo turno; o próximo golpe nele causa ×2) e recebe {veneno} doses de veneno.",
+          "origem": "Lótus Congelada (Doma) · Demon Slayer",
+          "combate": {
+            "tipo": "maldita",
+            "congelar": 1,
+            "veneno": 12,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "lamina_que_paralisa",
+          "nome": "Lâmina que Paralisa",
+          "kanji": "痺",
+          "raridade": "maldito",
+          "texto": "{dano} de dano: o veneno entra ({veneno} doses) e o rival só pode usar o Golpe no próximo turno.",
+          "origem": "Ashisogi Jizo (Mayuri) · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "veneno": 4,
+            "silenciar": 1,
+            "recarga": 4,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "caixao_negro",
+          "nome": "Caixão Negro",
+          "kanji": "柩",
+          "raridade": "maldito",
+          "texto": "Um caixão de gravidade se fecha: {dano} de dano, e o rival causa −{enfraquecer} em todo golpe até o fim da luta.",
+          "origem": "Hado #90 Kurohitsugi (Aizen) · Bleach",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 34,
+            "enfraquecer": 2,
+            "recarga": 4,
+            "sutileza": 3,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "levantem_se",
+          "nome": "Levantem-se",
+          "kanji": "起",
+          "raridade": "maldito",
+          "texto": "Os mortos levantam como sombras: ferem {invocar} agora e a cada turno seu, {invocar_turnos} vezes. Uma vez por luta.",
+          "origem": "Arise (Sung Jinwoo) · Solo Leveling",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 11,
+            "invocar_turnos": 4,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "lanca_do_coracao",
+          "nome": "Lança do Coração",
+          "kanji": "槍",
+          "raridade": "maldito",
+          "texto": "A lança já acertou antes de ser lançada: {dano} de dano, atravessa bloqueio, escudo e esquiva.",
+          "origem": "Gáe Bolg (Lancer) · Fate",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 12,
+            "absoluto": true,
+            "recarga": 4,
+            "sutileza": 4,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "sete_petalas",
+          "nome": "Sete Pétalas",
+          "kanji": "弁",
+          "raridade": "maldito",
+          "texto": "O escudo de sete camadas: os próximos {escudo} golpes passam através de você, e bloqueio {bloqueio}.",
+          "origem": "Rho Aias (Archer) · Fate",
+          "combate": {
+            "tipo": "defesa",
+            "escudo": 2,
+            "bloqueio": 20,
+            "recarga": 5
+          }
+        },
+        {
+          "id": "tempo_do_imperador",
+          "nome": "Tempo do Imperador",
+          "kanji": "帝",
+          "raridade": "maldito",
+          "texto": "Os olhos ficam escarlates: por {modo_turnos} turnos, +{modo_dano} de dano, +{modo_percepcao} de Percepção e +{modo_sutileza} de Sutileza. Não gasta o turno. Preço: −{modo_vida_max_run} de vida máxima pelo resto da run (cada segundo encurta a vida).",
+          "origem": "Emperor Time (Kurapika) · Hunter x Hunter",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 3,
+              "dano": 9,
+              "percepcao": 2,
+              "sutileza": 2,
+              "vida_max_run": 3
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "apagar_o_tempo",
+          "nome": "Apagar o Tempo",
+          "kanji": "抹",
+          "raridade": "maldito",
+          "texto": "O tempo some: o próximo turno do rival não fere, e você viu o futuro — seus próximos {expor} golpes nele causam +50%.",
+          "origem": "King Crimson (Diavolo) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "maldita",
+            "intocavel": 1,
+            "expor": 4,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "soco_que_quebra",
+          "nome": "Soco que Quebra o Braço",
+          "kanji": "砕",
+          "raridade": "maldito",
+          "texto": "Todo o poder num soco: {dano} de dano. Preço: {custo_vida} de vida (o braço quebra).",
+          "origem": "Detroit Smash 100% (Deku) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 38,
+            "custo_vida": 7,
+            "recarga": 3,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "juba_dourada",
+          "nome": "Juba Dourada",
+          "kanji": "鬣",
+          "raridade": "divino",
+          "texto": "O cabelo desce até as costas: por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%} e todo ataque acerta uma vez a mais. Não gasta o turno. Preço: {modo_sangria} de vida por turno e {modo_exausto} turno perdido quando passa.",
+          "origem": "Super Saiyajin 3 · Dragon Ball",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano_mult": 2.61,
+              "golpes": 1,
+              "sangria": 4,
+              "exausto": 1
+            }
+          }
+        },
+        {
+          "id": "preco_do_futuro",
+          "nome": "O Preço do Futuro",
+          "kanji": "未",
+          "raridade": "divino",
+          "texto": "Troca todo o potencial da vida por este momento: por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%}. Não gasta o turno. Preço: −{modo_vida_max_run} de vida máxima pelo resto da run.",
+          "origem": "Gon adulto · Hunter x Hunter",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 2,
+              "dano_mult": 3.04,
+              "vida_max_run": 10
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "transbordar",
+          "nome": "Transbordar",
+          "kanji": "溢",
+          "raridade": "divino",
+          "texto": "As emoções transbordam: por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%} e todo golpe atravessa bloqueio, escudo e esquiva. Não gasta o turno. Preço: perde {modo_exausto} turnos quando passa (desmaia).",
+          "origem": "???% (Mob) · Mob Psycho 100",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 2,
+              "dano_mult": 3.03,
+              "absoluto": true,
+              "exausto": 2
+            }
+          }
+        },
+        {
+          "id": "o_indomavel",
+          "nome": "O Indomável",
+          "kanji": "輪",
+          "raridade": "divino",
+          "texto": "Invoca o que ninguém domou: fere {invocar} agora e a cada turno seu, {invocar_turnos} vezes. Uma vez por luta. Preço: {custo_vida} de vida.",
+          "origem": "Mahoraga (Megumi) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 16,
+            "invocar_turnos": 4,
+            "custo_vida": 4,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "mundo_de_laminas",
+          "nome": "Mundo de Lâminas",
+          "kanji": "鋼",
+          "raridade": "divino",
+          "texto": "A realidade vira um campo de espadas: por {modo_turnos} turnos, todo ataque acerta {modo_golpes} vezes a mais e +{modo_dano} de dano. Não gasta o turno. Preço: quando acaba, suas técnicas ficam {modo_travar} turnos em recarga.",
+          "origem": "Unlimited Blade Works (Archer) · Fate",
+          "combate": {
+            "tipo": "modo",
+            "recarga": 99,
+            "modo": {
+              "turnos": 2,
+              "golpes": 2,
+              "dano": 1,
+              "travar": 2
+            },
+            "livre": true
+          }
+        },
+        {
+          "id": "espada_da_vitoria",
+          "nome": "Espada da Vitória Prometida",
+          "kanji": "覇",
+          "raridade": "divino",
+          "texto": "Uma vez por luta: {dano} de dano, um feixe de luz. Preço: {custo_vida} de vida.",
+          "origem": "Excalibur (Saber) · Fate",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 40,
+            "custo_vida": 6,
+            "recarga": 99,
+            "sutileza": 2,
+            "perigosa": true
           }
         }
       ]
@@ -2769,10 +3912,34 @@
           "kanji": "力",
           "raridade": "divino",
           "texto": "Uma luta a menos neste capítulo, e o chefe é 40% mais forte; vencê-lo dá um Despertar guardado.",
-          "origem": "Torneio do Poder · Dragon Ball Super",
+          "origem": "Torneio do Poder · Dragon Ball",
           "regra": {
             "luta_extra": -1,
             "chefe_mult": 1.4,
+            "despertar_chefe": true
+          }
+        },
+        {
+          "id": "exame_de_magos",
+          "nome": "Exame de Primeira Classe",
+          "kanji": "試",
+          "raridade": "sangue",
+          "texto": "Os rivais são magos atentos (+1 de Percepção), mas toda vitória dá uma Relíquia.",
+          "origem": "Exame de Magos de Primeira Classe · Frieren",
+          "regra": {
+            "percepcao_rivais": 1,
+            "reliquia_garantida": true
+          }
+        },
+        {
+          "id": "guerra_do_calice",
+          "nome": "Guerra do Cálice",
+          "kanji": "杯",
+          "raridade": "maldito",
+          "texto": "O chefe deste capítulo vem 30% mais forte, mas vencê-lo dá um Despertar guardado.",
+          "origem": "Guerra do Santo Graal · Fate",
+          "regra": {
+            "chefe_mult": 1.3,
             "despertar_chefe": true
           }
         }
@@ -3182,6 +4349,88 @@
             "espacos_extra": 1,
             "dano_mult": 1.15,
             "carma_mult": 0.7
+          }
+        },
+        {
+          "id": "frasco_de_glicinia",
+          "nome": "Frasco de Glicínia",
+          "kanji": "瓶",
+          "raridade": "cinza",
+          "texto": "Todo ataque que fere injeta {veneno_ao_ferir} dose de veneno.",
+          "origem": "Veneno de glicínia (Esquadrão de Caçadores) · Demon Slayer",
+          "efeito": {
+            "veneno_ao_ferir": 1
+          }
+        },
+        {
+          "id": "pergaminho_de_invocacao",
+          "nome": "Pergaminho de Invocação",
+          "kanji": "巻",
+          "raridade": "sangue",
+          "texto": "Começa cada luta com uma invocação pequena: fere {invocar_inicio} a cada turno seu, por 3 turnos.",
+          "origem": "Pergaminho de contrato (Kuchiyose) · Naruto",
+          "efeito": {
+            "invocar_inicio": 1
+          }
+        },
+        {
+          "id": "pilula_de_rumble",
+          "nome": "Pílula de Rumble",
+          "kanji": "丸",
+          "raridade": "cinza",
+          "texto": "Suas transformações duram {modo_extra} turno a mais.",
+          "origem": "Rumble Ball (Chopper) · One Piece",
+          "efeito": {
+            "modo_extra": 1
+          }
+        },
+        {
+          "id": "joia_que_evolui",
+          "nome": "Joia que Evolui",
+          "kanji": "玉",
+          "raridade": "maldito",
+          "texto": "Responde ao desejo de quem a carrega: suas transformações duram {modo_extra} turno a mais e todo o seu dano {dano_mult+%}.",
+          "origem": "Hogyoku (Aizen) · Bleach",
+          "efeito": {
+            "modo_extra": 1,
+            "dano_mult": 1.05
+          }
+        },
+        {
+          "id": "bainha_sagrada",
+          "nome": "Bainha Sagrada",
+          "kanji": "鞘",
+          "raridade": "divino",
+          "texto": "A bainha que cura tudo: cura {regen} por turno; uma vez por run um golpe fatal deixa você com 1 de vida, e uma vez por run, ao cair, você volta com 30% da vida.",
+          "origem": "Avalon (Saber) · Fate",
+          "efeito": {
+            "regen": 4,
+            "salvacao": 1,
+            "reviver": 1
+          }
+        },
+        {
+          "id": "espada_grande_demais",
+          "nome": "Espada Grande Demais",
+          "kanji": "鉄",
+          "raridade": "maldito",
+          "texto": "Grande demais para ser uma espada: +{bonus_dano} de dano em todo golpe. Preço: −1 de Velocidade.",
+          "origem": "Dragonslayer (Guts) · Berserk",
+          "efeito": {
+            "bonus_dano": 1,
+            "velocidade": -1
+          }
+        },
+        {
+          "id": "mascara_de_pedra",
+          "nome": "Máscara de Pedra",
+          "kanji": "面",
+          "raridade": "sangue",
+          "texto": "Quem a veste vira vampiro: cura {drenar%} de todo dano que causa. Preço: as outras curas valem {cura_mult%}.",
+          "origem": "Máscara de Pedra (Dio) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "drenar": 0.392,
+            "cura_mult": 0.8
           }
         }
       ]
@@ -3692,6 +4941,42 @@
             "dano_run": 1,
             "vida_max_run": 5,
             "forma": 1
+          }
+        },
+        {
+          "id": "inferno_negro",
+          "nome": "Inferno Negro",
+          "kanji": "獄",
+          "raridade": "divino",
+          "texto": "As chamas negras saem do olho: o rival queima {chama} por turno, e a chama cresce 1 a cada turno, até o fim da luta.",
+          "origem": "Enton: Kagutsuchi (Sasuke) · Naruto",
+          "despertar": {
+            "chama": 4
+          }
+        },
+        {
+          "id": "o_que_o_heroi_faria",
+          "nome": "O que o Herói Faria",
+          "kanji": "勇",
+          "raridade": "divino",
+          "texto": "Você lembra do herói: cura {cura_frac%} da vida, tira sangramento, veneno e Marca, e os próximos {escudos} golpes passam através de você.",
+          "origem": "Himmel, o herói · Frieren",
+          "despertar": {
+            "cura_frac": 0.4,
+            "purificar": true,
+            "escudos": 2
+          }
+        },
+        {
+          "id": "lei_das_fadas",
+          "nome": "Lei das Fadas",
+          "kanji": "妖",
+          "raridade": "divino",
+          "texto": "Uma luz que só fere quem você vê como inimigo: {golpe_imediato} de dano agora, que atravessa tudo, e o rival causa −{enfraquecer} em todo golpe.",
+          "origem": "Fairy Law (Makarov) · Fairy Tail",
+          "despertar": {
+            "golpe_imediato": 30,
+            "enfraquecer": 2
           }
         }
       ]

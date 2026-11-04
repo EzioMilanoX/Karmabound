@@ -64,7 +64,37 @@ RAIO_SELO = 30
 
 KANJI_BASICO = "打"
 KANJI_HESITAR = "躊"
-NOMES_TIPO = {"ataque": "um ATAQUE", "defesa": "uma DEFESA", "maldita": "algo MALDITO"}
+NOMES_TIPO = {
+    "ataque": "um ATAQUE",
+    "defesa": "uma DEFESA",
+    "maldita": "algo MALDITO",
+    "modo": "uma TRANSFORMAÇÃO",
+}
+
+
+def _sinais_leva3(lutador, longo: bool = False) -> list[str]:
+    """Os estados da Leva 3: chama, veneno, gelo, clones, invocações, ritual, forma."""
+    s = []
+    if lutador.chama:
+        s.append(f"炎 chama {lutador.chama}" if longo else f"炎{lutador.chama}")
+    if lutador.veneno:
+        s.append(f"毒 veneno {lutador.veneno}" if longo else f"毒{lutador.veneno}")
+    if lutador.congelado:
+        s.append("氷 congelado" if longo else "氷")
+    if lutador.clones:
+        s.append(f"影 clones {lutador.clones}" if longo else f"影{lutador.clones}")
+    if lutador.invocacoes:
+        n = len(lutador.invocacoes)
+        s.append(f"召 invocação ×{n}" if longo else f"召{n}")
+    if lutador.vinculo:
+        s.append(f"儀 ritual {lutador.vinculo}" if longo else "儀")
+    if lutador.adiado:
+        s.append(f"鎧 adiado {lutador.adiado}" if longo else f"鎧{lutador.adiado}")
+    if not longo and lutador.modo is not None:
+        s.append(f"変{lutador.modo_turnos}")
+    return s
+
+
 ROMANOS = ("I", "II", "III", "IV", "V")
 ESCALA_JOGADOR = 1.2
 NOME_ESTILO = {
@@ -724,6 +754,8 @@ class LutaScene(IScene):
             visivel *= entrada
         if visivel <= 0.01:
             visivel = 0.0
+        if rival.modo is not None and visivel:  # o rival transformado
+            vfx.aura(r, rival.modo_id, x + dx, y + dy - 66 * escala, 0.12, self.relogio)
         desenhar_lutador(
             r,
             x + dx,
@@ -739,7 +771,9 @@ class LutaScene(IScene):
             ataque=self._pose_ataque(rival),
             dano=self._pose_dano(rival),
         )
-        if rival.pular:  # preso na ilusão
+        if rival.congelado:  # preso no gelo
+            self._texto(r, x, y - 200, "氷", 26, alpha((150, 200, 240, 255), 220), "center")
+        elif rival.pular:  # preso na ilusão
             self._texto(r, x, y - 200, "幻", 26, alpha(SANGUE_VIVO, 200), "center")
         nome = (
             "Chefe do capítulo"
@@ -764,6 +798,7 @@ class LutaScene(IScene):
             sinais.append("網")
         if rival.exposto:
             sinais.append(f"鷹{rival.exposto}")
+        sinais += _sinais_leva3(rival)
         if sinais:
             self._texto(
                 r,
@@ -922,8 +957,9 @@ class LutaScene(IScene):
         if inicio is not None and 0 <= self.relogio - inicio < 0.3:
             clarao = 1 - (self.relogio - inicio) / 0.3
         guarda = 1.0 if j.bloqueio or j.revide else 0.0
-        for ativo, aura in ((j.forma, "forma_desperta"), (j.instinto, "instinto_puro")):
-            if ativo:  # a aura fica enquanto o Despertar dura
+        auras = ((j.forma, "forma_desperta"), (j.instinto, "instinto_puro"), (j.modo, j.modo_id))
+        for ativo, aura in auras:
+            if ativo:  # a aura fica enquanto o Despertar (ou a transformação) dura
                 vfx.aura(r, aura, x + dx, y + dy - 66 * ESCALA_JOGADOR, 0.12, self.relogio)
         fim = self._fim()
         cai = fim[0] if fim and not fim[1] else 0.0  # perdeu: você cai e as correntes fecham
@@ -990,6 +1026,10 @@ class LutaScene(IScene):
             estados.append(f"爆 bomba em {min(b[0] for b in j.bombas)}")
         if j.absolutos:
             estados.append(f"界 absoluto {j.absolutos}")
+        if j.modo is not None:
+            nome = j.modo.nome or self.nomes.get(j.modo_id, "transformado")
+            estados.insert(0, f"変 {nome} {j.modo_turnos}")
+        estados += _sinais_leva3(j, longo=True)
         linhas = quebrar("   ".join(estados), 70)[:2]
         for k, linha in enumerate(linhas):
             self._texto(r, 40, 428 + k * 16, linha, 15, alpha(OURO, 170))
@@ -1097,6 +1137,22 @@ class LutaScene(IScene):
             partes.append(f"呪{t.marca}")
         if t.consome_tecnica:
             partes.append("pacto")
+        if t.modo is not None:
+            partes.append(f"forma {t.modo.turnos}")
+        if t.chama_eterna:
+            partes.append(f"炎{t.chama_eterna}")
+        if t.veneno:
+            partes.append(f"毒{t.veneno}")
+        if t.congelar:
+            partes.append("congela")
+        if t.clones:
+            partes.append(f"clones {t.clones}")
+        if t.invocar:
+            partes.append(f"invoca {t.invocar}×{t.invocar_turnos}")
+        if t.vinculo:
+            partes.append("ritual")
+        if t.purificar:
+            partes.append("purifica")
         if t.livre:
             partes.append("livre")
         return " · ".join(partes) or t.tipo

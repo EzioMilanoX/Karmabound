@@ -8,6 +8,7 @@ desenha "o Altar pesa..." num quadro e mede no seguinte.
 from __future__ import annotations
 
 import math
+from collections import Counter
 
 from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
@@ -18,7 +19,9 @@ from karmabound.arenas import _particulas
 from karmabound.combate import Tecnica
 from karmabound.figuras import desenhar_lutador
 from karmabound.jornada import Jornada, PropostaDeVoto
-from karmabound.rodas import carregar_balanceamento
+from karmabound.rodas import anime_de, carregar_balanceamento, carregar_raridades, carregar_rodas
+from karmabound.rolagem import Rolagem
+from karmabound.run import DESCRICAO_JOGO, JOGOS, animes_jogaveis
 from karmabound.visual import (
     ALTURA,
     FERRO,
@@ -90,25 +93,60 @@ class TituloScene(_Base):
         self.ao_opcoes = ao_opcoes
         self.ao_continuar = ao_continuar
         self.ao_diaria = ao_diaria
-        cfg = carregar_balanceamento()["combate"]
+        bal = carregar_balanceamento()
+        cfg = bal["combate"]
         self.modos = [(m, d) for m, d in cfg["dificuldades"].items() if not m.startswith("_")]
-        # cada linha: (o que faz, texto, detalhe à direita)
-        self.itens: list[tuple[str, str, str]] = []
-        if continuar and ao_continuar is not None:
-            self.itens.append(("continuar", "Continuar a run", continuar))
-        if ao_diaria is not None:
-            detalhe = (
-                f"hoje: {recorde_diaria} de 12"
-                if recorde_diaria is not None
-                else "Difícil, a mesma sorte para todos"
-            )
-            self.itens.append(("diaria", "Semente do dia", detalhe))
-        self.itens += [(m, d["nome"], f"~{d['alvo_vitoria']:.0%} vencem") for m, d in self.modos]
+        self.jogos = list(JOGOS)
+        self.i_jogo = 0
+        rodas = carregar_rodas(carregar_raridades(bal))
+        self.animes = animes_jogaveis(rodas)
+        self.tecnicas_anime = Counter(anime_de(f.origem) for f in rodas["tecnicas"].fatias)
+        self.i_anime = 0
+        self.continuar = continuar if ao_continuar is not None else None
+        self.recorde_diaria = recorde_diaria
+        self.itens: list[tuple[str, str, str]] = self._montar_itens()
         padrao = cfg["dificuldade_padrao"]
         self.cursor = (
             0 if continuar else next(i for i, x in enumerate(self.itens) if x[0] == padrao)
         )
         self.ao_escolher = ao_escolher
+
+    @property
+    def jogo(self) -> str:
+        return self.jogos[self.i_jogo]
+
+    @property
+    def anime(self) -> str:
+        return self.animes[self.i_anime] if self.jogo == "anime" and self.animes else ""
+
+    def _montar_itens(self) -> list[tuple[str, str, str]]:
+        """Cada linha: (o que faz, texto, detalhe à direita)."""
+        itens = []
+        if self.continuar:
+            itens.append(("continuar", "Continuar a run", self.continuar))
+        if self.ao_diaria is not None:
+            detalhe = (
+                f"hoje: {self.recorde_diaria} de 12"
+                if self.recorde_diaria is not None
+                else "Difícil, a mesma sorte para todos"
+            )
+            itens.append(("diaria", "Semente do dia", detalhe))
+        itens.append(("jogo", f"Modo: ← {JOGOS[self.jogo]} →", DESCRICAO_JOGO[self.jogo]))
+        if self.jogo == "anime" and self.animes:
+            n = self.tecnicas_anime[self.anime]
+            itens.append(("anime", f"Anime: ← {self.anime} →", f"{n} técnicas"))
+        itens += [(m, d["nome"], f"~{d['alvo_vitoria']:.0%} vencem") for m, d in self.modos]
+        return itens
+
+    def _mudar(self, acao: str, passo: int) -> None:
+        if acao == "jogo":
+            self.i_jogo = (self.i_jogo + passo) % len(self.jogos)
+        elif acao == "anime" and self.animes:
+            self.i_anime = (self.i_anime + passo) % len(self.animes)
+        else:
+            return
+        self.itens = self._montar_itens()
+        som.tocar("mover")
 
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
@@ -131,15 +169,24 @@ class TituloScene(_Base):
         elif e.is_action_pressed("baixo"):
             self.cursor = (self.cursor + 1) % len(self.itens)
             som.tocar("mover")
+        elif e.is_action_pressed("esquerda"):
+            self._mudar(self.itens[self.cursor][0], -1)
+        elif e.is_action_pressed("direita"):
+            self._mudar(self.itens[self.cursor][0], 1)
         elif e.is_action_pressed("confirmar"):
-            som.tocar("confirmar")
             acao = self.itens[self.cursor][0]
+            if acao in ("jogo", "anime"):
+                self._mudar(acao, 1)
+                return
+            som.tocar("confirmar")
             if acao == "continuar":
                 self.ao_continuar()
             elif acao == "diaria":
                 self.ao_diaria()
-            else:
+            elif self.jogo == "classico":
                 self.ao_escolher(acao)
+            else:
+                self.ao_escolher(acao, jogo=self.jogo, anime=self.anime)
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo(r)
@@ -176,12 +223,13 @@ class TituloScene(_Base):
         self._t(r, 480, 70, "業", 96, OURO, "center")
         self._t(r, 480, 150, "Karmabound", 52, TINTA, "center")
         self._t(r, 480, 200, "todo azar fica preso ao seu Carma", 18, alpha(TINTA, 150), "center")
-        passo = 36 if len(self.itens) <= 4 else max(24, 168 // len(self.itens))
-        y0 = 452 if len(self.itens) <= 4 else 432
+        n = len(self.itens)
+        y0 = 452 if n <= 4 else 432 if n <= 6 else 414
+        passo = min(36, (600 - y0) // n)
         for i, (acao, texto, detalhe) in enumerate(self.itens):
             y = y0 + i * passo
             atual = i == self.cursor
-            especial = acao in ("continuar", "diaria")
+            especial = acao in ("continuar", "diaria", "jogo", "anime")
             cor = (
                 (OURO if especial else TINTA) if atual else alpha(OURO if especial else TINTA, 120)
             )
@@ -194,7 +242,7 @@ class TituloScene(_Base):
             r,
             480,
             ALTURA - 28,
-            "↑ ↓ escolhe · Enter começa · G grimório · C crônica · O opções · esc sai",
+            "↑ ↓ escolhe · ← → muda o modo · Enter começa · G grimório · C crônica · O opções",
             14,
             alpha(TINTA, 100),
             "center",
@@ -330,6 +378,8 @@ class AltarScene(_Base):
         self.estado = "pesar"  # pesar | escolher | propor | comprar
         self.quadros = 0
         self.aviso = ""
+        self.rol = Rolagem(8)  # restrições: 8 de 44 px, com as 3 ações embaixo
+        self.rol_compra = Rolagem(11)  # ganhos: 11 de 34 px, com Jurar e Voltar embaixo
 
     @property
     def linhas(self) -> list[str]:
@@ -459,8 +509,12 @@ class AltarScene(_Base):
             alpha(TINTA, 150),
         )
         teto = self.j.ctx.catalogo.teto_por_restricao
-        for i, res in enumerate(self.restricoes):
-            y = 112 + i * 44
+        n = len(self.restricoes)
+        self.rol.seguir(self.cursor if self.cursor < n else None, n)
+        self.rol.desenhar(r, 938, 112, 44, n)
+        for i in self.rol.faixa(n):
+            res = self.restricoes[i]
+            y = self.rol.y(i, 112, 44)
             atual = i == self.cursor
             if atual:
                 r.draw_ui_rect(30, y - 6, 900, 40, LACA)
@@ -476,7 +530,7 @@ class AltarScene(_Base):
                 extra = " (teto)" if peso > teto else ""
                 rotulo, cor = f"custa ~{peso:.1f} luta{extra}".replace(".", ","), SANGUE_VIVO
             self._t(r, 920, y + 3, rotulo, 15, cor, "topright")
-        base = 112 + len(self.restricoes) * 44 + 8
+        base = 112 + min(n, self.rol.visiveis) * 44 + 8
         for k, (item, texto) in enumerate(
             [
                 ("duracao", f"Duração: {NOME_DURACAO[self.duracao]}"),
@@ -518,8 +572,13 @@ class AltarScene(_Base):
         r.draw_ui_rect(160, 106, 420 * frac, 12, alpha(OURO, 200))
         if self.j.estado.pontos_guardados > 0:
             self._t(r, 596, 102, "(com a força guardada de votos anteriores)", 13, alpha(OURO, 140))
-        for i, g in enumerate(self.ganhos):
-            y = 136 + i * 34
+        ganhos = self.ganhos
+        ng = len(ganhos)
+        self.rol_compra.seguir(self.cursor_compra if self.cursor_compra < ng else None, ng)
+        self.rol_compra.desenhar(r, 938, 136, 34, ng)
+        for i in self.rol_compra.faixa(ng):
+            g = ganhos[i]
+            y = self.rol_compra.y(i, 136, 34)
             atual = i == self.cursor_compra
             if atual:
                 r.draw_ui_rect(30, y - 5, 900, 32, LACA)
@@ -543,7 +602,7 @@ class AltarScene(_Base):
                 r.draw_ui_circle(770, y + 10, 6, OURO)
             if not cabe and n < g.niveis:
                 self._t(r, 920, y + 2, "não cabe", 13, alpha(TINTA, 90), "topright")
-        base = 136 + len(self.ganhos) * 34 + 6
+        base = 136 + min(ng, self.rol_compra.visiveis) * 34 + 6
         for k, (item, texto) in enumerate(
             (("jurar", "Jurar este voto"), ("voltar", "Voltar às restrições"))
         ):
@@ -592,6 +651,7 @@ class FimScene(_Base):
         j = self.j
         t = self.relogio
         venceu = j.fase == "vitoria"
+        torre = getattr(j.ctx, "jogo", "classico") == "torre"
         if venceu:  # o ensō dourado se fecha em volta de quem venceu
             traco = min(1.0, t / 1.6)
             r.draw_ui_arc(480, 220, 150, 1.6, 1.6 + 6.0 * traco, alpha(OURO, 120), 10)
@@ -602,11 +662,21 @@ class FimScene(_Base):
             _particulas(r, t, 30, alpha(SANGUE_VIVO, 90), sobe=False, tam=2.0, vel=20, semente=9)
             desenhar_lutador(r, 480, 300, 1.5, (60, 22, 24, 255), alpha(TINTA, 200), tempo=t)
             vfx.correntes_fechando(r, 480, 220, min(1.0, t / 1.4))
-            self._t(r, 480, 330, "敗  Seu destino terminou aqui", 40, SANGUE_VIVO, "center")
+            fim = "塔  A torre cobrou o preço" if torre else "敗  Seu destino terminou aqui"
+            self._t(r, 480, 330, fim, 40, SANGUE_VIVO, "center")
         modo = j.ctx.combate["dificuldades"][j.modo]["nome"]
         votos = len(j.estado.votos.ativos) + len(j.estado.votos.quebrados)
+        vencidas = j.estado.lutas_vencidas
+        if torre:
+            placar = f"Torre sem fim · {modo} · {vencidas} andares"
+            if self.recorde is not None:
+                placar += f" · seu melhor: {self.recorde}"
+        else:
+            jogo = {"anime": f"Mundo de {j.ctx.anime}", "chefes": "Desfile de chefes"}
+            prefixo = f"{jogo[j.ctx.jogo]} · " if j.ctx.jogo in jogo else ""
+            placar = f"{prefixo}{modo} · {vencidas} de {j.ctx.lutas} lutas vencidas"
         linhas = [
-            f"{modo} · {j.estado.lutas_vencidas} de {j.ctx.lutas} lutas vencidas",
+            placar,
             f"Dom: {j.dom.kanji} {j.dom.nome}" if j.dom else "",
             f"Despertares: {j.despertares} · Votos jurados: {votos}",
             "Técnicas: " + ", ".join(t.nome for t in j.jogador.tecnicas),

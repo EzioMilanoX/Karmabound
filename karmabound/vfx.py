@@ -669,6 +669,74 @@ POR_HABILIDADE = {
     "guerreiro_espectral": "dominio",
     "ceu_acelerado": "tempo",
     "fuga_dimensional": "tempo",
+    # Leva 3
+    "zoltraak": "presa",
+    "disco_cortante": "presa",
+    "lanca_do_coracao": "presa",
+    "chacal": "presa",
+    "canhao_do_braco": "explosao",
+    "suor_explosivo": "explosao",
+    "nuvem_de_trovao": "trovao",
+    "espada_da_vitoria": "corte_mundo",
+    "perna_em_brasa": "fogo",
+    "estalo_de_chamas": "fogo",
+    "metade_fria": "gelo",
+    "olhar_de_pedra": "gelo",
+    "lotus_de_gelo": "gelo",
+    "danca_do_inseto": "veneno",
+    "lamina_que_paralisa": "veneno",
+    "facas_de_arremesso": "corte_x",
+    "manobra_3d": "corte_x",
+    "explosao_estelar": "corte_x",
+    "espada_sem_magia": "corte_x",
+    "motosserra": "sangue",
+    "baionetas_bentas": "corte_x",
+    "respingo_esmeralda": "clones",
+    "mil_clones": "clones",
+    "sementes_de_combate": "clones",
+    "coruja_trovao": "trovao",
+    "caes_divinos": "presa",
+    "sapo_chefe": "demonio",
+    "levantem_se": "demonio",
+    "o_indomavel": "demonio",
+    "ritual_de_sangue": "sangue",
+    "caixao_negro": "dominio",
+    "trevas": "ilusao",
+    "olhar_que_apaga": "olho",
+    "voz_amaldicoada": "repulsao",
+    "chiclete_elastico": "correntes",
+    "apagar_o_tempo": "tempo",
+    "pedra_carregada": "punho",
+    "soco_que_quebra": "punho",
+    "respiracao_do_sol": "espiral",
+    "defesa_magica": "guarda",
+    "parede_transmutada": "guarda",
+    "sete_petalas": "guarda",
+    "sal_purificador": "cura",
+    "arraia_curandeira": "cura",
+    "diamante_que_conserta": "cura",
+    "caixao_da_montanha": "dominio",
+    "mundo_de_laminas": "dominio",
+    "dedo_que_aponta": "presa",
+    # transformações e técnicas de Dom/Linhagem da leva
+    "energia_natural": "dominio",
+    "segunda_marcha": "fogo",
+    "corpo_inteiro": "trovao",
+    "ponto_monstro": "repulsao",
+    "cabelo_dourado": "repulsao",
+    "juba_dourada": "repulsao",
+    "lamina_negra_liberada": "corte_x",
+    "velocidade_divina": "trovao",
+    "mordida_na_mao": "demonio",
+    "forma_do_demonio_negro": "demonio",
+    "tempo_do_imperador": "correntes",
+    "preco_do_futuro": "repulsao",
+    "transbordar": "repulsao",
+    "berserker": "demonio",
+    "maos_invisiveis": "correntes",
+    "exercito_de_um": "clones",
+    "balanca_da_obediencia": "ilusao",
+    "luas_crescentes": "corte_x",
     # técnicas-assinatura dos chefes
     "mil_laminas": "corte_x",
     "guerreiro_esqueleto": "rotacao",
@@ -684,7 +752,7 @@ def efeito_de(tecnica_id: str, tipo: str = "ataque") -> str:
     """O efeito de uma técnica (as sem homenagem própria caem no do tipo)."""
     if tecnica_id in POR_HABILIDADE:
         return POR_HABILIDADE[tecnica_id]
-    return {"defesa": "guarda", "maldita": "selo"}.get(tipo, "impacto")
+    return {"defesa": "guarda", "maldita": "selo", "modo": "selo"}.get(tipo, "impacto")
 
 
 def duracao(nome: str) -> float:
@@ -743,12 +811,37 @@ AURAS = {  # id do Despertar -> (cor, estilo)
     "tempo_parado": (OURO, "correntes"),
     "gula_sem_fim": (PRETO, "espinhos"),
     "despertar_ackerman": (SANGUE_VIVO, "marca"),
+    "inferno_negro": (PRETO, "chamas"),
+    "o_que_o_heroi_faria": ((160, 200, 255, 255), "brilho"),
+    "lei_das_fadas": (OURO, "brilho"),
+}
+
+AURAS_MODO = {  # transformações: a aura fica enquanto a forma dura
+    "kaioken": (SANGUE_VIVO, "chamas"),
+    "deus_do_sol": (BRANCO, "brilho"),
+    "quarta_marcha": ((220, 80, 80, 255), "pressao"),
+    "berserker": (PRETO, "espinhos"),
+    "energia_natural": ((240, 150, 60, 255), "aneis"),
+    "segunda_marcha": ((255, 160, 170, 255), "chamas"),
+    "corpo_inteiro": ((120, 230, 120, 255), "brilho"),
+    "ponto_monstro": ((255, 140, 40, 255), "pressao"),
+    "cabelo_dourado": (AMARELO, "chamas"),
+    "juba_dourada": (AMARELO, "chamas"),
+    "lamina_negra_liberada": (PRETO, "pressao"),
+    "velocidade_divina": (AZUL_CHAKRA, "brilho"),
+    "mordida_na_mao": ((210, 120, 80, 255), "pressao"),
+    "caixao_da_montanha": ((255, 120, 40, 255), "aneis"),
+    "forma_do_demonio_negro": (PRETO, "chamas"),
+    "tempo_do_imperador": (SANGUE_VIVO, "brilho"),
+    "preco_do_futuro": (AMARELO, "pressao"),
+    "transbordar": ((200, 120, 255, 255), "aneis"),
+    "mundo_de_laminas": ((220, 200, 160, 255), "aneis"),
 }
 
 
 def aura(r: IRenderer, despertar_id: str, x: float, y: float, k: float, relogio: float) -> None:
     """A aura de quem desperta, em volta de (x, y) — o centro do corpo."""
-    cor, estilo = AURAS.get(despertar_id, (OURO, "chamas"))
+    cor, estilo = AURAS.get(despertar_id) or AURAS_MODO.get(despertar_id) or (OURO, "chamas")
     forca = _sino(min(1.0, k * 1.2))
     t = relogio
     if estilo in ("chamas", "brilho"):

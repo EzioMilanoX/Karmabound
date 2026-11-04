@@ -97,8 +97,16 @@ class Jornada:
     # ------------------------------------------------------------------ começo
 
     @classmethod
-    def nova(cls, modo: str | None = None, seed: int | None = None) -> Jornada:
-        ctx = Contexto.padrao(modo)
+    def nova(
+        cls,
+        modo: str | None = None,
+        seed: int | None = None,
+        jogo: str = "classico",
+        anime: str = "",
+    ) -> Jornada:
+        """`modo`: a dificuldade. `jogo`: Clássico, Torre sem fim, Desfile de chefes ou
+        Mundo de um anime (com `anime`)."""
+        ctx = Contexto.padrao(modo, jogo=jogo, anime=anime)
         rng = random.Random(seed)
         mesa = Mesa(ctx.rodas, ctx.raridades, ctx.config_carma, rng)
         j = ctx.combate["jogador"]

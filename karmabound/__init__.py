@@ -1,3 +1,3 @@
 """Karmabound: torneio dark fantasy por turnos movido a roleta e Carma."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

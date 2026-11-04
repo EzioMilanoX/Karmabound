@@ -1,6 +1,6 @@
 [project]
 name = "karmabound"
-version = "0.1.0"
+version = "0.2.0"
 description = "Torneio dark fantasy por turnos em que poderes, técnicas e destino saem de uma roleta, e o azar acumulado vira Despertar."
 requires-python = ">=3.11"
 dependencies = [

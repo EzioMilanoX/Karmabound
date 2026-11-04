@@ -6,7 +6,7 @@ Você não escolhe seu poder: **gira por ele**. Dons, técnicas, o arco de cada 
 
 > Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: mais de 270 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Linhagens, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos entre capítulos, o voto de luta (Promessa, Revelação ou Selo), o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Executável do Windows pelo `build.bat`.
 
-📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos.
+📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos. · 📚 **[Wiki](docs/wiki.html)** — todos os poderes, com busca.
 
 ![Uma luta: o rival anuncia a próxima ação, a corrente do Carma atravessa a tela e as técnicas ficam na base](docs/telas/run_03_luta.png)
 
@@ -49,7 +49,18 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 ### Uma run
 
-Título → **Linhagem** (seu sangue) → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. Toda luta oferece um **voto de luta** (V). No fim dos capítulos 1 e 2 abre o **Altar dos Votos**. A run acaba ao vencer as 12 lutas — ou ao cair.
+Título (o **modo de jogo** e a dificuldade) → **Linhagem** (seu sangue) → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. Toda luta oferece um **voto de luta** (V). No fim dos capítulos 1 e 2 abre o **Altar dos Votos**. A run acaba ao vencer as 12 lutas — ou ao cair.
+
+### Modos de jogo
+
+No título, ← → troca o modo; depois é só escolher a dificuldade.
+
+| Modo | Como é |
+|---|---|
+| **Clássico** | 3 capítulos de 4 lutas; o chefe fecha cada um. |
+| **Torre sem fim** | Os capítulos não acabam: a run só termina quando você cai, e o título guarda a sua maior altura em cada dificuldade. |
+| **Desfile de chefes** | 6 lutas, todas contra chefes (3 capítulos de 2). |
+| **Mundo de um anime** | Todas as rodas só com um anime (Naruto, One Piece, Bleach, Hunter x Hunter ou Jujutsu Kaisen). Uma raridade que o anime não tem numa roda entra com convidados de fora, para nenhuma roda ficar vazia. |
 
 ## A ideia em uma frase
 
@@ -57,7 +68,9 @@ Num roguelite, a sorte costuma ser o inimigo. Aqui ela é **o suspense**: cada g
 
 ## Homenagens: todo poder tem uma origem
 
-Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta, na luta e no Grimório: a **Espiral Concentrada** é o Rasengan (Naruto), o **Clarão Negro** é o Kokusen (Jujutsu Kaisen), o **Corte do Mundo** é o corte que divide o mundo do Sukuna, o **Corpo Perfeito** é o Sukuna da Era Heian, o **Instante Suspenso** é The World (JoJo), a **Liberação Final** é o Bankai (Bleach). As obras vão de Naruto, One Piece, Bleach, Dragon Ball e Hunter x Hunter a Jujutsu Kaisen, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling e Attack on Titan. A lista completa, com a origem de cada uma, está no [catálogo](docs/CATALOGO.md).
+Cada habilidade é uma homenagem com nome próprio, e a origem aparece na carta, na luta e no Grimório: a **Espiral Concentrada** é o Rasengan (Naruto), o **Clarão Negro** é o Kokusen (Jujutsu Kaisen), o **Corte do Mundo** é o corte que divide o mundo do Sukuna, o **Corpo Perfeito** é o Sukuna da Era Heian, o **Instante Suspenso** é The World (JoJo), a **Liberação Final** é o Bankai (Bleach). As obras vão de Naruto, One Piece, Bleach, Dragon Ball e Hunter x Hunter a Jujutsu Kaisen, Demon Slayer, Chainsaw Man, Berserk, Solo Leveling, Attack on Titan, Frieren, Mob Psycho 100, Fate, Dandadan e My Hero Academia — 34 animes. A [wiki](docs/wiki.html) mostra tudo, por roda ou por anime; o [catálogo](docs/CATALOGO.md) tem a mesma lista em texto.
+
+A homenagem copia o que o poder **faz** na obra, não só o nome: as **Chamas Negras** (Amaterasu) não apagam e crescem a cada turno até incinerar, e cobram a visão para sempre (−1 de Percepção na run, como o Mangekyou); a **Armadura** do Guts não deixa você cair enquanto veste, mas cobra de uma vez todo o dano que segurou; o **Ritual de Sangue** (Hidan) faz o rival sofrer toda dor que você sofre, a começar pela estocada em si mesmo; a **Expansão de Domínio** acerta com certeza e depois queima o cérebro (todas as técnicas em recarga); o **Gon adulto** troca o resto da vida por dois turnos.
 
 A **Crônica** (C, no título) guarda o histórico das suas runs e doze **Feitos** (vencer no Brutal, vencer sem Relíquias, quebrar um voto e vencer, completar o Grimório...). O **Grimório** (G, no título) guarda todas as habilidades que já saíram da roleta, entre runs; as que faltam aparecem como ???.
 
@@ -68,8 +81,8 @@ Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparec
 ### O visual
 
 - **Um efeito por habilidade**, em tinta: a esfera que gira do Rasengan, os raios do Hekireki Issen, a lua negra do Getsuga, as correntes do Kurapika, o Domínio que fecha a arena, o tempo parado em sépia, a tela que se parte no Corte do Mundo.
-- **Lutadores articulados**: um esqueleto com poses (parado respirando, guarda, ataque, golpe recebido), roupa e rosto por estilo. Rivais: Ronin, Monge Errante, Shinobi, Oni, Hollow e Titã; o chefe é um colosso de quatro braços, com uma **técnica-assinatura** (Senbonzakura, Susanoo, Chibaku Tensei, Kamui, Mugetsu, Leigan).
-- **Arenas com profundidade**: camadas em parallax, luz, névoa, um primeiro plano na frente dos lutadores e a cena tremendo nos golpes. Dez Arcos, cada um com a sua (entre eles a Torre Celestial, a Floresta da Morte, Hueco Mundo e o Torneio do Poder).
+- **Lutadores articulados**: um esqueleto com poses (parado respirando, guarda, ataque, golpe recebido), roupa e rosto por estilo. Rivais: Ronin, Monge Errante, Shinobi, Oni, Hollow e Titã; o chefe é um colosso de quatro braços, com uma **técnica-assinatura** (Senbonzakura, Susanoo, Chibaku Tensei, Kamui, Mugetsu, Leigan, o Bang da Makima, a Balança de Aura e a Respiração da Lua).
+- **Arenas com profundidade**: camadas em parallax, luz, névoa, um primeiro plano na frente dos lutadores e a cena tremendo nos golpes. Doze Arcos, cada um com a sua (entre eles a Torre Celestial, a Floresta da Morte, Hueco Mundo, o Torneio do Poder, o Exame de Magos e a Guerra do Cálice).
 - **Sombrio**: vinheta, grão de tinta, o sangue dos golpes que fica no chão, espadas quebradas fincadas e corvos no céu.
 - **Uma aura por Despertar**, e cartas com moldura da raridade e a linha de origem.
 - **Cinema**: o rival entra numa pincelada de tinta com o nome em caligrafia (o chefe escurece a tela antes); na vitória ele se desfaz em tinta, na derrota as correntes se fecham sobre você; o título respira (ensō, corrente do Carma, tinta escorrendo); entre telas, a tinta cobre e recolhe.
@@ -81,12 +94,12 @@ Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparec
 
 | Roda | Decide | Modo |
 |---|---|---|
-| 血 **Linhagem** | O sangue de onde você vem (30): clãs, famílias e povos, com preço nas raras | gira e aceita |
-| 命 **Destino** | O Dom inato (49) | gira e aceita |
-| 技 **Técnicas** | Golpes, defesas e técnicas malditas (109) | gira 3, escolhe 1 |
-| 章 **Arco** | A regra do capítulo (Lua de Sangue, Invasão, Maldição Coletiva…) | gira e aceita |
-| 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem (35) | gira e aceita |
-| 覚 **Despertar** | O tipo de Despertar (42), na luta: Bankai, Ultra Instinto, Modo Sábio, Infinito, Santuário Malévolo... | sorteio igual |
+| 血 **Linhagem** | O sangue de onde você vem (36): clãs, famílias e povos, com preço nas raras | gira e aceita |
+| 命 **Destino** | O Dom inato (57) | gira e aceita |
+| 技 **Técnicas** | Golpes, defesas, técnicas malditas e transformações (169) | gira 3, escolhe 1 |
+| 章 **Arco** | A regra do capítulo (12: Lua de Sangue, Invasão, Maldição Coletiva, Guerra do Cálice…) | gira e aceita |
+| 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem (42) | gira e aceita |
+| 覚 **Despertar** | O tipo de Despertar (45), na luta: Bankai, Ultra Instinto, Modo Sábio, Infinito, Santuário Malévolo... | sorteio igual |
 
 Tudo o que a roleta entrega vale na luta: a **Linhagem** (passivo, técnica de família ou uma técnica que já começa num espaço), o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
 
@@ -98,7 +111,7 @@ O Carma é um **pity compartilhado entre todas as rodas**. Ele enche com giros r
 
 - **Pity suave:** acima de 60, Malditos e Divinos ficam até 3× mais prováveis. As correntes em volta da mandala racham e avermelham.
 - **Transbordo:** em 100, as correntes tremem e o Carma fica esperando a luta.
-- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com 42. Os doze primeiros: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio), 痣 Marca do Caçador, 獣 Fera Interior (Modo Kurama), 無 Vazio Infinito (o Infinito do Gojo), 竜 Dragão Negro (Kokuryuha) ou 戻 Retorno pela Morte (Re:Zero); os outros trinta estão no [catálogo](docs/CATALOGO.md). E o próximo giro depois da luta vem Divino garantido.
+- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com 45. Os doze primeiros: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio), 痣 Marca do Caçador, 獣 Fera Interior (Modo Kurama), 無 Vazio Infinito (o Infinito do Gojo), 竜 Dragão Negro (Kokuryuha) ou 戻 Retorno pela Morte (Re:Zero); os outros trinta e três estão na [wiki](docs/wiki.html). E o próximo giro depois da luta vem Divino garantido.
 - **Calibrado** por simulação de lutas reais: cerca de **1,2 Despertar por run**. Algumas runs terminam sem nenhum — nem todo mundo recebe seu momento.
 
 ## Lutas: só recarga
@@ -111,6 +124,10 @@ Duelo 1v1, turnos alternados, regras curtas:
 - **Percepção é sentir o perigo:** contra golpe perigoso, se a sua Percepção for ≥ a **Sutileza** do golpe, você leva metade e devolve um golpe. Determinístico, sem dado; calibrado para salvar ~33% das vezes.
 - **O rival anuncia** a próxima ação e cumpre. Sua Percepção decide o quanto você vê: nada, o tipo, ou a técnica.
 - **Além de dano, bloqueio e cura:** sangrar, bomba, detonar, silenciar, desarmar, cegar, expor, drenar, executar, acumular, combo, gravidade, desespero, fera, instinto, intocável, espelho e acelerar. Algumas técnicas de preparo **não gastam o turno** ("livre" no selo).
+- **O que fere com o tempo:** o **sangramento** dura 3 turnos; o **veneno** acumula doses que ferem e caem 1 por turno; a **chama negra** não apaga e cresce 1 a cada turno até o fim da luta. **Purificar** tira sangramento, veneno, Marca e selos — a chama negra, nunca.
+- **Gelo:** congelar tira o turno do rival, e o próximo golpe nele causa ×2 e quebra o gelo.
+- **Quem luta ao seu lado:** **clones** atacam junto (40% do golpe) e somem no lugar de um golpe que você levaria; **invocações** ferem sozinhas a cada turno seu, por alguns turnos.
+- **Transformações** (Modo Sábio, Super Saiyajin, Bankai, Gear, Godspeed, Titã, Expansão de Domínio...): por alguns turnos você fica mais forte, sem gastar o turno, e quando a forma acaba vem o preço — vida por turno, turnos perdidos, técnicas em recarga ou vida máxima perdida para sempre. Uma forma por vez; trocar de forma cobra a anterior.
 
 ### Modos de dificuldade
 
@@ -118,10 +135,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 3,21 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 3,44 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 3,64 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 4,44 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 3,19 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 3,46 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 3,87 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 5,21 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
@@ -200,7 +217,7 @@ python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale
 python tools/afinar.py              # mede os itens novos e ajusta o número principal à régua (--aplicar grava)
 python tools/medir_tipicos.py       # valores típicos do Altar rápido do simulador (--aplicar grava)
 python tools/calibrar.py tudo       # o ciclo inteiro: modos no alvo (--aplicar grava) e itens contra a régua
-python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
+python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md e docs/wiki.html a partir dos JSON
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/
 python tools/vitrine.py             # PNG de cada arena, rival e efeito, em docs/telas/vitrine/
 python tools/gerar_sons.py          # sintetiza os efeitos e as músicas em assets/ (WAV)
@@ -210,6 +227,7 @@ python tools/gerar_icone.py         # o ícone (業 dourado) em assets/
 ## Documentação
 
 - **[docs/index.html](docs/index.html)** — o manual.
+- **[docs/wiki.html](docs/wiki.html)** — a wiki: todo item do jogo numa ficha (linhagens, Dons, técnicas, arcos, relíquias, Despertares, técnicas de chefe e votos), com busca e filtro de raridade. Gerada dos JSON.
 - **[docs/DESIGN.md](docs/DESIGN.md)** — todas as decisões de design, com data e motivo.
 - **[docs/CATALOGO.md](docs/CATALOGO.md)** — todo o conteúdo (rodas, técnicas, votos, modos), gerado dos dados.
 - **[docs/telas/](docs/telas/)** — capturas de cada estado da roleta; **[docs/telas/vitrine/](docs/telas/vitrine/)**, as arenas e os efeitos.

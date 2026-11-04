@@ -38,6 +38,7 @@ FORCA_TECNICA = (
     "dano", "bomba", "bloqueio", "cura", "regenerar", "sangrar", "fortalecer", "revide",
     "enfraquecer", "acumula", "combo", "detonar", "instinto", "espelho", "silenciar",
     "desarmar", "cegar", "expor", "foco", "intocavel", "fera", "acelerar",
+    "chama_eterna", "veneno", "invocar", "clones",
 )
 FLOAT_TECNICA = ("drenar", "gravidade", "desespero", "executar")
 # Efeitos que são força quando sobem (os multiplicadores contam pelo quanto passam de 1)
@@ -46,9 +47,10 @@ FORCA_EFEITO = (
     "revide_permanente", "regen", "cura_inicio", "crescer", "sangrar", "sutileza", "drenar",
     "executar", "primeiro_golpe", "dano_marcado", "chance_reliquia", "esquiva", "sombra",
     "furia", "carma_por_vitoria", "vida_por_vitoria",
+    "veneno_ao_ferir", "veneno_espinhos", "clones_inicio", "invocar_inicio", "modo_extra",
 )
 MULT_ACIMA = ("dano_mult", "dano_tecnicas_mult", "cura_mult", "bloqueio_mult", "vida_max_mult",
-              "dano_chefe_mult", "fator_evolucao", "carma_mult")
+              "dano_chefe_mult", "fator_evolucao", "carma_mult", "dot_mult")
 MULT_ABAIXO = ("dano_recebido_mult",)
 
 
@@ -59,8 +61,31 @@ def _escalar_int(v: int, f: float) -> int:
     return max(1, novo)
 
 
+def ajustar_modo(m: dict, f: float) -> str:
+    """Uma transformação: o multiplicador de dano, o dano, a esquiva, o bloqueio, a cura —
+    o primeiro que ela tiver —, senão a duração. O preço (sangria, exausto...) não muda."""
+    if m.get("dano_mult", 1.0) > 1:
+        v = m["dano_mult"]
+        m["dano_mult"] = round(1 + (v - 1) * f, 2)
+        return f"modo.dano_mult {v}→{m['dano_mult']}"
+    for campo in ("dano", "bloqueio", "regen"):
+        v = m.get(campo, 0)
+        if v >= 2:
+            m[campo] = _escalar_int(v, f)
+            return f"modo.{campo} {v}→{m[campo]}"
+    if m.get("esquiva"):
+        v = m["esquiva"]
+        m["esquiva"] = round(min(0.6, v * f), 2)
+        return f"modo.esquiva {v}→{m['esquiva']}"
+    v = m["turnos"]
+    m["turnos"] = max(1, v + (1 if f > 1 else -1))
+    return f"modo.turnos {v}→{m['turnos']}"
+
+
 def ajustar_tecnica(c: dict, f: float) -> str:
     """Mexe numa técnica: o maior número de força (se for grande o bastante), senão a recarga."""
+    if c.get("modo"):
+        return ajustar_modo(c["modo"], f)
     for campo in FORCA_TECNICA:
         v = c.get(campo, 0)
         if isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 3:

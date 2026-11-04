@@ -13,6 +13,7 @@ from karmabound import som
 from karmabound.dicas import DICAS
 from karmabound.jornada import Jornada
 from karmabound.opcoes import OPCOES, VELOCIDADES
+from karmabound.rolagem import Rolagem
 from karmabound.tela_menus import DURANTE, _Base, _cortar
 from karmabound.visual import (
     ALTURA,
@@ -270,6 +271,7 @@ class VotosScene(_Sobre):
         self.marcadas: set[str] = set()
         self.restricoes = list(jornada.ctx.catalogo.restricoes.values())
         self.aviso = ""
+        self.rol = Rolagem(9)  # restrições: 9 de 38 px, com Quebrar embaixo
 
     def update(self, world, delta_time: float) -> None:
         self.relogio += delta_time
@@ -338,8 +340,12 @@ class VotosScene(_Sobre):
         for k, linha in enumerate(quebrar(texto, 92)):
             self._t(r, 40, 104 + k * 20, linha, 15, SANGUE_VIVO)
         y0 = 178
-        for i, res in enumerate(self.restricoes):
-            y = y0 + i * 38
+        n = len(self.restricoes)
+        self.rol.seguir(self.cursor if self.cursor < n else None, n)
+        self.rol.desenhar(r, 938, y0, 38, n)
+        for i in self.rol.faixa(n):
+            res = self.restricoes[i]
+            y = self.rol.y(i, y0, 38)
             if i == self.cursor:
                 r.draw_ui_rect(30, y - 5, 900, 34, LACA)
             marcada = res.id in self.marcadas
@@ -347,7 +353,7 @@ class VotosScene(_Sobre):
             self._t(r, 72, y - 1, res.kanji, 22, SANGUE_VIVO if marcada else TINTA)
             self._t(r, 108, y + 1, res.nome, 17, TINTA)
             self._t(r, 290, y + 3, _cortar(res.texto, 66), 14, alpha(TINTA, 140))
-        y = y0 + len(self.restricoes) * 38 + 8
+        y = y0 + min(n, self.rol.visiveis) * 38 + 8
         if self.cursor == len(self.restricoes):
             r.draw_ui_rect(30, y - 5, 420, 32, LACA)
         self._t(r, 52, y - 1, "Quebrar o voto", 19, SANGUE_VIVO)

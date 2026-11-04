@@ -44,8 +44,8 @@ def test_jornada_termina_em_vitoria_ou_derrota(seed):
     assert j.fase in ("vitoria", "derrota")
     assert fases[:3] == ["linhagem", "destino", "arco"]
     if j.fase == "vitoria":
-        # a Invasão pode acrescentar lutas a um capítulo: a run tem 12 ou mais
-        assert j.estado.lutas_vencidas >= j.ctx.lutas
+        # a Invasão acrescenta uma luta a um capítulo, e o Torneio do Poder tira uma
+        assert j.estado.lutas_vencidas >= j.ctx.lutas - j.ctx.capitulos
         assert fases.count("arco") == j.ctx.capitulos
 
 

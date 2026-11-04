@@ -132,8 +132,16 @@ class Fluxo:
                 DicaScene(baixo, dica_id, self.entrada, self._fechar, self.loop.stop)
             )
 
-    def comecar(self, modo: str, seed: int | None = None, diaria: str = "") -> None:
-        self.jornada = Jornada.nova(modo, self.seed if seed is None else seed)
+    def comecar(
+        self,
+        modo: str,
+        seed: int | None = None,
+        diaria: str = "",
+        jogo: str = "classico",
+        anime: str = "",
+    ) -> None:
+        seed = self.seed if seed is None else seed
+        self.jornada = Jornada.nova(modo, seed, jogo=jogo, anime=anime)
         self.jornada.grimorio = self.grimorio
         self.jornada.diaria = diaria
         self.passo()
@@ -194,9 +202,12 @@ class Fluxo:
             self._roleta("reliquias", j.girar_reliquia, self.passo)
         else:  # vitoria | derrota
             salvar.apagar()
-            recorde = (
-                salvar.registrar_diaria(j.diaria, j.estado.lutas_vencidas) if j.diaria else None
-            )
+            recorde = None
+            if j.diaria:
+                recorde = salvar.registrar_diaria(j.diaria, j.estado.lutas_vencidas)
+            elif j.ctx.jogo == "torre":  # na Torre, o recorde é a altura
+                chave = salvar.chave_torre(j.modo)
+                recorde = salvar.registrar_recorde(chave, j.estado.lutas_vencidas)
             total = sum(len(r.fatias) for r in j.ctx.rodas.values()) + len(j.ctx.chefes)
             feitos = self.cronica.registrar(j, len(self.grimorio.vistos), total)
             self._cena(FimScene(j, self.entrada, self.titulo, self.loop.stop, recorde, feitos))

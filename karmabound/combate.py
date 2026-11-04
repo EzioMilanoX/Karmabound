@@ -28,6 +28,39 @@ from karmabound.votos_luta import Promessa
 
 
 @dataclass(frozen=True)
+class Modo:
+    """Uma transformação (Modo Sábio, Bankai, Gear, Super Saiyajin...): por `turnos` turnos
+    seus você fica mais forte, e quando ela acaba vem o preço."""
+
+    turnos: int
+    nome: str = ""  # o nome na tela ("Modo Sábio")
+    dano_mult: float = 1.0
+    dano: int = 0  # +dano em todo golpe
+    golpes: int = 0  # golpes a mais em todo ataque
+    percepcao: int = 0
+    sutileza: int = 0
+    regen: int = 0  # cura a cada turno seu
+    sangria: int = 0  # vida perdida a cada turno seu (o corpo não aguenta)
+    esquiva: float = 0.0
+    bloqueio: int = 0  # bloqueio renovado a cada turno seu
+    recebido_mult: float = 1.0  # todo dano que você sofre
+    drenar: float = 0.0
+    inabalavel: bool = False  # não cai abaixo de 1 enquanto dura: o dano fica adiado
+    absoluto: bool = False  # todo golpe atravessa bloqueio, escudo e esquiva
+    sem_recarga: bool = False  # nada entra em recarga enquanto dura
+    # o preço, quando acaba
+    exausto: int = 0  # turnos perdidos
+    travar: int = 0  # todas as suas técnicas em recarga por N turnos (o cérebro queimado)
+    perde_vida_frac: float = 0.0  # fração da vida atual
+    vida_max_run: int = 0  # −N de vida máxima pelo resto da run
+    adiado: bool = False  # sofre todo o dano adiado (Armadura Berserker)
+
+    @classmethod
+    def de_dict(cls, d: dict) -> Modo:
+        return cls(**d)
+
+
+@dataclass(frozen=True)
 class Tecnica:
     id: str
     nome: str
@@ -94,7 +127,22 @@ class Tecnica:
     regenerar: int = 0  # cura N a cada turno seu até o fim da luta
     variacao: int = 0  # dano extra sorteado entre 0 e N
     custo_vida_max: int = 0  # preço: −N de vida máxima pelo resto da run, a cada uso
+    # Leva 3: o que os poderes fazem nos animes
+    chama_eterna: int = 0  # Amaterasu: o alvo queima N por turno até o fim da luta, +1 a cada turno
+    veneno: int = 0  # doses: o alvo sofre as doses a cada turno dele; elas caem 1 por turno
+    congelar: int = 0  # o alvo perde N turnos; o próximo golpe nele causa ×2 e quebra o gelo
+    clones: int = 0  # cada clone ataca junto (40% do golpe) e absorve um golpe recebido
+    invocar: int = 0  # uma invocação fere o alvo em N a cada turno seu, por `invocar_turnos`
+    invocar_turnos: int = 3
+    vinculo: int = 0  # por N turnos seus, toda dor que você sofre o alvo sofre junto (Hidan)
+    purificar: bool = False  # tira de você sangramento, veneno, Marca, cegueira e bloqueios
+    custo_percepcao: int = 0  # preço: −N de Percepção pelo resto da run, a cada uso (Mangekyō)
+    modo: Modo | None = None  # transformação
     nivel: int = 1  # duplicatas evoluem a técnica
+
+    def __post_init__(self) -> None:
+        if isinstance(self.modo, dict):  # dos dados: o modo chega como dicionário
+            object.__setattr__(self, "modo", Modo.de_dict(self.modo))
 
     @classmethod
     def de_dict(cls, d: dict, raridade: str = "cinza") -> Tecnica:
@@ -174,6 +222,18 @@ class Lutador:
     revelada_bonus: float = 0.0
     dano_mult_luta: float = 1.0  # votos de luta
     recebido_mult_luta: float = 1.0
+    # Leva 3 (também só da luta)
+    chama: int = 0  # a chama que não apaga: queima isto por turno e cresce 1
+    veneno: int = 0  # doses de veneno: fere isto por turno e cai 1
+    congelado: bool = False  # o próximo golpe recebido causa ×2 e quebra o gelo
+    clones: int = 0
+    invocacoes: list[list[int]] = field(default_factory=list)  # [turnos, dano]
+    vinculo: int = 0  # turnos seus em que a sua dor passa para `elo`
+    elo: Lutador | None = field(default=None, repr=False)
+    modo: Modo | None = None  # a transformação ativa
+    modo_id: str = ""
+    modo_turnos: int = 0
+    adiado: int = 0  # o dano que a Armadura segurou
     base_vida_max: int = field(init=False)
     base_velocidade: int = field(init=False)
     base_percepcao: int = field(init=False)
@@ -227,6 +287,10 @@ class Lutador:
         self.revelar = self.revelada_bonus = 0.0
         self.revelada = ""
         self.dano_mult_luta = self.recebido_mult_luta = 1.0
+        self.chama = self.veneno = self.vinculo = self.modo_turnos = self.adiado = 0
+        self.congelado, self.elo, self.modo, self.modo_id = False, None, None, ""
+        self.clones = self.efeitos.clones_inicio
+        self.invocacoes = [[3, self.efeitos.invocar_inicio]] if self.efeitos.invocar_inicio else []
         self.escudos = self.efeitos.escudo_inicial
         self.bloqueio = self.efeitos.bloqueio_inicio
         if self.efeitos.cura_inicio and not self.efeitos.sem_cura:
@@ -236,8 +300,43 @@ class Lutador:
     def pronta(self, t: Tecnica) -> bool:
         return self.recargas.get(t.id, 0) == 0
 
-    def sofrer(self, dano: int) -> int:
+    def purificar(self) -> None:
+        """Tira sangramento, veneno, Marca, cegueira, selos e bombas. A chama negra fica."""
+        self.sangue = self.sangue_turnos = self.veneno = self.marca = 0
+        self.cegueira = self.exposto = self.silencio = self.desarme = 0
+        self.bombas, self.congelado = [], False
+        self.bonus_dano = max(0, self.bonus_dano)  # o que enfraquecia também sai
+
+    def entrar_no_modo(self, t: Tecnica) -> None:
+        self.modo, self.modo_id = t.modo, t.id
+        self.modo_turnos = t.modo.turnos + self.efeitos.modo_extra
+
+    def sair_do_modo(self) -> None:
+        """A transformação acaba: o preço vem agora."""
+        m = self.modo
+        self.modo, self.modo_id, self.modo_turnos = None, "", 0
+        if m is None:
+            return
+        self.pular += m.exausto
+        if m.travar:
+            for t in self.tecnicas:
+                self.recargas[t.id] = max(self.recargas.get(t.id, 0), m.travar)
+        if m.perde_vida_frac:
+            self.vida = max(1, self.vida - round(self.vida * m.perde_vida_frac))
+        if m.vida_max_run:
+            self.base_vida_max = max(1, self.base_vida_max - m.vida_max_run)
+            self.aplicar_efeitos(self.efeitos)
+        if m.adiado and self.adiado:
+            adiado, self.adiado = self.adiado, 0
+            self.sofrer(adiado)  # a Armadura se abre: tudo o que ela segurou
+
+    def sofrer(self, dano: int, ecoa: bool = True) -> int:
         dano = max(0, min(dano, self.vida))
+        if self.modo is not None and self.modo.inabalavel and dano >= self.vida:
+            self.adiado += dano - (self.vida - 1)  # a Armadura segura: o corpo cobra depois
+            dano = self.vida - 1
+        if ecoa and dano and self.vinculo and self.elo is not None and self.elo.vivo:
+            self.elo.sofrer(dano, ecoa=False)  # o ritual: a dor passa para quem está ligado
         self.vida -= dano
         if self.carma is not None and dano:
             self.carma.registrar_dano(dano / self.vida_max * self.efeitos.carma_mult)
@@ -571,6 +670,15 @@ class Luta:
             rival.vida = max(1, round(fj * rival.vida_max))
         if d.get("bomba"):
             rival.bombas.append([d.get("bomba_turnos", 2), d["bomba"]])
+        # Leva 3
+        if d.get("purificar"):
+            j.purificar()
+        if rival.vivo:
+            rival.chama += d.get("chama", 0)
+            rival.veneno += d.get("veneno", 0)
+        j.clones = min(5, j.clones + d.get("clones", 0))
+        if d.get("invocar"):
+            j.invocacoes.append([d.get("invocar_turnos", 3), d["invocar"]])
         # preços (votos de luta)
         if d.get("perde_vida_frac"):
             j.vida = max(1, j.vida - round(j.vida * d["perde_vida_frac"]))
@@ -629,9 +737,9 @@ class Luta:
         """Percepção do alvo contra quem o ataca (o Voto Exposto dá Percepção ao rival)."""
         if alvo.cego or alvo.cegueira or alvo.sem_percepcao:
             return 0
-        extra = 0
+        extra = alvo.modo.percepcao if alvo.modo is not None else 0
         if alvo is self.rival:
-            extra = self.jogador.efeitos.percepcao_rival + self.jogador.percepcao_rival_luta
+            extra += self.jogador.efeitos.percepcao_rival + self.jogador.percepcao_rival_luta
         return max(0, alvo.percepcao + alvo.percepcao_luta + extra)
 
     def outro(self, lutador: Lutador) -> Lutador:
@@ -641,6 +749,8 @@ class Luta:
         """O que o jogador enxerga da próxima ação do rival: nada, o tipo, ou a técnica."""
         j = self.jogador
         p, t = j.percepcao + j.percepcao_luta, self.intencao_rival
+        if j.modo is not None:
+            p += j.modo.percepcao
         if t is None or p <= 0 or j.cego or j.cegueira or j.sem_percepcao:
             return None
         return t.tipo if p == 1 else t
@@ -665,7 +775,7 @@ class Luta:
         if ator.eco:
             ator.sofrer(ator.eco)  # o preço de ter marcado alguém
         if ator.sangue_turnos:
-            ator.sofrer(ator.sangue)
+            ator.sofrer(round(ator.sangue * self.outro(ator).efeitos.dot_mult))
             ator.sangue_turnos -= 1
             if not ator.sangue_turnos:
                 ator.sangue = 0
@@ -677,6 +787,33 @@ class Luta:
                 else:
                     restantes.append([turnos - 1, dano])
             ator.bombas = restantes
+        # Leva 3: o que queima, o que envenena, o que luta ao seu lado
+        dot = self.outro(ator).efeitos.dot_mult  # quem aplicou decide o quanto fere
+        if ator.chama:
+            self._ferir(ator, round(ator.chama * dot))  # a chama negra não apaga
+            ator.chama += 1  # e cresce, até incinerar
+        if ator.veneno:
+            self._ferir(ator, round(ator.veneno * dot))
+            ator.veneno -= 1
+        m = ator.modo
+        if m is not None:
+            if m.regen:
+                self._curar(ator, m.regen)
+            if m.sangria:
+                ator.sofrer(m.sangria)  # o corpo paga a forma
+            if m.bloqueio:
+                ator.bloqueio = max(ator.bloqueio, m.bloqueio)
+        if ator.invocacoes:
+            alvo = self.outro(ator)
+            restantes = []
+            for turnos, dano in ator.invocacoes:
+                if alvo.vivo:
+                    absorvido = min(alvo.bloqueio, dano)
+                    alvo.bloqueio -= absorvido
+                    self._ferir(alvo, dano - absorvido)  # a invocação ataca sozinha
+                if turnos > 1:
+                    restantes.append([turnos - 1, dano])
+            ator.invocacoes = restantes
         if ator.efeitos.crescer:
             antes = int(ator.crescido + 1e-9)
             ator.crescido += ator.efeitos.crescer
@@ -706,6 +843,8 @@ class Luta:
             ator.carma.valor = max(0.0, ator.carma.valor - t.custo_carma)
 
         self._inicio_do_turno(ator)
+        if efetiva.vinculo and alvo.vivo:  # o ritual vem antes do preço: a dor já é dividida
+            ator.vinculo, ator.elo = max(ator.vinculo, efetiva.vinculo), alvo
         if efetiva.custo_vida:
             ator.sofrer(efetiva.custo_vida)
             if ator.carma is not None:
@@ -715,6 +854,18 @@ class Luta:
             ator.aplicar_efeitos(ator.efeitos)
             if ator.carma is not None:
                 ator.carma.registrar_custo(ator.efeitos.carma_mult)
+        if efetiva.custo_percepcao:  # o Mangekyō cobra a visão, para sempre
+            ator.base_percepcao = max(0, ator.base_percepcao - efetiva.custo_percepcao)
+            ator.aplicar_efeitos(ator.efeitos)
+            if ator.carma is not None:
+                ator.carma.registrar_custo(ator.efeitos.carma_mult)
+        if efetiva.purificar:
+            ator.purificar()
+        ativou_modo = efetiva.modo is not None
+        if ativou_modo:
+            if ator.modo is not None:
+                ator.sair_do_modo()  # trocar de forma cobra a anterior
+            ator.entrar_no_modo(efetiva)
         ator.bonus_dano += efetiva.fortalecer
         ator.bloqueio += round(efetiva.bloqueio * ator.efeitos.bloqueio_mult)
         ator.revide += efetiva.revide
@@ -753,9 +904,9 @@ class Luta:
             if efetiva.variacao:
                 base += self.rng.randint(0, efetiva.variacao)
             if efetiva.detonar:
-                resto = alvo.marca + alvo.sangue * alvo.sangue_turnos
+                resto = alvo.marca + alvo.sangue * alvo.sangue_turnos + alvo.veneno
                 base += efetiva.detonar * resto
-                alvo.marca = alvo.sangue = alvo.sangue_turnos = 0
+                alvo.marca = alvo.sangue = alvo.sangue_turnos = alvo.veneno = 0
                 ator.eco = 0  # sem Marca, sem o preço dela
         if efetiva.acumula:
             ator.acumulos[efetiva.id] = ator.acumulos.get(efetiva.id, 0) + efetiva.acumula
@@ -766,6 +917,9 @@ class Luta:
             fervor = round(ator.efeitos.furia * perdida)  # Sangue Fervente
             base += ator.bonus_dano + ator.efeitos.bonus_dano + fervor + ator.dano_extra
             base += ator.dano_run
+            modo = ator.modo
+            if modo is not None:
+                base += modo.dano
             if ator.vida < ator.vida_max * 0.3:
                 base += ator.efeitos.ultimo_suspiro
             if ator.vida >= ator.vida_max:
@@ -777,6 +931,8 @@ class Luta:
                 base *= 2
             base = max(0, base)
             mult = ator.dano_mult * ator.efeitos.dano_mult * ator.dano_mult_luta
+            if modo is not None:
+                mult *= modo.dano_mult
             if t.copia_rival:
                 mult *= t.copia_bonus
             if not basico:
@@ -790,7 +946,8 @@ class Luta:
                 mult *= 2
             if ator.efeitos.executar and fracao_alvo < ator.efeitos.executar:
                 mult *= 1.5
-            if ator.efeitos.dano_marcado and (alvo.marca or alvo.sangue_turnos):
+            marcado = alvo.marca or alvo.sangue_turnos or alvo.veneno or alvo.chama
+            if ator.efeitos.dano_marcado and marcado:
                 mult *= 1 + ator.efeitos.dano_marcado
             base = round(base * mult)
             if efetiva.critico and self.rng.random() < efetiva.critico:
@@ -800,7 +957,9 @@ class Luta:
             santuario = ator.santuario > 0 and not ativou_santuario
             if santuario:
                 base = round(base * 1.5)
-            absoluto = efetiva.absoluto or ator.absolutos > 0
+            absoluto = (
+                efetiva.absoluto or ator.absolutos > 0 or (modo is not None and modo.absoluto)
+            )
             perigoso = efetiva.perigosa or surpresa
             oculto = (
                 (ator.efeitos.imperceptivel and efetiva.perigosa)
@@ -810,6 +969,8 @@ class Luta:
             emboscada = surpresa and ator.efeitos.primeiro_sangue
             sangue_frio = surpresa and alvo.efeitos.sangue_frio
             sutileza = efetiva.sutileza + ator.efeitos.sutileza
+            if modo is not None:
+                sutileza += modo.sutileza
             reagiu = (
                 perigoso
                 and not (oculto or emboscada)
@@ -823,10 +984,16 @@ class Luta:
                 if alvo.intocavel:  # Vazio Infinito: o golpe para no ar
                     escudados += 1
                     return 0
+                if alvo.congelado:  # o gelo se estilhaça com o golpe
+                    alvo.congelado, alvo.pular = False, 0
+                    dano *= 2
                 if alvo.exposto:
                     alvo.exposto -= 1
                     dano = round(dano * 1.5)
-                dano = round(dano * alvo.efeitos.dano_recebido_mult * alvo.recebido_mult_luta)
+                recebido = alvo.efeitos.dano_recebido_mult * alvo.recebido_mult_luta
+                if alvo.modo is not None:
+                    recebido *= alvo.modo.recebido_mult
+                dano = round(dano * recebido)
                 if not absoluto:
                     if alvo.espelho:  # o golpe volta a quem golpeou
                         alvo.espelho -= 1
@@ -837,8 +1004,15 @@ class Luta:
                         instintos += 1  # Instinto Puro: esquiva e devolve um Golpe
                         self._ferir(ator, self.basico.dano)
                         return 0
-                    if alvo.efeitos.esquiva and self.rng.random() < alvo.efeitos.esquiva:
+                    esquiva = alvo.efeitos.esquiva + (alvo.modo.esquiva if alvo.modo else 0.0)
+                    if esquiva and self.rng.random() < esquiva:
                         esquivas += 1  # Reflexo Treinado
+                        return 0
+                    # com N clones, o golpe acha um clone em N de N+1 vezes: quem sabe qual
+                    # é o verdadeiro?
+                    if alvo.clones and self.rng.random() < alvo.clones / (alvo.clones + 1):
+                        alvo.clones -= 1  # era um clone: some numa nuvem
+                        escudados += 1
                         return 0
                     if alvo.escudos:
                         alvo.escudos -= 1  # Pele de Cinzas
@@ -847,7 +1021,8 @@ class Luta:
                 fura = efetiva.perfura or absoluto or (basico and ator.efeitos.basico_perfura)
                 absorvido = 0 if fura else min(alvo.bloqueio, dano)
                 alvo.bloqueio -= absorvido
-                if alvo is self.jogador and dano - absorvido >= alvo.vida:
+                inabalavel = alvo.modo is not None and alvo.modo.inabalavel
+                if alvo is self.jogador and dano - absorvido >= alvo.vida and not inabalavel:
                     if self.pode_despertar():
                         despertou = self.despertar().id  # à beira da morte: o golpe é anulado
                         return 0
@@ -858,6 +1033,8 @@ class Luta:
                 if alvo.revide and dano:
                     self._ferir(ator, alvo.revide)
                     alvo.revide = 0
+                if feito and alvo.efeitos.veneno_espinhos:
+                    ator.veneno += alvo.efeitos.veneno_espinhos  # o corpo é veneno
                 return feito
 
             por_golpe = base // 2 if reagiu else base
@@ -865,10 +1042,15 @@ class Luta:
                 por_golpe = round(por_golpe * (1 + self.bonus_surpresa))
             golpes = efetiva.golpes + (ator.efeitos.basico_golpes if basico else 0)
             golpes += 1 if ator.fera else 0  # Fera Interior
+            golpes += modo.golpes if modo is not None else 0
             for _ in range(golpes):
                 total += golpear(por_golpe)
                 if not alvo.vivo:
                     break
+            for _ in range(min(ator.clones, 3)):  # os clones atacam junto
+                if not alvo.vivo:
+                    break
+                total += golpear(max(1, round(por_golpe * 0.4)))
             if ator.efeitos.sombra and alvo.vivo and ator.vivo:
                 sombra = golpear(round(por_golpe * ator.efeitos.sombra))  # Sombra Leal
                 total += sombra
@@ -880,6 +1062,8 @@ class Luta:
             if ator.absolutos and absoluto and not efetiva.absoluto:
                 ator.absolutos -= 1
             drenar = efetiva.drenar + ator.efeitos.drenar + ator.drenar_luta
+            if modo is not None:
+                drenar += modo.drenar
             if drenar and total:
                 curou += self._curar(ator, round(total * drenar))
             passivo = ator.efeitos.sangrar if total else 0
@@ -887,9 +1071,14 @@ class Luta:
                 alvo.sangue += efetiva.sangrar
                 alvo.sangue = max(alvo.sangue, passivo)  # o passivo renova, não empilha
                 alvo.sangue_turnos = 3
-        elif efetiva.sangrar and alvo.vivo:
-            alvo.sangue += efetiva.sangrar
-            alvo.sangue_turnos = 3
+            if total and alvo.vivo:  # o veneno precisa entrar na carne
+                alvo.veneno += efetiva.veneno + ator.efeitos.veneno_ao_ferir
+        else:
+            if efetiva.sangrar and alvo.vivo:
+                alvo.sangue += efetiva.sangrar
+                alvo.sangue_turnos = 3
+            if efetiva.veneno and alvo.vivo:  # névoa, gás, esporos: sem golpe
+                alvo.veneno += efetiva.veneno
 
         selou, atordoou = "", False
         if efetiva.selar and alvo.vivo:
@@ -905,6 +1094,17 @@ class Luta:
             alvo.desarme += efetiva.desarmar
             if efetiva.bomba:
                 alvo.bombas.append([efetiva.bomba_turnos, efetiva.bomba])
+            alvo.chama += efetiva.chama_eterna  # basta o olhar: não há esquiva
+            if efetiva.congelar:
+                alvo.pular += efetiva.congelar
+                alvo.congelado = atordoou = True
+        ator.clones = min(5, ator.clones + efetiva.clones)
+        if efetiva.invocar and alvo.vivo:  # a invocação ataca assim que chega
+            absorvido = min(alvo.bloqueio, efetiva.invocar)
+            alvo.bloqueio -= absorvido
+            total += self._ferir(alvo, efetiva.invocar - absorvido)
+            if efetiva.invocar_turnos > 1:
+                ator.invocacoes.append([efetiva.invocar_turnos - 1, efetiva.invocar])
         mudou_rival = selou or atordoou or efetiva.silenciar or efetiva.desarmar
         if mudou_rival and alvo is self.rival:
             self.intencao_rival = escolher_rival(self)  # o que ele anunciou não vem mais
@@ -912,7 +1112,8 @@ class Luta:
         for tid in list(ator.recargas):
             if ator.recargas[tid] > 0:
                 ator.recargas[tid] -= 1
-        if t not in (self.basico, HESITAR) and t.recarga and not ator.forma:
+        sem_recarga = ator.modo is not None and ator.modo.sem_recarga and not ativou_modo
+        if t not in (self.basico, HESITAR) and t.recarga and not ator.forma and not sem_recarga:
             ator.recargas[t.id] = self._recarga(ator, t)  # na Forma Desperta, nada em recarga
         if efetiva.acelerar:
             for tid in list(ator.recargas):
@@ -922,6 +1123,14 @@ class Luta:
             ator.forma -= 1
         if ator.fera:
             ator.fera -= 1
+        if ator.modo is not None and not ativou_modo and ator.vivo:
+            ator.modo_turnos -= 1
+            if ator.modo_turnos <= 0:
+                ator.sair_do_modo()  # a forma se desfaz: o preço vem agora
+        if ator.vinculo and not efetiva.vinculo:
+            ator.vinculo -= 1
+            if not ator.vinculo:
+                ator.elo = None
         if ator.silencio:
             ator.silencio -= 1
         if ator.desarme:
@@ -1017,16 +1226,22 @@ def _valor_ofensivo(luta: Luta, ator: Lutador, t: Tecnica) -> float:
         base += t.combo * sum(1 for x in ator.tecnicas if ator.recargas.get(x.id, 0))
         base += min(TETO_GRAVIDADE, t.gravidade * max(0, alvo.vida))
         base += t.desespero * max(0, ator.vida_max - ator.vida)
-        base += t.detonar * (alvo.marca + alvo.sangue * alvo.sangue_turnos)
+        base += t.detonar * (alvo.marca + alvo.sangue * alvo.sangue_turnos + alvo.veneno)
         if t.executar and alvo.vida < alvo.vida_max * t.executar:
             base *= 2
     extra = ator.bonus_dano + ator.efeitos.bonus_dano
+    if ator.modo is not None:
+        extra += ator.modo.dano
     if t is luta.basico:
         extra += ator.efeitos.basico_dano
         golpes = t.golpes + ator.efeitos.basico_golpes
     else:
         golpes = t.golpes
     valor = (base + extra) * golpes if base > 0 else 0.0
+    if alvo.congelado and valor:
+        valor *= 2
+    # o que fere com o tempo (Leva 3): o que ainda vai doer, em poucos turnos
+    valor += 3 * t.chama_eterna + t.veneno * (t.veneno + 1) / 2 + t.invocar * t.invocar_turnos
     return valor * (1 + t.critico * (CRITICO - 1))
 
 
@@ -1059,6 +1274,11 @@ def evoluir(t: Tecnica, fator: float = 1.3) -> Tecnica:
         acumula=cresce(t.acumula),
         detonar=cresce(t.detonar),
         enfraquecer=cresce(t.enfraquecer),
+        chama_eterna=cresce(t.chama_eterna),
+        veneno=cresce(t.veneno),
+        invocar=cresce(t.invocar),
+        clones=cresce(t.clones),
+        modo=replace(t.modo, turnos=t.modo.turnos + 1) if t.modo is not None else None,
         recarga=recarga,
     )
 
@@ -1068,6 +1288,8 @@ def valor_tecnica(t: Tecnica) -> float:
     valor = t.dano * t.golpes + t.bloqueio + t.revide + 3 * (t.marca + t.fortalecer)
     valor += t.cura + 6 * t.atordoar + 4 * t.selar + 8 * t.escudo
     valor += 3 * t.sangrar + t.bomba + 3 * t.regenerar + 5 * (t.silenciar + t.espelho)
+    valor += 6 * t.chama_eterna + 2 * t.veneno + t.invocar * t.invocar_turnos
+    valor += 6 * (t.congelar + t.clones) + 4 * t.vinculo + (12 if t.modo is not None else 0)
     return valor + 4 * (t.instinto + t.intocavel + t.fera + t.enfraquecer)
 
 
@@ -1077,6 +1299,22 @@ def _vale_o_preco(luta: Luta, j: Lutador, t: Tecnica) -> bool:
     Carma e técnica consumidos: para fechar a luta ou num chefe. Marca: só em luta que
     ainda vai durar (rival com vida) e sem empilhar além de duas — o preço também se soma.
     """
+    rival = luta.rival
+    if t.modo is not None:  # transformar custa; só em luta que ainda dura, e uma forma por vez
+        m = t.modo
+        caro = m.exausto or m.travar or m.vida_max_run or m.adiado or m.sangria or t.custo_vida
+        return j.modo is None and (rival.chefe or rival.vida >= (30 if caro else 10))
+    if t.custo_percepcao:  # o preço fica na run: só contra chefe ou rival que vai durar
+        return rival.chefe or rival.vida >= 30
+    if t.purificar and not t.dano:
+        sujo = j.sangue * j.sangue_turnos + j.veneno + j.marca
+        return sujo >= 6 or j.silencio or j.desarme or j.bonus_dano < 0
+    if t.chama_eterna and not t.dano:
+        return rival.vida >= 15 and rival.chama == 0
+    if t.congelar:
+        return rival.vida >= 12 and not rival.pular
+    if (t.invocar or t.vinculo or t.clones) and not t.dano:
+        return rival.vida >= 15 and not (t.clones and j.clones >= 2)
     if t.marca:
         return luta.rival.vida >= 12 and luta.rival.marca < 2 * t.marca
     if t.atordoar:
@@ -1119,6 +1357,8 @@ def escolher_rival(luta: Luta) -> Tecnica:
     if defesas and rival.vida < rival.vida_max * 0.4 and rng.random() < 0.5:
         return rng.choice(defesas)
     preparos = [t for t in prontas if t.tipo == "maldita" and _valor_ofensivo(luta, rival, t) == 0]
+    if rival.modo is None:  # o rival também se transforma, cedo
+        preparos += [t for t in prontas if t.modo is not None]
     if preparos and rng.random() < 0.6:
         return rng.choice(preparos)
     return max(prontas, key=lambda t: (_valor_ofensivo(luta, rival, t), rng.random()))
@@ -1168,6 +1408,7 @@ def escolher_jogador_auto(luta: Luta) -> Tecnica:
         return defesas[0]
     melhor = max(prontas, key=lambda t: _valor_ofensivo(luta, j, t))
     preparos = [t for t in prontas if t.tipo == "maldita" and _valor_ofensivo(luta, j, t) == 0]
+    preparos += [t for t in prontas if t.modo is not None and t not in preparos]
     # preparar custa um turno: só vale em luta que ainda dura uns golpes
     livres = [t for t in preparos if t.livre]
     if livres:

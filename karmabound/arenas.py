@@ -568,7 +568,81 @@ def _frente_torneio_poder(r, t, cam) -> None:
         )
 
 
+def _exame(r, t, cam) -> None:
+    """Exame de magos: um campo aberto ao entardecer, a torre da Associação ao longe e um
+    círculo de runas girando no chão."""
+    _ceu(cam(CEU), (40, 46, 80, 255), (214, 160, 120, 255))
+    c = cam(CEU)
+    _brilho(c, 640, HORIZONTE - 40, 160, (255, 200, 140, 255), 0.5)
+    c = cam(LONGE)
+    c.draw_ui_polygon(_serra(-60, LARGURA + 60, HORIZONTE - 30, 30, 0.012, 0.4), (70, 70, 96, 255))
+    c.draw_ui_rect(700, HORIZONTE - 190, 26, 170, (60, 58, 84, 255))  # a torre
+    c.draw_ui_polygon(
+        [(692, HORIZONTE - 190), (713, HORIZONTE - 236), (734, HORIZONTE - 190)], (60, 58, 84, 255)
+    )
+    c = cam(MEIO)
+    c.draw_ui_polygon(_serra(-60, LARGURA + 60, HORIZONTE + 4, 18, 0.02, 0.6), (64, 92, 70, 255))
+    _chao(cam(CHAO), (82, 110, 76, 255))
+    c = cam(CHAO)
+    giro = t * 0.6
+    for k in range(3):  # o círculo de runas
+        raio = 120 - k * 34
+        c.draw_ui_arc(
+            480,
+            HORIZONTE + 80,
+            raio,
+            giro * (1 - 2 * (k % 2)),
+            giro + 5.4,
+            alpha((180, 220, 255, 255), 70),
+            2,
+        )
+    _particulas(
+        r, t, 16, alpha((200, 230, 255, 255), 80), sobe=True, tam=1.4, vel=18, deriva=14, semente=7
+    )
+
+
+def _frente_exame(r, t, cam) -> None:
+    c = cam(FRENTE)
+    for k, x in enumerate((30, LARGURA - 40)):  # flores do campo balançando
+        for i in range(5):
+            dx = math.sin(t * 1.5 + i + k) * 4
+            base = (x + i * 9, ALTURA)
+            c.draw_ui_line(*base, x + i * 9 + dx, ALTURA - 40 - i * 6, (60, 90, 60, 230), 2)
+            c.draw_ui_circle(x + i * 9 + dx, ALTURA - 42 - i * 6, 4, (230, 200, 230, 230))
+
+
+def _calice(r, t, cam) -> None:
+    """Guerra do Cálice: a cidade em ruínas sob um céu em brasa e um sol negro, o cálice."""
+    _ceu(cam(CEU), (20, 6, 8, 255), (120, 30, 20, 255))
+    c = cam(CEU)
+    _brilho(c, 480, 110, 180, (255, 90, 40, 255), 0.6)
+    c.draw_ui_circle(480, 110, 52, (8, 4, 6, 255))  # o sol negro
+    c.draw_ui_arc(480, 110, 58, t * 0.4, t * 0.4 + 5.6, alpha((255, 120, 60, 255), 120), 3)
+    c = cam(LONGE)
+    for i, x in enumerate(range(-40, LARGURA + 80, 70)):  # prédios partidos
+        alto = 80 + (i * 37) % 90
+        c.draw_ui_rect(x, HORIZONTE - alto, 46, alto, (26, 12, 14, 255))
+        c.draw_ui_polygon(
+            [(x, HORIZONTE - alto), (x + 20, HORIZONTE - alto - 14), (x + 46, HORIZONTE - alto)],
+            (26, 12, 14, 255),
+        )
+    _chao(cam(CHAO), (44, 24, 22, 255))
+    _nevoa(cam(CHAO), t, HORIZONTE + 6, (120, 40, 30, 255), 1.2, 12)
+    _particulas(
+        r, t, 24, alpha((255, 140, 60, 255), 110), sobe=True, tam=1.8, vel=26, deriva=22, semente=11
+    )
+
+
+def _frente_calice(r, t, cam) -> None:
+    c = cam(FRENTE)
+    for k, x in enumerate((20, LARGURA - 60)):  # espadas cravadas no chão
+        c.draw_ui_line(x, ALTURA, x + 30 + k * 4, ALTURA - 110, (30, 26, 30, 240), 5)
+        c.draw_ui_line(x + 14, ALTURA - 60, x + 40, ALTURA - 52, (30, 26, 30, 240), 4)
+
+
 ARENAS = {
+    "exame_de_magos": (_exame, _frente_exame),
+    "guerra_do_calice": (_calice, _frente_calice),
     "treino_na_montanha": (_montanha, _frente_montanha),
     "torneio_regular": (_torneio, _frente_torneio),
     "lua_de_sangue": (_eclipse, _frente_eclipse),

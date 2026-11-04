@@ -71,6 +71,13 @@ class Efeitos:
     dano_recebido_mult: float = 1.0  # todo dano que você sofre
     chance_reliquia: float = 0.0  # chance a mais de girar uma Relíquia depois da luta
     sem_despertar: bool = False  # voto: o Despertar fica selado
+    # Leva 3
+    dot_mult: float = 1.0  # o sangramento, o veneno e a chama que você aplica ferem mais
+    veneno_ao_ferir: int = 0  # todo ataque que fere injeta N doses de veneno
+    veneno_espinhos: int = 0  # quem te fere recebe N doses de veneno (o corpo é veneno)
+    clones_inicio: int = 0  # começa cada luta com N clones
+    invocar_inicio: int = 0  # começa cada luta com uma invocação que fere N por turno (3 turnos)
+    modo_extra: int = 0  # suas transformações duram N turnos a mais
 
     @classmethod
     def de_dict(cls, d: dict) -> Efeitos:
@@ -150,5 +157,11 @@ def somar(lista: list[Efeitos]) -> Efeitos:
             dano_recebido_mult=total.dano_recebido_mult * e.dano_recebido_mult,
             chance_reliquia=total.chance_reliquia + e.chance_reliquia,
             sem_despertar=total.sem_despertar or e.sem_despertar,
+            dot_mult=total.dot_mult * e.dot_mult,
+            veneno_ao_ferir=total.veneno_ao_ferir + e.veneno_ao_ferir,
+            veneno_espinhos=total.veneno_espinhos + e.veneno_espinhos,
+            clones_inicio=total.clones_inicio + e.clones_inicio,
+            invocar_inicio=total.invocar_inicio + e.invocar_inicio,
+            modo_extra=total.modo_extra + e.modo_extra,
         )
     return total

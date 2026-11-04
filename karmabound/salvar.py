@@ -18,7 +18,7 @@ from pathlib import Path
 
 from karmabound.grimorio import caminho_padrao
 from karmabound.jornada import Jornada
-from karmabound.run import Contexto
+from karmabound.run import JOGOS, Contexto
 
 VERSAO = 1
 
@@ -50,7 +50,9 @@ def carregar() -> Jornada | None:
             return None
     except Exception:  # sem arquivo, estragado ou de outra versão do código
         return None
-    j.ctx = Contexto.padrao(j.modo)  # os dados de agora: um ajuste de balanceamento vale já
+    jogo, anime = getattr(j.ctx, "jogo", "classico"), getattr(j.ctx, "anime", "")
+    # os dados de agora: um ajuste de balanceamento vale já
+    j.ctx = Contexto.padrao(j.modo, jogo=jogo, anime=anime)
     if j.fase == "luta":
         j._comecar_luta()  # da foto de antes da luta: o mesmo rival
     return j
@@ -95,4 +97,18 @@ def resumo() -> str | None:
     if j is None:
         return None
     nome = j.ctx.combate["dificuldades"][j.modo]["nome"]
+    if j.ctx.jogo == "torre":
+        return f"Torre sem fim · {nome} · andar {j.n_luta}"
+    if j.ctx.jogo != "classico":
+        jogo = j.ctx.anime if j.ctx.jogo == "anime" else JOGOS[j.ctx.jogo]
+        return f"{jogo} · {nome} · luta {j.n_luta}"
     return f"{nome} · capítulo {j.capitulo} · luta {j.n_luta}"
+
+
+def chave_torre(modo: str) -> str:
+    return f"torre:{modo}"
+
+
+def registrar_recorde(chave: str, lutas: int) -> int:
+    """O melhor resultado guardado sob `chave` (a data da semente do dia, a Torre...)."""
+    return registrar_diaria(chave, lutas)

@@ -261,12 +261,12 @@ def test_toda_habilidade_tem_a_sua_origem(ctx):
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
     assert contagem == {
-        "linhagem": 30,
-        "destino": 49,
-        "tecnicas": 109,
-        "arco": 10,
-        "reliquias": 35,
-        "despertar": 42,
+        "linhagem": 36,
+        "destino": 57,
+        "tecnicas": 169,
+        "arco": 12,
+        "reliquias": 42,
+        "despertar": 45,
     }
 
 
