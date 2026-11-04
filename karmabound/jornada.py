@@ -5,12 +5,13 @@ do jogador e chama o passo certo. O piloto automático (`run.jogar_run`) usa os
 mesmos passos, então a simulação mede este mesmo jogo.
 
 Fases:
+    linhagem   gira a roda da Linhagem (uma vez, no começo): de que sangue você vem
     destino    gira a roda do Destino (uma vez, no começo): o Dom
     arco       gira a roda do Arco (começo de cada capítulo): a regra do capítulo
     luta       a luta em andamento (`self.luta`)
     tecnica    depois de vencer: gira Técnicas e escolhe 1 de 3
     substituir os 4 espaços estão cheios: troca uma técnica ou descarta a nova
-    altar      saiu o Juramento: monta um voto ou recusa
+    altar      o capítulo acabou: o Altar dos Votos abre (monta um voto ou recusa)
     reliquia   depois da técnica, às vezes (sempre, na Invasão): gira Relíquias
     vitoria    venceu os 3 capítulos
     derrota    caiu
@@ -31,6 +32,7 @@ from karmabound.run import (
     EstadoRun,
     aplicar_arco,
     aplicar_dom,
+    aplicar_linhagem,
     aplicar_voto,
     atualizar_efeitos,
     avaliar_restricoes,
@@ -79,14 +81,15 @@ class Jornada:
     estado: EstadoRun
     rng: random.Random
     modo: str
-    fase: str = "destino"
+    fase: str = "linhagem"
     luta: Luta | None = None
     giro: Giro | None = None  # o último giro, para a tela mostrar
     pendente: Fatia | None = None  # técnica nova esperando espaço
     resultado_tecnica: str = ""  # equipada | fragmento | evoluiu | cheio | altar
     aviso: str = ""  # mensagem para a próxima tela (fragmento, evolução)
     sacrificios: dict[str, dict[str, float]] = field(default_factory=dict)  # cache do Altar
-    amostras_altar: int = 80
+    amostras_altar: int = 30
+    horizonte_altar: int = 4  # o Altar mede o próximo capítulo e projeta para o resto da run
     grimorio: Grimorio | None = None  # registra o que sai da roleta (só quem joga)
     antes_da_luta: bytes | None = field(default=None, repr=False)  # a foto para continuar
     diaria: str = ""  # a data, numa run da semente do dia
@@ -155,6 +158,13 @@ class Jornada:
         return self.giro
 
     # ------------------------------------------------------------------ fases
+
+    def girar_linhagem(self) -> Giro:
+        self._exigir("linhagem")
+        giro = self._girar("linhagem")
+        aplicar_linhagem(self.estado, self.ctx, giro.fatias[0])
+        self.fase = "destino"
+        return giro
 
     def girar_destino(self) -> Giro:
         self._exigir("destino")
@@ -232,6 +242,13 @@ class Jornada:
         return giro
 
     def _proxima_luta(self) -> None:
+        if self.estado.altar_pendente:  # fim de capítulo: o Altar abre antes do próximo Arco
+            self.estado.altar_pendente = False
+            if self.estado.votos.pode_jurar():
+                self.estado.altares += 1
+                self.sacrificios = {}
+                self.fase = "altar"
+                return
         if self.estado.arco is None:
             self.fase = "arco"
         else:
@@ -244,7 +261,12 @@ class Jornada:
         self._exigir("altar")
         if duracao not in self.sacrificios:
             self.sacrificios[duracao] = medir_restricoes(
-                self.estado, self.ctx, duracao, self.amostras_altar, seed=self.n_luta
+                self.estado,
+                self.ctx,
+                duracao,
+                self.amostras_altar,
+                seed=self.n_luta,
+                horizonte=self.horizonte_altar,
             )
         return self.sacrificios[duracao]
 
@@ -262,15 +284,17 @@ class Jornada:
         if not restricoes:
             return None
         individuais = self.pesar_restricoes(duracao)
-        seed, n, e = self.n_luta, self.amostras_altar, self.estado
-        pontos, junto = avaliar_restricoes(e, self.ctx, restricoes, individuais, duracao, n, seed)
+        seed, n, e, h = self.n_luta, self.amostras_altar, self.estado, self.horizonte_altar
+        pontos, junto = avaliar_restricoes(
+            e, self.ctx, restricoes, individuais, duracao, n, seed, h
+        )
         pontos += e.pontos_guardados
-        beneficio = beneficios_dos_ganhos(e, self.ctx, restricoes, junto, duracao, n, seed)
+        beneficio = beneficios_dos_ganhos(e, self.ctx, restricoes, junto, duracao, n, seed, h)
         ganhos = comprar_ganhos(e, self.ctx, restricoes, pontos, junto, duracao, n, seed, beneficio)
         voto = Voto(restricoes, ganhos, duracao, pontos=pontos, sacrificio=junto)
         proposta = PropostaDeVoto(voto, junto, pontos, beneficio)
         if estimar:
-            proposta.saldo = saldo_do_voto(e, self.ctx, voto, n, seed)
+            proposta.saldo = saldo_do_voto(e, self.ctx, voto, n, seed, h)
         return proposta
 
     def jurar(self, proposta: PropostaDeVoto, ganhos: list | None = None) -> None:
@@ -284,11 +308,11 @@ class Jornada:
         proposta.voto.sobra = proposta.pontos - custo
         aplicar_voto(self.estado, self.ctx, proposta.voto)
         self.estado.pontos_guardados = proposta.voto.sobra
-        self._depois_da_tecnica()
+        self._proxima_luta()
 
     def recusar_altar(self) -> None:
         self._exigir("altar")
-        self._depois_da_tecnica()
+        self._proxima_luta()
 
     def quebrar_voto(self, voto: Voto, ids_quebra: list[str]) -> bool:
         """Quebra `voto` (de qualquer fase da run): perde os ganhos, metade da vida e o Carma,

@@ -40,7 +40,8 @@
       "texto": "Vida máxima −25%.",
       "efeito": {
         "vida_max_mult": 0.75
-      }
+      },
+      "tipico": 0.1326
     },
     {
       "id": "passos_pesados",
@@ -50,7 +51,8 @@
       "texto": "Velocidade −1.",
       "efeito": {
         "velocidade": -1
-      }
+      },
+      "tipico": 0.0843
     },
     {
       "id": "sem_descanso",
@@ -60,7 +62,8 @@
       "texto": "Sem cura entre lutas.",
       "efeito": {
         "sem_cura": true
-      }
+      },
+      "tipico": 0.3367
     },
     {
       "id": "sem_guarda",
@@ -70,7 +73,8 @@
       "texto": "Nunca usar técnicas de defesa.",
       "efeito": {
         "proibir_tipo": "defesa"
-      }
+      },
+      "tipico": 0.0
     },
     {
       "id": "maos_atadas",
@@ -80,7 +84,8 @@
       "texto": "Nunca usar o Golpe básico; sem técnica pronta, você hesita e perde o turno.",
       "efeito": {
         "proibir_basico": true
-      }
+      },
+      "tipico": 0.0164
     },
     {
       "id": "voto_exposto",
@@ -90,7 +95,8 @@
       "texto": "O rival tem +2 de Percepção contra você.",
       "efeito": {
         "percepcao_rival": 2
-      }
+      },
+      "tipico": 0.1048
     },
     {
       "id": "prazo",
@@ -100,7 +106,8 @@
       "texto": "Luta com mais de 10 turnos é derrota.",
       "efeito": {
         "limite_turnos": 10
-      }
+      },
+      "tipico": 0.0015
     },
     {
       "id": "fio_da_navalha",
@@ -110,7 +117,96 @@
       "texto": "Cair abaixo de 20% da vida máxima é morte.",
       "efeito": {
         "morte_abaixo": 0.2
-      }
+      },
+      "tipico": 0.185
+    },
+    {
+      "id": "olhos_vendados",
+      "nome": "Olhos Vendados",
+      "kanji": "盲",
+      "categoria": "simples",
+      "texto": "Percepção −2.",
+      "efeito": {
+        "percepcao": -2
+      },
+      "tipico": 0.0574
+    },
+    {
+      "id": "despertar_selado",
+      "nome": "Despertar Selado",
+      "kanji": "抑",
+      "categoria": "conduta",
+      "texto": "Você não pode despertar.",
+      "efeito": {
+        "sem_despertar": true
+      },
+      "tipico": 0.0969
+    },
+    {
+      "id": "sangue_ralo",
+      "nome": "Sangue Ralo",
+      "kanji": "薄",
+      "categoria": "simples",
+      "texto": "Toda cura vale metade.",
+      "efeito": {
+        "cura_mult": 0.5
+      },
+      "tipico": 0.1759
+    },
+    {
+      "id": "lamina_lenta",
+      "nome": "Lâmina Lenta",
+      "kanji": "遅",
+      "categoria": "simples",
+      "texto": "Recargas das técnicas +1.",
+      "efeito": {
+        "recarga_menos": -1
+      },
+      "tipico": 0.0032
+    },
+    {
+      "id": "pele_fina",
+      "nome": "Pele Fina",
+      "kanji": "脆",
+      "categoria": "risco",
+      "texto": "Todo dano que você sofre +25%.",
+      "efeito": {
+        "dano_recebido_mult": 1.25
+      },
+      "tipico": 0.1011
+    },
+    {
+      "id": "silencio_maldito",
+      "nome": "Silêncio Maldito",
+      "kanji": "黙",
+      "categoria": "conduta",
+      "texto": "Nunca usar técnicas malditas.",
+      "efeito": {
+        "proibir_tipo": "maldita"
+      },
+      "tipico": 0.1986
+    },
+    {
+      "id": "coracao_frio",
+      "nome": "Coração Frio",
+      "kanji": "冬",
+      "categoria": "simples",
+      "texto": "O Carma enche pela metade.",
+      "efeito": {
+        "carma_mult": 0.5
+      },
+      "tipico": 0.0435
+    },
+    {
+      "id": "voto_anunciado",
+      "nome": "Voto Anunciado",
+      "kanji": "告",
+      "categoria": "revelacao",
+      "texto": "Seus golpes têm −2 de Sutileza.",
+      "efeito": {
+        "sutileza": -2
+      },
+      "tipico": 0.1088
     }
   ],
   "ganhos": [
@@ -123,7 +219,8 @@
       "efeito": {
         "bonus_dano": 2
       },
-      "niveis": 5
+      "niveis": 5,
+      "tipico": 0.0735
     },
     {
       "id": "vigor",
@@ -134,7 +231,8 @@
       "efeito": {
         "vida_max": 15
       },
-      "niveis": 5
+      "niveis": 5,
+      "tipico": 0.1574
     },
     {
       "id": "olhar_agucado",
@@ -145,7 +243,8 @@
       "efeito": {
         "percepcao": 1
       },
-      "niveis": 5
+      "niveis": 5,
+      "tipico": 0.092
     },
     {
       "id": "passo_leve",
@@ -156,7 +255,8 @@
       "efeito": {
         "velocidade": 1
       },
-      "niveis": 5
+      "niveis": 5,
+      "tipico": 0.1157
     },
     {
       "id": "golpe_oculto",
@@ -167,7 +267,8 @@
       "efeito": {
         "imperceptivel": true
       },
-      "niveis": 1
+      "niveis": 1,
+      "tipico": 0.0548
     },
     {
       "id": "pele_de_espinhos",
@@ -178,7 +279,8 @@
       "efeito": {
         "revide_permanente": 3
       },
-      "niveis": 1
+      "niveis": 1,
+      "tipico": 0.0438
     },
     {
       "id": "carma_faminto",
@@ -189,7 +291,8 @@
       "efeito": {
         "carma_mult": 1.5
       },
-      "niveis": 1
+      "niveis": 1,
+      "tipico": 0.0349
     },
     {
       "id": "primeiro_sangue",
@@ -200,7 +303,8 @@
       "efeito": {
         "primeiro_sangue": true
       },
-      "niveis": 1
+      "niveis": 1,
+      "tipico": 0.234
     },
     {
       "id": "segunda_vida",
@@ -211,7 +315,8 @@
       "texto": "Uma vez na run, ao cair, volta com 30% da vida.",
       "efeito": {
         "reviver": 1
-      }
+      },
+      "tipico": 0.1932
     },
     {
       "id": "carrasco",
@@ -222,7 +327,8 @@
       "texto": "+50% de dano contra chefes.",
       "efeito": {
         "dano_chefe_mult": 1.5
-      }
+      },
+      "tipico": 0.0153
     },
     {
       "id": "sangue_frio",
@@ -233,7 +339,117 @@
       "texto": "Você sempre reage ao ataque surpresa.",
       "efeito": {
         "sangue_frio": true
-      }
+      },
+      "tipico": 0.1136
+    },
+    {
+      "id": "lamina_faminta",
+      "nome": "Lâmina Faminta",
+      "kanji": "飢",
+      "categoria": "simples",
+      "texto": "Cura 8% de todo dano que você causa.",
+      "efeito": {
+        "drenar": 0.08
+      },
+      "niveis": 3,
+      "tipico": 0.0681
+    },
+    {
+      "id": "carrasco_menor",
+      "nome": "Executor",
+      "kanji": "処",
+      "categoria": "especial",
+      "texto": "+50% de dano contra rival abaixo de 30% da vida.",
+      "efeito": {
+        "executar": 0.3
+      },
+      "niveis": 1,
+      "tipico": 0.008
+    },
+    {
+      "id": "sangria",
+      "nome": "Sangria",
+      "kanji": "瀉",
+      "categoria": "simples",
+      "texto": "Todo ataque que fere faz o rival sangrar 1 por 3 turnos.",
+      "efeito": {
+        "sangrar": 1
+      },
+      "niveis": 3,
+      "tipico": 0.039
+    },
+    {
+      "id": "guarda_eterna",
+      "nome": "Guarda Eterna",
+      "kanji": "衛",
+      "categoria": "simples",
+      "texto": "Começa cada luta com 4 de bloqueio.",
+      "efeito": {
+        "bloqueio_inicio": 4
+      },
+      "niveis": 5,
+      "tipico": 0.077
+    },
+    {
+      "id": "folego",
+      "nome": "Fôlego",
+      "kanji": "息",
+      "categoria": "especial",
+      "texto": "Recargas das técnicas −1 (mínimo 1).",
+      "efeito": {
+        "recarga_menos": 1
+      },
+      "niveis": 1,
+      "tipico": 0.0034
+    },
+    {
+      "id": "passo_sutil",
+      "nome": "Passo Sutil",
+      "kanji": "忍",
+      "categoria": "simples",
+      "texto": "+1 de Sutileza em todos os seus golpes.",
+      "efeito": {
+        "sutileza": 1
+      },
+      "niveis": 3,
+      "tipico": 0.0378
+    },
+    {
+      "id": "ultimo_suspiro",
+      "nome": "Último Suspiro",
+      "kanji": "喘",
+      "categoria": "simples",
+      "texto": "+3 de dano abaixo de 30% da vida.",
+      "efeito": {
+        "ultimo_suspiro": 3
+      },
+      "niveis": 3,
+      "tipico": 0.0287
+    },
+    {
+      "id": "pele_de_ferro",
+      "nome": "Pele de Ferro",
+      "kanji": "鋼",
+      "categoria": "simples",
+      "texto": "Todo dano que você sofre −8%.",
+      "efeito": {
+        "dano_recebido_mult": 0.92
+      },
+      "niveis": 3,
+      "tipico": 0.0449
+    },
+    {
+      "id": "carne_imortal",
+      "nome": "Carne Imortal",
+      "kanji": "不",
+      "categoria": "exclusivo",
+      "texto": "Abaixo de metade da vida, cura 2 por turno.",
+      "efeito": {
+        "regen": 2,
+        "regen_ate": 0.5
+      },
+      "niveis": 1,
+      "tipico": 0.0914
     }
   ],
   "precos": {

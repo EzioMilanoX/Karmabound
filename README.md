@@ -4,7 +4,7 @@
 
 Você não escolhe seu poder: **gira por ele**. Dons, técnicas, o arco de cada capítulo e as relíquias saem de rodas de sorteio desenhadas como uma mandala de selos. Todo azar fica preso ao seu **Carma** — e quando o Carma transborda, no pior momento, você **Desperta**.
 
-> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: 59 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos, o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Executável do Windows pelo `build.bat`.
+> Protótipo jogável. Uma run inteira já se joga do título ao fim, e tudo o que sai da roleta vale na luta: mais de 270 habilidades — cada uma uma **homenagem** a um anime ou mangá, com a origem na carta —, Linhagens, Dons, técnicas, Relíquias, Arcos com arena própria, duplicatas que evoluem, o Altar dos Votos entre capítulos, o voto de luta (Promessa, Revelação ou Selo), o Despertar e o Grimório, com quatro modos de dificuldade calibrados por simulação. Executável do Windows pelo `build.bat`.
 
 📖 **[Manual](docs/index.html)** — o jogo explicado por dentro: a roleta, o Carma, a luta e os votos.
 
@@ -32,14 +32,15 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 | Onde | Ação | Tecla |
 |---|---|---|
-| **Controle** (Xbox/XInput) | Mover · confirmar · voltar · pausa · Despertar | direcional/analógico · A · B · Start · Y |
+| **Controle** (Xbox/XInput) | Mover · confirmar · voltar · pausa · Despertar · voto de luta | direcional/analógico · A · B · Start · Y · RB |
 | Título | Escolher o modo / começar / Grimório / Crônica / opções | ↑ ↓ / Enter / G / C / O |
 | Durante a run | Pausa: continuar, opções, quebrar um voto, voltar ao título | Esc |
 | Opções | Música, efeitos, silenciar, tela cheia, velocidade, dicas | ↑ ↓ / ← → |
 | Grimório | Trocar de roda / de habilidade / voltar | ← → / ↑ ↓ / Backspace |
 | Roleta | Girar / escolher 1 de 3 / continuar | Espaço / 1–3 / Enter |
-| Luta | Usar a técnica do selo (6 = técnica do Dom) | 1–6 (ou ← → e Enter) |
+| Luta | Usar a técnica do selo (depois dos espaços: as técnicas do Dom e da Linhagem) | 1–8 (ou ← → e Enter) |
 | Luta | Despertar (com o Carma cheio; não gasta o turno) | E |
+| Luta | Voto de luta: ver e jurar o voto que a luta oferece (não gasta o turno) | V |
 | Luta | Contrato: escolher a técnica sacrificada / desistir | 1–5 / Backspace |
 | Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
 | Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
@@ -48,7 +49,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 ### Uma run
 
-Título → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. O **Juramento** abre o Altar dos Votos. A run acaba ao vencer as 12 lutas — ou ao cair.
+Título → **Linhagem** (seu sangue) → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. Toda luta oferece um **voto de luta** (V). No fim dos capítulos 1 e 2 abre o **Altar dos Votos**. A run acaba ao vencer as 12 lutas — ou ao cair.
 
 ## A ideia em uma frase
 
@@ -76,17 +77,18 @@ Na **primeira run**, cada sistema se explica uma vez, na primeira vez que aparec
 
 ![O Corte do Mundo atravessando a tela contra o chefe, em Marineford](docs/telas/vitrine/06_marineford_corte_do_mundo.png)
 
-## A roleta: quatro rodas, um destino
+## A roleta: seis rodas, um destino
 
 | Roda | Decide | Modo |
 |---|---|---|
-| 命 **Destino** | O Dom inato e a origem do personagem | gira e aceita |
-| 技 **Técnicas** | Golpes, defesas e técnicas malditas | gira 3, escolhe 1 |
+| 血 **Linhagem** | O sangue de onde você vem (30): clãs, famílias e povos, com preço nas raras | gira e aceita |
+| 命 **Destino** | O Dom inato (49) | gira e aceita |
+| 技 **Técnicas** | Golpes, defesas e técnicas malditas (109) | gira 3, escolhe 1 |
 | 章 **Arco** | A regra do capítulo (Lua de Sangue, Invasão, Maldição Coletiva…) | gira e aceita |
-| 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem | gira e aceita |
-| 覚 **Despertar** | O tipo de Despertar (12), na luta: Bankai, Ultra Instinto, Modo Sábio, Infinito... | sorteio igual |
+| 宝 **Relíquias** | Itens; duplicatas evoluem o que você já tem (35) | gira e aceita |
+| 覚 **Despertar** | O tipo de Despertar (42), na luta: Bankai, Ultra Instinto, Modo Sábio, Infinito, Santuário Malévolo... | sorteio igual |
 
-Tudo o que a roleta entrega vale na luta: o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
+Tudo o que a roleta entrega vale na luta: a **Linhagem** (passivo, técnica de família ou uma técnica que já começa num espaço), o **Dom** (efeito passivo ou uma técnica própria, num 6º selo), as **Relíquias** (acumulam e se somam), o **Arco** (a regra do capítulo, para os dois lados — a Invasão até acrescenta uma luta) e as técnicas, que **evoluem** quando repetidas (2 fragmentos = nível II). Cada item foi medido em pontos de vitória contra uma régua por raridade.
 
 Cada fatia é um **selo com um kanji**, colorido pela raridade: **Cinza** (60%), **Sangue** (28%), **Maldito** (10%), **Divino** (2%). O resultado é decidido antes da animação; o selo aceso só corre pelo círculo até ele. A tela mostra a **taxa publicada ao lado da taxa real** de cada raridade — sem dinheiro, nunca.
 
@@ -96,7 +98,7 @@ O Carma é um **pity compartilhado entre todas as rodas**. Ele enche com giros r
 
 - **Pity suave:** acima de 60, Malditos e Divinos ficam até 3× mais prováveis. As correntes em volta da mandala racham e avermelham.
 - **Transbordo:** em 100, as correntes tremem e o Carma fica esperando a luta.
-- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com doze: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio), 痣 Marca do Caçador, 獣 Fera Interior (Modo Kurama), 無 Vazio Infinito (o Infinito do Gojo), 竜 Dragão Negro (Kokuryuha) ou 戻 Retorno pela Morte (Re:Zero). E o próximo giro depois da luta vem Divino garantido.
+- **Despertar:** na luta, quando você quiser (E, sem gastar o turno) — ou sozinho, quando um golpe for te matar: o golpe é anulado. O tipo sai da **Roda do Despertar**, com 42. Os doze primeiros: 報 Retribuição (a dor da luta volta ao rival), 奪 Tomar o Destino (rouba a melhor técnica dele), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e escudo), 卍 Liberação Final (Bankai), 極 Instinto Puro (Ultra Instinto), 仙 Modo Eremita (Modo Sábio), 痣 Marca do Caçador, 獣 Fera Interior (Modo Kurama), 無 Vazio Infinito (o Infinito do Gojo), 竜 Dragão Negro (Kokuryuha) ou 戻 Retorno pela Morte (Re:Zero); os outros trinta estão no [catálogo](docs/CATALOGO.md). E o próximo giro depois da luta vem Divino garantido.
 - **Calibrado** por simulação de lutas reais: cerca de **1,2 Despertar por run**. Algumas runs terminam sem nenhum — nem todo mundo recebe seu momento.
 
 ## Lutas: só recarga
@@ -108,6 +110,7 @@ Duelo 1v1, turnos alternados, regras curtas:
 - **Velocidade** decide quem começa — e quem começa tenta um **ataque surpresa** (+50% de dano se não for percebido).
 - **Percepção é sentir o perigo:** contra golpe perigoso, se a sua Percepção for ≥ a **Sutileza** do golpe, você leva metade e devolve um golpe. Determinístico, sem dado; calibrado para salvar ~33% das vezes.
 - **O rival anuncia** a próxima ação e cumpre. Sua Percepção decide o quanto você vê: nada, o tipo, ou a técnica.
+- **Além de dano, bloqueio e cura:** sangrar, bomba, detonar, silenciar, desarmar, cegar, expor, drenar, executar, acumular, combo, gravidade, desespero, fera, instinto, intocável, espelho e acelerar. Algumas técnicas de preparo **não gastam o turno** ("livre" no selo).
 
 ### Modos de dificuldade
 
@@ -115,10 +118,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 4,6 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 4,77 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 4,77 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 5,9 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 12 + 3,21 por luta, chefe ×1,2 | 80 |
+| Equilibrado | ~36% | 12 + 3,44 por luta, chefe ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 + 3,64 por luta, chefe ×1,25 | 70 |
+| Brutal | ~10% | 12 + 4,44 por luta, chefe ×1,25 | 68 |
 
 ### Poderes com preço
 
@@ -134,13 +137,21 @@ Os poderes mais raros são quebrados de propósito — e cobram à altura. Cada 
 | 契 Contrato | Divino | Golpe de 40, uma vez por luta; cresce +7 a cada técnica consumida | destrói uma das suas outras técnicas para sempre | +12 |
 | 裁 Julgamento | Divino | Dano = 1,8 × o seu Carma | consome todo o Carma — e o Despertar que vinha com ele | +15 |
 
-## Votos vinculativos (o Juramento)
+## Votos vinculativos
 
-Tirar o **Juramento** na roleta abre o **Altar dos Votos**: você monta o próprio voto, como nos animes. Escolhe **restrições** — simples (−25% de vida), de conduta (nunca usar defesa), de revelação (o rival te lê melhor) ou de risco (cair abaixo de 20% é morte) — e os pontos compram **ganhos**: simples em níveis (Força, Vigor, Percepção, Velocidade), especiais (Golpe Oculto, Primeiro Sangue…) e exclusivos (Segunda Vida, Carrasco, Sangue Frio).
+O **Altar dos Votos** abre sozinho no fim dos capítulos 1 e 2, fora da luta (dá para recusar). Lá você monta o próprio voto, como nos animes. Escolhe **restrições** — simples (−25% de vida), de conduta (nunca usar defesa), de revelação (o rival te lê melhor) ou de risco (cair abaixo de 20% é morte) — e os pontos compram **ganhos**: simples em níveis (Força, Vigor, Percepção, Velocidade), especiais (Golpe Oculto, Primeiro Sangue…) e exclusivos (Segunda Vida, Carrasco, Sangue Frio).
 
 **Você compra os ganhos.** O Altar abre com a compra que ele faria já marcada, e você mexe à vontade — mas às cegas: sem preço nem estimativa, só uma barra com a **força do voto** que resta e o aviso de quando um ganho não cabe mais. O que você não gastar **fica guardado** para o próximo voto (dá até para jurar só as restrições e guardar toda a força).
 
-O que torna o sistema diferente: **o valor de uma restrição não é tabelado**. O Altar simula o resto da sua run com e sem ela e mede o potencial que você realmente sacrificaria. Proibir o que você não usa não rende nada; proibir o seu melhor golpe rende muito. Sacrifícios maiores e permanentes rendem mais que a soma, mas cada restrição tem um teto — para ir além, é preciso combinar restrições diferentes. Quebrar um voto é possível, com punição e um voto de quebra que, se quebrado, encerra a run. Calibrado, o Juramento vale cerca de **+13 pontos de vitória**.
+O que torna o sistema diferente: **o valor de uma restrição não é tabelado**. O Altar simula o resto da sua run com e sem ela e mede o potencial que você realmente sacrificaria. Proibir o que você não usa não rende nada; proibir o seu melhor golpe rende muito. Sacrifícios maiores e permanentes rendem mais que a soma, mas cada restrição tem um teto — para ir além, é preciso combinar restrições diferentes. Quebrar um voto é possível, com punição e um voto de quebra que, se quebrado, encerra a run. São 16 restrições e 20 ganhos. (Até 2026-11-04 o Altar só abria quando a roleta tirava o Juramento; ele saiu da roleta e virou mecânica.)
+
+### O voto da luta
+
+Dentro da luta há um voto menor e diferente: toda luta oferece **um**, sorteado entre três tipos, e você jura uma vez, sem gastar o turno (V).
+
+- **約 Promessa**: uma condição (vencer em 3 turnos, não ser ferido, só usar o Golpe…). Dá algo agora; cumprir dá prêmio, falhar cobra.
+- **明 Revelação**: mostrar algo ao rival. Poder agora; ele te lê melhor.
+- **封 Selo**: abrir mão de uma parte do seu kit até o fim da luta (as defesas, o Golpe, o Despertar…) em troca de força.
 
 O conceito vive também como blueprint reutilizável (**GAM-11 O.A.T.H.**).
 
@@ -156,6 +167,7 @@ karmabound/
   combate.py    a luta 1v1 por recarga, IA do rival e piloto automático
   efeitos.py    o que votos, Dons e Relíquias fazem no lutador
   votos.py      catálogo, pontos, teto, preço e quebra dos votos
+  votos_luta.py o voto da luta: Promessa, Revelação e Selo
   run.py        os passos de uma run (Dom, Arco, luta, técnica, relíquia) + o piloto automático
   simulacao.py  runs em massa para calibrar
   jornada.py    a run jogada por uma pessoa, fase a fase (as telas só chamam a Jornada)
@@ -183,8 +195,10 @@ karmabound/
 pytest                              # testes headless, incluindo runs inteiras jogadas pelas telas
 ruff check .                        # lint
 python tools/simular.py --combate   # vitórias, Carma e Percepção por modo
-python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitória
+python tools/medir_juramento.py     # quanto o Altar vale em pontos de vitória
 python tools/medir_poder.py         # quanto cada Dom, Relíquia e técnica vale, contra a régua
+python tools/afinar.py              # mede os itens novos e ajusta o número principal à régua (--aplicar grava)
+python tools/medir_tipicos.py       # valores típicos do Altar rápido do simulador (--aplicar grava)
 python tools/calibrar.py tudo       # o ciclo inteiro: modos no alvo (--aplicar grava) e itens contra a régua
 python tools/gerar_catalogo.py      # regenera docs/CATALOGO.md a partir dos JSON
 python tools/capturar_telas.py      # PNG de cada estado da roleta e das telas da run, em docs/telas/

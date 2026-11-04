@@ -32,6 +32,7 @@ from karmabound.combate import (
     config_combate,
     escolher_jogador_auto,
     evoluir,
+    jurar_luta_auto,
 )
 from karmabound.efeitos import Efeitos, somar
 from karmabound.mesa import Giro, Mesa
@@ -45,6 +46,7 @@ from karmabound.rodas import (
     carregar_rodas,
 )
 from karmabound.votos import Catalogo, Voto, Votos, carregar_catalogo, lutas_da_duracao
+from karmabound.votos_luta import VotoDeLuta, carregar_votos_luta
 
 
 @dataclass(frozen=True)
@@ -62,6 +64,7 @@ class Contexto:
     chance_reliquia: float = 1 / 3
     max_turnos: int = 80
     chefes: tuple[Fatia, ...] = ()  # técnicas-assinatura: cada chefe recebe uma
+    votos_luta: tuple[VotoDeLuta, ...] = ()  # a roleta oferece um por luta
 
     @property
     def lutas(self) -> int:
@@ -89,6 +92,7 @@ class Contexto:
             catalogo=carregar_catalogo(),
             basico=Tecnica.de_dict(cfg["golpe_basico"]),
             chefes=carregar_chefes(),
+            votos_luta=carregar_votos_luta(),
         )
 
 
@@ -110,6 +114,10 @@ class EstadoRun:
     altares: int = 0
     pontos_guardados: float = 0.0  # pontos de voto não gastos: ficam para o próximo voto
     dom: Fatia | None = None
+    linhagem: Fatia | None = None
+    altar_pendente: bool = False  # o capítulo acabou: o Altar dos Votos abre antes do próximo
+    votos_de_luta: int = 0  # votos de luta jurados na run
+    promessas_cumpridas: int = 0
     arco: Fatia | None = None  # None no começo de cada capítulo: falta girar o Arco
     reliquias: list[Fatia] = field(default_factory=list)
     fragmentos: Counter = field(default_factory=Counter)
@@ -148,6 +156,8 @@ class EstadoRun:
 def efeitos_do_estado(estado: EstadoRun) -> Efeitos:
     """Votos + Dom + Relíquias + a parte do Arco que é do jogador."""
     partes = [estado.votos.efeitos()]
+    if estado.linhagem is not None and estado.linhagem.efeito:
+        partes.append(Efeitos.de_dict(estado.linhagem.efeito))
     if estado.dom is not None and estado.dom.efeito:
         partes.append(Efeitos.de_dict(estado.dom.efeito))
     partes += [Efeitos.de_dict(r.efeito) for r in estado.reliquias if r.efeito]
@@ -190,6 +200,23 @@ def aplicar_dom(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
             id=fatia.id, nome=fatia.nome, raridade=fatia.raridade, **fatia.tecnica
         )
     atualizar_efeitos(estado)
+
+
+def aplicar_linhagem(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
+    """A Linhagem: o sangue de onde você vem. Efeitos, às vezes uma técnica própria
+    (que não ocupa espaço) e às vezes uma técnica que já começa num espaço."""
+    estado.linhagem = fatia
+    j = estado.jogador
+    j.tecnica_linhagem = None
+    if fatia.tecnica:
+        j.tecnica_linhagem = Tecnica(
+            id=fatia.id, nome=fatia.nome, raridade=fatia.raridade, **fatia.tecnica
+        )
+    if fatia.inicial and fatia.inicial in ctx.tecnicas:
+        if all(t.id != fatia.inicial for t in j.tecnicas):
+            j.tecnicas.append(Tecnica.de_fatia(ctx.tecnicas[fatia.inicial]))
+    atualizar_efeitos(estado)
+    j.vida = j.vida_max  # a run começa com a vida cheia da Linhagem
 
 
 def aplicar_arco(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
@@ -258,6 +285,7 @@ def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
         jogador.tecnica_dom = None
         atualizar_efeitos(estado)
 
+    voto = rng.choice(ctx.votos_luta) if ctx.votos_luta else None
     return Luta(
         jogador,
         rival,
@@ -267,6 +295,7 @@ def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
         ao_despertar=ao_despertar,
         espacos=espacos(estado, ctx),
         ao_eclipse=ao_eclipse,
+        voto_luta=voto,
     )
 
 
@@ -274,6 +303,8 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
     """Fecha a luta: contadores, recompensas, cura, votos e o avanço de capítulo."""
     jogador, carma = estado.jogador, estado.mesa.carma
     luta.encerrar()
+    estado.votos_de_luta += luta.voto_jurado
+    estado.promessas_cumpridas += luta.promessa_resultado == "cumprida"
     if luta.vencedor is not jogador:
         estado.derrotado = True
         return False
@@ -301,6 +332,7 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
         estado.arco = None
         estado.tamanho_capitulo = ctx.lutas_por_capitulo
         estado.venceu = estado.capitulo > ctx.capitulos
+        estado.altar_pendente = not estado.venceu  # o Altar abre entre capítulos
     else:
         estado.luta_no_capitulo += 1
     atualizar_efeitos(estado)
@@ -341,7 +373,8 @@ def receber_reliquia(estado: EstadoRun, fatia: Fatia) -> None:
 
 def vai_ter_reliquia(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> bool:
     sorte = rng.random()
-    return estado.regra.get("reliquia_garantida", False) or sorte < ctx.chance_reliquia
+    chance = ctx.chance_reliquia + estado.jogador.efeitos.chance_reliquia
+    return estado.regra.get("reliquia_garantida", False) or sorte < chance
 
 
 # ----------------------------------------------------------------------- piloto automático
@@ -359,6 +392,7 @@ def nova_run(ctx: Contexto, rng: random.Random) -> EstadoRun:
         carma=mesa.carma,
     )
     estado = EstadoRun(jogador, mesa, Votos(ctx.catalogo))
+    aplicar_linhagem(estado, ctx, girar(estado, ctx, "linhagem").fatias[0])
     aplicar_dom(estado, ctx, girar(estado, ctx, "destino").fatias[0])
     return estado
 
@@ -385,6 +419,10 @@ def jogar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random, reg: Regist
             if luta.pode_despertar() and _desperta_agora(luta):
                 luta.despertar()
                 if luta.acabou:  # o Dragão Negro pode encerrar a luta no próprio Despertar
+                    break
+            if jurar_luta_auto(luta):
+                luta.jurar_luta()
+                if luta.acabou:
                     break
             luta.resolver(escolher_jogador_auto(luta))
         else:
@@ -426,6 +464,11 @@ def jogar_run(
 ) -> EstadoRun:
     """Joga da próxima luta até o fim da run (ou até a luta `ate`, inclusive) ou até cair."""
     while not estado.acabou and (ate is None or estado.proxima_luta <= ate):
+        if estado.altar_pendente:
+            estado.altar_pendente = False
+            if altar is not None and estado.votos.pode_jurar():
+                estado.altares += 1
+                altar(estado, ctx, rng)
         if estado.arco is None:
             aplicar_arco(estado, ctx, girar(estado, ctx, "arco").fatias[0])
         if not jogar_luta(estado, ctx, rng, reg) or estado.venceu:
@@ -449,20 +492,29 @@ def medir(
     modificar: Callable[[EstadoRun], None],
     amostras: int = 200,
     seed: int = 0,
+    horizonte: int | None = None,
 ) -> float:
     """Lutas vencidas a mais (positivo) ou a menos (negativo) no resto da run com `modificar`.
 
-    Mesmas seeds com e sem: a diferença vem da modificação, não do acaso.
+    Mesmas seeds com e sem: a diferença vem da modificação, não do acaso. `horizonte`:
+    joga só as próximas N lutas e projeta a diferença para o resto da run (o Altar da
+    tela usa, para não fazer o jogador esperar).
     """
+    restantes = max(1, ctx.lutas - estado.proxima_luta + 1)
+    ate = None
+    escala = 1.0
+    if horizonte is not None and horizonte < restantes:
+        ate = estado.proxima_luta + horizonte - 1
+        escala = restantes / horizonte
     diferenca = 0
     for i in range(amostras):
         base = estado.clonar(random.Random(seed + i))
-        jogar_run(base, ctx, random.Random(seed + i))
+        jogar_run(base, ctx, random.Random(seed + i), ate=ate)
         variante = estado.clonar(random.Random(seed + i))
         modificar(variante)
-        jogar_run(variante, ctx, random.Random(seed + i))
+        jogar_run(variante, ctx, random.Random(seed + i), ate=ate)
         diferenca += variante.lutas_vencidas - base.lutas_vencidas
-    return diferenca / amostras
+    return diferenca / amostras * escala
 
 
 def aplicar_voto(estado: EstadoRun, ctx: Contexto, voto: Voto) -> None:
@@ -482,11 +534,16 @@ def _com(ctx: Contexto, restricoes, ganhos, duracao: str) -> Callable[[EstadoRun
 
 
 def medir_restricoes(
-    estado: EstadoRun, ctx: Contexto, duracao: str = "run", amostras: int = 120, seed: int = 0
+    estado: EstadoRun,
+    ctx: Contexto,
+    duracao: str = "run",
+    amostras: int = 120,
+    seed: int = 0,
+    horizonte: int | None = None,
 ) -> dict[str, float]:
     """Sacrifício de cada restrição sozinha contra o build atual, em lutas (≥ 0 = custa)."""
     return {
-        r.id: -medir(estado, ctx, _com(ctx, [r], [], duracao), amostras, seed)
+        r.id: -medir(estado, ctx, _com(ctx, [r], [], duracao), amostras, seed, horizonte)
         for r in ctx.catalogo.restricoes.values()
     }
 
@@ -499,10 +556,11 @@ def avaliar_restricoes(
     duracao: str = "run",
     amostras: int = 120,
     seed: int = 0,
+    horizonte: int | None = None,
 ) -> tuple[float, float]:
     """(pontos, sacrifício medido junto) de um conjunto de restrições."""
     cat = ctx.catalogo
-    junto = -medir(estado, ctx, _com(ctx, restricoes, [], duracao), amostras, seed)
+    junto = -medir(estado, ctx, _com(ctx, restricoes, [], duracao), amostras, seed, horizonte)
     creditado = cat.creditado(junto, [individuais[r.id] for r in restricoes])
     return cat.pontos(creditado, duracao, restricoes), junto
 
@@ -515,10 +573,12 @@ def beneficios_dos_ganhos(
     duracao: str = "run",
     amostras: int = 120,
     seed: int = 0,
+    horizonte: int | None = None,
 ) -> dict[str, float]:
     """Quanto cada ganho rende junto destas restrições, em lutas: é o que dá o preço."""
     return {
-        g.id: medir(estado, ctx, _com(ctx, restricoes, [g], duracao), amostras, seed) + sacrificio
+        g.id: medir(estado, ctx, _com(ctx, restricoes, [g], duracao), amostras, seed, horizonte)
+        + sacrificio
         for g in ctx.catalogo.ganhos.values()
     }
 
@@ -568,10 +628,16 @@ def comprar_ganhos(
 
 
 def saldo_do_voto(
-    estado: EstadoRun, ctx: Contexto, voto: Voto, amostras: int = 120, seed: int = 0
+    estado: EstadoRun,
+    ctx: Contexto,
+    voto: Voto,
+    amostras: int = 120,
+    seed: int = 0,
+    horizonte: int | None = None,
 ) -> float:
     """Lutas vencidas a mais (ou a menos) com o voto inteiro: a estimativa que o Altar mostra."""
-    return medir(estado, ctx, _com(ctx, voto.restricoes, voto.ganhos, voto.duracao), amostras, seed)
+    modificar = _com(ctx, voto.restricoes, voto.ganhos, voto.duracao)
+    return medir(estado, ctx, modificar, amostras, seed, horizonte)
 
 
 def montar_voto_auto(
@@ -614,6 +680,40 @@ def montar_voto_auto(
     voto = Voto(escolha, ganhos, duracao, pontos=pontos, sacrificio=sacrificio)
     voto.sobra = pontos - custo_dos_ganhos(ctx, ganhos, beneficio)
     return voto if saldo_do_voto(estado, ctx, voto, amostras, seed) > 0 else None
+
+
+def altar_rapido(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> None:
+    """O Altar do simulador: sem medir nada, com os valores típicos do catálogo.
+
+    `altar_auto` mede cada restrição contra o build (centenas de continuações da run):
+    certo, mas lento demais para rodar dentro de milhares de runs. Este usa o sacrifício
+    e o benefício típicos (lutas por luta restante, medidos por `tools/medir_tipicos.py`)
+    e só jura se o voto compensa, como o jogador que lê o Altar.
+    """
+    if not estado.votos.pode_jurar():
+        return
+    cat = ctx.catalogo
+    restantes = max(1, ctx.lutas - estado.proxima_luta + 1)
+    tipico = {r.id: r.tipico * restantes for r in cat.restricoes.values()}
+    candidatas = sorted(
+        (r for r in cat.restricoes.values() if tipico[r.id] > 0),
+        key=lambda r: min(tipico[r.id], cat.teto_por_restricao),
+        reverse=True,
+    )[:3]
+    if not candidatas:
+        return
+    individuais = [tipico[r.id] for r in candidatas]
+    sacrificio = sum(individuais)
+    pontos = cat.pontos(cat.creditado(sacrificio, individuais), "run", candidatas)
+    pontos += estado.pontos_guardados
+    beneficio = {g.id: g.tipico * restantes for g in cat.ganhos.values()}
+    ganhos = comprar_ganhos(estado, ctx, candidatas, pontos, sacrificio, "run", beneficio=beneficio)
+    if sum(beneficio[g.id] for g in ganhos) <= sacrificio:
+        return
+    voto = Voto(candidatas, ganhos, "run", pontos=pontos, sacrificio=sacrificio)
+    voto.sobra = pontos - custo_dos_ganhos(ctx, ganhos, beneficio)
+    aplicar_voto(estado, ctx, voto)
+    estado.pontos_guardados = max(0.0, voto.sobra)
 
 
 def altar_auto(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> None:

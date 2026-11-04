@@ -6,6 +6,7 @@ from karmabound.jornada import Jornada
 
 def _fim(venceu=True, modo="dificil", seed=2):
     j = Jornada.nova(modo, seed=seed)
+    j.girar_linhagem()
     j.girar_destino()
     j.fase = "vitoria" if venceu else "derrota"
     j.estado.lutas_vencidas = 12 if venceu else 4

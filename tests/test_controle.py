@@ -44,6 +44,7 @@ def test_toda_acao_essencial_tem_botao_de_controle():
 
 def _cheia():
     j = Jornada.nova("dificil", seed=5)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     while len(j.jogador.tecnicas) < 4:
@@ -75,6 +76,7 @@ def test_troca_de_tecnica_pelo_cursor():
 
 def test_escolher_uma_de_tres_pelo_cursor():
     j = Jornada.nova("dificil", seed=6)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     e = Entrada()
@@ -101,6 +103,7 @@ def test_sacrificio_do_contrato_pelo_cursor():
     from karmabound.tela_luta import LutaScene
 
     j = Jornada.nova("dificil", seed=7)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     contrato = Tecnica.de_fatia(j.ctx.tecnicas["contrato"])

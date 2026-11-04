@@ -96,17 +96,15 @@ def test_uma_run_inteira_pelas_telas(seed):
 
 def test_altar_desenha_todos_os_estados():
     from karmabound.jornada import Jornada
-    from karmabound.mesa import Giro
 
     loop = build_game(seed=1)
     j = Jornada.nova("acessivel", seed=5)
     j.amostras_altar = 10
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
-    j.fase = "tecnica"
-    jur = next(f for f in j.ctx.rodas["tecnicas"].fatias if f.evento == "altar")
-    j.giro = Giro(j.ctx.rodas["tecnicas"], [jur])
-    j.escolher_tecnica(0)
+    j.estado.altar_pendente = True  # o capítulo acabou
+    j._proxima_luta()
     entrada = Entrada()
     concluiu = []
     cena = AltarScene(j, entrada, lambda: concluiu.append(True), lambda: None)

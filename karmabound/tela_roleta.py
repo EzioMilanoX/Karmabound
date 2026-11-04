@@ -48,7 +48,8 @@ DURACAO_SUBGIRO = 1.1  # cada opção do modo "escolha"
 DURACAO_QUEBRA = 1.3  # correntes se partindo, antes do giro do Despertar
 VOLTAS = 2
 
-ORDEM_RODAS = ("destino", "tecnicas", "arco", "reliquias")
+ORDEM_RODAS = ("linhagem", "destino", "tecnicas", "arco", "reliquias")
+MAX_SELOS = 20  # rodas maiores mostram uma amostra na mandala (sempre com as sorteadas)
 
 
 class RoletaScene(IScene):
@@ -76,7 +77,8 @@ class RoletaScene(IScene):
         self.cores = {r.id: _hex(r.cor) for r in mesa.raridades}
         self.cores_claras = {r: _mistura(c, TINTA, 0.25) for r, c in self.cores.items()}
         self.nomes_raridade = {r.id: r.nome for r in mesa.raridades}
-        self.i_roda = ORDEM_RODAS.index(roda_fixa) if roda_fixa else 0
+        self.i_roda = ORDEM_RODAS.index(roda_fixa) if roda_fixa else 1
+        self.selos = self._amostrar()  # os selos desenhados na mandala
         self.estado = "parado"  # parado | quebrando | girando | escolhendo | resultado
         self.t = 0.0  # tempo no estado atual
         self.relogio = 0.0  # tempo total, para pulsos
@@ -102,6 +104,34 @@ class RoletaScene(IScene):
 
     # ------------------------------------------------------------- lógica
 
+    def _amostrar(self) -> list:
+        """Os selos da mandala: a roda inteira, ou uma amostra fixa com todas as raridades."""
+        fatias = list(self.roda.fatias)
+        if len(fatias) <= MAX_SELOS:
+            return fatias
+        rng = random.Random(self.roda.id)
+        por_raridade = {
+            r.id: [f for f in fatias if f.raridade == r.id] for r in self.mesa.raridades
+        }
+        escolha = []
+        for lista in por_raridade.values():  # ao menos um selo de cada raridade
+            if lista:
+                escolha.append(rng.choice(lista))
+        resto = [f for f in fatias if f not in escolha]
+        escolha += rng.sample(resto, MAX_SELOS - len(escolha))
+        rng.shuffle(escolha)
+        return escolha
+
+    def _incluir(self, sorteadas) -> None:
+        """Garante as fatias sorteadas na mandala, trocando selos que não foram sorteados."""
+        ids = {f.id for f in sorteadas}
+        livres = [i for i, f in enumerate(self.selos) if f.id not in ids]
+        rng = random.Random(len(self.selos) + sum(len(i) for i in ids))
+        rng.shuffle(livres)
+        for f in sorteadas:
+            if all(x.id != f.id for x in self.selos):
+                self.selos[livres.pop()] = f
+
     def _ir(self, estado: str) -> None:
         self.estado = estado
         self.t = 0.0
@@ -113,7 +143,8 @@ class RoletaScene(IScene):
 
     def _comecar_giro(self) -> None:
         self.giro = self.girar_fn() if self.jornada else self.mesa.girar(self.roda.id)
-        ids = [f.id for f in self.roda.fatias]
+        self._incluir(self.giro.fatias)
+        ids = [f.id for f in self.selos]
         self.alvos = [ids.index(f.id) for f in self.giro.fatias]
         self.revelados = 0
         self.inicio = self.aceso
@@ -124,7 +155,7 @@ class RoletaScene(IScene):
         self._ir("quebrando" if self.giro.despertar else "girando")
 
     def _indice_girando(self) -> int:
-        n = len(self.roda.fatias)
+        n = len(self.selos)
         alvo = self.alvos[self.revelados]
         voltas = 1 if len(self.alvos) > 1 else VOLTAS
         passos = voltas * n + (alvo - self.inicio) % n
@@ -154,6 +185,7 @@ class RoletaScene(IScene):
             if e.is_action_pressed("trocar_roda"):
                 self.i_roda = (self.i_roda + 1) % len(ORDEM_RODAS)
                 self.giro, self.aceso = None, 0
+                self.selos = self._amostrar()
                 self._ir("parado")
             elif e.is_action_pressed("sofrer_dano"):
                 self.mesa.carma.registrar_dano(0.25)
@@ -277,7 +309,7 @@ class RoletaScene(IScene):
         """Enquanto gira, o selo aceso deixa um rastro nos selos por onde passou."""
         if self.estado != "girando":
             return
-        n = len(self.roda.fatias)
+        n = len(self.selos)
         for k in range(1, 5):
             x, y = self._pos_selo((self.aceso - k) % n, n)
             r.draw_ui_circle(x, y, RAIO_SELO + 12 - k * 2, _alpha(TINTA, 46 - k * 10))
@@ -288,7 +320,7 @@ class RoletaScene(IScene):
         if f is None or self.t > 1.4:
             return
         k = self.t / 1.4
-        n = len(self.roda.fatias)
+        n = len(self.selos)
         x, y = self._pos_selo(self.aceso, n)
         cor = self.cores[f.raridade]
         ordem = [rr.id for rr in self.mesa.raridades]
@@ -405,7 +437,7 @@ class RoletaScene(IScene):
 
     def _mandala(self, r: IRenderer) -> None:
         cx, cy = CENTRO
-        fatias = self.roda.fatias
+        fatias = self.selos
         n = len(fatias)
         r.draw_ui_circle(cx, cy, RAIO_SELOS - 52, _alpha(TINTA, 35), 1)
         r.draw_ui_circle(cx, cy, RAIO_SELOS, _alpha(TINTA, 25), 1)

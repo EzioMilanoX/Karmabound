@@ -17,20 +17,23 @@ Origem: blueprint **GAM-10 F.O.R.T.U.N.A.** (`PersonalBlueprints/00 Visualizador
 ## Loop de uma run
 
 ```
-Roda do Destino → seu Dom e sua origem
+Roda da Linhagem → o sangue de onde você vem
+Roda do Destino → seu Dom
   └─ Capítulo (arco sorteado na Roda do Arco: torneio, invasão, maldição, treino…)
        ├─ Luta por turnos contra um rival
        ├─ Giro de Técnica: gira 3, escolhe 1
        ├─ Às vezes: giro de Relíquia
        └─ Chefe do capítulo
+  └─ Fim do capítulo: o Altar dos Votos abre (jurar é opcional)
   └─ Final do torneio
 Morreu? A run acaba. O que fica entre runs: em aberto (ver fim).
 ```
 
-## As quatro rodas
+## As rodas
 
 | Roda | Decide | Modo |
 | --- | --- | --- |
+| **Linhagem** | O clã, a família ou o povo: atributos, às vezes uma técnica, e um preço nas raras | gira e aceita |
 | **Destino** | O Dom inato e a origem do personagem; mais tarde, o destino de rivais e aliados | gira e aceita |
 | **Técnicas** | Golpes, variações e combos | gira 3, escolhe 1 |
 | **Arco** | A regra do capítulo (modificador global) | gira e aceita |
@@ -120,10 +123,12 @@ Calibrados por simulação com o piloto automático (`python tools/simular.py --
 
 | Modo | Vitória (piloto) | Rival | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | ~45% | 12 +1/luta | ×1,2 | 75 |
-| Equilibrado | ~36% | 12 +1/luta | ×1,2 | 70 |
-| **Difícil** (padrão) | ~25% | 12 +1,5/luta | ×1,25 | 70 |
-| Brutal | ~10% | 12 +2/luta | ×1,25 | 65 |
+| Acessível | ~45% | 12 +3,21/luta | ×1,2 | 80 |
+| Equilibrado | ~36% | 12 +3,44/luta | ×1,2 | 76 |
+| **Difícil** (padrão) | ~25% | 12 +3,64/luta | ×1,25 | 70 |
+| Brutal | ~10% | 12 +4,44/luta | ×1,25 | 68 |
+
+Valores de 2026-11-04, recalibrados depois da expansão (`python tools/calibrar.py modos --aplicar`): os rivais crescem menos por luta do que antes (eram 4,6–5,9). Mesmo com o Altar garantido e o voto de luta do lado do jogador, foi preciso baixar a vida deles. Os rivais sorteiam técnicas da mesma roda, e as novas (gravidade, sangramento, bomba) pesam mais na mão deles.
 
 Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a calibração feita com dano aleatório se confirmou.
 
@@ -208,6 +213,8 @@ Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a
 
 Decidido em 2026-11-02. O Juramento deixou de ser técnica de luta: tirá-lo na roleta abre o **Altar dos Votos**, onde o jogador monta o próprio voto, como nos animes (Nen, Jujutsu).
 
+**Desde 2026-11-04 o Juramento não é mais uma fatia da roleta**: o Altar abre sozinho ao fim de cada capítulo (duas vezes por run), e na luta existe o voto de luta (ver "Expansão").
+
 - **Restrições em categorias** (simples, conduta, revelação, risco) viram **pontos**; pontos compram **ganhos** (simples ou especiais). Catálogo em `karmabound/data/votos.json`; tudo legível em `docs/CATALOGO.md`.
 - **O bônus vem do potencial sacrificado:** o valor de uma restrição é medido contra o build do jogador naquele momento, simulando o resto da run com e sem ela (mesmas seeds). Proibir o que você não usa não rende nada.
 - **Pontos** = sacrifício × (1 + sacrifício ÷ K) × duração × categoria. K = 2. Duração: só esta luta ×1, até o fim do capítulo ×1,3, resto da run ×1,75. Categoria: simples ×1, conduta e revelação ×1,15, risco ×1,4. O bônus deve compensar muito.
@@ -232,7 +239,7 @@ Medidos com `python tools/medir_poder.py`: o jogador começa com o poder no 3º 
 | **Marca da Maldição** | Maldito | Golpe de 10 que amaldiçoa: o rival sofre 3 a cada turno dele, e cada nova Marca soma +3. Preço: você sofre 1 por turno por Marca aplicada. | **+8,4** |
 | **Contrato** | Divino | Golpe de 60, uma vez por luta. Preço: cada uso destrói uma das suas outras técnicas para o resto da run (a mais fraca, ou a que você escolher). Sem outra técnica para sacrificar, fica indisponível. | **+11,3** |
 | **Julgamento** | Divino | Dano = 0,8 × Carma, e consome todo o Carma — até um Carma transbordando. A dor vira golpe agora, ou espera o Despertar. | **+14,2** |
-| Juramento | Maldito | Abre o Altar dos Votos (ver acima). | **+13,0** (re-medido em 2026-11-02, com o Altar manual, a força guardada e o bug dos efeitos corrigido) |
+| Juramento (até 2026-11-03) | Maldito | Abria o Altar dos Votos; hoje o Altar abre entre capítulos. | **+13,0** (re-medido em 2026-11-02, com o Altar manual, a força guardada e o bug dos efeitos corrigido) |
 
 - A Marca como "só maldição" (sem dano) ficou negativa em todas as versões: as lutas duram ~4 turnos seus, e um turno sem atacar custa mais do que a maldição devolve. Virou golpe que amaldiçoa.
 - O piloto usa os poderes caros como um jogador sensato: Contrato só para fechar a luta ou num chefe; Julgamento só para fechar a luta ou com Carma ≥ 60; Marca só em rival com vida e sem empilhar além de duas.
@@ -295,6 +302,47 @@ Todos dentro da régua (±2 de ruído) depois da segunda rodada de ajustes (2026
 - **Achados que eram defeito de regra, não de número:** o Instante gastava o turno e devolvia um (ganho zero) — agora são duas ações de verdade depois dele; o Coração Selado guardava só no giro (nada ganhava) — agora guarda no instante em que o Carma enche.
 - **Arquitetura:** as regras da run são passos em `run.py` (`aplicar_dom`, `aplicar_arco`, `comecar_luta`, `encerrar_luta`, `receber_tecnica`, `receber_reliquia`, `girar`). O piloto automático e a Jornada do jogador usam os mesmos passos: o simulador mede exatamente o jogo que se joga.
 - **Modos:** com Dons, Relíquias, Despertar e Divinos fortes, os rivais cresciam +5,8 / +6,1 / +6,2 / +7,5 de vida por luta. Com as homenagens (que os rivais também usam) e os ajustes do Contrato e do Instante, passaram a +5,25 / +5,5 / +5,55 / +6,7 (com a força do Altar guardada entre votos) e, com os Arcos novos e as técnicas de chefe (já suavizadas: Floresta com metade da cura, Torneio do Poder com chefe ×1,4), a +4,8 / +4,95 / +4,95 / +6,05; depois da régua dos itens (Amuleto vira Maldito, Corpo +2, Manto a cada 3, Clones 3×2, Pele 58%, Fervente 2,5, Corte do Mundo 58), o calibrador automático levou a +4,57 / +4,72 / +4,81 / +5,92 e, com os 12 Despertares, a **+4,6 / +4,77 / +4,77 / +5,9**. Resultado: **43,8% / 36,3% / 25,0% / 9,5%**.
+
+## Expansão (2026-11-04)
+
+Pedido: 150 poderes novos, 30 Despertares, Linhagens, mais votos, e o Juramento como mecânica, não como poder. Decisões tomadas com o Enzo:
+
+- **O Juramento sai da roleta.** O Altar dos Votos abre ao fim de cada capítulo (fora da luta). Na luta, um **voto de luta**, mais limitado e diferente: toda luta a roleta oferece um, sorteado entre três tipos, e o jogador jura com V (ou RB) uma vez por luta, sem gastar o turno.
+  - **Promessa:** meta com prazo (vencer em N turnos, não ser ferido, só o Golpe, não defender, causar X de dano). Força na hora; cumprir dá prêmio, falhar cobra.
+  - **Revelação:** expor algo ao rival (ele ganha Percepção, ou o seu dano sofrido sobe) em troca de força — "revelar a técnica" deixa a próxima técnica usada muito mais forte até o fim da luta.
+  - **Selo:** selar parte de si até o fim da luta (defesa, Golpe, Percepção, metade da vida, o Despertar, a técnica mais forte) e a força volta em outro lugar.
+- **Linhagem**, roda nova (gira e aceita) antes do Dom: 30 (12 Cinza, 9 Sangue, 6 Malditas, 3 Divinas). Muda o corpo; algumas começam com uma técnica num espaço (`inicial`), outras trazem uma técnica própria que não ocupa espaço.
+- **150 poderes:** 90 técnicas (35 Cinza, 28 Sangue, 18 Malditas, 9 Divinas), 35 Dons e 25 Relíquias, todos homenagens com nome próprio. Mais **30 Despertares** e **17 votos novos no Altar** (8 restrições, 9 ganhos), e **18 votos de luta**.
+- **Mecânicas novas de combate** (`combate.py`): sangramento (3 turnos), roubo de vida, execução (dobra abaixo de X%), enfraquecer, cegar (o alvo não percebe N golpes), expor (+50% nos próximos golpes), acelerar recargas, dissipar defesas, dano que acumula a cada uso, gravidade (fração da vida do alvo, com teto), detonar Marca e sangramento, combo (por técnica em recarga), desespero (pela vida perdida), bomba-relógio, silêncio (só o Golpe), desarme (sem defesa), espelho (devolve o golpe), regeneração na luta, dano sorteado, e o preço que fica na run: **vida máxima perdida a cada uso**. Os Despertares ganharam chaves novas (atordoar, renovar as técnicas, ações extras, execução, troca das frações de vida, +dano pelo resto da run, bomba…). Dons e Relíquias: roubo de vida, execução, sangrar, recarga −1, primeiro golpe, último suspiro, vida cheia, contra marcados, bloqueio inicial, Sutileza, Golpe que fura, crescer por turno, dano ×, dano sofrido ×, chance de Relíquia.
+- **Textos que não mentem:** os textos da roleta usam marcadores (`{dano}`, `{drenar%}`, `{dano_mult+%}`) preenchidos pelos números na carga; o afinador mexe no número e o texto acompanha.
+- **Tela:** a mandala mostra no máximo 20 selos (uma amostra fixa com todas as raridades, e sempre as fatias sorteadas); o Grimório rola; a luta mostra a técnica da Linhagem, até 8 selos, os estados novos, o painel do voto de luta e a promessa em andamento.
+- **O Altar ficou rápido:** com o catálogo dobrado e o jogo mais pesado, pesar levava 36 s. Agora mede o próximo capítulo (4 lutas, 30 continuações) e projeta para o resto da run: ~1–2 s.
+- **O simulador também jura:** como o Altar é garantido, a dificuldade precisa contar com ele. O Altar do simulador (`run.altar_rapido`) usa valores típicos de cada restrição e ganho (`tipico` em `votos.json`, medidos por `tools/medir_tipicos.py`) em vez de medir na hora.
+- **O afinador** (`tools/afinar.py`): mede cada item pela régua e mexe no número principal (dano, efeito ou recarga) de quem sai da faixa, por rodadas. O passo é amortecido, e um passo que deixa o item mais longe da faixa é desfeito. O afinador nunca mexe em preço; preço muda só à mão (abaixo).
+
+### O balanceamento da expansão (2026-11-04)
+
+Duas rodadas do afinador, uma medição final (2000 runs × 3 seeds, no Difícil) e ajustes à mão. Resultado: dos 172 itens novos, **123 ficaram na régua** (com folga de 1 ponto); os outros estão listados abaixo. O ruído da medição é de cerca de ±1,5 ponto.
+
+O que a primeira rodada ensinou:
+
+- **O piloto queimava vida à toa.** Ele usava golpes que custam vida máxima para sempre (Lua sem Luz, Vazio Púrpura, Banquete) em toda luta que eles fechavam. Quanto mais dano o afinador dava, mais lutas eles fechavam, e pior mediam (o dano da Lua sem Luz chegou a 184). Agora o piloto só os usa contra chefe ou abaixo de 35% da vida. Preparos pagos em vida só entram em luta longa e nunca enquanto o efeito está de pé; golpes que custam 6 de vida ou mais ficam para chefe ou para fechar uma luta que vale a pena.
+- **Preparar não valia nada.** As lutas comuns duram de 1 a 3 turnos do jogador, e o turno gasto preparando era o turno que derrubava o rival: o Deus do Sol com +40 de dano medía o mesmo que com +15. Decisão: os preparos de uma vez por luta (Deus do Sol, Vontade do Rei, Céu Acelerado, Kaioken, Quarta Marcha, Os Mascarados, Sangue de Ymir) **não gastam o turno** (campo `livre` da técnica; "livre" no selo). O piloto só prepara com turno gasto se a luta ainda vai durar (rival com mais que o dobro do melhor golpe).
+- **Duas mecânicas que nem o mínimo segurava:** +1 de dano por turno (Esquentar, Relógio de Bolso) valia +10 pontos; agora o crescimento é fracionário (0,2 e 0,4 por turno; vale a parte inteira). O sangramento passivo (Veneno de Glicínia, Pilares da Chama) somava a cada golpe; agora ele renova, não empilha.
+- **Golpes de muitos acertos** valem muito mais do que parecem, porque todo bônus fixo de dano entra em cada acerto. As Sessenta e Quatro Palmas tinham 8 golpes e mediam +24; com 5, +7. As Nove Cabeças do Dragão ficaram com 6 golpes.
+- **Degraus:** um golpe que passa a matar o rival comum de uma vez muda de valor num salto (a Onda de Ki foi de −1 a +11 entre 31 e 43 de dano; ficou em 40). Por isso o afinador amortece o passo.
+
+Preços e raridades mudados à mão: Explosão Final 20 → 10 de vida; Lua sem Luz −8 → −3 de vida máxima; Banquete −2 → −1; Pedra Filosofal, Selo de Restrição e Respiração Constante −15%/−10% → −5% de vida máxima; Olhos Brancos −6 → −3 de vida. Viraram de outra raridade porque o efeito vale outra coisa: Olho Transplantado (Maldito → Cinza), Espada que Bebe (Maldito → Cinza, sem preço), Imortal (Divino → Maldito) e Clã dos Cães (Cinza → Sangue).
+
+**Ainda fora da régua (medição final):**
+
+| Grupo | Itens | Medem | Por quê |
+|---|---|---|---|
+| Preparos e controle Malditos/Divinos | Céu Acelerado, Vazio Púrpura, Vontade do Rei, Lua sem Luz, Era do Gelo, Deus do Sol, Guerreiro Espectral, Quarta Marcha, Kaioken, Grilhão, Calma Absoluta, Possessão, Prisão de Cristal, Arte Explosiva, Banquete, Carne Maldita, Previsão, Sexto Sentido | −4 a 0 | O número quase não muda o resultado: a run do piloto morre por pico de dano nas lutas comuns, não por falta de dano. Um jogador que guarda esses poderes para o chefe tira mais deles do que o piloto. |
+| Recargas −1 | Respiração Constante, Selo de Restrição | ≈ −1,5 | Recarga −1 vale pouco com lutas curtas; o preço já foi a −5%. |
+| Técnicas Sangue | Muralha de Terra, Névoa Venenosa, Luz Cegante, Olhos do Futuro, Pistola a Jato, Dança dos Ossos, Pele de Diamante, Rajada de Dempsey, Bomba-Relógio, Selo da Força de Cem, Enxame, Gaiola de Fios, Sombra que Prende | +0 a +2 | A técnica entra no 3º espaço, que pesa pouco: até a Investida com 30 de dano mede só +4. |
+
+O que fica em aberto: medir esses grupos com um piloto que guarda poderes para o chefe, ou mudar a régua das técnicas (que hoje compara só o 3º espaço).
 
 ## Poderes impossíveis de balancear
 

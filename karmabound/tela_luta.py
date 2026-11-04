@@ -50,6 +50,14 @@ PAUSA_RIVAL = 0.35
 POS_RIVAL = (480, 282)
 POS_JOGADOR = (150, 626)
 SELO_Y = 500
+TIPOS_VOTO = {"promessa": "Promessa", "revelacao": "Revelação", "selo": "Selo"}
+CONDICAO = {
+    "vencer_em": "vencer em {} turnos seus",
+    "sem_dano": "não ser ferido por {} turnos dele",
+    "so_golpe": "só o Golpe por {} turnos",
+    "sem_defesa": "não defender até o fim",
+    "dano_em": "causar {meta} de dano ({} turnos)",
+}
 SELO_X0 = 372
 SELO_PASSO = 104
 RAIO_SELO = 30
@@ -146,6 +154,7 @@ class LutaScene(IScene):
         cores = {r.id: hex_cor(r.cor) for r in jornada.ctx.raridades}
         fatias = jornada.ctx.tecnicas
         dons = {f.id: f for f in jornada.ctx.rodas["destino"].fatias}
+        dons.update({f.id: f for f in jornada.ctx.rodas["linhagem"].fatias})
         self.kanji = {tid: f.kanji for tid, f in {**fatias, **dons}.items()}
         self.cor_raridade = cores
         self.kanji[jornada.ctx.basico.id] = KANJI_BASICO
@@ -164,17 +173,24 @@ class LutaScene(IScene):
         if self.assinatura is not None and jornada.grimorio is not None:
             jornada.grimorio.ver([self.assinatura])
         self.origens[jornada.ctx.basico.id] = jornada.ctx.combate["golpe_basico"].get("origem", "")
+        self.promessa_vista = ""  # para anunciar quando a promessa se cumpre ou se quebra
 
     # --------------------------------------------------------------- slots
 
     def slots(self) -> list[Tecnica | None]:
-        """Selo 1 = Golpe (ou Hesitar); 2 a 5 = os quatro espaços; 6 = a técnica do Dom."""
-        prontas = self.luta.prontas(self.j.jogador)
+        """Selo 1 = Golpe (ou Hesitar); depois os espaços; e as técnicas do Dom e da Linhagem."""
+        j = self.j.jogador
+        prontas = self.luta.prontas(j)
         primeiro = HESITAR if prontas == [HESITAR] else self.luta.basico
-        tecnicas = list(self.j.jogador.tecnicas)
-        vazios = [None] * (espacos(self.j.estado, self.j.ctx) - len(tecnicas))
-        dom = [self.j.jogador.tecnica_dom] if self.j.jogador.tecnica_dom else []
-        return [primeiro] + tecnicas + vazios + dom
+        tecnicas = list(j.tecnicas)
+        vazios = [None] * max(0, espacos(self.j.estado, self.j.ctx) - len(tecnicas))
+        extras = [t for t in (j.tecnica_dom, j.tecnica_linhagem) if t is not None]
+        return [primeiro] + tecnicas + vazios + extras
+
+    def _pos_selo(self, i: int, n: int) -> float:
+        x0 = SELO_X0 if n <= 6 else 330
+        passo = min(SELO_PASSO, (935 - x0) / max(1, n - 1))
+        return x0 + i * passo
 
     def _disponivel(self, t: Tecnica | None) -> bool:
         return t is not None and t in self.luta.prontas(self.j.jogador)
@@ -189,6 +205,12 @@ class LutaScene(IScene):
             t is self.luta.basico and j.efeitos.proibir_basico
         ):
             return "proibido pelo seu voto"
+        if t.tipo in j.proibir_luta or (t is self.luta.basico and j.sem_basico_luta):
+            return "selado pelo voto de luta"
+        if j.silencio:
+            return f"silenciado ({j.silencio}): só o Golpe"
+        if j.desarme and t.tipo == "defesa":
+            return f"desarmado ({j.desarme}): sem defesa"
         if j.recargas.get(t.id, 0):
             return f"em recarga ({j.recargas[t.id]})"
         if t.consome_tecnica:
@@ -215,7 +237,12 @@ class LutaScene(IScene):
         alvo = rival if ator is j else j
         self.golpe = (ator, self.relogio)
         tecnica = next(
-            (t for t in [*ator.tecnicas, ator.tecnica_dom] if t and t.id == acao.tecnica), None
+            (
+                t
+                for t in [*ator.tecnicas, ator.tecnica_dom, ator.tecnica_linhagem]
+                if t and t.id == acao.tecnica
+            ),
+            None,
         )
         nome_efeito = vfx.efeito_de(acao.tecnica, tecnica.tipo if tecnica else "ataque")
         if acao.copiou:  # o Olho Roubado toca o efeito da técnica roubada, depois do olho
@@ -297,6 +324,7 @@ class LutaScene(IScene):
         if acao.despertou:
             partes.append("o golpe fatal não veio: você despertou")
         self.registro = " · ".join(partes)
+        self._anunciar_promessa()
         if acao.despertou:
             self._celebrar(self.luta.ultimo_despertar)
         if self.luta.vez is rival:
@@ -311,6 +339,40 @@ class LutaScene(IScene):
         self.anim_ate = max(self.anim_ate, self.relogio + DURACAO_DESPERTAR)
         self.tremor[id(self.j.jogador)] = self.relogio
         self.registro = f"覚醒 {fatia.nome}: {fatia.texto}"
+
+    def _anunciar_promessa(self) -> None:
+        resultado = self.luta.promessa_resultado
+        if resultado and resultado != self.promessa_vista:
+            self.promessa_vista = resultado
+            x, y = self._centro(self.j.jogador)
+            if resultado == "cumprida":
+                self.textos.append(
+                    Texto(x, y - 170, "約 promessa cumprida", OURO, self.relogio, 22)
+                )
+                som.tocar("revela_divino")
+            else:
+                self.textos.append(
+                    Texto(x, y - 170, "約 promessa quebrada", SANGUE_VIVO, self.relogio, 22)
+                )
+                som.tocar("derrota")
+            self.registro += f" · a promessa foi {resultado}"
+
+    def _voto(self) -> None:
+        """O voto de luta aberto: Enter (ou V) jura, Backspace volta."""
+        e = self.entrada
+        if e.is_action_pressed("cancelar"):
+            self.modo = "escolher"
+            return
+        if e.is_action_pressed("confirmar") or e.is_action_pressed("voto"):
+            v = self.luta.voto_luta
+            self.luta.jurar_luta()
+            self.modo = "escolher"
+            som.tocar("corrente")
+            x, y = self._centro(self.j.jogador)
+            self.textos.append(Texto(x, y - 150, f"約 {v.nome}", OURO, self.relogio, 24))
+            self.registro = f"約 Você jurou: {v.nome}"
+            self.anim_ate = self.relogio + 0.6
+            self._anunciar_promessa()
 
     def _musica(self) -> None:
         if self.luta.rival.chefe:
@@ -355,6 +417,15 @@ class LutaScene(IScene):
             self.ao_dica("despertar")
         if e.is_action_pressed("despertar") and self.luta.pode_despertar():
             self._celebrar(self.luta.despertar())  # não gasta o turno
+            return
+        if self.luta.pode_jurar_luta():
+            self.ao_dica("voto_luta")
+        if self.modo == "voto":
+            self._voto()
+            return
+        if e.is_action_pressed("voto") and self.luta.pode_jurar_luta():
+            self.modo = "voto"
+            som.tocar("mover")
             return
         slots = self.slots()
         if self.modo == "sacrificio":
@@ -403,11 +474,11 @@ class LutaScene(IScene):
             if not e.is_action_pressed("confirmar"):
                 return
             escolhida = slots[self.cursor]
-        dom = self.j.jogador.tecnica_dom
+        dom, linhagem = self.j.jogador.tecnica_dom, self.j.jogador.tecnica_linhagem
         if (
             escolhida is None
             or escolhida is self.contrato
-            or escolhida in (self.luta.basico, HESITAR, dom)
+            or escolhida in (self.luta.basico, HESITAR, dom, linhagem)
         ):
             self._avisar("escolha outra das suas técnicas")
             return
@@ -479,6 +550,7 @@ class LutaScene(IScene):
         vfx.grao(r, self.relogio)
         self._cabecalho(r)
         self._intencao(r)
+        self._painel_voto(r)
         self._corrente(r)
         self._selos(r)
         self._origem(r)
@@ -494,6 +566,7 @@ class LutaScene(IScene):
                 alpha(t.cor, 255 * (1 - k**2)),
                 "center",
             )
+        self._modal_voto(r)
         self._cena_despertar(r)
         self._entrada_do_rival(r)
         if self.modo == "fim" and self.relogio >= self.anim_ate:
@@ -678,12 +751,25 @@ class LutaScene(IScene):
         self._texto(
             r, x + 130, 64, f"{max(0, rival.vida)} / {rival.vida_max}", 15, alpha(TINTA, 150)
         )
+        sinais = []
         if rival.marca:
+            sinais.append(f"呪{rival.marca}")
+        if rival.sangue_turnos:
+            sinais.append(f"血{rival.sangue}")
+        if rival.bombas:
+            sinais.append(f"爆{min(b[0] for b in rival.bombas)}")
+        if rival.silencio:
+            sinais.append("黙")
+        if rival.desarme:
+            sinais.append("網")
+        if rival.exposto:
+            sinais.append(f"鷹{rival.exposto}")
+        if sinais:
             self._texto(
                 r,
                 x - 130,
                 62,
-                f"呪 {rival.marca}",
+                " ".join(sinais),
                 20,
                 mistura(TINTA, (157, 92, 224, 255), 0.7),
                 "topright",
@@ -715,6 +801,58 @@ class LutaScene(IScene):
             origem = self.origens.get(vista.id, "")
             if origem:
                 self._texto(r, x, y + 62, f"※ {origem}", 12, alpha(TINTA, 100))
+
+    def _painel_voto(self, r: IRenderer) -> None:
+        v = self.luta.voto_luta
+        if v is None:
+            return
+        x, y = 660, 246
+        r.draw_ui_rect(x - 14, y - 8, 276, 64, alpha(LACA, 220))
+        tipo = TIPOS_VOTO[v.tipo]
+        if not self.luta.voto_jurado:
+            cor = OURO if self.luta.pode_jurar_luta() else alpha(TINTA, 120)
+            self._texto(r, x, y - 2, f"約 voto de luta · {tipo}", 14, alpha(TINTA, 130))
+            self._texto(r, x, y + 18, f"{v.kanji} {v.nome}", 19, cor)
+            self._texto(r, x + 200, y + 22, "V jura", 13, alpha(TINTA, 110))
+            return
+        self._texto(r, x, y - 2, f"約 jurado · {tipo}", 14, alpha(OURO, 160))
+        self._texto(r, x, y + 18, f"{v.kanji} {v.nome}", 19, OURO)
+        p = self.luta.promessa
+        if p is not None:
+            meta = CONDICAO[p.condicao].format(p.restante, meta=p.meta)
+            if p.condicao == "dano_em":
+                meta += f" · feito {p.feito}"
+            self._texto(r, x, y + 40, meta, 13, alpha(TINTA, 140))
+        elif self.luta.promessa_resultado:
+            cor = OURO if self.luta.promessa_resultado == "cumprida" else SANGUE_VIVO
+            self._texto(r, x, y + 40, f"promessa {self.luta.promessa_resultado}", 13, cor)
+
+    def _modal_voto(self, r: IRenderer) -> None:
+        if self.modo != "voto":
+            return
+        v = self.luta.voto_luta
+        r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(FUNDO, 170))
+        x0, y0, x1, y1 = 200, 170, 760, 430
+        r.draw_ui_rect(x0, y0, x1 - x0, y1 - y0, alpha(LACA, 245))
+        r.draw_ui_rect(x0, y0, x1 - x0, 4, OURO)
+        self._texto(r, x0 + 30, y0 + 22, v.kanji, 54, OURO)
+        self._texto(r, x0 + 110, y0 + 26, v.nome, 30, TINTA)
+        self._texto(
+            r, x0 + 110, y0 + 64, f"voto de luta · {TIPOS_VOTO[v.tipo]}", 16, alpha(TINTA, 140)
+        )
+        for k, linha in enumerate(quebrar(v.texto, 58)[:5]):
+            self._texto(r, x0 + 30, y0 + 110 + k * 22, linha, 17, TINTA)
+        if v.origem:
+            self._texto(r, x0 + 30, y1 - 52, f"※ {v.origem}", 13, alpha(TINTA, 100))
+        self._texto(
+            r,
+            (x0 + x1) / 2,
+            y1 - 26,
+            "Enter jura (não gasta o turno) · Backspace volta",
+            15,
+            alpha(OURO, 200),
+            "center",
+        )
 
     def _corrente(self, r: IRenderer) -> None:
         carma = self.j.carma
@@ -838,13 +976,29 @@ class LutaScene(IScene):
             estados.append(f"極 instinto {j.instinto}")
         if j.dano_mult > 1:
             estados.append(f"痣 dano ×{j.dano_mult:.1f}".replace(".", ","))
-        self._texto(r, 40, 428, "   ".join(estados), 15, alpha(OURO, 170))
+        if j.sangue_turnos:
+            estados.append(f"血 sangra {j.sangue}")
+        if j.silencio:
+            estados.append(f"黙 silêncio {j.silencio}")
+        if j.desarme:
+            estados.append(f"網 sem defesa {j.desarme}")
+        if j.espelho:
+            estados.append(f"鏡 espelho {j.espelho}")
+        if j.regen_luta:
+            estados.append(f"息 +{j.regen_luta}/turno")
+        if j.bombas:
+            estados.append(f"爆 bomba em {min(b[0] for b in j.bombas)}")
+        if j.absolutos:
+            estados.append(f"界 absoluto {j.absolutos}")
+        linhas = quebrar("   ".join(estados), 70)[:2]
+        for k, linha in enumerate(linhas):
+            self._texto(r, 40, 428 + k * 16, linha, 15, alpha(OURO, 170))
 
     def _selos(self, r: IRenderer) -> None:
         slots = self.slots()
         sac = self.modo == "sacrificio"
         for i, t in enumerate(slots):
-            x = SELO_X0 + i * SELO_PASSO
+            x = self._pos_selo(i, len(slots))
             y = SELO_Y
             if t is None:
                 r.draw_ui_circle(x, y, RAIO_SELO, alpha(FERRO, 120), 1)
@@ -863,6 +1017,7 @@ class LutaScene(IScene):
                     HESITAR,
                     self.contrato,
                     self.j.jogador.tecnica_dom,
+                    self.j.jogador.tecnica_linhagem,
                 )
                 cor = OURO if alvo_ok else alpha(FERRO, 140)
                 pronta = alvo_ok
@@ -887,8 +1042,11 @@ class LutaScene(IScene):
             if espera and not sac:
                 r.draw_ui_circle(x + 22, y - 22, 11, SANGUE_VIVO)
                 self._texto(r, x + 22, y - 23, str(espera), 15, TINTA, "center")
-            if t.tipo in self.j.jogador.efeitos.proibir_tipos or (
-                t is self.luta.basico and self.j.jogador.efeitos.proibir_basico
+            jj = self.j.jogador
+            if (
+                t.tipo in jj.efeitos.proibir_tipos
+                or t.tipo in jj.proibir_luta
+                or (t is self.luta.basico and (jj.efeitos.proibir_basico or jj.sem_basico_luta))
             ):
                 self._texto(r, x - 22, y - 34, "縛", 18, SANGUE_VIVO, "center")
             r.draw_ui_circle(x - 25, y - 25, 10, LACA)
@@ -939,6 +1097,8 @@ class LutaScene(IScene):
             partes.append(f"呪{t.marca}")
         if t.consome_tecnica:
             partes.append("pacto")
+        if t.livre:
+            partes.append("livre")
         return " · ".join(partes) or t.tipo
 
     def _rodape(self, r: IRenderer) -> None:

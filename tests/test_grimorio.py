@@ -33,6 +33,7 @@ def test_testes_nunca_gravam_na_pasta_pessoal():
 def test_a_jornada_registra_os_giros():
     j = Jornada.nova("dificil", seed=2)
     j.grimorio = Grimorio()
+    j.girar_linhagem()
     giro = j.girar_destino()
     assert j.grimorio.viu(giro.fatias[0].id)
 

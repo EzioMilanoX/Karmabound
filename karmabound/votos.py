@@ -32,6 +32,9 @@ class Clausula:
     texto: str
     efeito: Efeitos
     niveis: int = 1  # ganhos simples podem ser comprados várias vezes
+    # O Altar do simulador (`run.altar_rapido`) não mede: usa o valor típico, em lutas
+    # por luta restante (sacrifício da restrição ou benefício do 1º nível do ganho).
+    tipico: float = 0.0
 
     @property
     def exclusivo(self) -> bool:
@@ -93,6 +96,7 @@ def carregar_catalogo(caminho: Path | None = None) -> Catalogo:
                 x["texto"],
                 Efeitos.de_dict(x["efeito"]),
                 x.get("niveis", 1),
+                x.get("tipico", 0.0),
             )
             for x in lista
         }

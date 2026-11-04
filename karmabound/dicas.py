@@ -7,7 +7,8 @@ DICAS: dict[str, tuple[str, str, str]] = {  # id -> (kanji, título, texto)
         "命",
         "A roleta",
         "Você não escolhe o seu poder: gira por ele. Cada giro que não sai Divino enche o "
-        "Carma (業), a corrente no alto da tela. Espaço gira.",
+        "Carma (業), a corrente no alto da tela. A primeira roda é a da Linhagem, o sangue "
+        "de onde você vem; a segunda, a do seu Dom. Espaço gira.",
     ),
     "arco": (
         "章",
@@ -57,6 +58,13 @@ DICAS: dict[str, tuple[str, str, str]] = {  # id -> (kanji, título, texto)
         "O Altar dos Votos",
         "Escolha restrições: o Altar mede quanto cada uma tira de você e transforma o "
         "sacrifício em força. Depois compre os ganhos, às cegas. O que sobrar fica guardado "
-        "para o próximo voto. Um voto pode ser quebrado pela pausa, com punição.",
+        "para o próximo voto. Um voto pode ser quebrado pela pausa, com punição. O Altar "
+        "abre ao fim de cada capítulo.",
+    ),
+    "voto_luta": (
+        "約",
+        "O voto de luta",
+        "Toda luta oferece um voto rápido: uma Promessa, uma Revelação ou um Selo. Aperte V "
+        "para ver e jurar; não gasta o turno. Promessa cumprida dá prêmio, quebrada cobra.",
     ),
 }

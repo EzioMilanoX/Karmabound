@@ -260,7 +260,14 @@ def test_toda_habilidade_tem_a_sua_origem(ctx):
 
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
-    assert contagem == {"destino": 14, "tecnicas": 20, "arco": 10, "reliquias": 10, "despertar": 12}
+    assert contagem == {
+        "linhagem": 30,
+        "destino": 49,
+        "tecnicas": 109,
+        "arco": 10,
+        "reliquias": 35,
+        "despertar": 42,
+    }
 
 
 def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
@@ -314,6 +321,7 @@ def test_toda_tecnica_tem_efeito_proprio_e_todo_arco_uma_arena(ctx):
 
     tecnicas = [f.id for f in ctx.rodas["tecnicas"].fatias if f.combate]
     tecnicas += [f.id for f in ctx.rodas["destino"].fatias if f.tecnica]
+    tecnicas += [f.id for f in ctx.rodas["linhagem"].fatias if f.tecnica]
     assert set(tecnicas) <= set(vfx.POR_HABILIDADE), set(tecnicas) - set(vfx.POR_HABILIDADE)
     assert all(n in vfx.EFEITOS for n in vfx.POR_HABILIDADE.values())
     assert {f.id for f in ctx.rodas["despertar"].fatias} == set(vfx.AURAS)

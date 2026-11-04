@@ -34,6 +34,7 @@ from karmabound.visual import ALTURA, FONTE_PINCEL, LARGURA
 FONTES = Path(__file__).resolve().parent.parent / "assets" / "fonts"
 
 TITULOS_RODA = {
+    "linhagem": "Seu sangue",
     "destino": "Seu destino",
     "arco": "O arco do capítulo",
     "tecnicas": "Uma técnica nova",
@@ -175,7 +176,9 @@ class Fluxo:
         """Mostra a tela da fase atual da Jornada."""
         j = self.jornada
         fase = j.fase
-        if fase == "destino":
+        if fase == "linhagem":
+            self._roleta("linhagem", j.girar_linhagem, self.passo)
+        elif fase == "destino":
             self._roleta("destino", j.girar_destino, self.passo)
         elif fase == "arco":
             self._roleta("arco", j.girar_arco, self.passo)
@@ -200,6 +203,7 @@ class Fluxo:
             return
         salvar.salvar(j)
         dica = {
+            "linhagem": "roleta",
             "destino": "roleta",
             "arco": "arco",
             "luta": "luta",

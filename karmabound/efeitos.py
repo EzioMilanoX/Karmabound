@@ -54,6 +54,23 @@ class Efeitos:
     dano_tecnicas_mult: float = 1.0  # técnicas, não o Golpe (Lâmina Adormecida)
     espacos_extra: int = 0  # espaços de técnica a mais (Fruta Proibida)
     eclipse: int = 0  # Despertares sem Carma na run (Ovo do Eclipse)
+    # Expansão (Linhagens, Dons e Relíquias novos)
+    drenar: float = 0.0  # cura esta fração de todo dano que você causa
+    executar: float = 0.0  # +50% de dano contra quem está abaixo desta fração da vida
+    sangrar: int = 0  # todo ataque que fere faz o alvo sangrar isto por 3 turnos dele
+    recarga_menos: int = 0  # recargas das técnicas −N (mínimo 1; as de uma vez por luta não)
+    primeiro_golpe: float = 0.0  # o primeiro ataque de cada luta causa +esta fração
+    ultimo_suspiro: int = 0  # +dano enquanto você está abaixo de 30% da vida
+    vida_cheia: int = 0  # +dano enquanto a sua vida está cheia
+    dano_marcado: float = 0.0  # +esta fração contra quem tem Marca ou sangra
+    bloqueio_inicio: int = 0  # começa cada luta com este bloqueio
+    sutileza: int = 0  # +Sutileza em todos os seus golpes (mais difíceis de perceber)
+    basico_perfura: bool = False  # o Golpe atravessa bloqueio
+    crescer: float = 0.0  # +dano a cada turno seu na luta (acumula; vale a parte inteira)
+    dano_mult: float = 1.0  # todo o seu dano
+    dano_recebido_mult: float = 1.0  # todo dano que você sofre
+    chance_reliquia: float = 0.0  # chance a mais de girar uma Relíquia depois da luta
+    sem_despertar: bool = False  # voto: o Despertar fica selado
 
     @classmethod
     def de_dict(cls, d: dict) -> Efeitos:
@@ -117,5 +134,21 @@ def somar(lista: list[Efeitos]) -> Efeitos:
             dano_tecnicas_mult=total.dano_tecnicas_mult * e.dano_tecnicas_mult,
             espacos_extra=total.espacos_extra + e.espacos_extra,
             eclipse=total.eclipse + e.eclipse,
+            drenar=total.drenar + e.drenar,
+            executar=max(total.executar, e.executar),
+            sangrar=total.sangrar + e.sangrar,
+            recarga_menos=total.recarga_menos + e.recarga_menos,
+            primeiro_golpe=total.primeiro_golpe + e.primeiro_golpe,
+            ultimo_suspiro=total.ultimo_suspiro + e.ultimo_suspiro,
+            vida_cheia=total.vida_cheia + e.vida_cheia,
+            dano_marcado=total.dano_marcado + e.dano_marcado,
+            bloqueio_inicio=total.bloqueio_inicio + e.bloqueio_inicio,
+            sutileza=total.sutileza + e.sutileza,
+            basico_perfura=total.basico_perfura or e.basico_perfura,
+            crescer=total.crescer + e.crescer,
+            dano_mult=total.dano_mult * e.dano_mult,
+            dano_recebido_mult=total.dano_recebido_mult * e.dano_recebido_mult,
+            chance_reliquia=total.chance_reliquia + e.chance_reliquia,
+            sem_despertar=total.sem_despertar or e.sem_despertar,
         )
     return total

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -29,12 +30,13 @@ class Fatia:
     tags: tuple[str, ...] = ()
     peso: float = 1.0
     combate: dict | None = field(default=None, hash=False, compare=False)  # só técnicas
-    evento: str = ""  # ex.: "altar" (o Juramento abre o Altar dos Votos)
+    evento: str = ""  # ex.: "altar" (abre o Altar dos Votos; hoje ele abre entre capítulos)
     origem: str = ""  # a homenagem: "técnica · obra"
     efeito: dict | None = field(default=None, hash=False, compare=False)  # Dons, Relíquias
     tecnica: dict | None = field(default=None, hash=False, compare=False)  # técnica de Dom
     regra: dict | None = field(default=None, hash=False, compare=False)  # Arcos
     despertar: dict | None = field(default=None, hash=False, compare=False)  # Roda do Despertar
+    inicial: str = ""  # Linhagem: técnica (da roda de Técnicas) que já começa num espaço
 
 
 @dataclass(frozen=True)
@@ -66,12 +68,61 @@ def carregar_chefes(caminho: Path | None = None) -> tuple[Fatia, ...]:
     return tuple(Fatia(**f) for f in bruto["tecnicas"])
 
 
+_MARCADOR = re.compile(r"\{(\w+)(%|\+%|-%)?\}")
+
+
+def _numero(v: float) -> str:
+    return f"{v:g}".replace(".", ",")
+
+
+def preencher(texto: str, valores: dict) -> str:
+    """Troca os marcadores do texto pelos números dos dados, para o texto nunca mentir.
+
+    `{campo}` o número; `{campo%}` a fração em % (0,08 → 8%); `{campo+%}` o multiplicador
+    como aumento (1,25 → +25%); `{campo-%}` o multiplicador como redução (0,92 → 8%).
+    """
+
+    def troca(m: re.Match) -> str:
+        campo, forma = m.group(1), m.group(2)
+        if campo not in valores:
+            raise ValueError(f"texto com marcador desconhecido: {{{campo}}} em {texto!r}")
+        v = valores[campo]
+        if forma == "%":
+            return f"{round(v * 100)}%"
+        if forma == "+%":
+            return f"{round((v - 1) * 100):+d}%".replace("-", "−")
+        if forma == "-%":
+            return f"{round((1 - v) * 100)}%"
+        return _numero(v)
+
+    return _MARCADOR.sub(troca, texto)
+
+
+def _valores(f: dict) -> dict:
+    from karmabound.combate import Tecnica  # sem ciclo: só na carga
+
+    padrao = {k: v.default for k, v in Tecnica.__dataclass_fields__.items()}
+    valores = dict(padrao)
+    for chave in ("combate", "tecnica", "efeito", "despertar", "regra"):
+        valores.update(f.get(chave) or {})
+    return valores
+
+
 def carregar_rodas(raridades: list[Raridade], caminho: Path | None = None) -> dict[str, Roda]:
     bruto = json.loads((caminho or DADOS / "rodas.json").read_text(encoding="utf-8"))
     ids_raridade = {r.id for r in raridades}
     rodas: dict[str, Roda] = {}
     for r in bruto["rodas"]:
-        fatias = tuple(Fatia(**{**f, "tags": tuple(f.get("tags", ()))}) for f in r["fatias"])
+        fatias = tuple(
+            Fatia(
+                **{
+                    **f,
+                    "tags": tuple(f.get("tags", ())),
+                    "texto": preencher(f.get("texto", ""), _valores(f)),
+                }
+            )
+            for f in r["fatias"]
+        )
         roda = Roda(
             r["id"],
             r["nome"],

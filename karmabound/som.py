@@ -49,6 +49,11 @@ SOM_DO_EFEITO = {
     "tempo": "tempo",
     "correntes": "corrente",
     "cura": "cura",
+    "fogo": "critico",
+    "gelo": "corte_agudo",
+    "veneno": "maldita",
+    "vento": "corte",
+    "explosao": "critico",
 }
 
 

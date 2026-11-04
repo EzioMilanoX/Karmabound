@@ -16,6 +16,12 @@
   "tecnica_4": "KEY_4",
   "tecnica_5": "KEY_5",
   "tecnica_6": "KEY_6",
+  "tecnica_7": "KEY_7",
+  "tecnica_8": "KEY_8",
+  "voto": [
+    "KEY_V",
+    "PAD_RB"
+  ],
   "esquerda": [
     "KEY_LEFT",
     "KEY_A",

@@ -10,7 +10,9 @@ def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
     fases = []
     for _ in range(max_passos):
         fases.append(j.fase)
-        if j.fase == "destino":
+        if j.fase == "linhagem":
+            j.girar_linhagem()
+        elif j.fase == "destino":
             j.girar_destino()
         elif j.fase == "arco":
             j.girar_arco()
@@ -40,7 +42,7 @@ def test_jornada_termina_em_vitoria_ou_derrota(seed):
     j = Jornada.nova("acessivel", seed=seed)
     fases = jogar_ate_o_fim(j)
     assert j.fase in ("vitoria", "derrota")
-    assert fases[0] == "destino" and fases[1] == "arco"
+    assert fases[:3] == ["linhagem", "destino", "arco"]
     if j.fase == "vitoria":
         # a Invasão pode acrescentar lutas a um capítulo: a run tem 12 ou mais
         assert j.estado.lutas_vencidas >= j.ctx.lutas
@@ -51,13 +53,16 @@ def test_acao_fora_de_fase_e_recusada():
     j = Jornada.nova(seed=1)
     with pytest.raises(RuntimeError):
         j.girar_tecnica()
+    j.girar_linhagem()
     j.girar_destino()
     with pytest.raises(RuntimeError):
+        j.girar_linhagem()
         j.girar_destino()
 
 
 def test_espacos_cheios_pedem_substituicao():
     j = Jornada.nova(seed=2)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     while len(j.jogador.tecnicas) < j.ctx.combate["espacos"]:
@@ -73,27 +78,27 @@ def test_espacos_cheios_pedem_substituicao():
     assert j.fase in ("reliquia", "luta", "arco")
 
 
-def test_juramento_abre_o_altar_e_jurar_aplica_o_voto():
+def test_fim_de_capitulo_abre_o_altar_e_jurar_aplica_o_voto():
     j = Jornada.nova("acessivel", seed=3)
     j.amostras_altar = 12
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
-    juramento = next(f for f in j.ctx.rodas["tecnicas"].fatias if f.evento == "altar")
-    j.fase = "tecnica"
-    j.giro = Giro(j.ctx.rodas["tecnicas"], [juramento])
-    j.escolher_tecnica(0)
+    j.estado.altar_pendente = True  # o capítulo acabou
+    j._proxima_luta()
     assert j.fase == "altar"
     pesos = j.pesar_restricoes()
     assert set(pesos) == set(j.ctx.catalogo.restricoes)
     proposta = j.propor_voto(["sem_descanso", "corpo_ofertado"])
     assert proposta is not None and proposta.voto.restricoes
     j.jurar(proposta)
-    assert j.estado.votos.ativos and j.fase in ("reliquia", "luta", "arco")
+    assert j.estado.votos.ativos and j.fase in ("luta", "arco")
 
 
 def test_carma_transbordado_espera_a_luta():
     """O Despertar acontece na luta; o Carma cheio não desperta sozinho num giro."""
     j = Jornada.nova(seed=4)
+    j.girar_linhagem()
     j.girar_destino()
     j.carma.valor = j.carma.config.maximo
     giro = j.girar_arco()

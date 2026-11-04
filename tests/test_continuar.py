@@ -18,6 +18,7 @@ def _rival(j):
 
 def test_no_meio_da_luta_continuar_recomeca_a_mesma_luta():
     j = Jornada.nova("dificil", seed=7)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     antes = _rival(j)
@@ -30,6 +31,7 @@ def test_no_meio_da_luta_continuar_recomeca_a_mesma_luta():
 
 def test_salva_entre_fases_e_o_resumo_diz_onde():
     j = Jornada.nova("acessivel", seed=3)
+    j.girar_linhagem()
     j.girar_destino()
     salvar.salvar(j)
     assert salvar.carregar().fase == "arco"
@@ -71,7 +73,7 @@ def test_o_titulo_oferece_continuar_e_continuar_retoma(loop):
     assert isinstance(titulo, TituloScene) and titulo.itens[0][0] == "continuar"
     assert titulo.cursor == 0
     f.continuar()
-    assert f.jornada is not None and f.jornada.fase == "destino"
+    assert f.jornada is not None and f.jornada.fase == "linhagem"
 
 
 def test_semente_do_dia_e_a_mesma_para_todos(loop):
@@ -81,6 +83,7 @@ def test_semente_do_dia_e_a_mesma_para_todos(loop):
     f.semente_do_dia()
     b = f.jornada
     assert a.diaria and a.diaria == b.diaria and a.modo == "dificil"
+    assert a.girar_linhagem().fatias[0].id == b.girar_linhagem().fatias[0].id
     assert a.girar_destino().fatias[0].id == b.girar_destino().fatias[0].id
 
 

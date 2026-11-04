@@ -54,7 +54,7 @@ def test_giro_comum_termina_no_selo_sorteado(cena):
     assert cena.estado == "girando"
     esperar(cena, 3)
     assert cena.estado == "resultado"
-    assert cena.roda.fatias[cena.aceso] is cena.giro.fatias[0]
+    assert cena.selos[cena.aceso] is cena.giro.fatias[0]
     assert cena.carma_visual == cena.mesa.carma.valor
 
 
@@ -66,7 +66,7 @@ def test_modo_escolha(cena):
     assert cena.estado == "escolhendo"
     apertar(cena, "escolher_2")
     assert cena.estado == "resultado"
-    assert cena.roda.fatias[cena.aceso] is cena.giro.fatias[1]
+    assert cena.selos[cena.aceso] is cena.giro.fatias[1]
 
 
 def test_despertar_quebra_as_correntes_e_entrega_divino(cena):

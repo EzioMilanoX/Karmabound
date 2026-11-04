@@ -24,7 +24,7 @@ def lutador(tecnicas=(), efeitos=NEUTRO, vida=50, vel=1, perc=0):
 
 
 def test_catalogo_carrega_restricoes_e_ganhos():
-    assert len(R) == 8 and len(G) == 11
+    assert len(R) == 16 and len(G) == 20
     assert {g.categoria for g in G.values()} == {"simples", "especial", "exclusivo"}
     assert G["forca"].niveis == 5 and G["segunda_vida"].niveis == 1
     assert {r.categoria for r in R.values()} == {"simples", "conduta", "revelacao", "risco"}

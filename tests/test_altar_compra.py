@@ -3,19 +3,17 @@
 import pytest
 
 from karmabound.jornada import Jornada
-from karmabound.mesa import Giro
 from karmabound.tela_menus import AltarScene
 
 
 def no_altar(seed=3) -> Jornada:
     j = Jornada.nova("acessivel", seed=seed)
     j.amostras_altar = 10
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
-    juramento = next(f for f in j.ctx.rodas["tecnicas"].fatias if f.evento == "altar")
-    j.fase = "tecnica"
-    j.giro = Giro(j.ctx.rodas["tecnicas"], [juramento])
-    j.escolher_tecnica(0)
+    j.estado.altar_pendente = True  # o capítulo acabou
+    j._proxima_luta()
     assert j.fase == "altar"
     return j
 

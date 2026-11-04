@@ -145,14 +145,15 @@ def simular_com_combate(
     balanceamento: dict | None = None,
     max_turnos: int = 80,
     dificuldade: str | None = None,
-    altar=None,
+    altar="rapido",
     preparar=None,
 ) -> ResultadoCombate:
     """Runs inteiras com lutas de verdade (`run.py`), jogador no piloto automático.
 
     O Despertar ainda não existe: quando o Carma transborda, conta um transbordo e
-    zera, para medir onde os Despertares cairiam. `altar`: o que fazer quando sai o
-    Juramento (padrão: nada; `run.altar_auto` monta votos, mas é lento).
+    zera, para medir onde os Despertares cairiam. `altar`: o Altar entre capítulos
+    (padrão: `run.altar_rapido`, com os valores típicos; `run.altar_auto` mede de
+    verdade, mas é lento; None não jura).
     `preparar(estado, ctx)`: mexe na run logo depois de criada (forçar um Dom, uma Relíquia).
     """
     from karmabound.run import Contexto, Registro, jogar_run, nova_run
@@ -166,6 +167,10 @@ def simular_com_combate(
         chance_reliquia=forma.chance_reliquia_por_luta,
         max_turnos=max_turnos,
     )
+    if altar == "rapido":
+        from karmabound.run import altar_rapido
+
+        altar = altar_rapido
     rng = random.Random(seed)
     res = ResultadoCombate(runs)
     reg = Registro(res.dano_por_luta, res.turnos_por_luta)

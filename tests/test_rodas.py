@@ -23,8 +23,8 @@ def rodas():
     return carregar_rodas(RARIDADES)
 
 
-def test_carrega_as_cinco_rodas(rodas):
-    assert set(rodas) == {"destino", "tecnicas", "arco", "reliquias", "despertar"}
+def test_carrega_as_seis_rodas(rodas):
+    assert set(rodas) == {"linhagem", "destino", "tecnicas", "arco", "reliquias", "despertar"}
     assert rodas["despertar"].uniforme and not rodas["tecnicas"].uniforme
 
 

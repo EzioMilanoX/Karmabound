@@ -418,6 +418,90 @@ def _corte_mundo(r, a, b, k, t, forte):
     r.draw_ui_line(x0, y0 + abre / 2, x1, y1 + abre / 2, alpha(BRANCO, 230 * (1 - q)), 2)
 
 
+def _fogo(r, a, b, k, t, forte):
+    """Katon: uma bola de fogo que voa e se abre em labaredas."""
+    p = _lerp(a, b, min(1.0, k * 1.4))
+    cores = ((255, 120, 40, 255), (255, 190, 80, 255), AMARELO)
+    for i in range(3):
+        raio = (34 - i * 9) * (0.6 + 0.4 * _sino(k))
+        r.draw_ui_circle(p[0], p[1], raio, alpha(cores[i], 200 * (1 - k * 0.6)))
+    if k > 0.6:
+        abre = (k - 0.6) / 0.4
+        for i in range(12):
+            ang = -math.pi / 2 + (i - 6) * 0.22
+            alto = 40 + 50 * abre * (0.6 + 0.4 * math.sin(t * 11 + i))
+            r.draw_ui_line(
+                b[0] + (i - 6) * 8,
+                b[1] + 30,
+                b[0] + math.cos(ang) * 30,
+                b[1] - alto,
+                alpha((255, 140, 40, 255), 190 * (1 - abre)),
+                4,
+            )
+
+
+def _gelo(r, a, b, k, t, forte):
+    """Hyorinmaru: cristais de gelo que crescem em volta do alvo."""
+    cresce = min(1.0, k * 1.8)
+    for i in range(8):
+        ang = i * 2 * math.pi / 8 + 0.2
+        comp = 30 + 40 * cresce * (0.7 + 0.3 * math.sin(i * 2.3))
+        base = (b[0] + math.cos(ang) * 10, b[1] + math.sin(ang) * 10)
+        ponta = (b[0] + math.cos(ang) * comp, b[1] + math.sin(ang) * comp)
+        lado = (math.cos(ang + math.pi / 2) * 7, math.sin(ang + math.pi / 2) * 7)
+        r.draw_ui_polygon(
+            [(base[0] + lado[0], base[1] + lado[1]), ponta, (base[0] - lado[0], base[1] - lado[1])],
+            alpha((190, 230, 255, 255), 210 * (1 - k * 0.5)),
+        )
+    r.draw_ui_circle(b[0], b[1], 50 * cresce, alpha(BRANCO, 90 * (1 - k)), 2)
+
+
+def _veneno(r, a, b, k, t, forte):
+    """Kikaichu: gotas verdes que caem e borbulham no alvo."""
+    for i in range(10):
+        fase = (k * 1.6 + i * 0.13) % 1.0
+        x = b[0] + (i - 5) * 11 + math.sin(t * 5 + i) * 4
+        y = b[1] - 60 + 90 * fase
+        r.draw_ui_circle(x, y, 4 + 3 * math.sin(i), alpha((120, 200, 90, 255), 220 * (1 - k)))
+    r.draw_ui_circle(b[0], b[1] + 30, 30 * _sino(k), alpha((90, 160, 60, 255), 120 * (1 - k)), 3)
+
+
+def _vento(r, a, b, k, t, forte):
+    """Kamaitachi: arcos de vento cortante que atravessam o alvo."""
+    for i in range(4):
+        prog = max(0.0, min(1.0, k * 1.6 - i * 0.15))
+        if prog <= 0:
+            continue
+        c = _lerp(a, b, prog)
+        ini = math.atan2(b[1] - a[1], b[0] - a[0]) - 1.1 + i * 0.2
+        cor = alpha(BRANCO, 200 * (1 - prog * 0.6))
+        r.draw_ui_arc(c[0], c[1], 40 + i * 10, ini, ini + 2.2, cor, 3)
+
+
+def _explosao(r, a, b, k, t, forte):
+    """Kibaku Fuda: o pavio corre e a tinta explode."""
+    if k < 0.45:
+        p = _lerp(a, b, k / 0.45)
+        r.draw_ui_line(a[0], a[1], p[0], p[1], alpha(SEPIA, 180), 2)
+        r.draw_ui_circle(p[0], p[1], 5, AMARELO)
+        return
+    abre = (k - 0.45) / 0.55
+    cores = ((255, 230, 150, 255), (255, 140, 40, 255), PRETO)
+    for i, cor in enumerate(cores):
+        raio = (30 + 80 * abre) * (1 - i * 0.25)
+        r.draw_ui_circle(b[0], b[1], raio, alpha(cor, 200 * (1 - abre)), 0 if i < 2 else 3)
+    for i in range(14):
+        ang = i * 2 * math.pi / 14
+        r.draw_ui_line(
+            b[0] + math.cos(ang) * 30 * abre,
+            b[1] + math.sin(ang) * 30 * abre,
+            b[0] + math.cos(ang) * 110 * abre,
+            b[1] + math.sin(ang) * 110 * abre,
+            alpha(TINTA, 200 * (1 - abre)),
+            3,
+        )
+
+
 def _hesitar(r, a, b, k, t, forte):
     """Sem efeito: o turno passa."""
 
@@ -453,6 +537,11 @@ EFEITOS: dict[str, Efeito] = {
     "ilusao": Efeito(_ilusao, 1.2),
     "corte_mundo": Efeito(_corte_mundo, 1.3),
     "nada": Efeito(_hesitar, 0.4),
+    "fogo": Efeito(_fogo, 0.8),
+    "gelo": Efeito(_gelo, 0.8),
+    "veneno": Efeito(_veneno, 0.8),
+    "vento": Efeito(_vento, 0.7),
+    "explosao": Efeito(_explosao, 1.0),
 }
 
 POR_HABILIDADE = {
@@ -480,6 +569,106 @@ POR_HABILIDADE = {
     "esfera_dos_mil": "esfera",
     "lua_ilusoria": "ilusao",
     "corte_do_mundo": "corte_mundo",
+    # expansão
+    "bola_de_fogo": "fogo",
+    "rugido_do_dragao": "fogo",
+    "chamas_negras": "fogo",
+    "punho_de_magma": "fogo",
+    "kaioken": "fogo",
+    "grito_de_guerra": "repulsao",
+    "onda_solar": "fogo",
+    "quarta_marcha": "fogo",
+    "deus_do_sol": "fogo",
+    "lanca_de_gelo": "gelo",
+    "era_do_gelo": "gelo",
+    "prisao_de_cristal": "gelo",
+    "agulhas_de_veneno": "veneno",
+    "enxame": "veneno",
+    "nevoa_venenosa": "veneno",
+    "golpe_de_vento": "vento",
+    "ferida_do_vento": "vento",
+    "chute_do_furacao": "vento",
+    "folha_cortante": "vento",
+    "corte_rapido": "vento",
+    "selo_explosivo": "explosao",
+    "bomba_relogio": "explosao",
+    "arte_explosiva": "explosao",
+    "explosao_final": "explosao",
+    "chifrada": "punho",
+    "chuva_de_chutes": "punho",
+    "rasteira": "punho",
+    "punho_que_cresce": "punho",
+    "punho_armado": "punho",
+    "pistola_a_jato": "punho",
+    "rajada_de_dempsey": "punho",
+    "bazuca": "punho",
+    "palma_suave": "punho",
+    "ultimo_corte": "corte_x",
+    "enma": "corte_x",
+    "danca_da_lua_branca": "corte_x",
+    "lua_cruzada": "corte_x",
+    "lamina_que_ecoa": "corte_x",
+    "nove_cabecas": "corte_x",
+    "garra_do_tigre": "corte_x",
+    "fio_de_aco": "corte_x",
+    "corpo_de_ferro": "guarda",
+    "parede_dagua": "guarda",
+    "muralha_de_terra": "guarda",
+    "pele_de_diamante": "guarda",
+    "calmaria": "guarda",
+    "espelho_sagrado": "guarda",
+    "estrela_no_ombro": "guarda",
+    "danca_dos_ossos": "rotacao",
+    "presa_sobre_presa": "rotacao",
+    "respiracao_total": "cura",
+    "byakugo": "cura",
+    "carne_maldita": "cura",
+    "pilula_de_soldado": "cura",
+    "olhar_de_nen": "olho",
+    "intencao_assassina": "olho",
+    "previsao": "olho",
+    "olhos_do_futuro": "olho",
+    "sexto_sentido": "olho",
+    "raio_branco": "trovao",
+    "mil_passaros": "trovao",
+    "seis_trovoes": "trovao",
+    "passo_relampago": "trovao",
+    "tiro_de_dedo": "presa",
+    "disparo_certeiro": "presa",
+    "mira_do_falcao": "presa",
+    "onda_de_ki": "espiral",
+    "shuriken_espiral": "espiral",
+    "dragao_dagua": "espiral",
+    "vazio_purpura": "esfera",
+    "lua_sem_luz": "corte_mundo",
+    "sombra_que_prende": "correntes",
+    "gaiola_de_fios": "correntes",
+    "grilhao": "correntes",
+    "fio_invisivel": "correntes",
+    "calma_absoluta": "ilusao",
+    "possessao": "ilusao",
+    "bomba_de_fumaca": "ilusao",
+    "luz_cegante": "clarao_negro",
+    "golpe_de_misericordia": "clarao_negro",
+    "vontade_do_rei": "repulsao",
+    "pressao_gravitacional": "repulsao",
+    "mao_que_apaga": "repulsao",
+    "dente_de_tubarao": "sangue",
+    "mordida": "sangue",
+    "chuva_de_sangue": "sangue",
+    "espinhos_da_rosa": "sangue",
+    "banquete": "demonio",
+    "mascarados": "demonio",
+    "sangue_de_ymir": "demonio",
+    "lotus_primaria": "investida",
+    "martelo_de_cinco_toneladas": "investida",
+    "portao_da_morte": "investida",
+    "marionetes": "clones",
+    "sessenta_e_quatro_palmas": "clones",
+    "substituicao": "clones",
+    "guerreiro_espectral": "dominio",
+    "ceu_acelerado": "tempo",
+    "fuga_dimensional": "tempo",
     # técnicas-assinatura dos chefes
     "mil_laminas": "corte_x",
     "guerreiro_esqueleto": "rotacao",
@@ -524,6 +713,36 @@ AURAS = {  # id do Despertar -> (cor, estilo)
     "vazio_infinito": ((200, 225, 255, 255), "aneis"),
     "dragao_negro": ((120, 60, 200, 255), "pressao"),
     "retorno_pela_morte": ((160, 120, 200, 255), "correntes"),
+    "sangue_explosivo": (SANGUE_VIVO, "chamas"),
+    "santuario_malevolo": (SANGUE_VIVO, "pressao"),
+    "vontade_herdada": (OURO, "brilho"),
+    "izanami": (ROXO, "aneis"),
+    "soco_serio": (AMARELO, "pressao"),
+    "troca_de_corpos": (ROXO, "correntes"),
+    "reflexo_vetorial": (BRANCO, "aneis"),
+    "mordida_do_po": ((255, 140, 180, 255), "espinhos"),
+    "mil_maos": (OURO, "asas"),
+    "noite_sem_fim": (SANGUE_VIVO, "asas"),
+    "rajada_ora": ((150, 120, 230, 255), "chamas"),
+    "selo_de_cinco_partes": (ROXO, "correntes"),
+    "zenkai": (AMARELO, "chamas"),
+    "susanoo_completo": (ROXO, "aneis"),
+    "olho_que_preve": (BRANCO, "brilho"),
+    "relampago_do_tigre": (AZUL_CHAKRA, "brilho"),
+    "selo_do_ceu": (PRETO, "marca"),
+    "fenix_negra": (PRETO, "asas"),
+    "dragao_de_trovao": (AZUL_CHAKRA, "pressao"),
+    "uniao": (OURO, "aneis"),
+    "selo_do_ceifador": (BRANCO, "correntes"),
+    "deus_saiyajin": (SANGUE_VIVO, "chamas"),
+    "rei_dos_demonios": (SANGUE_VIVO, "espinhos"),
+    "asas_da_liberdade": (BRANCO, "asas"),
+    "lacos": ((255, 150, 70, 255), "aneis"),
+    "rei_dos_piratas": (OURO, "pressao"),
+    "espada_do_fim": ((255, 120, 40, 255), "chamas"),
+    "tempo_parado": (OURO, "correntes"),
+    "gula_sem_fim": (PRETO, "espinhos"),
+    "despertar_ackerman": (SANGUE_VIVO, "marca"),
 }
 
 

@@ -92,6 +92,7 @@ def test_volume_e_silenciar(monkeypatch):
 
 def _com_voto(seed=2, de_quebra=False):
     j = Jornada.nova("dificil", seed=seed)
+    j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
     cat = j.ctx.catalogo

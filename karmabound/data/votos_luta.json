@@ -1,0 +1,296 @@
+{
+  "_nota": "Votos de luta: um é oferecido por luta (ver karmabound/votos_luta.py).",
+  "votos": [
+    {
+      "id": "tres_turnos",
+      "nome": "Em Três Turnos",
+      "kanji": "三",
+      "tipo": "promessa",
+      "texto": "Prometa derrubar o rival em 3 turnos seus. Agora: +40% de dano. Cumpriu: +20 de Carma. Falhou: perde 30% da vida atual e o Carma zera.",
+      "origem": "A promessa do Rock Lee · Naruto",
+      "agora": {
+        "dano_mult": 1.4
+      },
+      "piloto": "fechar",
+      "condicao": {
+        "vencer_em": 3
+      },
+      "premio": {
+        "carma": 20
+      },
+      "falha": {
+        "perde_vida_frac": 0.3,
+        "zera_carma": true
+      }
+    },
+    {
+      "id": "intocado",
+      "nome": "Intocado",
+      "kanji": "触",
+      "tipo": "promessa",
+      "texto": "Prometa não ser ferido no próximo turno do rival. Agora: seu próximo golpe é absoluto. Cumpriu: +50% de dano até o fim da luta. Falhou: você perde o próximo turno.",
+      "origem": "Nem um arranhão (Saitama) · One Punch Man",
+      "agora": {
+        "absolutos": 1
+      },
+      "piloto": "seguro",
+      "condicao": {
+        "sem_dano": 1
+      },
+      "premio": {
+        "dano_mult": 1.5
+      },
+      "falha": {
+        "hesitar": 1
+      }
+    },
+    {
+      "id": "so_o_punho",
+      "nome": "Só o Punho",
+      "kanji": "素",
+      "tipo": "promessa",
+      "texto": "Prometa usar só o Golpe nos próximos 2 turnos. Agora: +3 de dano. Cumpriu: todas as suas técnicas ficam prontas e +2 de dano. Falhou: perde o próximo turno.",
+      "origem": "Só com os punhos (Garp) · One Piece",
+      "agora": {
+        "dano": 3
+      },
+      "piloto": "inicio",
+      "condicao": {
+        "so_golpe": 2
+      },
+      "premio": {
+        "renovar": true,
+        "dano": 2
+      },
+      "falha": {
+        "hesitar": 1
+      }
+    },
+    {
+      "id": "sem_recuar",
+      "nome": "Sem Recuar",
+      "kanji": "進",
+      "tipo": "promessa",
+      "texto": "Prometa não defender até o fim da luta. Agora: +4 de dano. Cumpriu: cura 20% da vida. Falhou: perde 25% da vida atual.",
+      "origem": "Nunca recuar (Kenpachi) · Bleach",
+      "agora": {
+        "dano": 4
+      },
+      "piloto": "inicio",
+      "condicao": {
+        "sem_defesa": 0
+      },
+      "premio": {
+        "cura_frac": 0.2
+      },
+      "falha": {
+        "perde_vida_frac": 0.25
+      }
+    },
+    {
+      "id": "golpe_decisivo",
+      "nome": "Golpe Decisivo",
+      "kanji": "断",
+      "tipo": "promessa",
+      "texto": "Prometa causar 30 de dano em 2 turnos seus. Agora: +30% de dano. Cumpriu: +15 de Carma. Falhou: o Carma zera.",
+      "origem": "O golpe decisivo (Ichigo) · Bleach",
+      "agora": {
+        "dano_mult": 1.3
+      },
+      "piloto": "inicio",
+      "condicao": {
+        "dano_em": [
+          30,
+          2
+        ]
+      },
+      "premio": {
+        "carma": 15
+      },
+      "falha": {
+        "zera_carma": true
+      }
+    },
+    {
+      "id": "ate_o_fim",
+      "nome": "Até o Fim",
+      "kanji": "尽",
+      "tipo": "promessa",
+      "texto": "Prometa vencer em 5 turnos seus. Agora: cura 20% do dano que causa e +2 de dano. Cumpriu: +3 de vida máxima pelo resto da run. Falhou: −5 de vida máxima pelo resto da run.",
+      "origem": "Até o último suspiro (Rengoku) · Demon Slayer",
+      "agora": {
+        "drenar": 0.2,
+        "dano": 2
+      },
+      "piloto": "chefe",
+      "condicao": {
+        "vencer_em": 5
+      },
+      "premio": {
+        "vida_max_run": 3
+      },
+      "falha": {
+        "vida_max_run": -5
+      }
+    },
+    {
+      "id": "revelar_a_tecnica",
+      "nome": "Revelar a Técnica",
+      "kanji": "明",
+      "tipo": "revelacao",
+      "texto": "Explique sua técnica ao rival: a próxima que você usar causa +80% até o fim da luta. Preço: o rival tem +2 de Percepção contra você nesta luta.",
+      "origem": "Revelação da técnica · Jujutsu Kaisen",
+      "agora": {
+        "revelar": 0.8,
+        "percepcao_rival": 2
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "mostrar_a_ferida",
+      "nome": "Mostrar a Ferida",
+      "kanji": "傷",
+      "tipo": "revelacao",
+      "texto": "Mostre onde dói: até o fim da luta seu dano +35%. Preço: o dano que você sofre +20%.",
+      "origem": "A cicatriz do Zoro · One Piece",
+      "agora": {
+        "dano_mult": 1.35,
+        "recebido_mult": 1.2
+      },
+      "piloto": "vida_alta"
+    },
+    {
+      "id": "nome_verdadeiro",
+      "nome": "Nome Verdadeiro",
+      "kanji": "名",
+      "tipo": "revelacao",
+      "texto": "Diga o nome verdadeiro da sua arma: a próxima técnica que você usar causa +120% até o fim da luta. Preço: o rival tem +4 de Percepção contra você.",
+      "origem": "Bankai: o nome da Zanpakuto · Bleach",
+      "agora": {
+        "revelar": 1.2,
+        "percepcao_rival": 4
+      },
+      "piloto": "chefe"
+    },
+    {
+      "id": "expor_o_coracao",
+      "nome": "Expor o Coração",
+      "kanji": "胸",
+      "tipo": "revelacao",
+      "texto": "Abra a guarda de propósito: seus próximos 2 golpes são absolutos. Preço: o rival tem +2 de Percepção contra você.",
+      "origem": "Abrir a guarda (Ippo) · Hajime no Ippo",
+      "agora": {
+        "absolutos": 2,
+        "percepcao_rival": 2
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "contar_o_plano",
+      "nome": "Contar o Plano",
+      "kanji": "策",
+      "tipo": "revelacao",
+      "texto": "Anuncie o que vai fazer: uma ação a mais agora. Preço: o rival tem +3 de Percepção contra você.",
+      "origem": "O plano dito em voz alta (Shikamaru) · Naruto",
+      "agora": {
+        "acoes_extras": 1,
+        "percepcao_rival": 3
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "mostrar_o_sangue",
+      "nome": "Mostrar o Sangue",
+      "kanji": "証",
+      "tipo": "revelacao",
+      "texto": "Sangre na frente dele: perde 15% da vida atual, e a próxima técnica que você usar causa +100% até o fim da luta.",
+      "origem": "Manipulação de Sangue (Choso) · Jujutsu Kaisen",
+      "agora": {
+        "perde_vida_frac": 0.15,
+        "revelar": 1.0
+      },
+      "piloto": "vida_alta"
+    },
+    {
+      "id": "selar_a_guarda",
+      "nome": "Selar a Guarda",
+      "kanji": "鍵",
+      "tipo": "selo",
+      "texto": "Sele suas defesas até o fim da luta: +4 de dano.",
+      "origem": "Sem guarda (Kenpachi) · Bleach",
+      "agora": {
+        "proibir": [
+          "defesa"
+        ],
+        "dano": 4
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "selar_o_golpe",
+      "nome": "Selar o Golpe",
+      "kanji": "閉",
+      "tipo": "selo",
+      "texto": "Sele o Golpe até o fim da luta: as recargas das suas técnicas caem 1.",
+      "origem": "Restrição do Mahito · Jujutsu Kaisen",
+      "agora": {
+        "sem_basico": true,
+        "recarga_menos": 1
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "selar_os_olhos",
+      "nome": "Selar os Olhos",
+      "kanji": "盲",
+      "tipo": "selo",
+      "texto": "Sele sua Percepção até o fim da luta: seus golpes não podem ser percebidos.",
+      "origem": "Os olhos vendados (Gojo) · Jujutsu Kaisen",
+      "agora": {
+        "sem_percepcao": true,
+        "imperceptivel": true
+      },
+      "piloto": "inicio"
+    },
+    {
+      "id": "selar_a_carne",
+      "nome": "Selar a Carne",
+      "kanji": "削",
+      "tipo": "selo",
+      "texto": "Sele metade da vida atual: seus próximos 2 golpes são absolutos e causam +50% até o fim da luta.",
+      "origem": "O preço da carne (Guts) · Berserk",
+      "agora": {
+        "perde_vida_frac": 0.5,
+        "absolutos": 2,
+        "dano_mult": 1.5
+      },
+      "piloto": "vida_alta"
+    },
+    {
+      "id": "selar_o_despertar",
+      "nome": "Selar o Despertar",
+      "kanji": "抑",
+      "tipo": "selo",
+      "texto": "Sele o Despertar nesta luta: +40% de dano até o fim dela.",
+      "origem": "Selo de Oito Trigramas · Naruto",
+      "agora": {
+        "sem_despertar": true,
+        "dano_mult": 1.4
+      },
+      "piloto": "vida_alta"
+    },
+    {
+      "id": "selar_o_melhor",
+      "nome": "Selar o Melhor",
+      "kanji": "犠",
+      "tipo": "selo",
+      "texto": "Sele a sua técnica mais forte até o fim da luta: todo o resto causa +60%.",
+      "origem": "Voto de restrição (Kurapika) · Hunter x Hunter",
+      "agora": {
+        "selar_melhor": true,
+        "dano_mult": 1.6
+      },
+      "piloto": "inicio"
+    }
+  ]
+}

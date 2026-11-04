@@ -12,6 +12,10 @@ import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAIZ))
+
+from karmabound.rodas import _valores, preencher  # noqa: E402
+
 DADOS = RAIZ / "karmabound" / "data"
 DESTINO = RAIZ / "docs" / "CATALOGO.md"
 
@@ -91,9 +95,10 @@ def gerar() -> str:
             out += ["| | Nome | Raridade | Texto | Origem |", "|---|---|---|---|---|"]
         for f in roda["fatias"]:
             rar = raridades[f["raridade"]]["nome"]
+            texto = preencher(f.get("texto", ""), _valores(f))
             if tecnicas:
                 c = f.get("combate", {})
-                efeito = _efeito(c)
+                efeito = texto or _efeito(c)
                 out.append(
                     f"| {f['kanji']} | {f['nome']} | {rar} | {c.get('tipo', '')} | {efeito} | "
                     f"{c.get('recarga', 0)} | {c.get('sutileza', 0)} | "
@@ -101,15 +106,15 @@ def gerar() -> str:
                 )
             else:
                 out.append(
-                    f"| {f['kanji']} | {f['nome']} | {rar} | {f.get('texto', '')} | "
-                    f"{f.get('origem', '')} |"
+                    f"| {f['kanji']} | {f['nome']} | {rar} | {texto} | {f.get('origem', '')} |"
                 )
 
     b = votos["bonus"]
     out += [
         "",
-        "## 誓 Votos vinculativos (Juramento)",
+        "## 誓 Votos vinculativos (o Altar)",
         "",
+        "O Altar dos Votos abre no fim de cada capítulo, fora da luta (dá para recusar). "
         f"Até {votos['limite_ativos']} votos ativos; quebrar um voto libera o espaço. "
         "O valor de cada restrição é medido contra o seu build na hora, por simulação.",
         "",
@@ -149,6 +154,22 @@ def gerar() -> str:
         out.append(
             f"| {x['kanji']} | {x['nome']} | {x['categoria']} | {x['texto']} | "
             f"{x.get('niveis', 1)} |"
+        )
+
+    luta = _ler("votos_luta.json")["votos"]
+    tipos = {"promessa": "Promessa", "revelacao": "Revelação", "selo": "Selo"}
+    out += [
+        "",
+        "## 約 Votos de luta",
+        "",
+        "Toda luta oferece um, sorteado; jurar não gasta o turno (uma vez por luta).",
+        "",
+        "| | Nome | Tipo | Texto | Origem |",
+        "|---|---|---|---|---|",
+    ]
+    for x in luta:
+        out.append(
+            f"| {x['kanji']} | {x['nome']} | {tipos[x['tipo']]} | {x['texto']} | {x['origem']} |"
         )
 
     c = bal["combate"]

@@ -103,7 +103,7 @@
   <nav>
     <ul class="indice">
       <li><a href="#azar">O azar como suspense</a></li>
-      <li><a href="#rodas">Quatro rodas, um destino</a></li>
+      <li><a href="#rodas">Seis rodas, um destino</a></li>
       <li><a href="#tinta">As raridades são tinta</a></li>
       <li><a href="#carma">O Carma é uma corrente</a></li>
       <li><a href="#despertar">A roda se quebra</a></li>
@@ -115,6 +115,7 @@
       <li><a href="#homenagens">Todo poder tem uma origem</a></li>
       <li><a href="#modos">Quatro modos, um piloto</a></li>
       <li><a href="#votos">Votos que pesam quem você é</a></li>
+      <li><a href="#voto-luta">O voto da luta</a></li>
       <li><a href="#dados">Tudo que é número é dado</a></li>
       <li><a href="#medir">Medir em vez de adivinhar</a></li>
       <li><a href="#falta">O que ainda não existe</a></li>
@@ -136,18 +137,22 @@
   <li><strong>A roleta é o jogo.</strong> As decisões importantes acontecem entre girar e escolher; a luta é onde você descobre se escolheu bem.</li>
 </ul>
 
-<h2 id="rodas"><span class="kanji">命</span>Quatro rodas, um destino</h2>
+<h2 id="rodas"><span class="kanji">命</span>Seis rodas, um destino</h2>
 <p>Toda decisão aleatória passa pela mesma roleta. Cada propósito é só uma roda diferente, definida em dados:</p>
 <table>
   <thead><tr><th></th><th>Roda</th><th>Decide</th><th>Modo</th></tr></thead>
   <tbody>
-    <tr><td class="k">命</td><td>Destino</td><td>O Dom inato e a origem do personagem</td><td>gira e aceita</td></tr>
-    <tr><td class="k">技</td><td>Técnicas</td><td>Golpes, defesas e técnicas malditas</td><td>gira 3, escolhe 1</td></tr>
+    <tr><td class="k">血</td><td>Linhagem</td><td>De que sangue você vem: um passivo, às vezes uma técnica de família, às vezes uma técnica que já começa num espaço (30)</td><td>gira e aceita</td></tr>
+    <tr><td class="k">命</td><td>Destino</td><td>O Dom inato (49)</td><td>gira e aceita</td></tr>
+    <tr><td class="k">技</td><td>Técnicas</td><td>Golpes, defesas e técnicas malditas (109)</td><td>gira 3, escolhe 1</td></tr>
     <tr><td class="k">章</td><td>Arco</td><td>A regra do capítulo</td><td>gira e aceita</td></tr>
-    <tr><td class="k">宝</td><td>Relíquias</td><td>Itens; duplicatas evoluem o que você já tem</td><td>gira e aceita</td></tr>
+    <tr><td class="k">宝</td><td>Relíquias</td><td>Itens; duplicatas evoluem o que você já tem (35)</td><td>gira e aceita</td></tr>
+    <tr><td class="k">覚</td><td>Despertar</td><td>O tipo do Despertar, quando o Carma transborda (42, todos Divinos)</td><td>gira e aceita</td></tr>
   </tbody>
 </table>
-<p>Na tela, cada roda é uma <strong>mandala de selos</strong>: um círculo ritual em que cada fatia é um selo com um kanji. O selo aceso corre pelo círculo, desacelera e para. O resultado já estava decidido antes de a animação começar — o sorteio é feito pela regra, por seed, e a tela só mostra o caminho até ele. Por isso qualquer giro estranho é reproduzível.</p>
+<p>A run começa com dois giros: a <strong>Linhagem</strong> e depois o <strong>Destino</strong>. A Linhagem é de onde você vem (o Clã dos Cães, os Olhos Escarlates, o Sangue de Ymir); o Dom é o que você nasceu sabendo fazer. Os dois se somam.</p>
+<figure><img src="telas/run_02a_linhagem.png" alt="A roda da Linhagem com vinte selos; saiu o Dojo de Espadachins, Cinza, que começa com o Corte Rápido"><figcaption>A Linhagem, o primeiro giro da run.</figcaption></figure>
+<p>Na tela, cada roda é uma <strong>mandala de selos</strong>: um círculo ritual em que cada fatia é um selo com um kanji. Uma roda grande mostra no máximo vinte selos de cada vez, sempre com os sorteados entre eles. O selo aceso corre pelo círculo, desacelera e para. O resultado já estava decidido antes de a animação começar — o sorteio é feito pela regra, por seed, e a tela só mostra o caminho até ele. Por isso qualquer giro estranho é reproduzível.</p>
 <div class="par">
   <figure><img src="telas/01_parado.png" alt="A roda do Destino parada, com catorze selos e o kanji 命 no centro"><figcaption>A roda do Destino, parada.</figcaption></figure>
   <figure><img src="telas/04_escolhendo.png" alt="A roda de Técnicas com três selos sorteados, numerados 1, 2 e 3"><figcaption>Técnicas: três selos sorteados, numerados na mandala; você escolhe um.</figcaption></figure>
@@ -179,7 +184,7 @@
 </div>
 
 <h2 id="despertar"><span class="kanji">覚</span>A roda se quebra</h2>
-<p>O Despertar acontece <strong>na luta</strong>. Com o Carma cheio, você desperta quando quiser — sem gastar o turno — ou ele dispara sozinho quando um golpe ia te matar, e o golpe não vem. O tipo sai de uma roda própria, a <strong>Roda do Despertar</strong>, com doze: 報 Retribuição (a dor que você levou na luta volta ao rival), 奪 Tomar o Destino (você rouba a melhor técnica dele e trava as outras), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e dois golpes que não ferem), 卍 Liberação Final (o Bankai: suas técnicas sobem um nível na luta), 極 Instinto Puro (o Ultra Instinto: 60% de esquiva, com revide), 仙 Modo Eremita (o Modo Sábio), 痣 Marca do Caçador (+50% de dano, ao preço de vida máxima para sempre), 獣 Fera Interior (o Modo Kurama: todo ataque acerta uma vez a mais), 無 Vazio Infinito (o Infinito: o turno do rival não te fere), 竜 Dragão Negro (40 de dano na hora) e 戻 Retorno pela Morte (a vida do começo da luta, como no Re:Zero). E o giro seguinte, depois da luta, vem Divino garantido.</p>
+<p>O Despertar acontece <strong>na luta</strong>. Com o Carma cheio, você desperta quando quiser — sem gastar o turno — ou ele dispara sozinho quando um golpe ia te matar, e o golpe não vem. O tipo sai de uma roda própria, a <strong>Roda do Despertar</strong>, hoje com 42. Os doze primeiros: 報 Retribuição (a dor que você levou na luta volta ao rival), 奪 Tomar o Destino (você rouba a melhor técnica dele e trava as outras), 醒 Forma Desperta (dano dobrado, sem recarga), 鳳 Renascer das Cinzas (cura total e dois golpes que não ferem), 卍 Liberação Final (o Bankai: suas técnicas sobem um nível na luta), 極 Instinto Puro (o Ultra Instinto: 60% de esquiva, com revide), 仙 Modo Eremita (o Modo Sábio), 痣 Marca do Caçador (+50% de dano, ao preço de vida máxima para sempre), 獣 Fera Interior (o Modo Kurama: todo ataque acerta uma vez a mais), 無 Vazio Infinito (o Infinito: o turno do rival não te fere), 竜 Dragão Negro (40 de dano na hora) e 戻 Retorno pela Morte (a vida do começo da luta, como no Re:Zero). Os outros trinta vieram com a expansão e estão no <a href="CATALOGO.md">catálogo</a>. E o giro seguinte, depois da luta, vem Divino garantido.</p>
 <figure><img src="telas/run_03c_despertar.png" alt="Na luta, 覚醒 em dourado e o tipo sorteado, Tomar o Destino, com as correntes douradas em volta do jogador"><figcaption>Um Despertar na luta: saiu Tomar o Destino, e a Investida do rival virou sua.</figcaption></figure>
 <p>A frequência foi decidida antes de qualquer número: <strong>uma ou duas vezes por run</strong>, para ser um momento lembrado e não uma rotina. Com lutas reais simuladas, o jogador desperta cerca de <strong>1,2 vez por run</strong>. Algumas runs terminam sem nenhum Despertar — nem todo mundo recebe seu momento.</p>
 
@@ -191,6 +196,14 @@
   <li><strong>A vida persiste</strong> pela run, com 30% de cura entre lutas. Cada luta desgasta a próxima.</li>
   <li><strong>Velocidade</strong> decide quem começa — e quem começa tenta um <strong>ataque surpresa</strong>: se não for percebido, causa 50% a mais.</li>
   <li><strong>O rival anuncia e cumpre.</strong> Ele decide a próxima ação ao fim do turno dele, antes de você escolher.</li>
+</ul>
+<p>Além de dano, bloqueio e cura, as técnicas mexem com a luta de outros jeitos:</p>
+<ul>
+  <li><strong>Sangrar</strong> e <strong>bomba</strong>: dano que chega depois, por turnos ou de uma vez. <strong>Detonar</strong> cobra na hora todo o sangramento e a Marca que restavam.</li>
+  <li><strong>Silenciar</strong> (o rival só usa o Golpe), <strong>desarmar</strong> (ele não defende), <strong>cegar</strong> (ele não percebe) e <strong>expor</strong> (os próximos golpes nele causam +50%).</li>
+  <li><strong>Drenar</strong> (cura parte do dano), <strong>executar</strong> (dobra contra rival ferido), <strong>acumular</strong> (cresce a cada uso), <strong>combo</strong> (cresce com as técnicas em recarga), <strong>gravidade</strong> (uma fração da vida que o alvo ainda tem) e <strong>desespero</strong> (cresce com a vida que você perdeu).</li>
+  <li><strong>Fera</strong> (todo ataque acerta uma vez a mais), <strong>instinto</strong> (esquiva com revide), <strong>intocável</strong>, <strong>espelho</strong> e <strong>acelerar</strong> (recargas descem).</li>
+  <li>Algumas técnicas de preparo <strong>não gastam o turno</strong>: você usa e ainda age. Sem isso, preparar não valia nada. As lutas comuns duram poucos turnos, e o turno gasto preparando era o turno que derrubava o rival.</li>
 </ul>
 
 <h2 id="percepcao"><span class="kanji">察</span>Perceber é sentir o perigo</h2>
@@ -223,11 +236,11 @@
 <p>O Julgamento é a escolha mais temática do jogo: a dor acumulada pode virar um golpe agora ou esperar o Despertar. Não dá para ter os dois.</p>
 
 <h2 id="roleta-importa"><span class="kanji">宝</span>Tudo o que sai da roleta vale</h2>
-<p>O <strong>Dom</strong> do Destino muda a run inteira: alguns são passivos (Corpo Resistente, Sangue Fervente, Sombra Leal, Pele de Cinzas; Reflexo Treinado é a única sorte dentro da luta, uma chance de esquiva), outros são uma técnica própria num sexto selo (Olho Roubado, Santuário, Instante Suspenso). As <strong>Relíquias</strong> se acumulam e repetidas se somam. O <strong>Arco</strong> muda a regra do capítulo para os dois lados — a Invasão chega a acrescentar uma luta. E uma técnica que sai de novo vira <strong>fragmento</strong>: dois fragmentos fazem ela evoluir para o nível II.</p>
+<p>A <strong>Linhagem</strong> e o <strong>Dom</strong> mudam a run inteira. O Dom: alguns são passivos (Corpo Resistente, Sangue Fervente, Sombra Leal, Pele de Cinzas; Reflexo Treinado é a única sorte dentro da luta, uma chance de esquiva), outros são uma técnica própria num sexto selo (Olho Roubado, Santuário, Instante Suspenso). As <strong>Relíquias</strong> se acumulam e repetidas se somam. O <strong>Arco</strong> muda a regra do capítulo para os dois lados — a Invasão chega a acrescentar uma luta. E uma técnica que sai de novo vira <strong>fragmento</strong>: dois fragmentos fazem ela evoluir para o nível II.</p>
 <p>Cada item foi medido do mesmo jeito que os poderes, contra uma régua por raridade: Cinza +1 a +3, Sangue +3 a +5, Maldito +5 a +10, Divino +10 a +20. Dois achados vieram da medição, não do papel: o Instante Suspenso gastava o próprio turno e devolvia um (ganho zero) até virar "duas ações depois dele"; e qualquer preço em Carma pesa demais enquanto o Carma cheio garante um Divino — por isso o Instante custa vida.</p>
 
 <h2 id="homenagens"><span class="kanji">源</span>Todo poder tem uma origem</h2>
-<p>Cada uma das 59 habilidades é uma <strong>homenagem com nome próprio</strong>: o jogo não usa o nome do original, mas escreve a origem na carta — <em>※ Rasengan · Naruto</em>. Ela aparece na roleta, sob o selo escolhido na luta, na leitura da intenção do rival e no <strong>Grimório</strong>, que guarda entre runs tudo o que já saiu da roleta.</p>
+<p>Cada uma das 275 habilidades é uma <strong>homenagem com nome próprio</strong>: o jogo não usa o nome do original, mas escreve a origem na carta — <em>※ Rasengan · Naruto</em>. Ela aparece na roleta, sob o selo escolhido na luta, na leitura da intenção do rival e no <strong>Grimório</strong>, que guarda entre runs tudo o que já saiu da roleta.</p>
 <p>A homenagem não é só o nome: a mecânica vem da cena original. A <strong>Espiral Concentrada</strong> (Rasengan) atravessa o bloqueio. O <strong>Clarão Negro</strong> (Kokusen) tem 20% de chance de sair ×2,5, e ninguém controla quando. A <strong>Corrente do Julgamento</strong> (Kurapika) prende a ação que o rival anunciou. A <strong>Esfera dos Mil</strong> (Genki Dama) cresce com toda a dor que você sofreu. O <strong>Corte do Mundo</strong> (Sukuna) atravessa tudo e não pode ser percebido, mas só fica pronto no quarto turno, como o corte que precisou ver a adaptação antes. O <strong>Corpo Perfeito</strong> (Sukuna da Era Heian) dá quatro braços e tira a defesa. E o <strong>Ovo do Eclipse</strong> (Behelit) desperta à beira da morte, mesmo sem Carma — ao preço do seu Dom.</p>
 <div class="par">
   <figure><img src="telas/vitrine/01_montanha_espiral.png" alt="A Espiral Concentrada, uma esfera azul girando, atingindo um rival no Monte Myoboku"><figcaption>A Espiral, no Monte Myoboku.</figcaption></figure>
@@ -250,18 +263,18 @@
 <table>
   <thead><tr><th>Modo</th><th class="num">Vitória do piloto</th><th>Rivais</th><th class="num">Sua vida</th></tr></thead>
   <tbody>
-    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 4,6 por luta, chefe ×1,2</td><td class="num">80</td></tr>
-    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 4,77 por luta, chefe ×1,2</td><td class="num">76</td></tr>
-    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 4,77 por luta, chefe ×1,25</td><td class="num">70</td></tr>
-    <tr><td>Brutal</td><td class="num">~10%</td><td>12 + 5,9 por luta, chefe ×1,25</td><td class="num">68</td></tr>
+    <tr><td>Acessível</td><td class="num">~45%</td><td>12 + 3,21 por luta, chefe ×1,2</td><td class="num">80</td></tr>
+    <tr><td>Equilibrado</td><td class="num">~36%</td><td>12 + 3,44 por luta, chefe ×1,2</td><td class="num">76</td></tr>
+    <tr><td><strong>Difícil</strong> (padrão)</td><td class="num">~25%</td><td>12 + 3,64 por luta, chefe ×1,25</td><td class="num">70</td></tr>
+    <tr><td>Brutal</td><td class="num">~10%</td><td>12 + 4,44 por luta, chefe ×1,25</td><td class="num">68</td></tr>
   </tbody>
 </table>
 <p>O primeiro rival tem sempre 12 de vida: um modo fácil não deveria significar lutas vazias. O piloto é propositalmente simples — um jogador de verdade, lendo o rival, vence mais.</p>
 
 <h2 id="votos"><span class="kanji">誓</span>Votos que pesam quem você é</h2>
-<p>Tirar o <strong>Juramento</strong> na roleta abre o <strong>Altar dos Votos</strong>. Como nos animes, você escolhe as restrições que se impõe, e quanto mais severo o voto, maior o poder.</p>
+<p>O <strong>Altar dos Votos</strong> abre sozinho <strong>no fim de cada capítulo</strong>, fora da luta: duas vezes por run. Como nos animes, você escolhe as restrições que se impõe, e quanto mais severo o voto, maior o poder. Pode recusar e seguir.</p>
 <h3>Restrições e ganhos</h3>
-<p>Restrições vêm em quatro categorias: <strong>simples</strong> (−25% de vida, sem cura entre lutas), <strong>conduta</strong> (nunca usar defesa, nunca usar o Golpe básico), <strong>revelação</strong> (o rival te lê melhor) e <strong>risco</strong> (lutas com prazo, ou morrer abaixo de 20% da vida). Os pontos compram ganhos: <strong>simples</strong> em até cinco níveis (Força, Vigor, Percepção, Velocidade), <strong>especiais</strong> (Golpe Oculto, Pele de Espinhos, Primeiro Sangue…) e <strong>exclusivos</strong> (Segunda Vida, Carrasco, Sangue Frio).</p>
+<p>São 16 restrições e 20 ganhos. Restrições vêm em quatro categorias: <strong>simples</strong> (−25% de vida, sem cura entre lutas), <strong>conduta</strong> (nunca usar defesa, nunca usar o Golpe básico), <strong>revelação</strong> (o rival te lê melhor) e <strong>risco</strong> (lutas com prazo, ou morrer abaixo de 20% da vida). Os pontos compram ganhos: <strong>simples</strong> em até cinco níveis (Força, Vigor, Percepção, Velocidade), <strong>especiais</strong> (Golpe Oculto, Pele de Espinhos, Primeiro Sangue…) e <strong>exclusivos</strong> (Segunda Vida, Carrasco, Sangue Frio).</p>
 <h3>O valor vem do que você sacrifica</h3>
 <p>Aqui está o que torna o sistema diferente: <strong>o valor de uma restrição não está numa tabela</strong>. O Altar pega a sua run do jeito que ela está — vida, técnicas, Carma — e simula o resto dela centenas de vezes, com e sem a restrição, usando os mesmos sorteios dos dois lados. A diferença em lutas vencidas é o sacrifício. Proibir a defesa vale muito para quem tem ótimas defesas e quase nada para quem não tem nenhuma.</p>
 <p class="formula">pontos = S × (1 + S ÷ 2) × duração × categoria</p>
@@ -270,11 +283,26 @@
   <li><strong>Duração:</strong> só esta luta ×1, até o fim do capítulo ×1,3, o resto da run ×1,75.</li>
   <li><strong>Categoria:</strong> simples ×1, conduta e revelação ×1,15, risco ×1,4.</li>
   <li><strong>Retorno decrescente por restrição:</strong> cada uma credita no máximo 1,5 luta. Uma restrição devastadora sozinha não passa disso; para ir além, é preciso juntar restrições diferentes.</li>
-  <li><strong>Preço crescente:</strong> o segundo nível de um ganho custa o dobro do primeiro, o terceiro o triplo. Um câmbio único escala o preço de tudo — é a alavanca que coloca o Juramento no lugar.</li>
+  <li><strong>Preço crescente:</strong> o segundo nível de um ganho custa o dobro do primeiro, o terceiro o triplo. Um câmbio único escala o preço de tudo.</li>
 </ul>
-<p>Calibrado assim, o Juramento vale cerca de <strong>+13 pontos de vitória</strong> para quem o tira depois do primeiro chefe — o poder mais forte entre os Malditos, de propósito, porque é o que mais exige do jogador.</p>
+<p>Para a pesagem caber na tela, o Altar simula só as próximas quatro lutas e projeta o resto da run; leva pouco mais de um segundo. Até 2026-11-04 o Altar só abria quando a roleta tirava o <strong>Juramento</strong>, que valia cerca de +13 pontos. Ele saiu da roleta: votar virou uma mecânica, não um poder.</p>
 <h3>Quebrar</h3>
 <p>Até três votos ao mesmo tempo. Quebrar um é possível — num momento de desespero — mas você perde os ganhos dele, metade da vida atual e todo o Carma, e precisa jurar um <strong>voto de quebra</strong>, só de restrições. Quebrar o voto de quebra encerra a run.</p>
+<h2 id="voto-luta"><span class="kanji">約</span>O voto da luta</h2>
+<p>Dentro da luta existe um voto menor, de outro tipo. Toda luta oferece <strong>um</strong>, sorteado, e você pode jurá-lo uma vez, quando quiser, sem gastar o turno. São três tipos, seis de cada:</p>
+<table>
+  <thead><tr><th>Tipo</th><th>Como funciona</th><th>Exemplo</th></tr></thead>
+  <tbody>
+    <tr><td>約 Promessa</td><td>Uma condição a cumprir. Dá algo agora; cumprir dá um prêmio, falhar cobra.</td><td><em>Em Três Turnos</em>: +40% de dano agora; vencer em 3 turnos rende +20 de Carma; falhar tira 30% da vida e zera o Carma.</td></tr>
+    <tr><td>明 Revelação</td><td>Você mostra algo ao rival: poder agora, e o rival te lê melhor.</td><td><em>Revelar a Técnica</em>: a próxima técnica causa +80% até o fim da luta; o rival ganha +2 de Percepção.</td></tr>
+    <tr><td>封 Selo</td><td>Você abre mão de uma parte do seu kit até o fim da luta.</td><td><em>Selar a Guarda</em>: sem defesas, +4 de dano.</td></tr>
+  </tbody>
+</table>
+<p>O Altar pesa a run inteira e pede tempo. O voto da luta é uma aposta rápida, lida no calor da hora.</p>
+<div class="par">
+  <figure><img src="telas/run_03_luta.png" alt="A luta, com o painel do voto de luta abaixo da intenção do rival: Promessa, Até o Fim, V jura"><figcaption>O voto que a luta oferece fica ao lado da intenção do rival.</figcaption></figure>
+  <figure><img src="telas/run_03d_voto_de_luta.png" alt="O voto de luta aberto: Até o Fim, uma Promessa, com o que dá agora, o prêmio e a falha"><figcaption>Aberto com V: o que dá agora, o prêmio e o preço da falha.</figcaption></figure>
+</div>
 <div class="nota">O conceito virou um blueprint reutilizável da biblioteca, <strong>GAM-11 O.A.T.H.</strong> (<em>Obligations Amplified Through Hardship</em>), porque serve a qualquer jogo que queira handicaps auto-impostos com recompensa justa.</div>
 
 <h2 id="dados"><span class="kanji">理</span>Tudo que é número é dado</h2>
@@ -290,11 +318,14 @@
 <p>Quase toda decisão de balanceamento deste jogo saiu de uma simulação, e algumas simulações corrigiram decisões anteriores. Dois exemplos:</p>
 <ul>
   <li>A primeira calibração dos modos estava errada porque o piloto equipava uma versão provisória do Juramento que o machucava em toda luta. Quando o Juramento virou o Altar, as vitórias saltaram — e os modos foram recalibrados.</li>
+  <li>Na expansão, o afinador automático subia o dano da Lua sem Luz e ela media cada vez pior. O motivo era o piloto: ele usava o golpe em toda luta fácil e pagava vida máxima para sempre. Corrigido o piloto, o número voltou ao normal.</li>
   <li>A primeira versão dos votos dava pontos demais para gastar com de menos: as restrições custavam mais do que todo o catálogo de ganhos devolvia. Daí vieram os ganhos em níveis, os exclusivos e o teto por restrição.</li>
 </ul>
 <pre><code>pytest                              # regras, tela, votos e calibração, sem janela
 python tools/simular.py --combate   # vitórias, Carma e Percepção por modo
-python tools/medir_juramento.py     # quanto o Juramento vale em pontos de vitória
+python tools/medir_poder.py X       # quanto um item vale em pontos de vitória
+python tools/afinar.py              # mede os itens novos e ajusta o número principal à régua
+python tools/medir_juramento.py     # quanto o Altar vale em pontos de vitória
 python tools/capturar_telas.py      # as imagens deste manual
 python tools/gerar_catalogo.py      # docs/CATALOGO.md a partir dos dados</code></pre>
 

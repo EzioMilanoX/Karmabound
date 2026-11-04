@@ -25,7 +25,12 @@ from karmabound.rodas import (  # noqa: E402
     carregar_raridades,
     carregar_rodas,
 )
-from karmabound.run import aplicar_dom, atualizar_efeitos, receber_reliquia  # noqa: E402
+from karmabound.run import (  # noqa: E402
+    aplicar_dom,
+    aplicar_linhagem,
+    atualizar_efeitos,
+    receber_reliquia,
+)
 from karmabound.simulacao import simular_com_combate  # noqa: E402
 
 SEEDS = (1, 2, 3)
@@ -37,7 +42,13 @@ def _rodas():
 
 def tipo_do_item(item: str) -> str:
     rodas = _rodas()
-    for roda, tipo in (("tecnicas", "tecnica"), ("destino", "dom"), ("reliquias", "reliquia")):
+    pares = (
+        ("tecnicas", "tecnica"),
+        ("destino", "dom"),
+        ("reliquias", "reliquia"),
+        ("linhagem", "linhagem"),
+    )
+    for roda, tipo in pares:
         if any(f.id == item for f in rodas[roda].fatias):
             return tipo
     raise SystemExit(f"item desconhecido: {item}")
@@ -47,6 +58,17 @@ def _sem_dom(estado, ctx):
     estado.dom = None
     estado.jogador.tecnica_dom = None
     atualizar_efeitos(estado)
+
+
+def _sem_linhagem(estado, ctx):
+    """Tira a Linhagem que a run sorteou (e a técnica com que ela começa)."""
+    lin = estado.linhagem
+    if lin is not None and lin.inicial:
+        estado.jogador.tecnicas = [t for t in estado.jogador.tecnicas if t.id != lin.inicial]
+    estado.linhagem = None
+    estado.jogador.tecnica_linhagem = None
+    atualizar_efeitos(estado)
+    estado.jogador.vida = estado.jogador.vida_max
 
 
 def _uma(args: tuple[str, str, int, int, str | None]) -> tuple[tuple[str, str], int, int]:
@@ -61,6 +83,16 @@ def _uma(args: tuple[str, str, int, int, str | None]) -> tuple[tuple[str, str], 
         else:
             fatia = next(f for f in _rodas()["destino"].fatias if f.id == item)
             preparar = lambda e, c: aplicar_dom(e, c, fatia)  # noqa: E731
+    elif tipo == "linhagem":
+        if item == "-":
+            preparar = _sem_linhagem
+        else:
+            fatia = next(f for f in _rodas()["linhagem"].fatias if f.id == item)
+
+            def preparar(e, c, fatia=fatia):
+                _sem_linhagem(e, c)
+                aplicar_linhagem(e, c, fatia)
+
     elif tipo == "reliquia" and item != "-":
         fatia = next(f for f in _rodas()["reliquias"].fatias if f.id == item)
         preparar = lambda e, c: receber_reliquia(e, fatia)  # noqa: E731
@@ -72,7 +104,7 @@ def _uma(args: tuple[str, str, int, int, str | None]) -> tuple[tuple[str, str], 
 
 def medir(itens: list[str], runs: int, dificuldade: str | None) -> dict[tuple[str, str], float]:
     tipos = {i: tipo_do_item(i) for i in itens}
-    bases = {"tecnica": "investida", "dom": "-", "reliquia": "-"}
+    bases = {"tecnica": "investida", "dom": "-", "reliquia": "-", "linhagem": "-"}
     alvos = {(t, bases[t]) for t in tipos.values()} | {(t, i) for i, t in tipos.items()}
     tarefas = [(t, i, s, runs, dificuldade) for t, i in sorted(alvos) for s in SEEDS]
     soma: dict[tuple[str, str], list[int]] = {}
@@ -108,6 +140,7 @@ def main() -> None:
         "tecnica": ("investida", "com a Investida"),
         "dom": ("-", "sem Dom"),
         "reliquia": ("-", "sem relíquia"),
+        "linhagem": ("-", "sem linhagem"),
     }
     for tipo, (b, nome) in bases.items():
         if (tipo, b) in taxas:

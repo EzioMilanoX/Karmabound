@@ -85,7 +85,6 @@ def capturar_run(destino: Path) -> list[Path]:
     """As telas da run: título, roleta da jornada, luta, troca, Altar e fim."""
     from karmabound.combate import Tecnica
     from karmabound.jornada import Jornada
-    from karmabound.mesa import Giro
     from karmabound.tela_luta import LutaScene
     from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene
     from karmabound.tela_roleta import RoletaScene
@@ -119,6 +118,10 @@ def capturar_run(destino: Path) -> list[Path]:
     foto(TituloScene(ent, nada, nada), "run_01_titulo")
     j = Jornada.nova("dificil", seed=11)
     j.amostras_altar = 40
+    linhagem = RoletaScene(
+        j.estado.mesa, ent, nada, "linhagem", j.girar_linhagem, nada, titulo="Seu sangue"
+    )
+    foto(linhagem, "run_02a_linhagem", 3.5, ["girar"])
     roleta = RoletaScene(
         j.estado.mesa, ent, nada, "destino", j.girar_destino, nada, titulo="Seu destino"
     )
@@ -143,14 +146,19 @@ def capturar_run(destino: Path) -> list[Path]:
     luta.anim_ate = 0
     foto(luta, "run_03b_luta_despertar_pronto")
     foto(luta, "run_03c_despertar", 0.5, ["despertar"])
+    luta.desperto, luta.anim_ate = None, 0
+    if j.luta.voto_luta is not None and j.luta.pode_jurar_luta():
+        luta.modo = "voto"
+        foto(luta, "run_03d_voto_de_luta")
+        luta.modo = "escolher"
 
     j.jogador.tecnicas.append(Tecnica.de_fatia(tec["julgamento"]))
     j.pendente, j.fase = tec["contrato"], "substituir"
     foto(SubstituirScene(j, ent, nada, nada), "run_04_substituir")
 
-    j.fase = "tecnica"
-    j.giro = Giro(j.ctx.rodas["tecnicas"], [next(f for f in tec.values() if f.evento == "altar")])
-    j.escolher_tecnica(0)
+    j.fase = "reliquia"  # entre lutas; o capítulo acabou: o Altar abre
+    j.estado.altar_pendente = True
+    j._proxima_luta()
     altar = AltarScene(j, ent, nada, nada)
     foto(altar, "run_05_altar_pesando")
     altar.update(None, 1 / 60)

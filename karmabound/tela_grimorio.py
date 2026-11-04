@@ -28,10 +28,11 @@ from karmabound.visual import (
     quebrar,
 )
 
-ORDEM_RODAS = ("destino", "tecnicas", "arco", "reliquias", "despertar", "chefes")
+ORDEM_RODAS = ("linhagem", "destino", "tecnicas", "arco", "reliquias", "despertar", "chefes")
 NOMES_ABA = {"chefes": ("魔", "Chefes")}  # abas que não são rodas
 LINHA = 22
 TOPO_LISTA = 118
+VISIVEIS = 20  # linhas da lista na tela; o resto rola
 
 
 @dataclass(frozen=True)
@@ -78,6 +79,7 @@ class GrimorioScene(_Base):
         self.nomes_raridade = {r.id: r.nome for r in self.ctx.raridades}
         self.i_roda = 0
         self.cursor = 0
+        self.topo = 0  # a primeira linha visível da lista
 
     @property
     def lista(self) -> list[Entrada]:
@@ -106,6 +108,10 @@ class GrimorioScene(_Base):
             self.cursor = (self.cursor + 1) % len(self.lista)
         if (self.i_roda, self.cursor) != antes:
             som.tocar("mover")
+        if self.cursor < self.topo:
+            self.topo = self.cursor
+        elif self.cursor >= self.topo + VISIVEIS:
+            self.topo = self.cursor - VISIVEIS + 1
 
     # --------------------------------------------------------------- desenho
 
@@ -148,8 +154,14 @@ class GrimorioScene(_Base):
             x += largura + 26
 
     def _lista(self, r: IRenderer) -> None:
-        for i, e in enumerate(self.lista):
-            y = TOPO_LISTA + i * LINHA
+        lista = self.lista
+        if self.topo > 0:
+            self._t(r, 58, TOPO_LISTA - 20, "↑ mais", 13, alpha(TINTA, 110))
+        if self.topo + VISIVEIS < len(lista):
+            self._t(r, 58, TOPO_LISTA + VISIVEIS * LINHA, "↓ mais", 13, alpha(TINTA, 110))
+        for i in range(self.topo, min(len(lista), self.topo + VISIVEIS)):
+            e = lista[i]
+            y = TOPO_LISTA + (i - self.topo) * LINHA
             visto = self._visto(e)
             cor = self.cores.get(e.raridade, TINTA)
             if i == self.cursor:
