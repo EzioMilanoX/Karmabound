@@ -1,0 +1,154 @@
+{
+  "_nota": "Fusões (karmabound/fusoes.py): quando o jogador passa a ter todos os requisitos, a técnica-fusão nasce, uma vez por run. Requisito: {tipo: id} ou {tipo: [ids]} (um de), tipo = tecnica | dom | linhagem | reliquia | despertar. Com técnica entre os requisitos, a fusão toma o lugar da primeira técnica-requisito; sem, entra como técnica nova. O resultado é um id das rodas ou de 'tecnicas' abaixo (as que só nascem de fusão).",
+  "fusoes": [
+    {
+      "id": "roxo",
+      "resultado": "vazio_purpura",
+      "requisitos": [{"dom": "olhos_que_tudo_veem"}, {"despertar": "vazio_infinito"}]
+    },
+    {
+      "id": "vermelho",
+      "resultado": "repulsao_escarlate",
+      "requisitos": [{"tecnica": "carne_maldita"}, {"dom": "olhos_que_tudo_veem"}]
+    },
+    {
+      "id": "shuriken",
+      "resultado": "shuriken_espiral",
+      "requisitos": [{"tecnica": "espiral_concentrada"}, {"tecnica": "golpe_de_vento"}]
+    },
+    {
+      "id": "chuva_de_espirais",
+      "resultado": "tempestade_de_espirais",
+      "requisitos": [{"tecnica": "espiral_concentrada"}, {"tecnica": "mil_clones"}]
+    },
+    {
+      "id": "guerreiro",
+      "resultado": "guerreiro_espectral",
+      "requisitos": [
+        {"tecnica": "lua_ilusoria"},
+        {"tecnica": "chamas_negras"},
+        {"linhagem": "cla_do_leque"}
+      ]
+    },
+    {
+      "id": "lua_sem_luz",
+      "resultado": "lua_sem_luz",
+      "requisitos": [
+        {"tecnica": "presa_da_lua"},
+        {"tecnica": "lamina_negra_liberada"},
+        {"linhagem": "mascarados"}
+      ]
+    },
+    {
+      "id": "corta_raio",
+      "resultado": "corta_raio",
+      "requisitos": [{"tecnica": "mil_passaros"}, {"dom": "olho_roubado"}]
+    },
+    {
+      "id": "punho_colossal",
+      "resultado": "punho_colossal",
+      "requisitos": [
+        {"tecnica": "punho_armado"},
+        {"dom": ["corpo_de_borracha", "pele_de_borracha"]}
+      ]
+    },
+    {
+      "id": "onda_carmesim",
+      "resultado": "onda_carmesim",
+      "requisitos": [{"tecnica": "onda_de_ki"}, {"tecnica": "kaioken"}]
+    },
+    {
+      "id": "trovao_em_chamas",
+      "resultado": "trovao_em_chamas",
+      "requisitos": [{"tecnica": "primeiro_trovao"}, {"dom": "respiracao_constante"}]
+    },
+    {
+      "id": "relampago_ligeiro",
+      "resultado": "relampago_ligeiro",
+      "requisitos": [{"tecnica": "velocidade_divina"}, {"linhagem": "familia_de_assassinos"}]
+    },
+    {
+      "id": "palmas_da_verdade",
+      "resultado": "palmas_da_verdade",
+      "requisitos": [
+        {"tecnica": "parede_transmutada"},
+        {"linhagem": "alquimistas"},
+        {"reliquia": "pedra_filosofal"}
+      ]
+    }
+  ],
+  "tecnicas": [
+    {
+      "id": "corta_raio",
+      "nome": "Corta-Raio",
+      "kanji": "切",
+      "raridade": "maldito",
+      "texto": "O raio na mão e o olho que lê o rival: {dano} de dano que atravessa bloqueio e quase ninguém percebe; dobra contra rival abaixo de {executar%} da vida. Preço: {custo_vida} de vida.",
+      "origem": "Raikiri (Kakashi) · Naruto",
+      "combate": {"tipo": "ataque", "dano": 15, "perfura": true, "executar": 0.3, "recarga": 2, "sutileza": 4, "perigosa": true, "custo_vida": 3}
+    },
+    {
+      "id": "punho_colossal",
+      "nome": "Punho Colossal",
+      "kanji": "剛",
+      "raridade": "maldito",
+      "texto": "O corpo infla, duro de Haki: por {modo_turnos} turnos, +{modo_dano} de dano em todo golpe, que atravessa bloqueio, escudo e esquiva, e você sofre {modo_recebido_mult-%} menos. Não gasta o turno. Preço: quando acaba, {modo_exausto} turnos sem ar.",
+      "origem": "King Kong Gun (Gear Fourth) · One Piece",
+      "combate": {"tipo": "modo", "recarga": 99, "livre": true, "modo": {"turnos": 3, "dano": 16, "absoluto": true, "recebido_mult": 0.75, "exausto": 1}}
+    },
+    {
+      "id": "onda_carmesim",
+      "nome": "Onda Carmesim",
+      "kanji": "紅",
+      "raridade": "divino",
+      "texto": "O corpo em brasa e a onda de ki inteira: {dano} de dano. Preço: {custo_vida} de vida, e o corpo no limite não lê nada até o seu próximo turno (Percepção 0).",
+      "origem": "Kaioken Kamehameha (Goku) · Dragon Ball",
+      "combate": {"tipo": "ataque", "dano": 48, "custo_vida": 5, "cega_proprio": true, "recarga": 3, "sutileza": 2, "perigosa": true}
+    },
+    {
+      "id": "trovao_em_chamas",
+      "nome": "Trovão em Chamas",
+      "kanji": "神",
+      "raridade": "maldito",
+      "texto": "Um passo só, mais rápido que o trovão: {dano} de dano, todo uso é surpresa e o corte queima (sangra {sangrar} por 3 turnos). Preço: {custo_vida} de vida (as pernas não aguentam).",
+      "origem": "Honoikazuchi no Kami (Zenitsu) · Demon Slayer",
+      "combate": {"tipo": "ataque", "dano": 11, "sempre_surpresa": true, "sangrar": 2, "recarga": 3, "sutileza": 3, "perigosa": true, "custo_vida": 4}
+    },
+    {
+      "id": "repulsao_escarlate",
+      "nome": "Repulsão Escarlate",
+      "kanji": "赫",
+      "raridade": "maldito",
+      "texto": "A energia ao contrário empurra tudo: {dano} de dano, o rival perde {atordoar} turno e os outros sofrem {area%} do golpe. Preço: {custo_vida} de vida.",
+      "origem": "Técnica Reversa: Vermelho (Gojo) · Jujutsu Kaisen",
+      "combate": {"tipo": "ataque", "dano": 11, "atordoar": 1, "area": 0.5, "recarga": 5, "sutileza": 2, "custo_vida": 4}
+    },
+    {
+      "id": "tempestade_de_espirais",
+      "nome": "Tempestade de Espirais",
+      "kanji": "嵐",
+      "raridade": "maldito",
+      "texto": "Cada clone com a sua esfera: {golpes} golpes de {dano} que atravessam bloqueio, e os outros rivais sofrem {area%} de cada um. Preço: {custo_vida} de vida.",
+      "origem": "Rasen Tarengan (Naruto) · Naruto",
+      "combate": {"tipo": "ataque", "dano": 4, "golpes": 3, "perfura": true, "area": 0.5, "recarga": 4, "sutileza": 1, "custo_vida": 5}
+    },
+    {
+      "id": "relampago_ligeiro",
+      "nome": "Relâmpago Ligeiro",
+      "kanji": "迅",
+      "raridade": "maldito",
+      "texto": "O corpo vira relâmpago: {golpes} golpes de {dano} que sempre pegam de surpresa, e o choque faz o rival perder {atordoar} turno. Preço: {custo_vida} de vida.",
+      "origem": "Narukami e Shippu Jinrai (Killua) · Hunter x Hunter",
+      "combate": {"tipo": "ataque", "dano": 4, "golpes": 2, "sempre_surpresa": true, "atordoar": 1, "recarga": 5, "sutileza": 2, "custo_vida": 5}
+    },
+    {
+      "id": "palmas_da_verdade",
+      "nome": "Palmas da Verdade",
+      "kanji": "真",
+      "raridade": "maldito",
+      "texto": "Quem viu a Verdade não precisa de círculo: {dano} de dano, bloqueio {bloqueio} e revide {revide} no mesmo gesto. Preço: {custo_vida} de vida (o pedágio da Verdade).",
+      "origem": "Transmutação sem círculo (Ed) · Fullmetal Alchemist",
+      "combate": {"tipo": "ataque", "dano": 10, "bloqueio": 6, "revide": 3, "recarga": 2, "sutileza": 3, "custo_vida": 3}
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "_nota": "Ressonância de anime (karmabound/ressonancia.py): com 'minimo' ou mais técnicas EQUIPADAS do mesmo anime (o fim da origem), o bônus do nível 1 vale enquanto durar; com 'minimo' + 1, o do nível 2 (no lugar do 1). Os efeitos são campos de Efeitos (karmabound/efeitos.py). Anime sem entrada própria usa 'generico'.",
+  "minimo": 3,
+  "animes": {
+    "Naruto": {
+      "nome": "Vontade do Fogo",
+      "kanji": "火",
+      "niveis": [
+        {"texto": "Começa cada luta com {clones_inicio} clone ao seu lado.", "efeito": {"clones_inicio": 1}},
+        {"texto": "Começa cada luta com {clones_inicio} clones ao seu lado.", "efeito": {"clones_inicio": 2}}
+      ]
+    },
+    "One Piece": {
+      "nome": "Haki Desperto",
+      "kanji": "覇",
+      "niveis": [
+        {"texto": "+{percepcao} de Percepção: você sente o golpe antes de ele vir.", "efeito": {"percepcao": 1}},
+        {"texto": "+{percepcao} de Percepção: você vê um instante do futuro.", "efeito": {"percepcao": 2}}
+      ]
+    },
+    "Jujutsu Kaisen": {
+      "nome": "Energia Amaldiçoada",
+      "kanji": "呪",
+      "niveis": [
+        {"texto": "O primeiro ataque de cada luta causa +{primeiro_golpe%}.", "efeito": {"primeiro_golpe": 0.3}},
+        {"texto": "O primeiro ataque de cada luta causa +{primeiro_golpe%} e todos os seus golpes têm +{sutileza} de Sutileza.", "efeito": {"primeiro_golpe": 0.5, "sutileza": 1}}
+      ]
+    },
+    "Bleach": {
+      "nome": "Pressão Espiritual",
+      "kanji": "霊",
+      "niveis": [
+        {"texto": "+{bonus_dano} de dano em todo golpe.", "efeito": {"bonus_dano": 1}},
+        {"texto": "+{bonus_dano} de dano em todo golpe e as técnicas causam {dano_tecnicas_mult+%}.", "efeito": {"bonus_dano": 1, "dano_tecnicas_mult": 1.1}}
+      ]
+    },
+    "Demon Slayer": {
+      "nome": "Respiração Total",
+      "kanji": "息",
+      "niveis": [
+        {"texto": "Cura {regen} a cada turno seu enquanto a vida estiver abaixo de {regen_ate%}.", "efeito": {"regen": 2, "regen_ate": 0.5}},
+        {"texto": "Cura {regen} a cada turno seu enquanto a vida estiver abaixo de {regen_ate%}.", "efeito": {"regen": 3, "regen_ate": 0.6}}
+      ]
+    },
+    "Dragon Ball": {
+      "nome": "Ki em Ascensão",
+      "kanji": "気",
+      "niveis": [
+        {"texto": "+1 de dano a cada dois turnos seus na luta (acumula).", "efeito": {"crescer": 0.5}},
+        {"texto": "+{crescer} de dano a cada turno seu na luta (acumula).", "efeito": {"crescer": 1.0}}
+      ]
+    },
+    "Hunter x Hunter": {
+      "nome": "Nen Afiado",
+      "kanji": "念",
+      "niveis": [
+        {"texto": "{esquiva%} de chance de um golpe inteiro errar você.", "efeito": {"esquiva": 0.08}},
+        {"texto": "{esquiva%} de chance de um golpe inteiro errar você e +{sutileza} de Sutileza em todos os seus golpes.", "efeito": {"esquiva": 0.12, "sutileza": 1}}
+      ]
+    }
+  },
+  "generico": {
+    "nome": "Mesma Escola",
+    "kanji": "縁",
+    "niveis": [
+      {"texto": "+{vida_max} de vida máxima: o estilo é um só.", "efeito": {"vida_max": 8}},
+      {"texto": "+{vida_max} de vida máxima e +{bonus_dano} de dano em todo golpe.", "efeito": {"vida_max": 12, "bonus_dano": 1}}
+    ]
+  }
+}

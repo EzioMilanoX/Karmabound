@@ -1,0 +1,66 @@
+{
+  "_nota": "Ascensão (karmabound/ascensao.py): para quem já vence. Vencer na Ascensão N de uma dificuldade abre a N+1 nela (legado.py). Cada nível acumula o seu modificador com os de baixo. Chaves: vida_rivais_mult (vida dos rivais), cura_entre_lutas (somada à fração), peso_elite (somado ao peso da porta Elite), chefe_tecnicas (técnicas a mais do chefe), carma_giro_mult (Carma que um giro ruim dá), oferta_treino (treinos oferecidos), encruzilhada_preco (multiplica o preço das encruzilhadas), chance_reliquia (somada), percepcao_rivais (somada à faixa), vida_jogador (somada à sua vida).",
+  "maximo": 10,
+  "niveis": [
+    {
+      "nome": "Sangue Novo",
+      "kanji": "血",
+      "texto": "Os rivais têm {vida_rivais_mult+%} de vida.",
+      "mod": {"vida_rivais_mult": 1.08}
+    },
+    {
+      "nome": "Feridas Abertas",
+      "kanji": "傷",
+      "texto": "A cura entre lutas vale {cura_pontos} pontos a menos.",
+      "mod": {"cura_entre_lutas": -0.1}
+    },
+    {
+      "nome": "Elites à Espreita",
+      "kanji": "強",
+      "texto": "A porta da Elite aparece mais no caminho.",
+      "mod": {"peso_elite": 2}
+    },
+    {
+      "nome": "Coroas Pesadas",
+      "kanji": "王",
+      "texto": "Os chefes chegam com +{chefe_tecnicas} técnica.",
+      "mod": {"chefe_tecnicas": 1}
+    },
+    {
+      "nome": "Carma Avaro",
+      "kanji": "業",
+      "texto": "Um giro ruim dá {carma_giro_mult-%} menos Carma.",
+      "mod": {"carma_giro_mult": 0.75}
+    },
+    {
+      "nome": "Treino Curto",
+      "kanji": "鍛",
+      "texto": "O Treino oferece {oferta_treino} opções em vez de 3.",
+      "mod": {"oferta_treino": 2}
+    },
+    {
+      "nome": "Encruzilhadas Cobram",
+      "kanji": "岐",
+      "texto": "As encruzilhadas cobram {encruzilhada_preco+%} e curam {encruzilhada_cura-%} menos.",
+      "mod": {"encruzilhada_preco": 1.5, "encruzilhada_cura": 0.75}
+    },
+    {
+      "nome": "Relíquias Raras",
+      "kanji": "遺",
+      "texto": "A chance de girar uma Relíquia depois da luta cai {reliquia_pontos} pontos.",
+      "mod": {"chance_reliquia": -0.08}
+    },
+    {
+      "nome": "Olhos Atentos",
+      "kanji": "眼",
+      "texto": "Os rivais têm +{percepcao_rivais} de Percepção.",
+      "mod": {"percepcao_rivais": 1}
+    },
+    {
+      "nome": "Corpo Frágil",
+      "kanji": "命",
+      "texto": "Você começa com {vida_menos} de vida máxima a menos.",
+      "mod": {"vida_jogador": -10}
+    }
+  ]
+}

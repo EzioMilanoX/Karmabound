@@ -1,0 +1,130 @@
+{
+  "_nota": "O caminho entre as lutas (karmabound/caminho.py): antes de cada luta que não é de chefe, o jogador escolhe 1 de 3 portas. Bandos têm de 2 a 3 rivais com papéis; a vida do bando é a de um rival comum vezes fator_vida, repartida pelo peso de vida de cada papel; cada membro bate com dano_mult do tamanho do bando vezes o do papel.",
+  "portas": 3,
+  "pesos": {"bando": 3, "elite": 2, "evento": 2},
+  "elite_a_partir_da_luta": 2,
+  "bando_a_partir_da_luta": 2,
+  "bando": {
+    "fator_vida": {"2": 1.35, "3": 1.35},
+    "dano_mult": {"2": 0.62, "3": 0.38},
+    "tecnicas_menos": 1
+  },
+  "elite": {"vida_mult": 1.35, "dano_mult": 1.15, "percepcao": 1, "tecnicas_mais": 1, "bando": 0.35, "bando_vida_mult": 1.15, "bando_dano_mult": 1.0,
+    "afixos": 1, "afixos_dois_a_partir_do_capitulo": 3, "aliado": 0.2},
+  "afixos": {
+    "vampirico": {"nome": "Vampírico", "kanji": "吸", "texto": "Cura 30% do dano que causa.", "efeitos": {"drenar": 0.3}},
+    "espinhos": {"nome": "Espinhos", "kanji": "棘", "texto": "Quem o golpeia leva 2 de volta, a cada troca (+1 por capítulo).", "efeitos": {"revide_permanente": 2}, "por_capitulo": {"revide_permanente": 1}},
+    "veloz": {"nome": "Veloz", "kanji": "速", "texto": "+2 de Velocidade; a cada 3 turnos dele, age duas vezes seguidas.", "efeitos": {"velocidade": 2}, "lutador": {"veloz": 3}},
+    "invocador": {"nome": "Invocador", "kanji": "召", "texto": "Chega com uma criatura que fere 3 a cada turno dele, por 4 turnos (+1 por capítulo).", "invocacao": {"turnos": 4, "dano": 3}, "por_capitulo": {"invocacao": 1}},
+    "blindado": {"nome": "Blindado", "kanji": "甲", "texto": "Chega com bloqueio de 10% da vida e o renova a cada 3 turnos dele.", "bloqueio_frac": 0.1},
+    "furioso": {"nome": "Furioso", "kanji": "怒", "texto": "Quanto menos vida, mais forte: até +5 de dano em todo golpe (+2 por capítulo).", "efeitos": {"furia": 5}, "por_capitulo": {"furia": 2}},
+    "amaldicoado": {"nome": "Amaldiçoado", "kanji": "祟", "texto": "Quem ele fere fica com a Marca 1: sofre 1 a cada turno, e as técnicas demoram +1 turno a voltar.", "lutador": {"marca_ao_ferir": 1}},
+    "gelido": {"nome": "Gélido", "kanji": "氷", "texto": "Cada ataque que fere tem 20% de chance de congelar: você perde o turno, e o próximo golpe em você causa o dobro.", "lutador": {"gelo": 0.2}}
+  },
+  "nemesis": {
+    "a_partir_do_capitulo": 2,
+    "vida_mult": 1.3,
+    "vida_por_vez": 0.1,
+    "dano_mult": 1.1,
+    "dano_por_vez": 0.05,
+    "carma": 40
+  },
+  "papeis": {
+    "lamina": {"nome": "Lâmina", "kanji": "刃", "vida": 1.0, "dano": 1.2, "estilo": "espadachim",
+      "texto": "Bate forte. É o perigo de agora."},
+    "guardiao": {"nome": "Guardião", "kanji": "盾", "vida": 1.5, "dano": 0.6, "estilo": "tita",
+      "texto": "Ergue a defesa de quem está mais ferido.",
+      "tecnica": {"id": "papel_guardar", "nome": "Guardar", "tipo": "defesa", "recarga": 2, "proteger_frac": 0.2}},
+    "curandeiro": {"nome": "Curandeiro", "kanji": "癒", "vida": 0.8, "dano": 0.6, "estilo": "monge",
+      "texto": "Fecha as feridas do bando. Derrube-o primeiro.",
+      "tecnica": {"id": "papel_bencao", "nome": "Bênção", "tipo": "defesa", "recarga": 2, "curar_frac": 0.18}},
+    "xama": {"nome": "Xamã", "kanji": "呪", "vida": 0.85, "dano": 0.9, "estilo": "oni",
+      "texto": "Amaldiçoa: veneno e fraqueza que ficam.",
+      "tecnica": {"id": "papel_praga", "nome": "Praga", "tipo": "maldita", "recarga": 3, "veneno": 2, "enfraquecer": 1, "veneno_por_capitulo": 1}},
+    "comandante": {"nome": "Comandante", "kanji": "将", "vida": 1.2, "dano": 1.0, "estilo": "hollow",
+      "texto": "Um grito, e o bando inteiro bate mais forte.",
+      "tecnica": {"id": "papel_grito", "nome": "Grito de Guerra", "tipo": "defesa", "recarga": 99, "inspirar": 2, "inspirar_por_capitulo": 1}}
+  },
+  "grupos": [
+    ["lamina", "curandeiro"],
+    ["lamina", "guardiao"],
+    ["lamina", "xama"],
+    ["lamina", "lamina"],
+    ["xama", "guardiao"],
+    ["lamina", "guardiao", "curandeiro"],
+    ["lamina", "xama", "curandeiro"],
+    ["lamina", "lamina", "xama"],
+    ["lamina", "guardiao", "xama"]
+  ],
+  "grupos_elite": [
+    ["comandante", "lamina"],
+    ["comandante", "lamina", "curandeiro"],
+    ["comandante", "guardiao", "xama"]
+  ],
+  "portas_tipos": {
+    "rival": {"nome": "Rival", "kanji": "敵", "texto": "Um lutador, frente a frente."},
+    "bando": {"nome": "Bando", "kanji": "群", "texto": "Dois ou três, cada um com um papel. Escolha em quem bater."},
+    "elite": {"nome": "Elite", "kanji": "強", "texto": "Mais forte que os outros. Vencer garante uma Relíquia."},
+    "evento": {"nome": "Encruzilhada", "kanji": "岐", "texto": "Sem luta: um encontro, uma escolha e um preço."},
+    "nemesis": {"nome": "Nêmesis", "kanji": "仇", "texto": "Quem te matou voltou. Vencer: Relíquia, Carma e um Despertar guardado."}
+  },
+  "eventos": [
+    {
+      "id": "fonte", "nome": "Fonte Esquecida", "kanji": "泉",
+      "texto": "Uma fonte escondida entre raízes. A água tem gosto de ferro.",
+      "opcoes": [
+        {"texto": "Beber: recupera 60% da vida.", "cura": 0.6},
+        {"texto": "Mergulhar: +15 de vida máxima, mas perde 25% da vida agora.", "vida_max": 15, "perde_vida_frac": 0.25}
+      ]
+    },
+    {
+      "id": "mercador", "nome": "Mercador de Almas", "kanji": "商",
+      "texto": "Ele não vende nada. Ele troca.",
+      "opcoes": [
+        {"texto": "Dar 15 de vida máxima por um giro de Relíquia.", "vida_max": -15, "giro": "reliquias"},
+        {"texto": "Dar 40 de Carma por um giro de Técnica.", "custa_carma": 40, "giro": "tecnicas"},
+        {"texto": "Seguir caminho."}
+      ]
+    },
+    {
+      "id": "mestre", "nome": "Mestre Errante", "kanji": "師",
+      "texto": "Um velho de bengala desvia de todos os seus golpes. Depois, ensina.",
+      "opcoes": [
+        {"texto": "Treinar até sangrar: sua melhor técnica evolui; −8 de vida máxima.", "evoluir": true, "vida_max": -8},
+        {"texto": "Só ouvir: +1 de Percepção.", "percepcao": 1}
+      ]
+    },
+    {
+      "id": "santuario", "nome": "Santuário em Ruínas", "kanji": "祠",
+      "texto": "Um altar rachado. Alguém ainda deixa oferendas.",
+      "opcoes": [
+        {"texto": "Rezar: +35 de Carma.", "carma": 35},
+        {"texto": "Profanar: +2 de dano em todo golpe, e o Carma zera.", "dano": 2, "zera_carma": true}
+      ]
+    },
+    {
+      "id": "cemiterio", "nome": "Cemitério de Lutadores", "kanji": "墓",
+      "texto": "Espadas fincadas no chão, uma por túmulo. Algumas ainda brilham.",
+      "opcoes": [
+        {"texto": "Honrar os mortos: recupera 30% da vida e +15 de Carma.", "cura": 0.3, "carma": 15},
+        {"texto": "Saquear: um giro de Relíquia, e perde 30% da vida.", "giro": "reliquias", "perde_vida_frac": 0.3}
+      ]
+    },
+    {
+      "id": "forja", "nome": "Forja Abandonada", "kanji": "鍛",
+      "texto": "O fogo ainda está aceso. Ninguém sabe quem o alimenta.",
+      "opcoes": [
+        {"texto": "Afiar: +1 de dano em todo golpe.", "dano": 1},
+        {"texto": "Temperar o corpo: +12 de vida máxima.", "vida_max": 12}
+      ]
+    },
+    {
+      "id": "ferido", "nome": "Lutador Ferido na Estrada", "kanji": "傷",
+      "texto": "Alguém caído à beira do caminho, ainda respirando. Os olhos pedem ajuda.",
+      "opcoes": [
+        {"texto": "Ajudar: perde 15% da vida; ele te segue e luta ao seu lado (substitui o aliado que você tiver).", "perde_vida_frac": 0.15, "aliado": true},
+        {"texto": "Seguir caminho."}
+      ]
+    }
+  ]
+}

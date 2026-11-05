@@ -1,0 +1,54 @@
+{
+  "_nota": "Treino: depois de cada vitória o jogador escolhe 1 de 3. É o que o faz crescer junto com os rivais (karmabound/treino.py).",
+  "oferta": 3,
+  "treinos": [
+    {
+      "id": "corpo_forjado",
+      "nome": "Corpo Forjado",
+      "kanji": "体",
+      "texto": "+10 de vida máxima, e ela já chega cheia.",
+      "origem": "Treino de Peso (Rock Lee) · Naruto",
+      "vida_max": 10
+    },
+    {
+      "id": "punhos_de_ferro",
+      "nome": "Punhos de Ferro",
+      "kanji": "拳",
+      "texto": "+1 de dano em todo golpe, pelo resto da run.",
+      "origem": "Cem Flexões por Dia (Saitama) · One Punch Man",
+      "dano": 1
+    },
+    {
+      "id": "passos_leves",
+      "nome": "Passos Leves",
+      "kanji": "速",
+      "texto": "+1 de Velocidade: quem é mais rápido começa a luta.",
+      "origem": "Shunpo (Yoruichi) · Bleach",
+      "velocidade": 1
+    },
+    {
+      "id": "olhos_abertos",
+      "nome": "Olhos Abertos",
+      "kanji": "眼",
+      "texto": "+1 de Percepção: lê melhor o rival e reage a mais golpes.",
+      "origem": "Haki da Observação · One Piece",
+      "percepcao": 1
+    },
+    {
+      "id": "respiracao_profunda",
+      "nome": "Respiração Profunda",
+      "kanji": "息",
+      "texto": "Recupera 40% da vida agora.",
+      "origem": "Respiração Total Concentrada · Demon Slayer",
+      "cura": 0.4
+    },
+    {
+      "id": "meditar_no_carma",
+      "nome": "Meditar no Carma",
+      "kanji": "業",
+      "texto": "+30 de Carma: o Despertar chega mais cedo.",
+      "origem": "Modo Sábio (meditação) · Naruto",
+      "carma": 30
+    }
+  ]
+}

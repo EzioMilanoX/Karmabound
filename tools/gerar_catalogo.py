@@ -176,6 +176,54 @@ def gerar() -> str:
             f"| {x['kanji']} | {x['nome']} | {tipos[x['tipo']]} | {x['texto']} | {x['origem']} |"
         )
 
+    treinos = _ler("treinos.json")
+    out += [
+        "",
+        "## 修 Treinos",
+        "",
+        f"Depois de cada vitória, escolhe 1 de {treinos['oferta']}. Dura a run.",
+        "",
+        "| | Nome | Texto | Origem |",
+        "|---|---|---|---|",
+    ]
+    for x in treinos["treinos"]:
+        out.append(f"| {x['kanji']} | {x['nome']} | {x['texto']} | {x.get('origem', '')} |")
+
+    cam = _ler("caminho.json")
+    bando = cam["bando"]
+    out += [
+        "",
+        "## 岐 O caminho",
+        "",
+        f"Antes de cada luta que não é de chefe, escolhe 1 de {cam['portas']} portas. "
+        "Sempre há um Rival; as outras são sorteadas sem repetir.",
+        "",
+        "| | Porta | O que tem |",
+        "|---|---|---|",
+    ]
+    for x in cam["portas_tipos"].values():
+        out.append(f"| {x['kanji']} | {x['nome']} | {x['texto']} |")
+    out += [
+        "",
+        "### Papéis do bando",
+        "",
+        f"Vida do bando = a de um rival comum × {bando['fator_vida']['2']:g} (2) ou "
+        f"×{bando['fator_vida']['3']:g} (3), repartida pelo peso de cada papel. Cada um bate "
+        f"×{bando['dano_mult']['2']:g} (2) ou ×{bando['dano_mult']['3']:g} (3) vezes o "
+        "do papel.",
+        "",
+        "| | Papel | Peso de vida | Dano | O que faz |",
+        "|---|---|---|---|---|",
+    ]
+    for x in cam["papeis"].values():
+        out.append(
+            f"| {x['kanji']} | {x['nome']} | {x['vida']:g} | ×{x['dano']:g} | {x['texto']} |"
+        )
+    out += ["", "### Encruzilhadas", "", "| | Encontro | Escolhas |", "|---|---|---|"]
+    for x in cam["eventos"]:
+        escolhas = " / ".join(o["texto"] for o in x["opcoes"])
+        out.append(f"| {x['kanji']} | {x['nome']} | {escolhas} |")
+
     c = bal["combate"]
     out += [
         "",
@@ -331,6 +379,112 @@ def _indice(nav_id: str, secoes: list[tuple[str, str, str, int]], escondido: boo
     )
 
 
+def _secoes_da_leva_4(raridades: dict) -> list[tuple[str, str, str, str, list[_Item]]]:
+    """Fusões, Ressonâncias, mecânicas de chefe, afixos de elite, aliados e Ascensão."""
+    from karmabound.fusoes import carregar_fusoes, nomes_dos_requisitos
+
+    secoes = []
+    itens = []
+    for fusao in carregar_fusoes():
+        f = fusao.fatia
+        d = {"id": fusao.id, "nome": f.nome, "kanji": f.kanji, "origem": f.origem}
+        receita = " + ".join(nomes_dos_requisitos(fusao))
+        texto = f"{receita} → {f.nome}. {f.texto}"
+        chips = tuple(_chips_tecnica(f.combate)) if f.combate else ()
+        itens.append(_Item("fusoes", d, texto, "Fusão", raridades.get(f.raridade), chips))
+    secoes.append(
+        (
+            "fusoes",
+            "融",
+            "Fusões",
+            "Técnicas que nascem quando você junta as peças certas: técnicas equipadas, o Dom, a "
+            "Linhagem, uma Relíquia ou um Despertar já disparado na run. Se uma peça é técnica, a "
+            "fusão toma o lugar da primeira; cada uma nasce uma vez por run.",
+            itens,
+        )
+    )
+    res = _ler("ressonancias.json")
+    itens = []
+    for anime, r in res["animes"].items():
+        niveis = [preencher(n["texto"], n.get("efeito", {})) for n in r["niveis"]]
+        d = {"id": _slug(anime), "nome": r["nome"], "kanji": r["kanji"], "origem": f"· {anime}"}
+        chips = tuple(f"{res['minimo'] + i}: {t}" for i, t in enumerate(niveis))
+        itens.append(_Item("ressonancias", d, anime, "Ressonância", chips=chips))
+    g = res["generico"]
+    niveis = [preencher(n["texto"], n.get("efeito", {})) for n in g["niveis"]]
+    d = {"id": "generico", "nome": g["nome"], "kanji": g["kanji"]}
+    chips = tuple(f"{res['minimo'] + i}: {t}" for i, t in enumerate(niveis))
+    itens.append(_Item("ressonancias", d, "Qualquer outro anime", "Ressonância", chips=chips))
+    secoes.append(
+        (
+            "ressonancias",
+            "共",
+            "Ressonâncias de anime",
+            f"Com {res['minimo']} técnicas equipadas do mesmo anime, um bônus vale enquanto "
+            f"elas estiverem ali; com {res['minimo'] + 1}, o nível seguinte.",
+            itens,
+        )
+    )
+    chefes = _ler("chefes.json")
+    itens = [
+        _Item("mecanicas", {"id": mid, **m}, m["texto"], "Mecânica de chefe")
+        for mid, m in chefes["mecanicas"].items()
+    ]
+    secoes.append(
+        (
+            "mecanicas",
+            "鬼",
+            "Mecânicas de chefe",
+            "Cada técnica-assinatura de chefe traz uma regra própria da luta.",
+            itens,
+        )
+    )
+    cam = _ler("caminho.json")
+    itens = [
+        _Item("afixos", {"id": aid, **a}, a["texto"], "Afixo de elite")
+        for aid, a in cam["afixos"].items()
+    ]
+    secoes.append(
+        (
+            "afixos",
+            "強",
+            "Afixos de elite",
+            "Toda elite ganha um afixo sorteado (dois a partir do capítulo 3).",
+            itens,
+        )
+    )
+    al = _ler("aliados.json")
+    itens = [_Item("aliados", x, x["texto"], "Aliado") for x in al["aliados"]]
+    secoes.append(
+        (
+            "aliados",
+            "伴",
+            "Aliados",
+            f"Um companheiro por run, que age no começo do seu turno e não é alvo dos rivais. "
+            f"Sobe um nível a cada vitória (até {al['nivel_max']}). Vem da encruzilhada do "
+            "lutador ferido, ou às vezes de uma elite vencida.",
+            itens,
+        )
+    )
+    from karmabound.ascensao import carregar_ascensao
+
+    itens = []
+    for n in carregar_ascensao():
+        d = {"id": f"a{n.nivel}", "nome": f"{n.nivel}. {n.nome}", "kanji": n.kanji}
+        itens.append(_Item("ascensao", d, n.texto, "Ascensão"))
+    secoes.append(
+        (
+            "ascensao",
+            "昇",
+            "Ascensão",
+            "Para quem já vence: vencer na Ascensão N libera a N+1 naquela dificuldade. Os "
+            "níveis se acumulam.",
+            itens,
+        )
+    )
+    return secoes
+
+
 def _itens_da_wiki() -> tuple[list[tuple[str, str, str, str, list[_Item]]], dict, dict]:
     """As seções da wiki (id, kanji, nome, intro, itens), as raridades e os votos."""
     bal, rodas = _ler("balanceamento.json"), _ler("rodas.json")
@@ -413,6 +567,107 @@ def _itens_da_wiki() -> tuple[list[tuple[str, str, str, str, list[_Item]]], dict
             "Toda luta oferece um, sorteado; jurar não gasta o turno (uma vez por luta). "
             "<strong>Promessa</strong> cobra uma meta, <strong>Revelação</strong> mostra algo do "
             "rival, <strong>Selo</strong> troca uma regra da luta.",
+            itens,
+        )
+    )
+    treinos = _ler("treinos.json")
+    itens = [_Item("treinos", x, x["texto"], "Treino") for x in treinos["treinos"]]
+    secoes.append(
+        (
+            "treinos",
+            "修",
+            "Treinos",
+            f"Depois de cada vitória, escolhe 1 de {treinos['oferta']}. Fica pelo resto da run: "
+            "os rivais crescem a cada luta, você também.",
+            itens,
+        )
+    )
+    cam = _ler("caminho.json")
+    itens = [
+        _Item("portas", {"id": pid, **x}, x["texto"], "Porta")
+        for pid, x in cam["portas_tipos"].items()
+    ]
+    secoes.append(
+        (
+            "portas",
+            "岐",
+            "O caminho: portas",
+            f"Antes de cada luta que não é de chefe, escolhe 1 de {cam['portas']} portas. Sempre "
+            "há um Rival; as outras são sorteadas sem repetir. Bando e Elite não aparecem na "
+            "primeira luta; a Nêmesis, só do capítulo 2 em diante.",
+            itens,
+        )
+    )
+    b = cam["bando"]
+    itens = []
+    for pid, x in cam["papeis"].items():
+        chips = [f"vida ×{x['vida']:g}", f"dano ×{x['dano']:g}"]
+        t = x.get("tecnica")
+        if t:
+            chips.append(f"{t['nome']} (recarga {t['recarga'] if t['recarga'] < 99 else '1×'})")
+        itens.append(_Item("papeis", {"id": pid, **x}, x["texto"], "Papel", chips=tuple(chips)))
+    secoes.append(
+        (
+            "papeis",
+            "群",
+            "Bandos: os papéis",
+            f"Um bando tem 2 ou 3 rivais. A vida do bando é a de um rival comum "
+            f"×{b['fator_vida']['2']:g}, repartida pelo peso de vida de cada papel; cada um bate "
+            f"×{b['dano_mult']['2']:g} (dupla) ou ×{b['dano_mult']['3']:g} (trio) vezes o do "
+            "papel. Você escolhe em quem bater (↑ ↓ ou Tab); técnicas de explosão pegam todos.",
+            itens,
+        )
+    )
+    itens = []
+    for x in cam["eventos"]:
+        escolhas = tuple(o["texto"] for o in x["opcoes"])
+        itens.append(_Item("encruzilhadas", x, x["texto"], "Encruzilhada", chips=escolhas))
+    secoes.append(
+        (
+            "encruzilhadas",
+            "辻",
+            "Encruzilhadas",
+            "A porta sem luta: um encontro, uma escolha e o seu preço. O tempo passa: o "
+            "próximo rival é o da luta seguinte.",
+            itens,
+        )
+    )
+    secoes += _secoes_da_leva_4(raridades)
+    from karmabound.legado import CUSTO_ANIME, INICIAIS, MAESTRIA
+
+    legado = [
+        {
+            "id": "memoria",
+            "nome": "A roda se abre",
+            "kanji": "憶",
+            "texto": f"Você começa com os {INICIAIS} animes mais ricos nas rodas. Cada run deixa "
+            "Memória (1 por luta vencida, 2 por capítulo fechado, 5 pela vitória, 3 pela "
+            f"Nêmesis vingada); a cada {CUSTO_ANIME}, o próximo anime entra em todas as rodas.",
+        },
+        {
+            "id": "maestria",
+            "nome": "Maestria",
+            "kanji": "極",
+            "texto": f"Cada uso de uma técnica conta, de run em run. Com {MAESTRIA[0]} usos ela "
+            f"chega à sua mão já evoluída uma vez (★); com {MAESTRIA[1]}, duas (★★).",
+        },
+        {
+            "id": "nemesis",
+            "nome": "Nêmesis",
+            "kanji": "仇",
+            "texto": "Quem te matou volta numa run seguinte, mais forte e com o golpe que te "
+            "matou. Vencer: Relíquia garantida, Carma e um Despertar guardado. Perder de novo: "
+            "ela cresce.",
+        },
+    ]
+    itens = [_Item("legado", x, x["texto"], "Entre runs") for x in legado]
+    secoes.append(
+        (
+            "legado",
+            "遺",
+            "O Legado",
+            "O que fica de uma run para a outra. A semente do dia joga com tudo aberto, sem "
+            "Maestria nem Nêmesis.",
             itens,
         )
     )

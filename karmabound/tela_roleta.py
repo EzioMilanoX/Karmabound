@@ -8,14 +8,17 @@ from __future__ import annotations
 
 import math
 import random
+from dataclasses import dataclass
 
 from ouroboros.bootstrap.scene import IScene
 from ouroboros.interfaces.input_provider import IInputProvider
 from ouroboros.interfaces.renderer import IRenderer
 
-from karmabound import som, vfx
+from karmabound import som, transicoes, vfx
 from karmabound.mesa import Giro, Mesa
 from karmabound.opcoes import OPCOES
+from karmabound.rodas import Fatia
+from karmabound.transicoes import Camada, Cartas, suave
 from karmabound.visual import (  # noqa: F401  (reexporta para quem importava daqui)
     ALTURA,
     FERRO,
@@ -50,6 +53,34 @@ VOLTAS = 2
 
 ORDEM_RODAS = ("linhagem", "destino", "tecnicas", "arco", "reliquias")
 MAX_SELOS = 20  # rodas maiores mostram uma amostra na mandala (sempre com as sorteadas)
+
+# O cartão do resultado: o lugar de sempre, o mais alto que ele sobe (sobre as Taxas), o pé dele
+# e as letras que ele tenta, da maior para a menor: (tamanho, caracteres por linha, entrelinha).
+TOPO_CARTAO = 380
+TOPO_MAXIMO_CARTAO = 218
+FUNDO_CARTAO = 556  # acima da borda de baixo da moldura
+LETRAS_CARTAO = ((16, 24, 21), (14, 28, 18), (13, 31, 16))
+
+
+LARGURA_POR_LETRA = 0.58  # a letra de pincel, com o espaçamento: largura ≈ 0,58 × tamanho
+LARGURA_SELO = 27  # caracteres do selo de combo (融 共) embaixo do nome de uma opção
+
+
+def tam_que_cabe(texto: str, tam: int, largura: float) -> int:
+    """O maior tamanho (até `tam`, no mínimo 12) em que `texto` cabe em `largura`."""
+    if not texto:
+        return tam
+    return max(12, min(tam, int(largura / (LARGURA_POR_LETRA * len(texto)))))
+
+
+@dataclass(frozen=True)
+class _Cartao:
+    fatia: Fatia
+    topo: int
+    linhas: list[str]
+    tam: int
+    passo: int
+    origem: list[str]
 
 
 class RoletaScene(IScene):
@@ -93,6 +124,21 @@ class RoletaScene(IScene):
         ordem = list(range(ELOS))
         random.Random(7).shuffle(ordem)  # elos racham numa ordem fixa, espalhada pela corrente
         self.ordem_rachaduras = ordem
+        self.cartas = Cartas(sobe=28, lado=True)  # as opções do modo "escolha"
+        self.apressar = False  # Enter durante o giro: o resultado já está decidido, pula
+        self._pistas: tuple = (None, [])  # (o giro, os selos de combo das opções dele)
+
+    segurar_saida = 0.0
+
+    def animar(self, dt: float) -> None:
+        """Só o enfeite anda (a transição chama quando esta tela está saindo)."""
+        self.relogio += dt
+        self.t += dt
+        self.cartas.avancar(dt, self.cursor_escolha, len(self.alvos))
+
+    def assentar(self) -> None:
+        """As opções já no lugar (capturas de tela)."""
+        self.cartas.avancar(10.0, self.cursor_escolha, len(self.alvos))
 
     @property
     def jornada(self) -> bool:
@@ -135,6 +181,8 @@ class RoletaScene(IScene):
     def _ir(self, estado: str) -> None:
         self.estado = estado
         self.t = 0.0
+        if estado == "escolhendo":  # as opções entram uma a uma
+            self.cartas = Cartas(sobe=28, lado=True)
 
     def _duracao(self) -> float:
         if len(self.alvos) > 1:
@@ -149,6 +197,7 @@ class RoletaScene(IScene):
         self.revelados = 0
         self.inicio = self.aceso
         self.escolhida = None
+        self.apressar = False
         if self.giro.despertar:
             som.tocar("despertar")
             som.tocar("corrente")
@@ -162,6 +211,7 @@ class RoletaScene(IScene):
         return (self.inicio + int(passos * _ease_out(min(self.t / self._duracao(), 1.0)))) % n
 
     def update(self, world, delta_time: float) -> None:
+        self.cartas.avancar(delta_time, self.cursor_escolha, len(self.alvos))
         delta_time *= OPCOES.velocidade  # a velocidade das animações, das opções
         self.relogio += delta_time
         self.t += delta_time
@@ -170,6 +220,8 @@ class RoletaScene(IScene):
         if e.is_action_pressed("sair"):
             self.ao_sair()
             return
+        if self.estado in ("quebrando", "girando") and e.is_action_pressed("confirmar"):
+            self.apressar = True  # o sorteio já foi feito: o giro é só espetáculo
 
         if self.jornada:
             if self.estado == "parado" and e.is_action_pressed("girar"):
@@ -197,11 +249,13 @@ class RoletaScene(IScene):
                 self._comecar_giro()
 
         elif self.estado == "quebrando":
-            if self.t >= DURACAO_QUEBRA:
+            if self.t >= DURACAO_QUEBRA or self.apressar:
                 self.carma_visual = self.mesa.carma.valor
                 self._ir("girando")
 
         elif self.estado == "girando":
+            if self.apressar:
+                self.t = max(self.t, self._duracao())
             novo = self._indice_girando()
             if novo != self.aceso:
                 som.tocar("tique")  # o selo aceso passa para o próximo
@@ -239,6 +293,8 @@ class RoletaScene(IScene):
                 if apertou or (e.is_action_pressed("confirmar") and i == self.cursor_escolha):
                     som.tocar("confirmar")
                     self.escolhida = i
+                    self.cursor_escolha = i
+                    self.cartas.escolher(i)  # a escolhida carimba antes do resultado
                     self.aceso = self.alvos[i]
                     self._ir("resultado")
                     break
@@ -264,10 +320,14 @@ class RoletaScene(IScene):
         self._despertar(r)
         vfx.vinheta(r, 0.8)
         vfx.grao(r, self.relogio, 120)
-        vfx.revelar(r, self.relogio)
+        transicoes.revelar(self, r, self.relogio)
 
     def _texto(self, r: IRenderer, x, y, texto, tam, cor, anchor="topleft") -> None:
         r.draw_text(x, y, texto, tam, cor, anchor=anchor, font_id=FONTE_PINCEL)
+
+    def _nome(self, r: IRenderer, x, y, texto, tam, cor, largura, anchor="topleft") -> None:
+        """Um nome que encolhe para caber em `largura` (os longos não vazam da carta)."""
+        self._texto(r, x, y, texto, tam_que_cabe(texto, tam, largura), cor, anchor)
 
     def _fundo(self, r: IRenderer) -> None:
         """O santuário da roda: luz de sangue, incenso, um anel de kanji e correntes do alto."""
@@ -520,7 +580,7 @@ class RoletaScene(IScene):
                     2,
                 )
         self._texto(r, cx, cy - 18, f.kanji, 104, cor, "center")
-        self._texto(r, cx, cy + 56, f.nome, 24, TINTA, "center")
+        self._nome(r, cx, cy + 56, f.nome, 24, TINTA, 230, "center")
         self._texto(r, cx, cy + 86, self.nomes_raridade[f.raridade], 18, cor, "center")
 
     def _abas(self, r: IRenderer) -> None:
@@ -557,6 +617,26 @@ class RoletaScene(IScene):
         for j, linha in enumerate(_quebrar(aviso, 26)):
             self._texto(r, x, 160 + j * 20, linha, 16, cor)
 
+        cartao = self._cartao() if self.estado == "resultado" else None
+        if cartao is None or cartao.topo >= TOPO_CARTAO:  # o texto longo sobe por cima das Taxas
+            self._taxas(r, x)
+        if self.giro and (self.estado == "escolhendo" or self._carimbando()):
+            self._opcoes(r, x, TOPO_CARTAO)
+        elif cartao is not None:
+            surge = 1.0
+            if len(self.alvos) > 1:  # depois do carimbo, o cartão do resultado aparece
+                surge = suave((self.t - Cartas.CARIMBO) / 0.22)
+            self._resultado(Camada(r, (x, cartao.topo), 1.0, 0, 10 * (1 - surge), surge), x, cartao)
+
+    def _carimbando(self) -> bool:
+        return (
+            self.estado == "resultado"
+            and len(self.alvos) > 1
+            and self.cartas.escolhida is not None
+            and self.t < Cartas.CARIMBO
+        )
+
+    def _taxas(self, r: IRenderer, x: int) -> None:
         self._texto(r, x, 218, "Taxas", 20, TINTA)
         self._texto(r, x + 246, 222, "publicada · agora", 14, _alpha(TINTA, 120), "topright")
         for j, (rid, (pub, agora)) in enumerate(self.mesa.taxas().items()):
@@ -569,41 +649,81 @@ class RoletaScene(IScene):
             self._texto(r, x + 168, y, "→", 17, _alpha(TINTA, 100))
             self._texto(r, x + 246, y, _pct(agora), 17, cor_agora, "topright")
 
-        y = 380
-        if self.estado == "escolhendo" and self.giro:
-            self._texto(r, x, y, "Escolha uma técnica", 20, TINTA)
+    def pistas(self) -> list[str]:
+        """O selo de combo de cada opção do giro de Técnicas (vazio: nenhum). Só na Jornada."""
+        if self.j is None or self.giro is None or self.roda.id != "tecnicas":
+            return []
+        if self._pistas[0] is not self.giro:
+            from karmabound.grimorio import pista
+            from karmabound.tela_menus import texto_da_pista
+
+            e, fusoes, grim = self.j.estado, self.j.ctx.fusoes, self.j.grimorio
+            textos = [
+                texto_da_pista(pista(e, f.id, fusoes), grim, LARGURA_SELO) for f in self.giro.fatias
+            ]
+            self._pistas = (self.giro, textos)
+        return self._pistas[1]
+
+    def _opcoes(self, r: IRenderer, x: int, y: int) -> None:
+        if self.giro:
+            pistas = self.pistas()
+            sai = 1 - self.cartas.u_carimbo()
+            self._texto(r, x, y, "Escolha uma técnica", 20, _alpha(TINTA, 255 * sai))
+            tela = r
             for j, f in enumerate(self.giro.fatias):
                 cor = self.cores_claras[f.raridade]
                 yj = y + 34 + j * 52
-                if j == self.cursor_escolha:
-                    r.draw_ui_rect(x - 10, yj - 8, 256, 46, _alpha(TINTA, 18))
+                foco = self.cartas.foco_de(j)
+                r = self.cartas.camada(tela, j, (x + 118, yj + 14))
+                if foco > 0.02:  # o destaque desliza entre as opções
+                    r.draw_ui_rect(x - 10, yj - 8, 256, 46, _alpha(TINTA, 10 + 16 * foco))
+                    r.draw_ui_rect(x - 10, yj - 8, 3, 46, _alpha(cor, 230 * foco))
                 self._texto(r, x, yj, f"{j + 1}", 20, _alpha(TINTA, 140))
-                self._texto(r, x + 22, yj - 4, f.kanji, 26, cor)
-                self._texto(r, x + 58, yj, f.nome, 18, cor)
-                if f.origem:
+                self._texto(r, x + 22 + 4 * foco, yj - 4, f.kanji, 26, cor)
+                self._nome(r, x + 58 + 4 * foco, yj, f.nome, 18, cor, 190)
+                selo = pistas[j] if j < len(pistas) else ""
+                if selo:  # 融 peça de uma fusão · 共 forma ou avança uma Ressonância
+                    tam = tam_que_cabe(selo, 13, 190)
+                    self._texto(r, x + 58, yj + 22, selo, tam, _alpha(OURO, 230))
+                elif f.origem:
                     obra = f.origem.split(" · ")[-1]
                     self._texto(r, x + 58, yj + 22, f"※ {obra}", 13, _alpha(TINTA, 110))
-            return
-        f = self._escolhida() if self.estado == "resultado" else None
+                if j == self.cartas.escolhida:
+                    self.cartas.selo(tela, x + 6, yj + 12, "決", 20)  # sobre o número
+
+    def _cartao(self) -> _Cartao | None:
+        """Onde e em que letra cabe o resultado inteiro: no lugar de sempre se couber; se não,
+        o cartão sobe por cima das Taxas e, no limite, a letra diminui. Nada fica cortado."""
+        f = self._escolhida()
         if f is None:
-            return
+            return None
+        despertar = 26 if self.giro and self.giro.despertar else 0  # o título do Despertar
+        origem = _quebrar(f"※ {f.origem}", 26)[:2] if f.origem else []
+        for tam, largura, passo in LETRAS_CARTAO:
+            linhas = _quebrar(f.texto, largura)
+            altura = despertar + 62 + len(linhas) * passo + 18 * len(origem)
+            topo = min(TOPO_CARTAO, FUNDO_CARTAO - altura)
+            if topo >= TOPO_MAXIMO_CARTAO:
+                return _Cartao(f, topo, linhas, tam, passo, origem)
+        sobra = (FUNDO_CARTAO - TOPO_MAXIMO_CARTAO - despertar - 62 - 18 * len(origem)) // passo
+        linhas = linhas[:sobra]
+        linhas[-1] = linhas[-1].rstrip(" ,.;:") + "…"  # só se nem a letra menor couber
+        return _Cartao(f, TOPO_MAXIMO_CARTAO, linhas, tam, passo, origem)
+
+    def _resultado(self, r: IRenderer, x: int, c: _Cartao) -> None:
+        f, y = c.fatia, c.topo
         if self.giro and self.giro.despertar:
             self._texto(r, x, y - 6, "覚醒  Despertar", 22, OURO)
             y += 26
         divina = f.raridade == self.mesa.raridades[-1].id
         moldura(r, x - 14, y - 12, LARGURA - 14, ALTURA - 64, self.cores[f.raridade], divina)
-        self._texto(r, x, y, f.nome, 24, self.cores_claras[f.raridade])
+        self._nome(r, x, y, f.nome, 24, self.cores_claras[f.raridade], LARGURA - 42 - x)
         self._texto(r, x, y + 30, self.nomes_raridade[f.raridade], 16, self.cores[f.raridade])
-        linhas = _quebrar(f.texto, 24)
-        maximo = 3 if self.giro and self.giro.despertar else 5  # o título do Despertar ocupa espaço
-        if len(linhas) > maximo:
-            linhas = linhas[: maximo - 1] + [linhas[maximo - 1].rstrip(" ,.;:") + "…"]
-        for j, linha in enumerate(linhas):
-            self._texto(r, x, y + 56 + j * 21, linha, 16, TINTA)
-        if f.origem:
-            yo = y + 62 + len(linhas) * 21
-            for j, linha in enumerate(_quebrar(f"※ {f.origem}", 28)[: 1 if maximo == 3 else 2]):
-                self._texto(r, x, yo + j * 18, linha, 13, _alpha(OURO, 190))
+        for j, linha in enumerate(c.linhas):
+            self._texto(r, x, y + 56 + j * c.passo, linha, c.tam, TINTA)
+        yo = y + 62 + len(c.linhas) * c.passo
+        for j, linha in enumerate(c.origem):
+            self._texto(r, x, yo + j * 18, linha, 13, _alpha(OURO, 190))
 
     def _controles(self, r: IRenderer) -> None:
         if self.jornada:

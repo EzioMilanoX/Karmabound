@@ -21,6 +21,8 @@ def test_no_meio_da_luta_continuar_recomeca_a_mesma_luta():
     j.girar_linhagem()
     j.girar_destino()
     j.girar_arco()
+    if j.fase == "caminho":  # antes da luta, as portas: a do Rival
+        j.escolher_caminho([p.tipo for p in j.oferta_caminho].index("rival"))
     antes = _rival(j)
     vida = j.jogador.vida
     j.luta.resolver(j.luta.basico) if j.luta.vez is j.jogador else j.luta.turno_rival()

@@ -25,12 +25,13 @@ def test_todo_efeito_usado_existe():
     existentes = {p.stem for p in (RAIZ / "assets" / "sons").glob("*.wav")}
     raridades = [r.id for r in carregar_raridades(carregar_balanceamento())]
     usados = _usados("tocar") | set(som.SOM_DO_EFEITO.values()) | {f"revela_{r}" for r in raridades}
+    usados |= {"cutin", "quebra", "vidro", "roda"}  # a luta agenda estes (_agendar_som)
     assert usados <= existentes, usados - existentes
 
 
 def test_toda_musica_usada_existe():
     existentes = {p.stem for p in (RAIZ / "assets" / "musica").glob("*.wav")}
-    usadas = _usados("musica") | {"luta", "luta_carma", "chefe"}
+    usadas = _usados("musica") | {"luta", "luta_carma", "chefe", "chefe_furia"}
     assert usadas <= existentes, usadas - existentes
 
 

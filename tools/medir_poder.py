@@ -6,6 +6,7 @@ DESIGN.md (Cinza +1 a +3, Sangue +3 a +5, Maldito +5 a +10, Divino +10 a +20).
 - Técnica: começa no 3º espaço; a linha de base tem a Investida (Cinza) ali.
 - Dom: a run inteira com esse Dom, contra a run sem Dom.
 - Relíquia: começa a run com ela, contra a run sem ela.
+- Técnica de fusão (data/fusoes.json): começa no 3º espaço, como uma técnica.
 
 Sem ids, mede todos os Dons, Relíquias e técnicas Malditas/Divinas. Roda em paralelo.
 """
@@ -20,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from karmabound.fusoes import tecnicas_de_fusao  # noqa: E402
 from karmabound.rodas import (  # noqa: E402
     carregar_balanceamento,
     carregar_raridades,
@@ -29,6 +31,7 @@ from karmabound.run import (  # noqa: E402
     aplicar_dom,
     aplicar_linhagem,
     atualizar_efeitos,
+    criar_tecnica,
     receber_reliquia,
 )
 from karmabound.simulacao import simular_com_combate  # noqa: E402
@@ -51,6 +54,8 @@ def tipo_do_item(item: str) -> str:
     for roda, tipo in pares:
         if any(f.id == item for f in rodas[roda].fatias):
             return tipo
+    if item in tecnicas_de_fusao():
+        return "fusao"
     raise SystemExit(f"item desconhecido: {item}")
 
 
@@ -77,6 +82,14 @@ def _uma(args: tuple[str, str, int, int, str | None]) -> tuple[tuple[str, str], 
     preparar = None
     if tipo == "tecnica":
         bal["combate"]["jogador"]["tecnicas"] = ["golpe_direto", "guarda_alta", item]
+    elif tipo == "fusao":  # não está nas rodas: entra no lugar da Investida
+        bal["combate"]["jogador"]["tecnicas"] = ["golpe_direto", "guarda_alta", "investida"]
+        if item != "investida":
+            fatia = tecnicas_de_fusao()[item]
+
+            def preparar(e, c, fatia=fatia):
+                tecnicas = e.jogador.tecnicas
+                tecnicas[[t.id for t in tecnicas].index("investida")] = criar_tecnica(c, fatia)
     elif tipo == "dom":
         if item == "-":
             preparar = _sem_dom
@@ -105,6 +118,7 @@ def _uma(args: tuple[str, str, int, int, str | None]) -> tuple[tuple[str, str], 
 def medir(itens: list[str], runs: int, dificuldade: str | None) -> dict[tuple[str, str], float]:
     tipos = {i: tipo_do_item(i) for i in itens}
     bases = {"tecnica": "investida", "dom": "-", "reliquia": "-", "linhagem": "-"}
+    bases["fusao"] = "investida"
     alvos = {(t, bases[t]) for t in tipos.values()} | {(t, i) for i, t in tipos.items()}
     tarefas = [(t, i, s, runs, dificuldade) for t, i in sorted(alvos) for s in SEEDS]
     soma: dict[tuple[str, str], list[int]] = {}
@@ -134,6 +148,7 @@ def main() -> None:
         ]
     )
     raridade = {f.id: f.raridade for r in rodas.values() for f in r.fatias}
+    raridade.update({i: f.raridade for i, f in tecnicas_de_fusao().items()})
     taxas = medir(itens, args.runs, args.dificuldade)
     print(f"{args.dificuldade} · {args.runs * len(SEEDS)} runs por item")
     bases = {
@@ -141,6 +156,7 @@ def main() -> None:
         "dom": ("-", "sem Dom"),
         "reliquia": ("-", "sem relíquia"),
         "linhagem": ("-", "sem linhagem"),
+        "fusao": ("investida", "com a Investida"),
     }
     for tipo, (b, nome) in bases.items():
         if (tipo, b) in taxas:

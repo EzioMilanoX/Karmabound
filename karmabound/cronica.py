@@ -154,6 +154,7 @@ class Cronica:
                 "votos": _votos(j),
                 "reliquias": len(j.estado.reliquias),
                 "diaria": j.diaria,
+                "ascensao": getattr(j, "ascensao", 0),
             }
         )
         self.feitos += [f.id for f in novos]

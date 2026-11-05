@@ -8,10 +8,15 @@ Fases:
     linhagem   gira a roda da Linhagem (uma vez, no começo): de que sangue você vem
     destino    gira a roda do Destino (uma vez, no começo): o Dom
     arco       gira a roda do Arco (começo de cada capítulo): a regra do capítulo
+    caminho    antes de cada luta que não é de chefe: escolhe 1 de 3 portas (rival,
+               bando, elite, encruzilhada ou a Nêmesis)
+    encruzilhada  a porta sem luta: escolhe uma opção (às vezes ela leva a um giro)
     luta       a luta em andamento (`self.luta`)
-    tecnica    depois de vencer: gira Técnicas e escolhe 1 de 3
-    substituir os 4 espaços estão cheios: troca uma técnica ou descarta a nova
-    altar      o capítulo acabou: o Altar dos Votos abre (monta um voto ou recusa)
+    treino     depois de vencer: escolhe 1 de 3 treinos (fica mais forte pela run)
+    tecnica    depois do treino: gira Técnicas e escolhe 1 de 3
+    substituir os 4 espaços estão cheios: troca uma técnica ou descarta a nova (também
+               quando uma fusão nasce sem espaço; depois, segue `retomar`)
+    altar    o capítulo acabou: o Altar dos Votos abre (monta um voto ou recusa)
     reliquia   depois da técnica, às vezes (sempre, na Invasão): gira Relíquias
     vitoria    venceu os 3 capítulos
     derrota    caiu
@@ -21,9 +26,12 @@ from __future__ import annotations
 
 import pickle
 import random
+from collections import Counter
 from dataclasses import dataclass, field
 
-from karmabound.combate import Luta, Lutador, Tecnica, valor_tecnica
+from karmabound.caminho import Evento, Porta, nome_de_nemesis, pode_escolher
+from karmabound.combate import HESITAR, Luta, Lutador, Tecnica, valor_tecnica
+from karmabound.fusoes import fundir
 from karmabound.grimorio import Grimorio
 from karmabound.mesa import Giro, Mesa
 from karmabound.rodas import Fatia
@@ -34,6 +42,7 @@ from karmabound.run import (
     aplicar_dom,
     aplicar_linhagem,
     aplicar_voto,
+    atravessar_encruzilhada,
     atualizar_efeitos,
     avaliar_restricoes,
     beneficios_dos_ganhos,
@@ -41,14 +50,21 @@ from karmabound.run import (
     comprar_ganhos,
     custo_dos_ganhos,
     encerrar_luta,
+    escolher_porta,
     girar,
     medir_restricoes,
+    oferecer_caminho,
+    oferecer_treinos,
     receber_reliquia,
     receber_tecnica,
     saldo_do_voto,
     substituir_tecnica,
+    tecnicas_iniciais,
+    tem_caminho,
     vai_ter_reliquia,
 )
+from karmabound.treino import Treino
+from karmabound.treino import aplicar as aplicar_treino
 from karmabound.votos import FimDaRun, Voto, Votos
 
 
@@ -93,6 +109,17 @@ class Jornada:
     grimorio: Grimorio | None = None  # registra o que sai da roleta (só quem joga)
     antes_da_luta: bytes | None = field(default=None, repr=False)  # a foto para continuar
     diaria: str = ""  # a data, numa run da semente do dia
+    oferta_treino: tuple[Treino, ...] = ()  # os treinos que a fase "treino" oferece
+    oferta_caminho: tuple[Porta, ...] = ()  # as portas que a fase "caminho" oferece
+    encruzilhada: Evento | None = None  # o encontro da fase "encruzilhada"
+    giro_da_encruzilhada: bool = False  # o giro veio de uma escolha, não de uma vitória
+    usos: Counter = field(default_factory=Counter)  # técnica -> usos nesta run (Maestria)
+    assassino: dict | None = None  # quem te matou (vira a Nêmesis no Legado)
+    legado: dict = field(default_factory=dict)  # abertos/maestria/nemesis: o Contexto refeito
+    # fusões (fusoes.py): as que nasceram, para a tela anunciar (ela lê e esvazia)
+    fusoes_novas: list[Fatia] = field(default_factory=list)
+    fila_fusao: list[Fatia] = field(default_factory=list)  # nasceram sem espaço: a trocar
+    retomar: str = ""  # depois da troca de uma fusão: a fase (ou o passo "_metodo") que segue
 
     # ------------------------------------------------------------------ começo
 
@@ -103,10 +130,17 @@ class Jornada:
         seed: int | None = None,
         jogo: str = "classico",
         anime: str = "",
+        abertos: frozenset[str] | None = None,
+        maestria: dict[str, int] | None = None,
+        nemesis: dict | None = None,
+        ascensao: int = 0,
     ) -> Jornada:
         """`modo`: a dificuldade. `jogo`: Clássico, Torre sem fim, Desfile de chefes ou
-        Mundo de um anime (com `anime`)."""
-        ctx = Contexto.padrao(modo, jogo=jogo, anime=anime)
+        Mundo de um anime (com `anime`). `abertos`, `maestria`, `nemesis`: do Legado.
+        `ascensao`: o degrau da Ascensão (0 na semente do dia)."""
+        legado = {"abertos": abertos, "maestria": maestria, "nemesis": nemesis}
+        legado["ascensao"] = ascensao  # guardado junto: salvar.carregar refaz o Contexto
+        ctx = Contexto.padrao(modo, jogo=jogo, anime=anime, **legado)
         rng = random.Random(seed)
         mesa = Mesa(ctx.rodas, ctx.raridades, ctx.config_carma, rng)
         j = ctx.combate["jogador"]
@@ -115,11 +149,11 @@ class Jornada:
             j["vida"],
             j["velocidade"],
             j["percepcao"],
-            [Tecnica.de_fatia(ctx.tecnicas[t]) for t in j["tecnicas"]],
+            tecnicas_iniciais(ctx),
             carma=mesa.carma,
         )
         estado = EstadoRun(jogador, mesa, Votos(ctx.catalogo))
-        return cls(ctx, estado, rng, ctx.combate["dificuldade"])
+        return cls(ctx, estado, rng, ctx.combate["dificuldade"], legado=legado)
 
     # ------------------------------------------------------------------ atalhos
 
@@ -155,6 +189,15 @@ class Jornada:
     def despertares(self) -> int:
         return self.estado.despertares
 
+    @property
+    def ascensao(self) -> int:
+        return self.ctx.ascensao
+
+    @property
+    def proximas_portas(self) -> tuple[Porta, ...]:
+        """O mapa: as portas do passo seguinte do capítulo (vazio: o próximo é o chefe)."""
+        return self.estado.proximas_portas
+
     def _exigir(self, *fases: str) -> None:
         if self.fase not in fases:
             raise RuntimeError(f"ação de {fases} chamada na fase '{self.fase}'")
@@ -172,6 +215,7 @@ class Jornada:
         giro = self._girar("linhagem")
         aplicar_linhagem(self.estado, self.ctx, giro.fatias[0])
         self.fase = "destino"
+        self._fundir("destino")
         return giro
 
     def girar_destino(self) -> Giro:
@@ -179,29 +223,123 @@ class Jornada:
         giro = self._girar("destino")
         aplicar_dom(self.estado, self.ctx, giro.fatias[0])
         self.fase = "arco"
+        self._fundir("arco")
         return giro
 
     def girar_arco(self) -> Giro:
         self._exigir("arco")
         giro = self._girar("arco")
         aplicar_arco(self.estado, self.ctx, giro.fatias[0])
-        self._comecar_luta()
+        self._antes_da_luta()
         return giro
+
+    def _antes_da_luta(self) -> None:
+        """Chefe: a luta começa. Senão, o caminho oferece as portas."""
+        if tem_caminho(self.estado, self.ctx):
+            self.oferta_caminho = oferecer_caminho(self.estado, self.ctx, self.rng)
+            self.fase = "caminho"
+        else:
+            self._comecar_luta()
+
+    def escolher_caminho(self, indice: int) -> Porta:
+        """Atravessa a porta `indice`: a luta (ou a encruzilhada) começa."""
+        self._exigir("caminho")
+        porta = self.oferta_caminho[indice]
+        self.oferta_caminho = ()
+        if porta.tipo == "evento":
+            self.encruzilhada = porta.evento
+            self.fase = "encruzilhada"
+        else:
+            escolher_porta(self.estado, porta)
+            self._comecar_luta()
+        return porta
+
+    def pode_escolher(self, indice: int) -> bool:
+        """Se a opção `indice` da encruzilhada cabe (algumas custam Carma)."""
+        assert self.encruzilhada is not None
+        return pode_escolher(self.encruzilhada.opcoes[indice], self.jogador)
+
+    def escolher_encruzilhada(self, indice: int) -> None:
+        self._exigir("encruzilhada")
+        assert self.encruzilhada is not None
+        op = self.encruzilhada.opcoes[indice]
+        if not pode_escolher(op, self.jogador):
+            raise ValueError("Carma insuficiente para esta escolha")
+        self.encruzilhada = None
+        giro = atravessar_encruzilhada(self.estado, op)
+        if giro:
+            self.giro_da_encruzilhada = True
+            self.fase = "tecnica" if giro == "tecnicas" else "reliquia"
+        else:
+            self._proxima_luta()
 
     def _comecar_luta(self) -> None:
         self.antes_da_luta = pickle.dumps((self.estado, self.rng))  # continuar = a mesma luta
         self.luta = comecar_luta(self.estado, self.ctx, self.rng)
         self.fase = "luta"
 
+    def _contar_usos(self, luta: Luta) -> None:
+        """A Maestria conta cada técnica das rodas que você usou nesta luta."""
+        nao = {self.ctx.basico.id, HESITAR.id}
+        for acao in luta.log:
+            if acao.ator == self.jogador.nome and acao.tecnica not in nao:
+                if acao.tecnica in self.ctx.tecnicas:
+                    self.usos[acao.tecnica] += 1
+
+    def _quem_matou(self, luta: Luta) -> dict | None:
+        """O rival que deu o último golpe (vira a Nêmesis no Legado)."""
+        if self.jogador.vivo:
+            return None
+        nomes = {r.nome: r for r in luta.rivais}
+        acao = next((a for a in reversed(luta.log) if a.ator in nomes and a.dano), None)
+        acao = acao or next((a for a in reversed(luta.log) if a.ator in nomes), None)
+        quem = nomes[acao.ator] if acao is not None else luta.rival
+        golpe = acao.tecnica if acao is not None else ""
+        conhecidas = {t.id for t in quem.tecnicas if t.id != self.ctx.basico.id}
+        if golpe not in conhecidas:  # o Golpe não é assinatura: leva a melhor que ele tinha
+            golpe = max(quem.tecnicas, key=valor_tecnica).id if quem.tecnicas else ""
+        if quem.nemesis:
+            nome = quem.nome
+        else:
+            fatia = self.ctx.tecnicas.get(golpe) or next(
+                (c for c in self.ctx.chefes if c.id == golpe), None
+            )
+            nome = nome_de_nemesis(quem.estilo, fatia.nome if fatia else "")
+        return {
+            "nome": nome,
+            "estilo": quem.estilo,
+            "tecnica": golpe,
+            "nemesis": quem.nemesis,
+            "chefe": quem.chefe,
+        }
+
     def terminar_luta(self) -> bool:
         """Chame quando `luta.acabou`. Devolve se o jogador venceu."""
         self._exigir("luta")
         assert self.luta is not None and self.luta.acabou
+        self._contar_usos(self.luta)
         if not encerrar_luta(self.estado, self.ctx, self.luta):
+            self.assassino = self._quem_matou(self.luta)
             self.fase = "derrota"
             return False
-        self.fase = "vitoria" if self.estado.venceu else "tecnica"
+        if self.estado.venceu:
+            self.fase = "vitoria"
+        elif self.ctx.treinos:
+            self.oferta_treino = oferecer_treinos(self.ctx, self.rng)
+            self.fase = "treino"
+        else:
+            self.fase = "tecnica"
+        if not self.estado.venceu:
+            self._fundir(self.fase)  # o Despertar da luta pode completar uma fusão
         return True
+
+    def escolher_treino(self, indice: int) -> Treino:
+        self._exigir("treino")
+        t = self.oferta_treino[indice]
+        aplicar_treino(self.jogador, t)
+        self.oferta_treino = ()
+        self.fase = "tecnica"
+        return t
 
     def girar_tecnica(self) -> Giro:
         self._exigir("tecnica")
@@ -225,19 +363,54 @@ class Jornada:
         elif self.resultado_tecnica == "cheio":
             self.pendente = fatia
             self.fase = "substituir"
-        else:
+        elif not self._fundir("_depois_da_tecnica"):
             self._depois_da_tecnica()
 
     def substituir(self, sai: Tecnica | None) -> None:
-        """Troca `sai` pela técnica pendente; `None` descarta a nova."""
+        """Troca `sai` pela técnica pendente (ou pela fusão que nasceu sem espaço); `None`
+        descarta a nova."""
         self._exigir("substituir")
         assert self.pendente is not None
-        substituir_tecnica(self.estado, sai, self.pendente)
+        substituir_tecnica(self.estado, sai, self.pendente, self.ctx)
         self.pendente = None
-        self._depois_da_tecnica()
+        depois, self.retomar = self.retomar or "_depois_da_tecnica", ""
+        if not self._fundir(depois):
+            self._seguir(depois)
+
+    # ------------------------------------------------------------------ fusões
+
+    def _fundir(self, depois: str) -> bool:
+        """Confere as fusões (fusoes.py). O que nasceu vai para `fusoes_novas` (a tela
+        anuncia), para o Grimório e para o `aviso`. Uma fusão sem espaço abre a fase de
+        substituir; `depois` é o que segue a troca: uma fase ou um passo ("_metodo").
+        Devolve True se parou para a troca."""
+        for n in fundir(self.estado, self.ctx):
+            self.fusoes_novas.append(n.fatia)
+            if self.grimorio is not None:
+                self.grimorio.ver([n.fatia])
+            texto = f"Fusão: {n.fatia.nome} nasceu"
+            self.aviso = f"{self.aviso} · {texto}" if self.aviso else texto
+            if n.resultado == "cheio":
+                self.fila_fusao.append(n.fatia)
+        if not self.fila_fusao:
+            return False
+        self.pendente = self.fila_fusao.pop(0)
+        self.resultado_tecnica = "cheio"
+        self.retomar = depois
+        self.fase = "substituir"
+        return True
+
+    def _seguir(self, depois: str) -> None:
+        if depois.startswith("_"):
+            getattr(self, depois)()
+        else:
+            self.fase = depois
 
     def _depois_da_tecnica(self) -> None:
-        if vai_ter_reliquia(self.estado, self.ctx, self.rng):
+        if self.giro_da_encruzilhada:  # o giro foi a escolha: o caminho segue
+            self.giro_da_encruzilhada = False
+            self._proxima_luta()
+        elif vai_ter_reliquia(self.estado, self.ctx, self.rng):
             self.fase = "reliquia"
         else:
             self._proxima_luta()
@@ -246,7 +419,9 @@ class Jornada:
         self._exigir("reliquia")
         giro = self._girar("reliquias")
         receber_reliquia(self.estado, giro.fatias[0])
-        self._proxima_luta()
+        self.giro_da_encruzilhada = False
+        if not self._fundir("_proxima_luta"):
+            self._proxima_luta()
         return giro
 
     def _proxima_luta(self) -> None:
@@ -260,7 +435,7 @@ class Jornada:
         if self.estado.arco is None:
             self.fase = "arco"
         else:
-            self._comecar_luta()
+            self._antes_da_luta()
 
     # ------------------------------------------------------------------ Altar
 

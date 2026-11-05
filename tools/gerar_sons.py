@@ -366,6 +366,24 @@ def musica_chefe() -> np.ndarray:
     return _loop(seg, ev)
 
 
+def musica_chefe_furia() -> np.ndarray:
+    """A segunda forma do chefe: a mesma faixa (mesmo andamento e duração, para a
+    passagem cair no mesmo ponto do compasso), com tambor dobrado, odaiko em todo tempo,
+    o shamisen uma oitava acima e gongos mais perto."""
+    seg = 19.2
+    bpm = 100
+    ev = [(0, _continuo(drone(41.2, seg + CRUZA, sombrio=True)) * 0.6)]
+    ev += [(0, _continuo(drone(82.4, seg + CRUZA, sombrio=True)) * 0.18)]
+    ev += _tambores(seg, bpm, "O.DDO.DDO.DDOKDK", 60, 1.2)
+    ev += _tambores(seg, bpm, "O...O...O...O...", 60, 1.1)
+    ev += _tambores(seg, bpm, ".K.K.K.KKK.K.KKK", 72, 0.8)
+    ev += [(k * 2.4, gongo(55, 3.0) * 0.55) for k in range(8)]
+    riff = [0, -1, 1, -1, 0, -1, -1, -1, 4, -1, 3, -1, 1, -1, 0, -1]
+    ev += _melodia(seg, bpm, riff, IN, shamisen, oitava=0.5)
+    ev += _melodia(seg, bpm, [4, 3, 4, 1, 4, 3, 2, 1, 0, -1, 0, 1, 2, -1, 4, -1], IN, shamisen)
+    return _loop(seg, ev)
+
+
 MUSICAS = {
     "titulo": musica_titulo,
     "roleta": musica_roleta,
@@ -373,6 +391,35 @@ MUSICAS = {
     "luta_carma": lambda: _luta(16.0, 120, intensa=True),
     "chefe": musica_chefe,
 }
+
+
+# Gerados por último: o RNG tem seed fixa e é um só, então os antigos (acima) continuam
+# saindo idênticos byte a byte.
+EFEITOS_LUTA = {
+    # o cut-in de técnica: o ar rasgado, a batida e o shamisen
+    "cutin": lambda: _soma(
+        (0, corte(0.4, agudo=True) * 0.8),
+        (0.12, taiko(80, 0.7, 1.1)),
+        (0.14, shamisen(233.08, 0.9)),
+    ),
+    # a guarda quebra: estalo seco, madeira rachando e o taiko grave
+    "quebra": lambda: _soma(
+        (0, kane(0.15) * 1.2),
+        (0.03, corte(0.2, agudo=True)),
+        (0.05, taiko(55, 0.8, 1.3)),
+        *((0.08 + 0.04 * k, kane(0.08) * 0.5) for k in range(4)),
+    ),
+    # o espelho do Aizen: vidro estilhaçando (sinos agudos desafinados e ruído)
+    "vidro": lambda: _soma(
+        (0, _ruido(0.6) * np.exp(-_t(0.6) / 0.08) * 0.6),
+        *((0.02 * k, sino(2600 + 410 * k, 0.6) * 0.35) for k in range(8)),
+    ),
+    # a roda do Mahoraga gira uma casa: o estalo e o gongo grave
+    "roda": lambda: _soma(
+        (0, kane(0.2) * 1.3), (0.02, taiko(48, 1.0, 1.2)), (0.1, gongo(62, 2.5) * 0.9)
+    ),
+}
+MUSICAS_LUTA = {"chefe_furia": musica_chefe_furia}
 
 
 def _salvar(caminho: Path, som: np.ndarray, pico: float) -> None:
@@ -393,6 +440,14 @@ def gerar() -> list[Path]:
         _salvar(caminho, fazer(), 0.85)
         feitos.append(caminho)
     for nome, fazer in MUSICAS.items():
+        caminho = RAIZ / "musica" / f"{nome}.wav"
+        _salvar(caminho, fazer(), 0.6)
+        feitos.append(caminho)
+    for nome, fazer in EFEITOS_LUTA.items():
+        caminho = RAIZ / "sons" / f"{nome}.wav"
+        _salvar(caminho, fazer(), 0.85)
+        feitos.append(caminho)
+    for nome, fazer in MUSICAS_LUTA.items():
         caminho = RAIZ / "musica" / f"{nome}.wav"
         _salvar(caminho, fazer(), 0.6)
         feitos.append(caminho)

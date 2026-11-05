@@ -119,18 +119,18 @@ O `prototype` do GAM-10, ligado ao jogo:
 
 ### Modos de dificuldade
 
-Calibrados por simulação com o piloto automático (`python tools/simular.py --combate`). O primeiro rival sempre tem 12 de vida; os modos mudam o crescimento dos rivais, o chefe e a sua vida. Um jogador de verdade vence mais que o piloto.
+Calibrados por simulação com o piloto automático (`python tools/simular.py --combate`). O primeiro rival sempre tem 24 de vida; os modos mudam o crescimento dos rivais, o chefe e a sua vida. Um jogador de verdade vence mais que o piloto.
 
 | Modo | Vitória (piloto) | Rival | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | ~45% | 12 +3,19/luta | ×1,2 | 80 |
-| Equilibrado | ~36% | 12 +3,46/luta | ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 +3,87/luta | ×1,25 | 70 |
-| Brutal | ~10% | 12 +5,21/luta | ×1,25 | 68 |
+| Acessível | ~45% | 24 +4,94/luta | postura | 127 |
+| Equilibrado | ~36% | 24 +5,70/luta | postura | 119 |
+| **Difícil** (padrão) | ~25% | 24 +6,61/luta | postura | 110 |
+| Brutal | ~10% | 24 +9,28/luta | postura | 107 |
 
 Valores de 2026-11-04, recalibrados depois da expansão (`python tools/calibrar.py modos --aplicar`): os rivais crescem menos por luta do que antes (eram 4,6–5,9). Mesmo com o Altar garantido e o voto de luta do lado do jogador, foi preciso baixar a vida deles. Os rivais sorteiam técnicas da mesma roda, e as novas (gravidade, sangramento, bomba) pesam mais na mão deles.
 
-Recalibrados de novo depois da Leva 3: o jogador ficou mais forte com as formas, os clones e as invocações, e o Difícil e o Brutal subiram (3,64 → 3,87 e 4,44 → 5,21 por luta); o Acessível e o Equilibrado quase não mudaram.
+Recalibrados de novo depois da Leva 3: o jogador ficou mais forte com as formas, os clones e as invocações, e o Difícil e o Brutal subiram (3,64 → 3,87 e 4,44 → 5,05 por luta); o Acessível e o Equilibrado quase não mudaram. Com o efeito próprio de cada ferida (logo abaixo), o Brutal voltou um pouco (5,21 → 5,05) e os outros mudaram menos de 0,03.
 
 Com combate real, o Carma enche **0,85–1,05 vez por run** em todos os modos: a calibração feita com dano aleatório se confirmou.
 
@@ -392,6 +392,107 @@ O que a medição ensinou:
 
 Remedidos depois dos ajustes à mão: Motosserra +2,7, Casa dos Feiticeiros +3,1, Mana Escondida +2,4, Mundo de Lâminas +13,6, Espada da Vitória +14,2.
 
+### Cada ferida tem o seu jeito (2026-11-04)
+
+Antes, os quatro jeitos de ferir com o tempo só tiravam vida. Agora cada um faz uma coisa que é dele, tirada da obra:
+
+| Ferida | Além do dano | Por quê |
+|---|---|---|
+| 血 Sangramento (cortes e queimaduras) | Quem sangra recebe só **metade da cura**. | A ferida aberta não fecha. Responde aos rivais e builds de cura. |
+| 毒 Veneno | O envenenado causa **−5% de dano por dose**, até −50%. | O corpo amolece (a glicínia da Shinobu, a Ashisogi Jizo do Mayuri). Veneno vira defesa, não só dano. |
+| 炎 Chama negra | Com a vida em até **2× a chama**, o que sobra **vira cinza**. | A Amaterasu não apaga até incinerar. |
+| 呪 Marca | Cada técnica do amaldiçoado demora **+1 turno** a voltar. | A maldição sela (o Selo Amaldiçoado, o Gogyo Fuin). |
+
+Os números ficam em `combate.py` (`CURA_SANGRANDO`, `FRAQUEZA_POR_DOSE`, `FRAQUEZA_MAXIMA`, `INCINERAR`, `RECARGA_AMALDICOADA`). A cura de Despertar escapa da ferida aberta: é um milagre.
+
+**Medição (A/B no Difícil, 6000 runs por item, com e sem as regras):** as regras somam de 0 a +2 pontos a cada item, perto do ruído (±1). Nenhum item saiu da régua por causa delas. Os que estão fora já estavam antes:
+
+| Item | Raridade | Sem as regras | Com as regras |
+|---|---|---|---|
+| Chuva de Sangue | Maldito | +14,6 | +15,0 |
+| Enma | Maldito | +14,7 | +14,7 |
+| Frasco de Glicínia | Cinza | +5,0 | +6,3 |
+| Marca da Maldição | Maldito | −4,1 | −3,5 |
+
+A recalibração das dificuldades depois das regras mexeu pouco: Brutal 5,21 → 5,05 por luta; os outros, menos de 0,03.
+
+## Ritmo e progressão (2026-11-05)
+
+O Enzo jogou e sentiu: as lutas eram rápidas demais, dava para matar de um golpe, e os chefes ou te destruíam ou eram obliterados. Faltava a progressão de um roguelite. A medição (piloto, Difícil, 400 runs) confirmou:
+
+| | Antes | Depois |
+|---|---|---|
+| Ações suas por luta | 2,3 a 3,1 | 3,4 a 5,3 |
+| Lutas decididas com 1 ou 2 ações suas | 41% a 71% | 4% a 34% |
+| Maior golpe seu (mediana, % da vida do rival) | 44% a 97% | 29% a 57% |
+| Chefe da luta 12 | 73% quase intacto · 19% morte | 28% quase intacto · 39% suado · 31% morte |
+
+O que mudou:
+
+- **Rivais com o dobro de vida** (base 12 → 24, e o crescimento por luta recalibrado). A luta dura o bastante para a recarga pesar e para as feridas que duram valerem.
+- **Postura do chefe** (`POSTURA_CHEFE = 0,3`): uma ação tira no máximo 30% da vida do chefe. As feridas que duram (chama, veneno, sangramento, Marca) passam pela postura: são o jeito de derrubar um chefe. Por isso o multiplicador de vida do chefe saiu (×1,2–1,25 → ×1).
+- **Segunda forma** (`SEGUNDA_FORMA = 0,5`, `FURIA_CHEFE = 1,3`): com a vida na metade, o chefe fica +30% mais forte e todas as técnicas dele voltam prontas. Uma vez por luta.
+- **Treino** (`treino.py`, `data/treinos.json`): depois de cada vitória, 1 de 3: Corpo Forjado (+10 de vida máxima), Punhos de Ferro (+1 de dano em todo golpe), Passos Leves (+1 Velocidade), Olhos Abertos (+1 Percepção), Respiração Profunda (40% da vida) ou Meditar no Carma (+30 de Carma). Mexe na base do lutador: dura a run. O piloto respira abaixo de 45% da vida; senão prefere dano, depois vida.
+- **Você aguenta mais:** vida 70 → 100 no Difícil (os outros modos na mesma proporção) e cura entre lutas 30% → 50%. Sem isso, a luta mais longa virava só desgaste: o rival age o dobro de vezes.
+
+Os modos foram recalibrados (`tools/calibrar.py modos --aplicar`) e bateram o alvo. No meio da run (lutas 5 a 7) ainda há cerca de um terço de lutas curtas contra rivais comuns: o build cresce mais rápido que a vida deles ali. Os itens ainda não foram medidos de novo contra a régua com este ritmo.
+
+A progressão **entre** runs veio logo depois: ver "O caminho, os bandos e o Legado".
+
+## O caminho, os bandos e o Legado (2026-11-05)
+
+O Enzo escolheu, de uma lista de formas de progressão: a roda que se abre, a Nêmesis, a Maestria, o caminho com escolha e rivais com papel — e pediu lutas com até 3 inimigos, cada um com uma função.
+
+**Dentro da run: o caminho** (`caminho.py`, `data/caminho.json`). Antes de cada luta que não é de chefe, 1 de 3 portas. Sempre há um Rival; as outras saem dos pesos sem repetir:
+
+- 敵 **Rival**: o duelo de sempre.
+- 群 **Bando**: 2 ou 3 rivais com papel. A vida do bando é a de um rival comum ×1,35, repartida pelo peso de cada papel; cada um bate ×0,62 (dupla) ou ×0,38 (trio) vezes o do papel. Não aparece na primeira luta (você ainda bate fraco: um curandeiro ali virava uma luta sem fim).
+- 強 **Elite**: ×1,35 de vida, ×1,15 de dano, +1 técnica, +1 Percepção; às vezes um bando com Comandante (reforço menor). Vencer garante uma Relíquia.
+- 岐 **Encruzilhada**: sem luta. Seis encontros (Fonte, Mercador de Almas, Mestre Errante, Santuário, Cemitério, Forja), cada um com 2 ou 3 escolhas e o seu preço. O tempo passa: o próximo rival é o da luta seguinte.
+- 仇 **Nêmesis**: só do capítulo 2 em diante, uma vez por run (ver o Legado).
+
+**Os papéis** (`Lutador.papel`; a IA do papel vem antes da IA comum em `escolher_rival`): 刃 Lâmina (bate, ×1,2), 盾 Guardião (bloqueio de 20% da vida de um rival comum no aliado mais ferido), 癒 Curandeiro (cura 18% no aliado mais ferido), 呪 Xamã (Praga: veneno e fraqueza; prefere maldições) e 将 Comandante (Grito de Guerra: +2 de dano no bando, +1 por capítulo; só na elite).
+
+**O combate com bando** (`combate.py`): `Luta.rivais`, `Luta.rival` é o seu alvo (`mirar`; quando cai, a mira passa sozinha). O lado dos rivais age em sequência, o mais rápido primeiro, cada um anunciando a própria ação (`intencao_de`). A luta 1 contra 1 ficou idêntica (mesmos sorteios: a suíte antiga passou sem mudança). Técnicas de explosão ganharam `area`: os outros rivais sofrem uma fração do dano (Arte Explosiva, Era do Gelo, Explosão Final, Chuva de Sangue, Enxame, Suor Explosivo, Estalo de Chamas, Chuva de Chutes). O piloto mira quem cai com um Golpe; senão o curandeiro, o xamã e por último o guardião.
+
+**Entre runs: o Legado** (`legado.py`, `~/.karmabound/legado.json`; só quem joga registra):
+
+- **A roda se abre.** Começa com os 7 animes mais ricos. Cada run deixa Memória (1 por luta vencida, 2 por capítulo fechado, 5 pela vitória, 3 pela Nêmesis vingada); a cada 6, o próximo anime entra em todas as rodas. Uma raridade que os animes abertos não têm numa roda volta inteira, como no Mundo de um anime. Quem já jogava ganha a Memória das runs da Crônica. A semente do dia joga com tudo aberto, sem Maestria nem Nêmesis.
+- **Maestria.** Cada uso de uma técnica das rodas conta. Com 20 usos ela chega à mão já evoluída uma vez (★); com 60, duas (★★). As duplicatas continuam evoluindo por cima.
+- **Nêmesis.** Quem deu o último golpe vira a Nêmesis, com o nome do estilo e do golpe ("Ronin · Lâmina do Inferno"). Ela volta numa run seguinte com ×1,3 de vida (+0,1 por vez que te matou), ×1,1 de dano (+0,05) e o golpe que te matou, evoluído a cada vez. Vencer: Relíquia garantida, +40 de Carma e um Despertar guardado; ela some. Perder de novo: fica mais forte.
+
+**O balanceamento.** A primeira recalibração com o caminho baixou a vida dos rivais (Difícil 5,99 → 4,69 por luta): o duelo voltava a acabar com 2 ações suas, o problema que o Enzo tinha acabado de reclamar. A compensação foi pelo outro lado: cura entre lutas 50% → 65% e a sua vida ×1,1 em todos os modos; a vida dos rivais quase não mexeu (Difícil 5,99 → 5,66; modos em 45,7 / 35,6 / 25,7 / 9,8%). Piloto, Difícil, 400 runs:
+
+| | Antes do caminho | Com o caminho |
+|---|---|---|
+| Suas ações por luta (lutas 1 a 12) | 3,4 a 5,3 | 3,8 a 7,8 |
+| Lutas decididas com 1 ou 2 ações suas | 4% a 34% | 2% a 25% |
+| Chefe da luta 12 (perde) | 31% | 35% |
+
+Morte por luta, por porta (Difícil, piloto): rival ~7%, dupla ~4%, trio ~9%, elite ~6%, chefe ~20%. Um trio dura ~23 ações no total (umas 6 suas).
+
+Os itens ainda não foram medidos de novo contra a régua com o caminho.
+
+### Invocações em campo (2026-11-05)
+
+Pedido do Enzo: as invocações aparecerem, e um limite. Cada invocação guarda de onde veio (`[turnos, dano, origem]`) e a tela desenha a criatura certa (sapo, cão de sombra, ave-trovão, Mahoraga, soldado de sombra, broto) ao lado do dono, atacando quando ela fere. **No máximo 3 em campo** (`MAX_INVOCACOES`); a quarta manda embora a mais antiga. Clones continuam até 5 (`MAX_CLONES`) e aparecem como cópias translúcidas. A `Acao` passou a dizer à tela o alvo, as invocações que atacaram, o respingo da área, quem foi protegido e quem foi curado.
+
+## Fusões, Ressonância, chefes com regra própria e o resto da lista (2026-11-05)
+
+O Enzo pediu tudo da lista de ideias, mais "técnicas desbloqueadas quando tem certos requisitos, ex.: Seis Olhos + Infinito para dar o Roxo".
+
+- **Fusões** (`fusoes.py`, `data/fusoes.json`). Requisitos podem ser técnica equipada, Dom, Linhagem, Relíquia ou um Despertar já disparado na run (`EstadoRun.despertares_ids`); "um de" vale. Com tudo, a fusão nasce: toma o lugar da primeira técnica-requisito, ou entra como nova (sem espaço: a troca). Uma vez por run. O exemplo do Enzo: Olhos que Tudo Veem (Dom) + Vazio Infinito (Despertar) → Vazio Púrpura. Mais onze: Shuriken Espiral, Guerreiro Espectral, Lua Sem Luz, e oito técnicas novas só de fusão (Corta-Raio, Punho Colossal, Onda Carmesim, Trovão em Chamas, Repulsão Escarlate, Tempestade de Espirais, Relâmpago Ligeiro, Palmas da Verdade), medidas entre +9 e +16 na régua, todas com preço. São descobertas raras: o piloto (que agora prefere a peça de combo no empate) chega a uma em ~1% das runs.
+- **Ressonância** (`ressonancia.py`, `data/ressonancias.json`): 3 técnicas equipadas do mesmo anime dão um bônus temático; 4, o nível seguinte. Naruto clones, One Piece Haki (Percepção), Jujutsu Kaisen primeiro golpe, Bleach pressão espiritual (dano), Demon Slayer respiração (cura), Dragon Ball ki que cresce, Hunter x Hunter Nen (esquiva), e um genérico para os outros.
+- **Quebra de guarda** (todo rival): os seus golpes enchem um medidor (dano + 2 por golpe); a 50% da vida máxima (chefe 70%) a guarda quebra: ele perde o turno e sofre +25% até agir. O medidor esvazia 15% por turno dele. Com 40%/10% quebrava em 75% das lutas e a vitória ia de 22% a 42%; 50%/15% quebra em ~62%.
+- **Chefes com mecânica própria** (`chefes.json`, seção `mecanicas`): cada assinatura traz uma regra. Duas novas: General da Roda (Mahoraga: o 2º uso da mesma técnica fere metade, o 3º nada; a roda recomeça na segunda forma) e Flor no Espelho (Aizen: metade dos anúncios são isca). As antigas ganharam: Pétalas (atravessa clones), Armadura, Repulsão (a cada 3 turnos você perde clones, invocações e bloqueio), Intangível (1 em 4 ataques atravessa), O Preço (depois da Lua Sem Fim, −50% de dano), Regenera (o sangramento corta), Contrato (o primeiro golpe que o feriria é ignorado, renova), Balança (quem tem menos vida obedece) e Carregar (o disparo cresce se não for interrompido).
+- **Afixos de elite** (`caminho.json`, `afixos`): 1 por elite (2 do capítulo 3): Vampírico, Espinhos, Veloz, Invocador, Blindado, Furioso, Amaldiçoado, Gélido.
+- **Aliado** (`aliados.py`, `data/aliados.json`): um companheiro por run que age no começo do seu turno e não é alvo (Faro, Pequeno Doutor, Cavaleiro de Sombra, Raposa Rubra, Borboleta de Glicínia); sobe de nível a cada vitória. Vem da encruzilhada "Lutador Ferido na Estrada" ou, às vezes, de uma elite.
+- **Mapa**: as portas do próximo passo já aparecem junto com as de agora (`EstadoRun.proximas_portas`; vazio = o chefe).
+- **Ascensão** (`ascensao.py`, `data/ascensao.json`): 10 níveis acumulados por dificuldade; vencer na N libera a N+1. Piloto no Difícil: A0 29% · A5 22% · A10 13% (antes da recalibração).
+- **Visual e som**: cut-in de técnica (Maldita, Divina, fusão, assinatura de chefe), câmera que dá um soco no golpe forte, aviso de perigo nas bordas, barra de guarda e "崩" na quebra, selos de afixo, a mecânica do chefe sob o nome dele, o aliado em campo, as ressonâncias no seu cabeçalho e a música do chefe que intensifica na segunda forma.
+
+Efeito medido (piloto, Difícil, antes da recalibração): guarda +8 pontos de vitória, mecânicas de chefe −4, afixos −8, aliado ~0 (aparece pouco), fusões e ressonância ~0 no piloto (ele quase não monta combo; para quem joga, valem mais). A Makima é o chefe mais duro (morte 25% na luta 12). Depois de tudo, os modos foram recalibrados: os rivais ganharam vida por luta (Difícil 5,66 → 6,61; Acessível 4,94, Equilibrado 5,70, Brutal 9,28), com a vitória em 45 / 37 / 25 / 9%.
+
 ## Poderes impossíveis de balancear
 
 Preocupação levantada em 2026-11-02: alguns arquétipos (parar o tempo, copiar, golpe que nunca erra, dano igual ao Carma) quebram qualquer luta.
@@ -411,5 +512,5 @@ Ferramentas para calibrar os custos:
 - **Despertar:** quais variedades e qual gatilho.
 - Revisitar o que ficou fora da régua (tabela acima).
 - **Conteúdo das rodas:** nomes e textos atuais são rascunho.
-- **Progressão entre runs:** desbloquear fatias novas nas rodas? Carma residual?
+- **Progressão entre runs:** feita (o Legado). Em aberto: ascensão (Juramentos permanentes para quem já vence).
 - **Estilo de arte** definitivo.

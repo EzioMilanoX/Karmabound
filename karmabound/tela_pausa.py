@@ -2,7 +2,7 @@
 
 Todas guardam a tela de baixo e a desenham primeiro (a engine só desenha o topo
 da pilha), escurecida, com o painel por cima. Fecham com `ao_fechar` (o Fluxo
-desempilha).
+desempilha). Entram com um fade curto (o escuro e o painel), não com a pincelada.
 """
 
 from __future__ import annotations
@@ -10,11 +10,17 @@ from __future__ import annotations
 from ouroboros.interfaces.renderer import IRenderer
 
 from karmabound import som
+from karmabound.aliados import aliado as aliado_de
+from karmabound.ascensao import carregar_ascensao
 from karmabound.dicas import DICAS
+from karmabound.fusoes import faltam
+from karmabound.grimorio import fusao_descoberta
 from karmabound.jornada import Jornada
 from karmabound.opcoes import OPCOES, VELOCIDADES
+from karmabound.ressonancia import carregar_ressonancias, ressonancias_ativas
 from karmabound.rolagem import Rolagem
-from karmabound.tela_menus import DURANTE, _Base, _cortar
+from karmabound.tela_menus import DURANTE, _Base, proxima_ressonancia
+from karmabound.transicoes import Camada, suave
 from karmabound.visual import (
     ALTURA,
     FERRO,
@@ -39,12 +45,26 @@ class _Sobre(_Base):
         self.ao_fechar = ao_fechar
         self.cursor = 0
 
+    FADE = 0.16  # segundos (na velocidade 1) para o painel entrar
+
+    def _surgir(self) -> float:
+        return suave(self.relogio * OPCOES.velocidade / self.FADE)
+
     def _fundo_escuro(self, r: IRenderer, opacidade: float = 190) -> None:
         baixo = self.baixo
         while isinstance(baixo, _Sobre):  # o jogo de fundo, sem os painéis do meio
             baixo = baixo.baixo
         baixo.render(None, r)
-        r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(FUNDO, opacidade))
+        # por cima de outro painel o fundo já estava escuro: só o painel novo entra
+        k = 1.0 if isinstance(self.baixo, _Sobre) else self._surgir()
+        r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(FUNDO, opacidade * k))
+
+    def _painel(self, r: IRenderer):
+        """Onde desenhar o painel: em fade, subindo um pouco, enquanto entra."""
+        k = self._surgir()
+        if k >= 1.0:
+            return r
+        return Camada(r, (LARGURA / 2, ALTURA / 2), 0.97 + 0.03 * k, 0, 10 * (1 - k), k)
 
     def _mover(self, n: int) -> None:
         e = self.entrada
@@ -55,13 +75,14 @@ class _Sobre(_Base):
             self.cursor = (self.cursor + 1) % n
             som.tocar("mover")
 
-    def _lista(self, r, x, y, itens: list[str], largura=360, passo=40) -> None:
+    def _lista(self, r, x, y, itens: list[str], largura=360, passo=40, tam=20) -> None:
         for i, texto in enumerate(itens):
             yi = y + i * passo
             if i == self.cursor:
                 r.draw_ui_rect(x - 16, yi - 6, largura, passo - 6, alpha(OURO, 30))
                 r.draw_ui_polygon([(x - 6, yi + 4), (x + 2, yi + 10), (x - 6, yi + 16)], OURO)
-            self._t(r, x + 12, yi - 2, texto, 20, TINTA if i == self.cursor else alpha(TINTA, 150))
+            cor = TINTA if i == self.cursor else alpha(TINTA, 150)
+            self._t(r, x + 12, yi - 2 + (20 - tam) / 2, texto, tam, cor)
 
 
 # ----------------------------------------------------------------------- pausa
@@ -110,10 +131,16 @@ class PausaScene(_Sobre):
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo_escuro(r)
-        r.draw_ui_rect(300, 150, 360, 320, alpha(LACA, 250))
-        moldura(r, 300, 150, 660, 470, OURO)
-        self._t(r, 480, 172, "止  Pausa", 32, OURO, "center")
-        self._lista(r, 340, 236, [texto for _, texto in self.itens], largura=300)
+        r = self._painel(r)
+        # com uma run: o menu à esquerda, o build à direita
+        x0, w, tam = (300, 360, 20) if self.j is None else (36, 400, 17)
+        r.draw_ui_rect(x0, 150, w, 320, alpha(LACA, 250))
+        moldura(r, x0, 150, x0 + w, 470, OURO)
+        self._t(r, x0 + w / 2, 172, "止  Pausa", 32, OURO, "center")
+        itens = [texto for _, texto in self.itens]
+        self._lista(r, x0 + 40, 236, itens, largura=w - 60, tam=tam)
+        if self.j is not None:
+            self._build(r)
         self._t(
             r,
             480,
@@ -123,6 +150,80 @@ class PausaScene(_Sobre):
             alpha(TINTA, 110),
             "center",
         )
+
+    def linhas_do_build(self) -> list[tuple[str, int, tuple, int]]:
+        """O status do build, de cima para baixo: (texto, tamanho, cor, recuo)."""
+        j = self.j
+        e = j.estado
+        linhas: list[tuple[str, int, tuple, int]] = []
+
+        def titulo(texto: str) -> None:
+            linhas.append((texto, 17, OURO, 0))
+
+        def item(texto: str, cor=TINTA, recuo: int = 0, largura: int = 50) -> None:
+            for k, linha in enumerate(quebrar(texto, largura)[:2]):
+                linhas.append((linha, 15 if not recuo else 13, cor, recuo + (14 if k else 0)))
+
+        if e.linhagem is not None or e.dom is not None:
+            partes = [f"{x.kanji} {x.nome}" for x in (e.linhagem, e.dom) if x is not None]
+            item(" · ".join(partes), alpha(TINTA, 200))
+        titulo("共  Ressonância")
+        ativas = ressonancias_ativas(e)
+        for res in ativas[:2]:
+            nivel = " · nível 2" if res.nivel >= 2 else ""
+            item(f"{res.kanji} {res.nome} · {res.anime}{nivel}")
+            item(res.texto, alpha(TINTA, 150), recuo=24, largura=50)
+        if not ativas:
+            perto = proxima_ressonancia(j)
+            minimo = carregar_ressonancias().minimo
+            texto = f"nenhuma ({minimo} técnicas do mesmo anime)"
+            if perto:
+                texto += f" · mais perto: {perto[0]} {perto[1]}/{minimo}"
+            item(texto, alpha(TINTA, 130))
+        titulo("伴  Aliado")
+        a = aliado_de(e.aliado)
+        if a is None:
+            item("nenhum ainda (o Lutador Ferido, ou uma elite vencida)", alpha(TINTA, 130))
+        else:
+            item(f"{a.kanji} {a.nome} · nível {e.aliado_nivel}")
+            item(a.texto, alpha(TINTA, 150), recuo=24, largura=50)
+        titulo("融  Fusões")
+        fusoes = {f.id: f for f in j.ctx.fusoes}
+        nascidas = [fusoes[i].fatia for i in e.fusoes_nascidas if i in fusoes]
+        if nascidas:
+            item(", ".join(f"{f.kanji} {f.nome}" for f in nascidas))
+        perto = [
+            f for f in j.ctx.fusoes if f.id not in e.fusoes_nascidas and len(faltam(f, e)) == 1
+        ]
+        if perto:
+            conhecidas = [f.fatia.nome for f in perto if fusao_descoberta(j.grimorio, f)]
+            alvo = ", ".join(conhecidas) if conhecidas else "uma fusão…"
+            item(f"falta 1 peça para {alvo}", alpha(OURO, 200))
+        elif not nascidas:
+            item("nenhuma nesta run", alpha(TINTA, 130))
+        if j.ascensao:
+            nivel = carregar_ascensao()[j.ascensao - 1]
+            titulo(f"昇  Ascensão {j.ascensao}")
+            item(f"{nivel.kanji} {nivel.nome} e tudo o que vem antes", alpha(TINTA, 170))
+        return linhas
+
+    def _build(self, r: IRenderer) -> None:
+        """O painel do build: Ressonâncias, aliado, fusões e Ascensão."""
+        x0, y0, x1 = 460, 70, 900
+        linhas = self.linhas_do_build()
+        ys, y = [], y0 + 64
+        for k, (_texto, tam, _cor, _recuo) in enumerate(linhas):
+            y += 10 if tam == 17 and k else 0  # um respiro antes de cada seção
+            ys.append(y)
+            y += tam + 7
+        y1 = min(ALTURA - 50, y + 12)
+        r.draw_ui_rect(x0, y0, x1 - x0, y1 - y0, alpha(LACA, 250))
+        moldura(r, x0, y0, x1, y1, FERRO)
+        self._t(r, x0 + 24, y0 + 18, "己  O seu build", 24, OURO)
+        for (texto, tam, cor, recuo), y in zip(linhas, ys, strict=True):
+            if y + tam > y1 - 8:
+                break
+            self._t(r, x0 + 24 + recuo, y, texto, tam, cor)
 
 
 # ----------------------------------------------------------------------- opções
@@ -202,6 +303,7 @@ class OpcoesScene(_Sobre):
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo_escuro(r, 215)
+        r = self._painel(r)
         r.draw_ui_rect(180, 90, 600, 470, alpha(LACA, 250))
         moldura(r, 180, 90, 780, 560, OURO)
         self._t(r, 480, 110, "設  Opções", 30, OURO, "center")
@@ -245,6 +347,7 @@ class DicaScene(_Sobre):
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo_escuro(r, 150)
+        r = self._painel(r)
         linhas = quebrar(self.texto, 58)
         altura = 130 + len(linhas) * 26
         y0 = (ALTURA - altura) / 2
@@ -315,6 +418,7 @@ class VotosScene(_Sobre):
 
     def render(self, world, r: IRenderer) -> None:
         self._fundo_escuro(r, 225)
+        r = self._painel(r)
         self._t(r, 40, 24, "誓  Quebrar um voto", 30, SANGUE_VIVO)
         if self.voto is None:
             self._t(r, 40, 76, "Escolha o voto que você quer quebrar.", 16, alpha(TINTA, 150))
@@ -352,7 +456,7 @@ class VotosScene(_Sobre):
             r.draw_ui_rect(44, y + 4, 16, 16, OURO if marcada else alpha(FERRO, 160))
             self._t(r, 72, y - 1, res.kanji, 22, SANGUE_VIVO if marcada else TINTA)
             self._t(r, 108, y + 1, res.nome, 17, TINTA)
-            self._t(r, 290, y + 3, _cortar(res.texto, 66), 14, alpha(TINTA, 140))
+            self._t_ajustado(r, 290, y + 3, res.texto, 66, 14, alpha(TINTA, 140))
         y = y0 + min(n, self.rol.visiveis) * 38 + 8
         if self.cursor == len(self.restricoes):
             r.draw_ui_rect(30, y - 5, 420, 32, LACA)

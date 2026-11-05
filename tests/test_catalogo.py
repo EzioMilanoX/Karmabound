@@ -15,6 +15,21 @@ def _gerador():
     return modulo
 
 
+# seções de regras do jogo, sem homenagem a um anime
+SEM_ANIME = (
+    "restricoes",
+    "ganhos",
+    "portas",
+    "papeis",
+    "encruzilhadas",
+    "legado",
+    "ressonancias",
+    "mecanicas",
+    "afixos",
+    "ascensao",
+)
+
+
 def test_toda_origem_diz_o_anime():
     """A wiki agrupa por anime: toda origem termina em ' · <anime>'."""
     gerador = _gerador()
@@ -22,7 +37,7 @@ def test_toda_origem_diz_o_anime():
     sem = [
         x.item["id"]
         for sid, *_, itens in secoes
-        if sid not in ("restricoes", "ganhos")
+        if sid not in SEM_ANIME
         for x in itens
         if not x.anime
     ]

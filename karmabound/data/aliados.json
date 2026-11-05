@@ -1,0 +1,11 @@
+{
+  "_nota": "Os aliados (karmabound/aliados.py): um por run, que luta do seu lado e nunca é alvo dos rivais. Age no começo do seu turno, a cada `cada` turnos seus, com `acao` (ferir, curar, bloquear, expor, envenenar) de força `valor` + `por_nivel` × (nível − 1), arredondada para baixo. Começa no nível 1 e sobe 1 a cada luta vencida, até `nivel_max`. Ganha-se na encruzilhada do Lutador Ferido ou, às vezes, vencendo uma elite. Um novo substitui o antigo.",
+  "nivel_max": 8,
+  "aliados": [
+    {"id": "faro", "nome": "Faro", "kanji": "犬", "acao": "expor", "valor": 1, "por_nivel": 0.25, "cada": 3, "texto": "Um cão pequeno de faro infalível: a cada 3 turnos seus, acha o ponto fraco do alvo, e o próximo golpe nele causa +50% (2 golpes a partir do nível 5).", "origem": "Pakkun (Kakashi) · Naruto"},
+    {"id": "pequeno_doutor", "nome": "Pequeno Doutor", "kanji": "医", "acao": "curar", "valor": 8, "por_nivel": 0.5, "cada": 1, "texto": "Um médico do tamanho de um filhote: cura 8 a cada turno seu em que você está ferido (+1 a cada 2 níveis).", "origem": "Chopper · One Piece"},
+    {"id": "cavaleiro_de_sombra", "nome": "Cavaleiro de Sombra", "kanji": "影", "acao": "bloquear", "valor": 3, "por_nivel": 0.25, "cada": 1, "texto": "Uma sombra que jurou lealdade: a cada turno seu, ergue um bloqueio de 3 à sua frente (+1 a cada 4 níveis).", "origem": "Igris (Sung Jinwoo) · Solo Leveling"},
+    {"id": "raposa_rubra", "nome": "Raposa Rubra", "kanji": "狐", "acao": "ferir", "valor": 1, "por_nivel": 0.25, "cada": 1, "texto": "Uma raposa de chakra vermelho: a cada turno seu, morde o alvo em 1 (+1 a cada 4 níveis).", "origem": "Kurama · Naruto"},
+    {"id": "borboleta_de_glicinia", "nome": "Borboleta de Glicínia", "kanji": "蝶", "acao": "envenenar", "valor": 1, "por_nivel": 0.25, "cada": 3, "texto": "Uma borboleta com veneno de glicínia nas asas: a cada 3 turnos seus, garante ao alvo ao menos 1 dose de veneno (2 a partir do nível 5).", "origem": "Borboleta (Shinobu Kocho) · Demon Slayer"}
+  ]
+}

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ouroboros.interfaces.renderer import IRenderer
 
-from karmabound import som, vfx
+from karmabound import som, transicoes, vfx
 from karmabound.cronica import FEITOS, Cronica
 from karmabound.rodas import carregar_balanceamento
 from karmabound.tela_menus import _Base
@@ -79,6 +79,8 @@ class CronicaScene(_Base):
             marca = "勝" if run["venceu"] else "敗"
             self._t(r, 520, y, marca, 20, cor)
             modo = self.nome_modo.get(run["modo"], run["modo"])
+            if run.get("ascensao"):  # a Ascensão da run (quando a Crônica a guarda)
+                modo += f" 昇{run['ascensao']}"
             dia = "  · semente do dia" if run.get("diaria") else ""
             self._t(r, 552, y + 2, f"{modo} · {run['lutas']} lutas{dia}", 15, TINTA)
             detalhe = (
@@ -87,4 +89,4 @@ class CronicaScene(_Base):
             self._t(r, 552, y + 20, detalhe, 12, alpha(TINTA, 110))
         self._t(r, 480, ALTURA - 26, "Enter ou Backspace volta", 14, alpha(TINTA, 100), "center")
         vfx.vinheta(r, 0.7)
-        vfx.revelar(r, self.relogio)
+        transicoes.revelar(self, r, self.relogio)

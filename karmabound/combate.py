@@ -1,6 +1,11 @@
-"""Combate 1v1 por recarga. Regras puras, sem tela.
+"""Combate por recarga: você contra 1 a 3 rivais. Regras puras, sem tela.
 
-- Turnos alternados; quem tem mais Velocidade começa (empate: sorteio).
+- Turnos alternados; quem tem mais Velocidade começa (empate: sorteio). Contra
+  um bando, o lado dos rivais age em sequência (o mais rápido primeiro) e você
+  escolhe em quem bater (`Luta.rival` é o seu alvo; `mirar` troca).
+- Cada rival de um bando tem um papel (`Lutador.papel`): a lâmina bate, o
+  guardião protege (`Tecnica.proteger`), o curandeiro cura (`curar_aliado`), o
+  xamã amaldiçoa e o comandante inspira (`inspirar`).
 - A primeira ação da luta é um ataque surpresa: conta como perigosa e, se
   não for percebida, causa dano extra.
 - No seu turno você usa uma técnica pronta; ela fica fora por `recarga`
@@ -14,6 +19,10 @@
 - Despertar: com o Carma cheio (ou um Despertar guardado), o jogador desperta
   quando quiser — não gasta o turno — ou sozinho, quando um golpe do rival o
   mataria (o golpe é anulado). O tipo sai da Roda do Despertar.
+- Quebra de guarda: todo rival tem um medidor (`Lutador.guarda`) que os seus golpes
+  enchem; ao passar de `limiar_guarda`, ele perde o próximo turno e sofre +25%.
+- Chefes têm a mecânica da assinatura (`Lutador.mecanica`); elites têm afixos
+  (`Lutador.afixos`); o jogador pode ter um aliado, que age no começo do turno dele.
 """
 
 from __future__ import annotations
@@ -138,6 +147,11 @@ class Tecnica:
     purificar: bool = False  # tira de você sangramento, veneno, Marca, cegueira e bloqueios
     custo_percepcao: int = 0  # preço: −N de Percepção pelo resto da run, a cada uso (Mangekyō)
     modo: Modo | None = None  # transformação
+    # Bandos: o que um rival faz pelos aliados (e o que atinge todos de uma vez)
+    proteger: int = 0  # bloqueio para o aliado mais ferido (o Guardião)
+    curar_aliado: int = 0  # cura o aliado mais ferido (o Curandeiro)
+    inspirar: int = 0  # +dano em todos os aliados, até o fim da luta (o Comandante)
+    area: float = 0.0  # os outros rivais sofrem esta fração do dano que o alvo sofreu
     nivel: int = 1  # duplicatas evoluem a técnica
 
     def __post_init__(self) -> None:
@@ -227,13 +241,38 @@ class Lutador:
     veneno: int = 0  # doses de veneno: fere isto por turno e cai 1
     congelado: bool = False  # o próximo golpe recebido causa ×2 e quebra o gelo
     clones: int = 0
-    invocacoes: list[list[int]] = field(default_factory=list)  # [turnos, dano]
+    invocacoes: list[list] = field(default_factory=list)  # [turnos, dano, de onde veio]
     vinculo: int = 0  # turnos seus em que a sua dor passa para `elo`
     elo: Lutador | None = field(default=None, repr=False)
     modo: Modo | None = None  # a transformação ativa
     modo_id: str = ""
     modo_turnos: int = 0
     adiado: int = 0  # o dano que a Armadura segurou
+    incinerado: bool = False  # a chama negra terminou o serviço
+    segunda_forma: bool = False  # o chefe já revelou a segunda forma
+    # quem é este rival (a tela desenha por aqui; o combate só olha o papel)
+    papel: str = ""  # lamina | guardiao | curandeiro | xama | comandante ("" = sozinho)
+    estilo: str = ""  # a figura (espadachim, monge...); vazio: a tela escolhe
+    titulo: str = ""  # o nome na tela ("Guardião", "Nêmesis · Ronin do Trovão")
+    elite: bool = False
+    nemesis: bool = False
+    # Quebra de guarda (todo rival; só da luta: o rival nasce a cada luta)
+    guarda: int = 0  # o medidor: dano + GUARDA_POR_GOLPE por golpe que fere; ver `limiar_guarda`
+    quebrado: bool = False  # guarda quebrada: perde o turno e sofre +25% até agir de novo
+    # Chefe com mecânica própria (`data/chefes.json`, `mecanicas`)
+    mecanica: str = ""  # adaptar | ilusao | petalas | armadura | repulsao | intangivel | ...
+    assinatura: str = ""  # o id da técnica-assinatura do chefe
+    turnos_luta: int = 0  # turnos próprios nesta luta (sem contar as ações encadeadas)
+    adaptacao: dict[str, int] = field(default_factory=dict)  # Mahoraga: usos de cada técnica sua
+    carga: int = 0  # Leigan: cargas do Disparo (+CARGA_BONUS cada; zera ao disparar)
+    contrato: bool = False  # Makima: o próximo golpe que a feriria vai para outro lugar
+    preco: bool = False  # Mugetsu: a Lua Sem Fim já foi usada (o dano dele caiu à metade)
+    # Afixos de elite (`data/caminho.json`, `afixos`): os ids, e o que o combate lê deles
+    afixos: tuple[str, ...] = ()
+    blindagem: int = 0  # Blindado: bloqueio no início e a cada BLINDADO_CADA turnos dele
+    marca_ao_ferir: int = 0  # Amaldiçoado: quem ele fere fica com esta Marca (não soma)
+    gelo: float = 0.0  # Gélido: chance de congelar quem ele fere
+    veloz: int = 0  # Veloz: a cada N turnos dele, age duas vezes seguidas (0 = não)
     base_vida_max: int = field(init=False)
     base_velocidade: int = field(init=False)
     base_percepcao: int = field(init=False)
@@ -289,8 +328,10 @@ class Lutador:
         self.dano_mult_luta = self.recebido_mult_luta = 1.0
         self.chama = self.veneno = self.vinculo = self.modo_turnos = self.adiado = 0
         self.congelado, self.elo, self.modo, self.modo_id = False, None, None, ""
+        self.incinerado = False
         self.clones = self.efeitos.clones_inicio
-        self.invocacoes = [[3, self.efeitos.invocar_inicio]] if self.efeitos.invocar_inicio else []
+        inicio = self.efeitos.invocar_inicio
+        self.invocacoes = [[3, inicio, "invocacao_inicio"]] if inicio else []
         self.escudos = self.efeitos.escudo_inicial
         self.bloqueio = self.efeitos.bloqueio_inicio
         if self.efeitos.cura_inicio and not self.efeitos.sem_cura:
@@ -353,9 +394,46 @@ class Lutador:
 
 CRITICO = 2.5  # o Clarão Negro
 TETO_GRAVIDADE = 25  # o máximo que a gravidade tira da vida do alvo de uma vez
+# Cada ferida que dura tem o seu jeito além do dano:
+CURA_SANGRANDO = 0.5  # sangramento e queimadura: a ferida aberta não fecha, a cura cai à metade
+FRAQUEZA_POR_DOSE = 0.05  # veneno: o corpo amolece, -5% de dano causado por dose...
+FRAQUEZA_MAXIMA = 0.5  # ...até -50%
+INCINERAR = 2  # chama negra: com a vida em até 2x a chama, o que sobra vira cinza
+RECARGA_AMALDICOADA = 1  # Marca: a maldição sela, cada técnica demora +1 turno a voltar
+# Chefes não caem de um golpe só, e mudam de forma na metade:
+MAX_INVOCACOES = 3  # em campo ao mesmo tempo: a quarta manda embora a mais antiga
+MAX_CLONES = 5
+POSTURA_CHEFE = 0.3  # uma ação tira no máximo 30% da vida do chefe (feridas que duram, não)
+SEGUNDA_FORMA = 0.5  # com a vida na metade, o chefe revela a segunda forma...
+FURIA_CHEFE = 1.3  # ...+30% de dano e todas as técnicas prontas de novo
+# Quebra de guarda: pressão concentrada derruba a defesa de qualquer rival
+GUARDA_LIMIAR = 0.5  # o medidor quebra ao chegar a 50% da vida máxima do rival...
+GUARDA_LIMIAR_CHEFE = 0.7  # ...70% num chefe (e a quebra do chefe não fura a postura)
+GUARDA_POR_GOLPE = 2  # cada golpe que fere soma o dano e mais isto: golpes múltiplos quebram mais
+GUARDA_ESVAI = 0.15  # a cada turno do rival, o medidor esvazia 15% da vida máxima dele
+GUARDA_QUEBRADA = 1.25  # guarda quebrada: +25% de dano recebido até ele agir de novo
+# Mecânicas dos chefes (uma por técnica-assinatura; nome e texto em data/chefes.json)
+ADAPTAR = (1.0, 0.5, 0.0)  # Mahoraga: 1º uso de uma técnica sua inteiro, 2º metade, 3º nada
+ILUSAO = 0.5  # Aizen: chance de o anúncio ser uma isca (ele age com o que decidiu de verdade)
+INTANGIVEL = 0.25  # Kamui: chance de um ataque seu atravessar (absoluto não; feridas, não)
+REPULSAO_CADA = 3  # Pain: a cada 3 turnos dele, empurra: clones, invocações e bloqueio seus
+ARMADURA_CADA = 2  # Susanoo: bloqueio renovado no 1º turno dele e a cada 2...
+ARMADURA_FRAC = 0.12  # ...de 12% da vida máxima dele
+PRECO = 0.5  # Mugetsu: depois da Lua Sem Fim, o dano dele cai à metade até o fim
+REGENERA = 0.04  # Kokushibo: cura 4% da vida por turno dele, se não sangra nem queima
+CONTRATO_CADA = 4  # Makima: o contrato se renova a cada 4 turnos dela
+CARGA_MAX = 2  # Leigan: cada turno dele sem disparar carrega o Disparo, até 2 cargas...
+CARGA_BONUS = 0.35  # ...+35% por carga; atordoar, selar, silenciar ou quebrar a guarda descarrega
+# Afixos de elite (os números de cada um estão em data/caminho.json)
+BLINDADO_CADA = 3
 
 # Sem nenhuma técnica permitida pronta (ex.: voto Mãos Atadas), o lutador hesita.
 HESITAR = Tecnica("hesitar", "Hesitar", "defesa")
+
+
+def limiar_guarda(r: Lutador) -> int:
+    """Quanto o medidor de guarda de `r` aguenta antes de quebrar."""
+    return max(1, round(r.vida_max * (GUARDA_LIMIAR_CHEFE if r.chefe else GUARDA_LIMIAR)))
 
 
 @dataclass(frozen=True)
@@ -377,13 +455,25 @@ class Acao:
     selou: str = ""  # técnica do alvo que a Corrente selou
     atordoou: bool = False
     instintos: int = 0  # ataques esquivados pelo Instinto Puro
+    incinerou: bool = False  # a chama negra reduziu quem agia a cinzas
+    segunda_forma: bool = False  # nesta ação o chefe revelou a segunda forma
+    # para a tela: quem sofreu e o que aconteceu ao redor
+    alvo: str = ""  # o nome de quem a ação mirou
+    invocadas: tuple = ()  # (de onde veio, dano) de cada invocação que atacou no começo do turno
+    respingo: tuple = ()  # (nome, dano) dos outros rivais que a área pegou
+    protegido: str = ""  # quem o Guardião protegeu
+    curado: str = ""  # quem o Curandeiro curou (e `curou` diz quanto)
+    quebrou: str = ""  # o nome do rival que teve a guarda quebrada nesta ação
+    mecanica: str = ""  # a mecânica de chefe que agiu nesta ação (ver data/chefes.json)
+    iludiu: bool = False  # Aizen: a ação anunciada era mentira
+    aliado: tuple = ()  # (id do aliado, efeito, valor) do que o seu aliado fez neste turno
 
 
 class Luta:
     def __init__(
         self,
         jogador: Lutador,
-        rival: Lutador,
+        rival: Lutador | list[Lutador],
         basico: Tecnica,
         rng: random.Random,
         bonus_surpresa: float = 0.5,
@@ -391,19 +481,32 @@ class Luta:
         espacos: int = 4,
         ao_eclipse=None,
         voto_luta=None,
+        aliado=None,
+        aliado_nivel: int = 1,
     ) -> None:
         """`ao_despertar()`: gira a Roda do Despertar e devolve a fatia (quem monta a luta
         cuida dos contadores e do giro Divino depois). Sem ela, não há Despertar.
-        `ao_eclipse()`: cobra o preço do Ovo do Eclipse (o Dom)."""
-        self.jogador, self.rival = jogador, rival
+        `ao_eclipse()`: cobra o preço do Ovo do Eclipse (o Dom).
+        `rival`: um rival, ou o bando (até 3). `self.rival` é o alvo do jogador; no
+        turno de um rival do bando, é ele (o combate inteiro fala com `self.rival`).
+        `aliado`: o companheiro do jogador (`aliados.Aliado`), no nível `aliado_nivel`; age
+        no começo de cada turno seu e nunca é alvo dos rivais."""
+        rivais = list(rival) if isinstance(rival, (list, tuple)) else [rival]
+        if not 1 <= len(rivais) <= 3:
+            raise ValueError("uma luta tem de 1 a 3 rivais")
+        self.jogador, self.rivais, self.rival = jogador, rivais, rivais[0]
+        # o lado dos rivais age em sequência: o mais rápido primeiro
+        self.ordem_rivais = sorted(rivais, key=lambda r: -r.velocidade)
+        self.intencoes: dict[int, Tecnica | None] = {}
         self.ao_despertar = ao_despertar
         self.ao_eclipse = ao_eclipse
         self._antes_da_liberacao: dict[str, Tecnica] = {}  # técnicas antes do Bankai
-        for lutador in (jogador, rival):
+        for lutador in (jogador, *rivais):
             for t in lutador.tecnicas:
                 if t.inicia_em_recarga:
                     lutador.recargas[t.id] = max(lutador.recargas.get(t.id, 0), t.inicia_em_recarga)
         self.espacos = espacos  # para o Tomar o Destino saber se precisa trocar uma técnica
+        self._invocadas: list[tuple[str, int]] = []
         self.dano_recebido = 0  # a dor do jogador nesta luta (base da Retribuição)
         self.vida_inicial = jogador.vida  # Retorno pela Morte volta para cá
         self.ultimo_despertar = None  # a fatia do último Despertar, para a tela
@@ -415,29 +518,112 @@ class Luta:
         self.voto_jurado = False
         self.promessa: Promessa | None = None
         self.promessa_resultado = ""  # "" | "cumprida" | "quebrada"
+        rapido = self.ordem_rivais[0]
         if jogador.efeitos.primeiro_sangue:
             self.vez = jogador
-        elif jogador.velocidade != rival.velocidade:
-            self.vez = jogador if jogador.velocidade > rival.velocidade else rival
+        elif jogador.velocidade != rapido.velocidade:
+            self.vez = jogador if jogador.velocidade > rapido.velocidade else rapido
         else:
-            self.vez = rng.choice((jogador, rival))
+            self.vez = rng.choice((jogador, rapido))
         self.abertura = True
         self.turnos = 0
+        self.rodadas = 0  # voltas completas (o Prazo de um bando conta por aqui)
         self.log: list[Acao] = []
-        # O rival já chega anunciando: se ele começa, é a emboscada; se não, é a resposta.
-        self.intencao_rival: Tecnica | None = escolher_rival(self)
+        self.forma_revelada = False  # um chefe revelou a segunda forma (zera a cada ação)
+        self.aliado, self.aliado_nivel = aliado, aliado_nivel
+        self._aliado_turnos = 0
+        self._iludiu = False  # o rival que age agora mentiu no anúncio (Aizen)
+        self._verdade: dict[int, Tecnica] = {}  # Aizen: o que ele vai fazer, atrás da isca
+        self._mecanica = ""  # a mecânica de chefe que agiu na ação em curso
+        for r in rivais:
+            r.contrato = r.mecanica == "contrato"  # Makima chega com o contrato firmado
+        # Cada rival já chega anunciando: se ele começa, é a emboscada; se não, a resposta.
+        for r in self.ordem_rivais:
+            with self.foco(r):
+                self.intencao_rival = escolher_rival(self)
+
+    # ------------------------------------------------------------- o bando
+
+    @property
+    def intencao_rival(self) -> Tecnica | None:
+        """A ação anunciada pelo rival em foco (o alvo, ou quem age agora)."""
+        return self.intencoes.get(id(self.rival))
+
+    @intencao_rival.setter
+    def intencao_rival(self, t: Tecnica | None) -> None:
+        r = self.rival
+        self._verdade.pop(id(r), None)
+        if t is not None and t is not HESITAR and r.mecanica == "ilusao":
+            iscas = [x for x in self.prontas(r) if x != t and x is not HESITAR]
+            if iscas and self.rng.random() < ILUSAO:  # Kyoka Suigetsu: você vê a isca
+                self._verdade[id(r)], t = t, self.rng.choice(iscas)
+        self.intencoes[id(r)] = t
+
+    def intencao_de(self, r: Lutador) -> Tecnica | None:
+        return self.intencoes.get(id(r))
+
+    @property
+    def vivos(self) -> list[Lutador]:
+        """Os rivais ainda de pé."""
+        return [r for r in self.rivais if r.vivo]
+
+    def foco(self, r: Lutador):
+        """`with luta.foco(r)`: o combate passa a falar com `r` e depois volta ao alvo."""
+        luta = self
+
+        class _Foco:
+            def __enter__(self_):
+                self_.antes = luta.rival
+                luta.rival = r
+
+            def __exit__(self_, *_):
+                luta.rival = self_.antes
+
+        return _Foco()
+
+    def mirar(self, r: Lutador) -> None:
+        """O jogador troca de alvo (só entre os rivais de pé)."""
+        if r not in self.rivais or not r.vivo:
+            raise ValueError("só dá para mirar num rival de pé")
+        self.rival = r
+
+    def aliados(self, lutador: Lutador) -> list[Lutador]:
+        """Quem luta do lado de `lutador` (ele incluso), de pé."""
+        if lutador is self.jogador:
+            return [self.jogador]
+        return self.vivos
+
+    def _mais_ferido(self, lutador: Lutador) -> Lutador:
+        aliados = self.aliados(lutador) or [lutador]
+        return min(aliados, key=lambda a: a.vida / a.vida_max)
+
+    def _reajustar_alvo(self) -> None:
+        """O alvo caiu: a mira passa para o próximo rival de pé."""
+        if not self.rival.vivo and self.vivos:
+            self.rival = self.vivos[0]
+
+    def _depois_de(self, ator: Lutador) -> Lutador:
+        """Quem age depois de `ator`: você, e então cada rival de pé, do mais rápido."""
+        vivos = [r for r in self.ordem_rivais if r.vivo]
+        if ator is self.jogador:
+            return vivos[0] if vivos else self.jogador
+        seguintes = vivos[vivos.index(ator) + 1 :] if ator in vivos else []
+        if not seguintes and ator not in vivos:  # caiu no próprio turno: o próximo depois dele
+            i = self.ordem_rivais.index(ator)
+            seguintes = [r for r in self.ordem_rivais[i + 1 :] if r.vivo]
+        return seguintes[0] if seguintes else self.jogador
 
     @property
     def acabou(self) -> bool:
-        return self.estourou_prazo or not (self.jogador.vivo and self.rival.vivo)
+        return self.estourou_prazo or not (self.jogador.vivo and any(r.vivo for r in self.rivais))
 
     @property
     def vencedor(self) -> Lutador | None:
         if not self.acabou:
             return None
-        if self.estourou_prazo:
+        if self.estourou_prazo or not self.jogador.vivo:
             return self.rival
-        return self.jogador if self.jogador.vivo else self.rival
+        return self.jogador
 
     def prontas(self, lutador: Lutador) -> list[Tecnica]:
         if lutador.pular:
@@ -521,7 +707,7 @@ class Luta:
         p = self.promessa
         if p is None or not self.jogador.vivo:
             return
-        if not self.rival.vivo:
+        if not self.vivos:
             self._fechar_promessa(True)  # a luta foi vencida dentro do prazo
             return
         do_jogador = ator is self.jogador
@@ -602,6 +788,8 @@ class Luta:
                 if len(j.tecnicas) >= self.espacos:
                     j.tecnicas.remove(min(j.tecnicas, key=valor_tecnica))
                 j.tecnicas.append(roubada)
+        if d.get("travar_rival") or d.get("atordoar") or d.get("silenciar"):
+            rival.carga = 0  # o disparo que carregava se perde
         if d.get("travar_rival"):
             for t in rival.tecnicas:
                 rival.recargas[t.id] = max(rival.recargas.get(t.id, 0), d["travar_rival"])
@@ -676,9 +864,9 @@ class Luta:
         if rival.vivo:
             rival.chama += d.get("chama", 0)
             rival.veneno += d.get("veneno", 0)
-        j.clones = min(5, j.clones + d.get("clones", 0))
+        j.clones = min(MAX_CLONES, j.clones + d.get("clones", 0))
         if d.get("invocar"):
-            j.invocacoes.append([d.get("invocar_turnos", 3), d["invocar"]])
+            invocar(j, [d.get("invocar_turnos", 3), d["invocar"], "despertar"])
         # preços (votos de luta)
         if d.get("perde_vida_frac"):
             j.vida = max(1, j.vida - round(j.vida * d["perde_vida_frac"]))
@@ -715,7 +903,10 @@ class Luta:
         if lutador.efeitos.sem_cura or not lutador.vivo:
             return 0
         antes = lutador.vida
-        cura = round(quanto * lutador.efeitos.cura_mult)
+        cura = quanto * lutador.efeitos.cura_mult
+        if lutador.sangue_turnos:
+            cura *= CURA_SANGRANDO  # a ferida aberta não fecha
+        cura = round(cura)
         lutador.vida = min(lutador.vida_max, lutador.vida + cura)
         return lutador.vida - antes
 
@@ -724,6 +915,18 @@ class Luta:
         lutador.dor += feito
         if lutador is self.jogador:
             self.dano_recebido += feito
+        if (
+            lutador.chefe
+            and not lutador.segunda_forma
+            and lutador.vivo
+            and lutador.vida <= lutador.vida_max * SEGUNDA_FORMA
+        ):
+            lutador.segunda_forma = self.forma_revelada = True
+            lutador.dano_mult *= FURIA_CHEFE
+            lutador.recargas.clear()
+            lutador.adaptacao.clear()  # a roda do Mahoraga recomeça na segunda forma
+            if lutador.preco and lutador.assinatura:
+                lutador.recargas[lutador.assinatura] = 99  # a Lua Sem Fim não volta
         return feito
 
     def _selar(self, alvo: Lutador, turnos: int) -> str:
@@ -738,17 +941,18 @@ class Luta:
         if alvo.cego or alvo.cegueira or alvo.sem_percepcao:
             return 0
         extra = alvo.modo.percepcao if alvo.modo is not None else 0
-        if alvo is self.rival:
+        if alvo is not self.jogador:
             extra += self.jogador.efeitos.percepcao_rival + self.jogador.percepcao_rival_luta
         return max(0, alvo.percepcao + alvo.percepcao_luta + extra)
 
     def outro(self, lutador: Lutador) -> Lutador:
         return self.rival if lutador is self.jogador else self.jogador
 
-    def ver_intencao(self) -> str | Tecnica | None:
-        """O que o jogador enxerga da próxima ação do rival: nada, o tipo, ou a técnica."""
+    def ver_intencao(self, de: Lutador | None = None) -> str | Tecnica | None:
+        """O que o jogador enxerga da próxima ação de um rival (padrão: o alvo): nada, o
+        tipo, ou a técnica."""
         j = self.jogador
-        p, t = j.percepcao + j.percepcao_luta, self.intencao_rival
+        p, t = j.percepcao + j.percepcao_luta, self.intencao_de(de or self.rival)
         if j.modo is not None:
             p += j.modo.percepcao
         if t is None or p <= 0 or j.cego or j.cegueira or j.sem_percepcao:
@@ -756,11 +960,25 @@ class Luta:
         return t.tipo if p == 1 else t
 
     def turno_rival(self) -> Acao:
-        assert self.vez is self.rival
-        tecnica = self.intencao_rival
-        if tecnica is None or tecnica not in self.prontas(self.rival):
-            tecnica = escolher_rival(self)
-        return self.resolver(tecnica)
+        """O rival da vez age (num bando, o combate fala com ele durante a ação)."""
+        ator = self.vez
+        assert ator is not self.jogador
+        alvo = self.rival
+        self.rival = ator
+        try:
+            tecnica = self.intencao_rival
+            verdade = self._verdade.pop(id(ator), None)
+            prontas = self.prontas(ator)
+            if verdade is not None and verdade in prontas:
+                tecnica, self._iludiu = verdade, True  # o anúncio era a ilusão
+            elif tecnica is None or tecnica not in prontas:
+                tecnica = escolher_rival(self)
+            acao = self.resolver(tecnica)
+        finally:
+            self.rival = alvo
+            self._iludiu, self._mecanica = False, ""
+        self._reajustar_alvo()
+        return acao
 
     def _inicio_do_turno(self, ator: Lutador) -> None:
         """O que acontece a quem age antes da ação: curas e preços por turno."""
@@ -792,6 +1010,9 @@ class Luta:
         if ator.chama:
             self._ferir(ator, round(ator.chama * dot))  # a chama negra não apaga
             ator.chama += 1  # e cresce, até incinerar
+            if ator.vivo and ator.vida <= INCINERAR * ator.chama:
+                self._ferir(ator, ator.vida)  # o que sobra vira cinza
+                ator.incinerado = not ator.vivo
         if ator.veneno:
             self._ferir(ator, round(ator.veneno * dot))
             ator.veneno -= 1
@@ -806,35 +1027,98 @@ class Luta:
         if ator.invocacoes:
             alvo = self.outro(ator)
             restantes = []
-            for turnos, dano in ator.invocacoes:
+            for turnos, dano, origem in ator.invocacoes:
                 if alvo.vivo:
                     absorvido = min(alvo.bloqueio, dano)
                     alvo.bloqueio -= absorvido
-                    self._ferir(alvo, dano - absorvido)  # a invocação ataca sozinha
+                    feito = self._ferir(alvo, dano - absorvido)  # a invocação ataca sozinha
+                    self._invocadas.append((origem, feito))
                 if turnos > 1:
-                    restantes.append([turnos - 1, dano])
+                    restantes.append([turnos - 1, dano, origem])
             ator.invocacoes = restantes
         if ator.efeitos.crescer:
             antes = int(ator.crescido + 1e-9)
             ator.crescido += ator.efeitos.crescer
             ator.bonus_dano += int(ator.crescido + 1e-9) - antes
 
+    def _turno_do_rival(self, r: Lutador) -> None:
+        """O começo do turno de um rival: a guarda se recompõe um pouco, e o que a
+        mecânica do chefe e os afixos da elite fazem a cada turno dele."""
+        if r.guarda:
+            r.guarda = max(0, r.guarda - round(r.vida_max * GUARDA_ESVAI))
+        n, j = r.turnos_luta, self.jogador
+        if r.blindagem and n % BLINDADO_CADA == 1:
+            r.bloqueio = max(r.bloqueio, r.blindagem)  # Blindado
+        if not r.vivo or not r.mecanica:
+            return
+        if r.mecanica == "armadura" and n % ARMADURA_CADA == 1:
+            r.bloqueio = max(r.bloqueio, round(r.vida_max * ARMADURA_FRAC))
+            self._mecanica = "armadura"
+        elif r.mecanica == "repulsao" and n % REPULSAO_CADA == 0:
+            j.clones, j.invocacoes, j.bloqueio = 0, [], 0  # tudo é empurrado para longe
+            self._mecanica = "repulsao"
+        elif r.mecanica == "regenera" and not (r.sangue_turnos or r.chama):
+            if self._curar(r, round(r.vida_max * REGENERA)):  # a ferida aberta não fecha
+                self._mecanica = "regenera"
+        elif r.mecanica == "contrato" and n % CONTRATO_CADA == 0:
+            r.contrato = True
+
+    def _aliado_age(self) -> tuple:
+        """O seu companheiro age (no começo do seu turno). Devolve (id, efeito, valor)."""
+        a, j, alvo = self.aliado, self.jogador, self.rival
+        if a is None or not j.vivo:
+            return ()
+        self._aliado_turnos += 1
+        if self._aliado_turnos % a.cada:
+            return ()
+        v = a.valor_no_nivel(self.aliado_nivel)
+        if a.acao == "curar":
+            curou = self._curar(j, v) if j.vida < j.vida_max else 0
+            return (a.id, "curar", curou) if curou else ()
+        if a.acao == "bloquear":
+            j.bloqueio = max(j.bloqueio, v)
+            return (a.id, "bloquear", v)
+        if not alvo.vivo:
+            return ()
+        if a.acao == "ferir":
+            absorvido = min(alvo.bloqueio, v)
+            alvo.bloqueio -= absorvido
+            return (a.id, "ferir", self._ferir(alvo, v - absorvido))
+        if a.acao == "expor":
+            alvo.exposto = max(alvo.exposto, v)
+        elif a.acao == "envenenar":
+            alvo.veneno = max(alvo.veneno, v)  # mantém o veneno vivo (não empilha)
+        else:
+            raise ValueError(f"ação de aliado desconhecida: {a.acao}")
+        return (a.id, a.acao, v)
+
     def _recarga(self, ator: Lutador, t: Tecnica) -> int:
         if t.recarga in (0, 99):
             return t.recarga
         menos = ator.efeitos.recarga_menos + ator.recarga_menos_luta
-        return max(1, t.recarga - menos)
+        selo = RECARGA_AMALDICOADA if ator.marca else 0  # a maldição sela
+        return max(1, t.recarga - menos) + selo
 
     def resolver(self, t: Tecnica, sacrificio: Tecnica | None = None) -> Acao:
         """Usa `t`. `sacrificio`: a técnica que um Contrato destrói (padrão: a mais fraca)."""
         if self.acabou:
             raise RuntimeError("a luta já acabou")
+        self.forma_revelada = False
+        self._invocadas: list[tuple[str, int]] = []
+        respingos: list[tuple[str, int]] = []
+        protegido = curado = ""
         ator, alvo = self.vez, self.outro(self.vez)
         if t not in self.prontas(ator):
             raise ValueError(f"{ator.nome} não pode usar {t.nome} agora")
         ator.cego = False  # a cegueira dura até o próximo turno de quem a sofreu
         if t is HESITAR and ator.pular:
             ator.pular -= 1
+        elif ator.quebrado:
+            ator.quebrado = False  # ele agiu de novo: a guarda se recompõe
+        # uma ação encadeada (Instante Suspenso, Veloz) não é um turno novo
+        encadeada = bool(self.log) and self.log[-1].turno_extra and self.log[-1].ator == ator.nome
+        if not encadeada:
+            ator.turnos_luta += 1
 
         efetiva = t
         if t.copia_rival:
@@ -843,6 +1127,23 @@ class Luta:
             ator.carma.valor = max(0.0, ator.carma.valor - t.custo_carma)
 
         self._inicio_do_turno(ator)
+        aliado = ()
+        if ator is self.jogador and not encadeada:
+            aliado = self._aliado_age()  # o companheiro age no começo do seu turno
+            if not alvo.vivo and self.vivos:  # ele derrubou o alvo: a mira passa adiante
+                self._reajustar_alvo()
+                alvo = self.rival
+        elif ator is not self.jogador and not encadeada:
+            self._turno_do_rival(ator)
+        if ator.mecanica == "balanca" and efetiva.id == ator.assinatura and alvo.vivo:
+            # a Balança pesa os dois: quem tem menos (em fração da vida) obedece
+            if alvo.vida / alvo.vida_max < ator.vida / ator.vida_max:
+                self._mecanica = "balanca"
+            else:  # a balança vira contra quem a ergueu
+                self._mecanica = "balanca_virou"
+                ator.pular += efetiva.atordoar
+                ator.bonus_dano -= efetiva.enfraquecer
+                efetiva = replace(efetiva, atordoar=0, enfraquecer=0)
         if efetiva.vinculo and alvo.vivo:  # o ritual vem antes do preço: a dor já é dividida
             ator.vinculo, ator.elo = max(ator.vinculo, efetiva.vinculo), alvo
         if efetiva.custo_vida:
@@ -879,6 +1180,17 @@ class Luta:
         ator.espelho += efetiva.espelho
         ator.regen_luta += efetiva.regenerar
         curou = self._curar(ator, efetiva.cura) if efetiva.cura else 0
+        if efetiva.proteger and ator.vivo:  # o Guardião ergue a defesa de quem mais precisa
+            protegido_lut = self._mais_ferido(ator)
+            protegido_lut.bloqueio += efetiva.proteger
+            protegido = protegido_lut.nome
+        if efetiva.curar_aliado and ator.vivo:  # o Curandeiro fecha a ferida de quem sangra
+            curado_lut = self._mais_ferido(ator)
+            curou += self._curar(curado_lut, efetiva.curar_aliado)
+            curado = curado_lut.nome
+        if efetiva.inspirar:  # o Comandante: todo o bando bate mais forte
+            for aliado in self.aliados(ator):
+                aliado.bonus_dano += efetiva.inspirar
         ativou_santuario = efetiva.santuario > 0
         if ativou_santuario:
             ator.santuario = efetiva.santuario
@@ -888,7 +1200,7 @@ class Luta:
 
         surpresa, reagiu, total = self.abertura or efetiva.sempre_surpresa, False, 0
         esquivas = escudados = sombra = instintos = 0
-        despertou, critico = "", False
+        despertou, critico, quebrou = "", False, ""
         basico = t is self.basico
         base = efetiva.dano + int(efetiva.dano_por_carma * ator.carma.valor if ator.carma else 0)
         base += _extra_da_dor(efetiva, ator)  # Esfera dos Mil
@@ -949,6 +1261,17 @@ class Luta:
             marcado = alvo.marca or alvo.sangue_turnos or alvo.veneno or alvo.chama
             if ator.efeitos.dano_marcado and marcado:
                 mult *= 1 + ator.efeitos.dano_marcado
+            if ator.veneno:  # o veneno amolece o corpo de quem golpeia
+                mult *= 1 - min(FRAQUEZA_MAXIMA, FRAQUEZA_POR_DOSE * ator.veneno)
+            if alvo.mecanica == "adaptar" and ator is self.jogador:  # a roda gira
+                usos = alvo.adaptacao.get(t.id, 0)
+                alvo.adaptacao[t.id] = usos + 1
+                mult *= ADAPTAR[min(usos, len(ADAPTAR) - 1)]
+                if usos:
+                    self._mecanica = "adaptar"
+            if ator.carga and t.id == ator.assinatura:  # Leigan: o Disparo sai carregado
+                mult *= 1 + CARGA_BONUS * ator.carga
+                self._mecanica = "carregar"
             base = round(base * mult)
             if efetiva.critico and self.rng.random() < efetiva.critico:
                 base, critico = round(base * CRITICO), True  # Clarão Negro
@@ -979,9 +1302,23 @@ class Luta:
             if alvo.cegueira:
                 alvo.cegueira -= 1
 
+            # a postura do chefe: o quanto esta ação ainda pode tirar dele
+            postura = [round(alvo.vida_max * POSTURA_CHEFE)] if alvo.chefe else None
+            # Kamui: o ataque inteiro atravessa o corpo dele
+            atravessa = (
+                alvo.mecanica == "intangivel"
+                and ator is self.jogador
+                and not absoluto
+                and self.rng.random() < INTANGIVEL
+            )
+            if atravessa:
+                self._mecanica = "intangivel"
+            petalas = ator.mecanica == "petalas"  # Senbonzakura: as pétalas passam pelos clones
+            guarda = ator is self.jogador and alvo is not self.jogador  # só rivais têm guarda
+
             def golpear(dano: int) -> int:
-                nonlocal esquivas, escudados, despertou, instintos
-                if alvo.intocavel:  # Vazio Infinito: o golpe para no ar
+                nonlocal esquivas, escudados, despertou, instintos, quebrou
+                if alvo.intocavel or atravessa:  # Vazio Infinito: o golpe para no ar
                     escudados += 1
                     return 0
                 if alvo.congelado:  # o gelo se estilhaça com o golpe
@@ -993,6 +1330,8 @@ class Luta:
                 recebido = alvo.efeitos.dano_recebido_mult * alvo.recebido_mult_luta
                 if alvo.modo is not None:
                     recebido *= alvo.modo.recebido_mult
+                if alvo.quebrado:
+                    recebido *= GUARDA_QUEBRADA  # a guarda quebrada (a postura ainda segura)
                 dano = round(dano * recebido)
                 if not absoluto:
                     if alvo.espelho:  # o golpe volta a quem golpeou
@@ -1010,16 +1349,22 @@ class Luta:
                         return 0
                     # com N clones, o golpe acha um clone em N de N+1 vezes: quem sabe qual
                     # é o verdadeiro?
-                    if alvo.clones and self.rng.random() < alvo.clones / (alvo.clones + 1):
+                    clones = alvo.clones and not petalas
+                    if clones and self.rng.random() < alvo.clones / (alvo.clones + 1):
                         alvo.clones -= 1  # era um clone: some numa nuvem
                         escudados += 1
                         return 0
-                    if alvo.escudos:
+                    if alvo.escudos and not petalas:
                         alvo.escudos -= 1  # Pele de Cinzas
                         escudados += 1
                         return 0
                 fura = efetiva.perfura or absoluto or (basico and ator.efeitos.basico_perfura)
                 absorvido = 0 if fura else min(alvo.bloqueio, dano)
+                if alvo.contrato and not absoluto and dano > absorvido:
+                    alvo.contrato = False  # Makima: o golpe vai para outro lugar
+                    self._mecanica = "contrato"
+                    escudados += 1
+                    return 0
                 alvo.bloqueio -= absorvido
                 inabalavel = alvo.modo is not None and alvo.modo.inabalavel
                 if alvo is self.jogador and dano - absorvido >= alvo.vida and not inabalavel:
@@ -1029,7 +1374,17 @@ class Luta:
                     if self.pode_eclipse():
                         despertou = self.despertar(eclipse=True).id  # o Ovo do Eclipse
                         return 0
-                feito = self._ferir(alvo, dano - absorvido)
+                real = dano - absorvido
+                if postura is not None:
+                    real = min(real, postura[0])
+                    postura[0] -= real
+                feito = self._ferir(alvo, real)
+                if feito and guarda and not alvo.quebrado and alvo.vivo:
+                    alvo.guarda += feito + GUARDA_POR_GOLPE  # a pressão se acumula
+                    if alvo.guarda >= limiar_guarda(alvo):  # a guarda quebra
+                        alvo.guarda, alvo.quebrado = 0, True
+                        alvo.pular = max(alvo.pular, 1)
+                        quebrou = alvo.nome
                 if alvo.revide and dano:
                     self._ferir(ator, alvo.revide)
                     alvo.revide = 0
@@ -1056,6 +1411,13 @@ class Luta:
                 total += sombra
             if reagiu and alvo.vivo:
                 self._ferir(ator, self.basico.dano)  # o contra-golpe de quem sentiu o perigo
+            if efetiva.area and total and ator is self.jogador:
+                for outro in self.vivos:  # a explosão pega o bando inteiro
+                    if outro is not alvo:
+                        respingo = round(total * efetiva.area)
+                        absorvido = min(outro.bloqueio, respingo)
+                        outro.bloqueio -= absorvido
+                        respingos.append((outro.nome, self._ferir(outro, respingo - absorvido)))
             if alvo.instinto:
                 alvo.instinto -= 1
             ator.atacou = True
@@ -1081,6 +1443,11 @@ class Luta:
                 alvo.veneno += efetiva.veneno
 
         selou, atordoou = "", False
+        if total and alvo.vivo and ator.marca_ao_ferir:  # Amaldiçoado: a Marca fica
+            alvo.marca = max(alvo.marca, ator.marca_ao_ferir)
+        if total and alvo.vivo and ator.gelo and not alvo.pular and self.rng.random() < ator.gelo:
+            alvo.pular += 1  # Gélido: o golpe congela
+            alvo.congelado = atordoou = True
         if efetiva.selar and alvo.vivo:
             selou = self._selar(alvo, efetiva.selar)
         if efetiva.atordoar and alvo.vivo:
@@ -1098,15 +1465,17 @@ class Luta:
             if efetiva.congelar:
                 alvo.pular += efetiva.congelar
                 alvo.congelado = atordoou = True
-        ator.clones = min(5, ator.clones + efetiva.clones)
+        ator.clones = min(MAX_CLONES, ator.clones + efetiva.clones)
         if efetiva.invocar and alvo.vivo:  # a invocação ataca assim que chega
             absorvido = min(alvo.bloqueio, efetiva.invocar)
             alvo.bloqueio -= absorvido
             total += self._ferir(alvo, efetiva.invocar - absorvido)
             if efetiva.invocar_turnos > 1:
-                ator.invocacoes.append([efetiva.invocar_turnos - 1, efetiva.invocar])
-        mudou_rival = selou or atordoou or efetiva.silenciar or efetiva.desarmar
-        if mudou_rival and alvo is self.rival:
+                invocar(ator, [efetiva.invocar_turnos - 1, efetiva.invocar, efetiva.id])
+        mudou_rival = selou or atordoou or efetiva.silenciar or efetiva.desarmar or quebrou
+        if mudou_rival and alvo is not self.jogador:
+            if selou or atordoou or efetiva.silenciar or quebrou:
+                alvo.carga = 0  # o disparo que carregava se perde
             self.intencao_rival = escolher_rival(self)  # o que ele anunciou não vem mais
 
         for tid in list(ator.recargas):
@@ -1160,8 +1529,18 @@ class Luta:
             ator.extras += 2  # o Instante não conta: duas ações de verdade depois dele
         if t.livre:
             ator.extras += 1  # não gasta o turno
+        if ator.veloz and not encadeada and t is not HESITAR and ator.turnos_luta % ator.veloz == 0:
+            ator.extras += 1  # Veloz: desta vez, age duas vezes seguidas
+        if ator.mecanica == "carregar" and not encadeada and t is not HESITAR:
+            disparou = t.id == ator.assinatura  # disparar descarrega; esperar carrega
+            ator.carga = 0 if disparou else min(CARGA_MAX, ator.carga + 1)
+        if ator.mecanica == "preco" and t.id == ator.assinatura and not ator.preco:
+            ator.preco = True  # Mugetsu: o poder inteiro num golpe, e o que sobra é metade
+            ator.dano_mult *= PRECO
+            self._mecanica = "preco"
 
-        extra = ator.extras > 0 and ator.vivo and alvo.vivo
+        do_outro_lado = bool(self.vivos) if ator is self.jogador else alvo.vivo
+        extra = ator.extras > 0 and ator.vivo and do_outro_lado
         if extra:
             ator.extras -= 1
         copiou = efetiva.id if t.copia_rival else ""
@@ -1183,21 +1562,48 @@ class Luta:
             selou=selou,
             atordoou=atordoou,
             instintos=instintos,
+            incinerou=ator.incinerado,
+            segunda_forma=self.forma_revelada,
+            alvo=alvo.nome,
+            invocadas=tuple(self._invocadas),
+            respingo=tuple(respingos),
+            protegido=protegido,
+            curado=curado,
+            quebrou=quebrou,
+            mecanica=self._mecanica,
+            iludiu=self._iludiu,
+            aliado=aliado,
         )
+        self._mecanica, self._iludiu = "", False
         self.log.append(acao)
         self.abertura = False
         self.turnos += 1
-        limite = self.jogador.efeitos.limite_turnos
-        if limite and self.turnos >= 2 * limite and self.rival.vivo and self.jogador.vivo:
+        if not extra:  # Instante Suspenso: a vez continua com quem agiu
+            self.vez = self._depois_de(ator)
+            if self.vez is self.jogador:
+                self.rodadas += 1
+        limite = self.jogador.efeitos.limite_turnos or 0
+        if len(self.rivais) == 1:
+            estourou = self.turnos >= 2 * limite
+        else:  # num bando, o prazo conta voltas inteiras
+            estourou = self.rodadas >= limite
+        if limite and estourou and self.vivos and self.jogador.vivo:
             self.estourou_prazo = True  # voto Prazo
         self._depois_da_acao(acao, ator, t)
-        if not extra:  # Instante Suspenso: a vez continua com quem agiu
-            self.vez = alvo
-        if ator is self.rival and not self.acabou:
+        if ator is not self.jogador and not self.acabou:
             # Anuncia ao fim do próprio turno, para o jogador ver antes de escolher. A técnica
             # anunciada continua pronta até lá: recargas do rival só descem no turno dele.
             self.intencao_rival = escolher_rival(self)
+        if ator is self.jogador:
+            self._reajustar_alvo()
         return acao
+
+
+def invocar(lutador: Lutador, entrada: list) -> None:
+    """Uma invocação entra em campo ([turnos, dano, de onde veio]). No limite, a mais
+    antiga vai embora: o campo não comporta um exército inteiro."""
+    lutador.invocacoes.append(entrada)
+    del lutador.invocacoes[:-MAX_INVOCACOES]
 
 
 def _extra_da_dor(t: Tecnica, ator: Lutador) -> int:
@@ -1207,8 +1613,8 @@ def _extra_da_dor(t: Tecnica, ator: Lutador) -> int:
 
 def _selar_alvo(luta: Luta, alvo: Lutador) -> Tecnica | None:
     """O que a Corrente prende: a ação anunciada do rival, ou a melhor técnica pronta."""
-    if alvo is luta.rival:
-        t = luta.intencao_rival
+    if alvo is not luta.jogador:
+        t = luta.intencao_de(alvo)
         return t if t is not None and t in alvo.tecnicas else None
     prontas = [t for t in alvo.tecnicas if alvo.pronta(t)]
     return max(prontas, key=valor_tecnica) if prontas else None
@@ -1290,6 +1696,7 @@ def valor_tecnica(t: Tecnica) -> float:
     valor += 3 * t.sangrar + t.bomba + 3 * t.regenerar + 5 * (t.silenciar + t.espelho)
     valor += 6 * t.chama_eterna + 2 * t.veneno + t.invocar * t.invocar_turnos
     valor += 6 * (t.congelar + t.clones) + 4 * t.vinculo + (12 if t.modo is not None else 0)
+    valor += t.proteger + t.curar_aliado + 4 * t.inspirar
     return valor + 4 * (t.instinto + t.intocavel + t.fera + t.enfraquecer)
 
 
@@ -1349,10 +1756,78 @@ def _vale_o_preco(luta: Luta, j: Lutador, t: Tecnica) -> bool:
     return luta.rival.vida >= 20  # Contrato: usa em toda luta que ainda vai durar; o demônio cresce
 
 
+MALDICOES = ("veneno", "marca", "enfraquecer", "cegar", "sangrar", "chama_eterna", "expor")
+
+
+def _maldicao(t: Tecnica) -> bool:
+    return any(getattr(t, a) for a in MALDICOES)
+
+
+def _pelo_papel(luta: Luta, rival: Lutador, prontas: list[Tecnica]) -> Tecnica | None:
+    """O que o papel manda fazer num bando (None: age como um rival qualquer)."""
+    ferido = luta._mais_ferido(rival)
+    fracao = ferido.vida / ferido.vida_max
+    if rival.papel == "curandeiro":
+        curas = [t for t in prontas if t.curar_aliado]
+        if curas and fracao < 0.7:
+            return curas[0]
+    elif rival.papel == "guardiao":
+        guardas = [t for t in prontas if t.proteger]
+        if guardas and ferido.bloqueio == 0:
+            return guardas[0]
+    elif rival.papel == "comandante":
+        gritos = [t for t in prontas if t.inspirar]
+        if gritos:
+            return gritos[0]
+    elif rival.papel == "xama":
+        pragas = [t for t in prontas if _maldicao(t)]
+        if pragas and luta.rng.random() < 0.75:
+            return luta.rng.choice(pragas)
+    return None
+
+
+def _assinatura_vale(luta: Luta, rival: Lutador, t: Tecnica) -> bool:
+    """O chefe sabe o preço da própria técnica: a Balança só quando você obedeceria; a Lua
+    Sem Fim (que cobra metade do poder) para fechar a luta ou na segunda forma."""
+    j = luta.jogador
+    if rival.mecanica == "balanca":
+        return j.vida / j.vida_max < rival.vida / rival.vida_max
+    if rival.mecanica == "preco":
+        golpe = _valor_ofensivo(luta, rival, t) * rival.dano_mult
+        return rival.segunda_forma or j.vida <= golpe * 1.2
+    return True
+
+
+def _valor_contra(luta: Luta, j: Lutador, t: Tecnica) -> float:
+    """O valor ofensivo de `t` contra o alvo, lendo a mecânica do chefe (o piloto)."""
+    valor, r = _valor_ofensivo(luta, j, t), luta.rival
+    m = r.mecanica
+    if m == "adaptar":  # o que a roda já aprendeu rende menos
+        valor *= ADAPTAR[min(r.adaptacao.get(t.id, 0), len(ADAPTAR) - 1)]
+    elif m == "contrato" and r.contrato and not t.absoluto:  # o 1º golpe vai embora
+        valor *= (t.golpes - 1) / t.golpes
+    elif m == "intangivel" and t.absoluto:
+        valor *= 1.5
+    elif m == "regenera" and (t.sangrar or t.chama_eterna):
+        valor += 6  # a ferida aberta corta a regeneração
+    elif m == "armadura" and (t.perfura or t.absoluto):
+        valor += r.bloqueio
+    return valor
+
+
 def escolher_rival(luta: Luta) -> Tecnica:
-    """IA simples do rival: defende quando está mal, prepara malditas cedo, senão bate forte."""
+    """IA simples do rival: defende quando está mal, prepara malditas cedo, senão bate forte.
+    Num bando, o papel vem antes (o curandeiro cura, o guardião protege...)."""
     rival, rng = luta.rival, luta.rng
     prontas = luta.prontas(rival)
+    if rival.mecanica and rival.assinatura:  # a assinatura que custa caro espera a hora
+        prontas = [
+            t for t in prontas if t.id != rival.assinatura or _assinatura_vale(luta, rival, t)
+        ] or prontas
+    if rival.papel:
+        pelo_papel = _pelo_papel(luta, rival, prontas)
+        if pelo_papel is not None:
+            return pelo_papel
     defesas = [t for t in prontas if t.tipo == "defesa"]
     if defesas and rival.vida < rival.vida_max * 0.4 and rng.random() < 0.5:
         return rng.choice(defesas)
@@ -1384,6 +1859,22 @@ def jurar_luta_auto(luta: Luta) -> bool:
     return rival.vida <= melhor * turnos * 0.8
 
 
+PRIORIDADE_ALVO = {"curandeiro": 0, "xama": 1, "comandante": 1, "lamina": 2, "": 2, "guardiao": 3}
+
+
+def escolher_alvo_auto(luta: Luta) -> Lutador:
+    """Piloto automático da mira: quem cai com um Golpe primeiro; senão quem cura, quem
+    amaldiçoa e por último o guardião (o mais fraco de cada papel antes)."""
+    vivos = luta.vivos
+    if len(vivos) == 1:
+        return vivos[0]
+    golpe = luta.basico.dano + luta.jogador.bonus_dano + luta.jogador.dano_run
+    caidos = [r for r in vivos if r.vida <= golpe]
+    if caidos:
+        return min(caidos, key=lambda r: r.vida)
+    return min(vivos, key=lambda r: (PRIORIDADE_ALVO.get(r.papel, 2), r.vida))
+
+
 def escolher_jogador_auto(luta: Luta) -> Tecnica:
     """Piloto automático do jogador (simulação): defende o que vê chegando, senão bate forte."""
     j = luta.jogador
@@ -1394,10 +1885,21 @@ def escolher_jogador_auto(luta: Luta) -> Tecnica:
     if p is not None and p.condicao == "sem_defesa":
         prontas = [t for t in prontas if t.tipo != "defesa"] or prontas
     vista = luta.ver_intencao()
+    if len(luta.vivos) > 1:  # num bando, o que importa é o golpe perigoso que vem
+        for r in luta.vivos:
+            v = luta.ver_intencao(r)
+            if isinstance(v, Tecnica) and v.perigosa:
+                vista = v
+                break
     selos = [t for t in prontas if t.selar]
     if isinstance(vista, Tecnica) and vista is not luta.basico and selos:
         if _valor_ofensivo(luta, luta.rival, vista) >= 8:
             return selos[0]  # prende o golpe que vem
+    r = luta.rival
+    if r.carga and isinstance(vista, Tecnica) and vista.id == r.assinatura:
+        corta = [t for t in prontas if t.atordoar or t.selar or t.silenciar or t.congelar]
+        if corta:  # o Disparo carregado vem aí: atordoar ou selar descarrega
+            return corta[0]
     curas = [t for t in prontas if t.cura and not t.dano]
     if curas and j.vida < j.vida_max * 0.45:
         return max(curas, key=lambda t: t.cura)
@@ -1406,7 +1908,8 @@ def escolher_jogador_auto(luta: Luta) -> Tecnica:
         return max(defesas, key=lambda t: t.bloqueio + t.revide)
     if vista == "ataque" and defesas and j.vida < j.vida_max * 0.35:
         return defesas[0]
-    melhor = max(prontas, key=lambda t: _valor_ofensivo(luta, j, t))
+    poupa = luta.rival.mecanica in ("adaptar", "contrato")  # no empate, gasta o Golpe
+    melhor = max(prontas, key=lambda t: (_valor_contra(luta, j, t), poupa and t is luta.basico))
     preparos = [t for t in prontas if t.tipo == "maldita" and _valor_ofensivo(luta, j, t) == 0]
     preparos += [t for t in prontas if t.modo is not None and t not in preparos]
     # preparar custa um turno: só vale em luta que ainda dura uns golpes

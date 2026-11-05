@@ -189,7 +189,7 @@ def test_promessa_cumprida_paga_o_premio():
     lt = luta(j, r, voto_luta=v)
     lt.jurar_luta()
     lt.resolver(soco)
-    lt.resolver(BASICO)
+    lt.turno_rival()  # 60 de 100 quebra a guarda: ele perde o turno
     lt.resolver(soco)
     assert not r.vivo and lt.promessa_resultado == "cumprida" and j.carma.valor >= 25
 

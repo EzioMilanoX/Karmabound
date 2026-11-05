@@ -13,8 +13,17 @@ import pytest  # noqa: E402
 
 from karmabound.combate import escolher_jogador_auto  # noqa: E402
 from karmabound.game import build_game  # noqa: E402
+from karmabound.tela_caminho import CaminhoScene, EncruzilhadaScene  # noqa: E402
 from karmabound.tela_luta import LutaScene  # noqa: E402
-from karmabound.tela_menus import AltarScene, FimScene, SubstituirScene, TituloScene  # noqa: E402
+from karmabound.tela_menus import (  # noqa: E402
+    AliadoScene,
+    AltarScene,
+    FimScene,
+    FusaoScene,
+    SubstituirScene,
+    TituloScene,
+    TreinoScene,
+)
 from karmabound.tela_roleta import RoletaScene  # noqa: E402
 
 PASSO = 1 / 30
@@ -35,6 +44,8 @@ def luta_dom(cena):
 def decidir(cena) -> set[str]:
     """Que tecla uma pessoa apertaria agora."""
     if isinstance(cena, TituloScene):
+        return {"confirmar"}
+    if isinstance(cena, (FusaoScene, AliadoScene)):  # o anúncio: Enter mostra, Enter segue
         return {"confirmar"}
     if isinstance(cena, RoletaScene):
         return {
@@ -61,6 +72,16 @@ def decidir(cena) -> set[str]:
         return {f"tecnica_{cena.slots().index(t) + 1}"}
     if isinstance(cena, SubstituirScene):
         return {"tecnica_1"}
+    if isinstance(cena, TreinoScene):
+        return {"confirmar"}
+    if isinstance(cena, CaminhoScene):
+        # a encruzilhada quando houver (passa pela outra tela); senão o Rival (porta 1)
+        tipos = [p.tipo for p in cena.j.oferta_caminho]
+        return {f"escolher_{tipos.index('evento') + 1}" if "evento" in tipos else "confirmar"}
+    if isinstance(cena, EncruzilhadaScene):
+        j = cena.j
+        cabe = next(i for i in range(len(j.encruzilhada.opcoes)) if j.pode_escolher(i))
+        return {f"escolher_{cabe + 1}"}
     if isinstance(cena, AltarScene):
         if cena.estado == "escolher":
             cena.cursor = cena.linhas.index("recusar")
@@ -91,6 +112,10 @@ def test_uma_run_inteira_pelas_telas(seed):
     j = loop.fluxo.jornada
     assert j.fase in ("vitoria", "derrota")
     assert {"TituloScene", "RoletaScene", "LutaScene", "FimScene"} <= vistas
+    if j.estado.lutas_vencidas:
+        assert "TreinoScene" in vistas
+        assert "CaminhoScene" in vistas
+    assert loop.fluxo.legado.memoria > 0 or not j.estado.lutas_vencidas  # o Legado registrou
     loop.renderer.shutdown()
 
 

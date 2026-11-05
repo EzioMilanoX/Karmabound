@@ -20,7 +20,7 @@ from karmabound.grimorio import caminho_padrao
 from karmabound.jornada import Jornada
 from karmabound.run import JOGOS, Contexto
 
-VERSAO = 1
+VERSAO = 3  # 2: o caminho, os bandos e o Legado; 3: fusões, mapa e Ascensão
 
 
 def caminho() -> Path:
@@ -51,8 +51,8 @@ def carregar() -> Jornada | None:
     except Exception:  # sem arquivo, estragado ou de outra versão do código
         return None
     jogo, anime = getattr(j.ctx, "jogo", "classico"), getattr(j.ctx, "anime", "")
-    # os dados de agora: um ajuste de balanceamento vale já
-    j.ctx = Contexto.padrao(j.modo, jogo=jogo, anime=anime)
+    # os dados de agora: um ajuste de balanceamento vale já (a Ascensão vem no `legado`)
+    j.ctx = Contexto.padrao(j.modo, jogo=jogo, anime=anime, **getattr(j, "legado", {}))
     if j.fase == "luta":
         j._comecar_luta()  # da foto de antes da luta: o mesmo rival
     return j

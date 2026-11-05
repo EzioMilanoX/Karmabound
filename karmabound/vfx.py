@@ -25,6 +25,7 @@ from karmabound.visual import (
     VERDE_JADE,
     Cor,
     alpha,
+    ease_out,
     mistura,
 )
 
@@ -502,6 +503,580 @@ def _explosao(r, a, b, k, t, forte):
         )
 
 
+# ----------------------------------------------------------------------- fusões e assinaturas
+
+VERMELHO_VIVO = (255, 70, 60, 255)
+LARANJA = (255, 140, 40, 255)
+ROSA = (255, 170, 200, 255)
+
+
+def _faixa(r: IRenderer, a: Ponto, b: Ponto, largura: float, cor: Cor) -> None:
+    """Um feixe reto de a até b com essa largura."""
+    ang = math.atan2(b[1] - a[1], b[0] - a[0])
+    nx, ny = -math.sin(ang) * largura / 2, math.cos(ang) * largura / 2
+    r.draw_ui_polygon(
+        [
+            (a[0] + nx, a[1] + ny),
+            (b[0] + nx, b[1] + ny),
+            (b[0] - nx, b[1] - ny),
+            (a[0] - nx, a[1] - ny),
+        ],
+        cor,
+    )
+
+
+def _feixe(r, a, b, k, t, forte):
+    """Kaioken Kamehameha: a onda carrega nas mãos, em brasa, e sai num feixe que atravessa."""
+    if k < 0.35:
+        c = k / 0.35
+        raio = 8 + 26 * c
+        r.draw_ui_circle(a[0], a[1], raio + 16, alpha(VERMELHO_VIVO, 80 * c))
+        r.draw_ui_circle(a[0], a[1], raio, alpha(AZUL_CHAKRA, 230))
+        r.draw_ui_circle(a[0], a[1], raio * 0.5, alpha(BRANCO, 240))
+        for i in range(12):  # o ki sugado para as mãos
+            ang = i * 0.52 + i * i * 0.1
+            d = 30 + 90 * (1 - ((t * 2.2 + i * 0.083) % 1.0))
+            px, py = a[0] + math.cos(ang) * d, a[1] + math.sin(ang) * d
+            r.draw_ui_circle(px, py, 2.5, alpha(VERMELHO_VIVO, 210))
+        return
+    q = (k - 0.35) / 0.65
+    some = 1 - max(0.0, (q - 0.6) / 0.4)
+    ang = math.atan2(b[1] - a[1], b[0] - a[0])
+    fim = (b[0] + math.cos(ang) * 900, b[1] + math.sin(ang) * 900)
+    ponta = _lerp(a, fim, min(1.0, q * 3))
+    vibra = 0.85 + 0.15 * math.sin(t * 50)
+    for largura, cor, op in ((58, VERMELHO_VIVO, 110), (36, AZUL_CHAKRA, 210), (14, BRANCO, 255)):
+        _faixa(r, a, ponta, largura * vibra * some, alpha(cor, op * some))
+    r.draw_ui_circle(a[0], a[1], 36 * some, alpha(BRANCO, 220 * some))
+    if q > 0.18:
+        u = min(1.0, (q - 0.18) / 0.5)
+        r.draw_ui_circle(b[0], b[1], 40 + 70 * u, alpha(BRANCO, 200 * (1 - u)), 5)
+
+
+def _raio_na_mao(r, a, b, k, t, forte):
+    """Raikiri: o raio estala na mão, e a mão atravessa o alvo num risco só."""
+    semente = math.floor(t * 30)
+    if k < 0.45:
+        c = k / 0.45
+        r.draw_ui_circle(a[0], a[1] + 20, 14 + 10 * c, alpha(AZUL_CHAKRA, 230))
+        r.draw_ui_circle(a[0], a[1] + 20, 7, alpha(BRANCO, 255))
+        for i in range(6):
+            ang = i * 1.05 + _ruido(semente + i) * 2
+            fim = (a[0] + math.cos(ang) * 60 * c, a[1] + 20 + math.sin(ang) * 60 * c)
+            _raio(r, (a[0], a[1] + 20), fim, alpha(BRANCO, 220), 2, semente + i * 3)
+        if int(t * 40) % 2:
+            r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(AZUL_CHAKRA, 18))
+        return
+    q = (k - 0.45) / 0.55
+    p = _lerp(a, b, min(1.0, q * 2.5))
+    _raio(r, a, p, alpha(AZUL_CHAKRA, 255 * (1 - q)), 6, semente)
+    _raio(r, a, p, alpha(BRANCO, 230 * (1 - q)), 2, semente + 5)
+    r.draw_ui_circle(p[0], p[1], 18 * (1 - q) + 6, alpha(BRANCO, 240 * (1 - q)))
+    if q > 0.35:
+        u = (q - 0.35) / 0.65
+        ang = math.atan2(b[1] - a[1], b[0] - a[0])
+        dx, dy = math.cos(ang) * 120, math.sin(ang) * 120
+        cor = alpha(BRANCO, 255 * (1 - u))
+        r.draw_ui_line(b[0] - dx, b[1] - dy, b[0] + dx * (1 + u), b[1] + dy * (1 + u), cor, 4)
+
+
+def _punho_gigante(r, a, b, k, t, forte):
+    """King Kong Gun: o punho inflado, duro de Haki, do tamanho de um homem."""
+    p = _lerp(a, b, ease_out(min(1.0, k / 0.45)))
+    escala = 0.6 + 0.4 * min(1.0, k / 0.3)
+    preto, rubro = (18, 12, 14, 255), (150, 30, 34, 255)
+    r.draw_ui_line(a[0], a[1], p[0], p[1], alpha(rubro, 220), 26)
+    r.draw_ui_circle(p[0], p[1], 64 * escala, alpha(preto, 245))
+    r.draw_ui_circle(p[0], p[1], 64 * escala, alpha(rubro, 230), 4)
+    sentido = 1 if b[1] >= a[1] else -1
+    for i in range(4):  # os nós dos dedos, de frente para o alvo
+        nx = p[0] + (i - 1.5) * 26 * escala
+        ny = p[1] + sentido * 40 * escala
+        r.draw_ui_circle(nx, ny, 15 * escala, alpha(preto, 255))
+        r.draw_ui_circle(nx, ny, 15 * escala, alpha(rubro, 200), 2)
+    if k > 0.45:
+        u = (k - 0.45) / 0.55
+        for i in range(3):
+            raio = (60 + 150 * u) * (1 - i * 0.22)
+            r.draw_ui_circle(b[0], b[1], raio, alpha(TINTA, 200 * (1 - u)), 5 - i)
+        for i in range(12):  # o chão que voa
+            ang = i * math.pi / 6 + 0.2
+            d = 40 + 160 * u
+            r.draw_ui_circle(
+                b[0] + math.cos(ang) * d,
+                b[1] + math.sin(ang) * d * 0.6 + 120 * u * u,
+                4 + 3 * abs(_ruido(i)),
+                alpha(SEPIA, 230 * (1 - u)),
+            )
+
+
+def _trovao_flamejante(r, a, b, k, t, forte):
+    """Honoikazuchi no Kami: um passo de trovão e um dragão de fogo no rastro."""
+    if k < 0.1:
+        r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(LARANJA, 110 * (1 - k / 0.1)))
+    semente = math.floor(t * 30)
+    _raio(r, a, b, alpha(LARANJA, 255 * (1 - k)), 7, semente)
+    _raio(r, a, b, alpha(AMARELO, 230 * (1 - k)), 2, semente + 4)
+    for i in range(16):  # o corpo do dragão: chamas ao longo do caminho, ondulando
+        s = i / 15
+        c = _lerp(a, b, s)
+        onda = math.sin(s * 9 + t * 12) * 34 * (1 - s * 0.4)
+        ang = math.atan2(b[1] - a[1], b[0] - a[0]) + math.pi / 2
+        x, y = c[0] + math.cos(ang) * onda, c[1] + math.sin(ang) * onda
+        vida = max(0.0, 1 - k * 1.2 - (1 - s) * 0.3)
+        r.draw_ui_circle(x, y, (14 - 6 * s) * (0.6 + vida), alpha(LARANJA, 200 * vida))
+        r.draw_ui_circle(x, y, (7 - 3 * s) * (0.6 + vida), alpha(AMARELO, 230 * vida))
+    if k > 0.3:
+        _corte_x(r, a, b, (k - 0.3) / 0.7, t, forte)
+
+
+def _vermelho(r, a, b, k, t, forte):
+    """Técnica Reversa: Vermelho. A esfera rubra nasce na ponta do dedo e empurra tudo."""
+    if k < 0.3:
+        c = k / 0.3
+        r.draw_ui_circle(a[0], a[1], 10 + 18 * c, alpha(VERMELHO_VIVO, 240))
+        r.draw_ui_circle(a[0], a[1], 26 + 30 * c, alpha(VERMELHO_VIVO, 60), 3)
+        return
+    q = (k - 0.3) / 0.7
+    p = _lerp(a, b, min(1.0, q * 3))
+    r.draw_ui_circle(p[0], p[1], 26 * (1 - q * 0.5), alpha(VERMELHO_VIVO, 240 * (1 - q)))
+    if q > 0.3:
+        u = (q - 0.3) / 0.7
+        for i in range(4):
+            raio = (u * 1.4 - i * 0.14) * 420
+            if raio > 0:
+                r.draw_ui_circle(b[0], b[1], raio, alpha(VERMELHO_VIVO, 180 * (1 - u)), 5)
+        r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(VERMELHO_VIVO, 50 * (1 - u)))
+
+
+def _espirais(r, a, b, k, t, forte):
+    """Rasen Tarengan: três clones, três esferas, uma depois da outra."""
+    ang = math.atan2(b[1] - a[1], b[0] - a[0]) + math.pi / 2
+    for i, desvio in enumerate((-90, 90, 0)):
+        prog = max(0.0, min(1.0, (k - i * 0.15) / 0.55))
+        if prog <= 0:
+            continue
+        inicio = (a[0] + math.cos(ang) * desvio, a[1] + math.sin(ang) * desvio)
+        if prog < 1:
+            _espiral(r, inicio, b, prog * 0.62, t + i, forte)
+        else:
+            u = min(1.0, (k - i * 0.15 - 0.55) / 0.3)
+            r.draw_ui_circle(b[0], b[1], 30 + 90 * u, alpha(AZUL_CHAKRA, 200 * (1 - u)), 5)
+
+
+def _transmutacao(r, a, b, k, t, forte):
+    """Transmutação sem círculo: as palmas se juntam, o raio azul corre pelo chão e a
+    pedra sobe em lanças debaixo do alvo."""
+    if k < 0.2:
+        c = k / 0.2
+        r.draw_ui_line(a[0] - 40 * (1 - c), a[1], a[0], a[1], alpha(TINTA, 230), 4)
+        r.draw_ui_line(a[0] + 40 * (1 - c), a[1], a[0], a[1], alpha(TINTA, 230), 4)
+        if c > 0.8:
+            r.draw_ui_circle(a[0], a[1], 30, alpha(BRANCO, 220))
+        return
+    chao_a, chao_b = (a[0], a[1] + 70), (b[0], b[1] + 70)
+    q = (k - 0.2) / 0.8
+    semente = math.floor(t * 24)
+    p = _lerp(chao_a, chao_b, min(1.0, q * 2.2))
+    _raio(r, chao_a, p, alpha(AZUL_CHAKRA, 230 * (1 - q * 0.6)), 3, semente)
+    _raio(r, chao_a, p, alpha(BRANCO, 200 * (1 - q * 0.6)), 1, semente + 2)
+    if q > 0.45:
+        u = (q - 0.45) / 0.55
+        sobe = ease_out(min(1.0, u * 2.2))
+        pedra = (140, 120, 100, 255)
+        for i, (dx, alto) in enumerate(((-36, 90), (0, 130), (34, 100), (-62, 60), (60, 70))):
+            base = chao_b[0] + dx
+            topo = chao_b[1] - alto * sobe
+            r.draw_ui_polygon(
+                [(base - 12, chao_b[1]), (base + 12, chao_b[1]), (base + 2 * _ruido(i), topo)],
+                alpha(pedra, 240 * (1 - max(0.0, u - 0.7) / 0.3)),
+            )
+
+
+def desenhar_roda(r: IRenderer, x: float, y: float, raio: float, giro: float, cor: Cor) -> None:
+    """A roda de oito raios do general (a que gira quando ele se adapta)."""
+    larg = max(1, round(raio / 10))
+    for i in range(8):
+        ang = giro + i * math.pi / 4
+        c, s = math.cos(ang), math.sin(ang)
+        r.draw_ui_line(
+            x + c * raio * 0.22, y + s * raio * 0.22, x + c * raio, y + s * raio, cor, larg
+        )
+        r.draw_ui_circle(x + c * raio * 1.14, y + s * raio * 1.14, raio * 0.13, cor)
+    r.draw_ui_circle(x, y, raio * 0.8, cor, larg + 1)
+    r.draw_ui_circle(x, y, raio * 0.2, cor)
+
+
+def _roda_dharma(r, a, b, k, t, forte):
+    """O General da Roda: a roda surge no alto, gira uma casa, e o general desce."""
+    s = _sino(min(1.0, k * 1.15))
+    giro = math.pi / 4 * ease_out(max(0.0, min(1.0, (k - 0.35) / 0.2)))
+    cx, cy = a[0], a[1] - 130
+    r.draw_ui_circle(cx, cy, 70 * s, alpha(OURO, 50 * s))
+    desenhar_roda(r, cx, cy, 56 * s, giro, alpha(OURO, 240 * s))
+    if k > 0.5:  # a luz que desce até o chão
+        u = (k - 0.5) / 0.5
+        _faixa(r, (cx, cy), (cx, a[1] + 80), 40 * (1 - u), alpha(OURO, 120 * (1 - u)))
+
+
+def _rachaduras(r: IRenderer, x: float, y: float, k: float, cor: Cor, n: int = 9) -> None:
+    """Riscos de vidro que se abrem a partir de (x, y), com anéis entre eles."""
+    alcance = 720 * ease_out(min(1.0, k))
+    pontas = []
+    for i in range(n):
+        ang = i * 2 * math.pi / n + _ruido(i * 3.3) * 0.5
+        anterior = (x, y)
+        trilha = []
+        for passo in range(1, 6):
+            d = alcance * passo / 5
+            desvio = _ruido(i * 7 + passo) * 0.3
+            p = (x + math.cos(ang + desvio) * d, y + math.sin(ang + desvio) * d)
+            r.draw_ui_line(anterior[0], anterior[1], p[0], p[1], cor, 2)
+            trilha.append(p)
+            anterior = p
+        pontas.append(trilha)
+    for anel in (0, 1):  # os anéis ligam os riscos (o vidro estrelado)
+        for i in range(n):
+            p, q = pontas[i][anel], pontas[(i + 1) % n][anel]
+            r.draw_ui_line(p[0], p[1], q[0], q[1], alpha(cor, cor[3] * 0.6), 1)
+
+
+def vidro_quebrando(r: IRenderer, x: float, y: float, k: float) -> None:
+    """Kyoka Suigetsu: o que você viu era um espelho. Ele racha a partir de (x, y), os
+    cacos caem e o nome da ilusão aparece."""
+    if not 0 <= k < 1:
+        return
+    vidro = (210, 230, 255, 255)
+    r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(vidro, 60 * (1 - k)))
+    if k < 0.55:
+        _rachaduras(r, x, y, k / 0.3, alpha(BRANCO, 230))
+    if k > 0.3:
+        u = (k - 0.3) / 0.7
+        for i in range(22):
+            ang = i * 2 * math.pi / 22 + _ruido(i) * 0.8
+            d = 60 + 280 * abs(_ruido(i * 1.7))
+            cx = x + math.cos(ang) * d + _ruido(i * 2.3) * 40 * u
+            cy = y + math.sin(ang) * d * 0.6 + 520 * u * u
+            tam = 10 + 12 * abs(_ruido(i * 5.1))
+            giro = ang + u * 5 * _ruido(i * 3)
+            pts = [
+                (cx + math.cos(giro + j * 2.2) * tam, cy + math.sin(giro + j * 2.2) * tam)
+                for j in range(3)
+            ]
+            r.draw_ui_polygon(pts, alpha(vidro, 200 * (1 - u)))
+            r.draw_ui_polygon(pts, alpha(BRANCO, 230 * (1 - u)), 1)
+    brilho = 255 * _sino(min(1.0, k * 1.4))
+    r.draw_text(
+        LARGURA / 2,
+        210,
+        "鏡花水月",
+        46,
+        alpha(vidro, brilho),
+        anchor="center",
+        font_id=FONTE_PINCEL,
+    )
+
+
+def _espelho(r, a, b, k, t, forte):
+    """Flor no Espelho: a lâmina reflete, o mundo vira espelho e se quebra no alvo."""
+    if k < 0.3:
+        c = k / 0.3
+        r.draw_ui_line(a[0], a[1] - 60, a[0], a[1] + 50, alpha(BRANCO, 240 * c), 4)
+        r.draw_ui_circle(a[0], a[1] - 60, 12 * c, alpha(BRANCO, 200))
+        return
+    q = (k - 0.3) / 0.7
+    _rachaduras(r, b[0], b[1], q / 0.5, alpha((210, 230, 255, 255), 230 * (1 - q)), 7)
+    for i in range(10):  # as pétalas da flor que nunca existiu
+        fase = (q + i * 0.1) % 1.0
+        px = b[0] + math.sin(i * 2.1 + q * 4) * 90
+        py = b[1] - 100 + fase * 200
+        r.draw_ui_circle(px, py, 4, alpha(ROSA, 230 * (1 - q)))
+
+
+# ----------------------------------------------------------------------- a luta: cinema
+
+
+def _suave(x: float) -> float:
+    x = max(0.0, min(1.0, x))
+    return x * x * (3 - 2 * x)
+
+
+def _estrela(r: IRenderer, x: float, y: float, tam: float, cor: Cor, giro: float = 0.0) -> None:
+    pts = []
+    for i in range(10):
+        raio = tam if i % 2 == 0 else tam * 0.45
+        ang = giro - math.pi / 2 + i * math.pi / 5
+        pts.append((x + math.cos(ang) * raio, y + math.sin(ang) * raio))
+    r.draw_ui_polygon(pts, cor)
+
+
+def cut_in(
+    r: IRenderer,
+    k: float,
+    kanji: str,
+    nome: str,
+    origem: str = "",
+    rotulo: str = "",
+    rival: bool = False,
+    estilo: str = "espadachim",
+    relogio: float = 0.0,
+) -> None:
+    """O cut-in de técnica: uma faixa diagonal atravessa a tela com o kanji gigante, o
+    nome, a origem e a silhueta de quem usa, em pose. O seu vem da esquerda, em ouro;
+    o do rival, da direita, cor de sangue. `k` 0–1: entra, segura e corta para fora."""
+    if not 0 <= k < 1:
+        return
+    entra = _suave(k / 0.16)
+    sai = _suave((k - 0.8) / 0.2)
+    lado = -1 if rival else 1
+    cor = SANGUE_VIVO if rival else OURO
+    fundo = (54, 6, 10, 240) if rival else (12, 10, 9, 240)
+    vis = 1 - sai
+    r.draw_ui_rect(0, 0, LARGURA, ALTURA, alpha(PRETO, 140 * entra * vis))
+
+    def yc(x: float) -> float:  # o meio da faixa: sobe para o lado de onde ela não veio
+        return 318 + lado * (LARGURA / 2 - x) * 0.18
+
+    meia = 96 * (1 - sai * 0.92)
+    desliza = -lado * (1 - entra) * 1100
+    x0, x1 = -80 + desliza, LARGURA + 80 + desliza
+    r.draw_ui_polygon(
+        [(x0, yc(x0) - meia), (x1, yc(x1) - meia), (x1, yc(x1) + meia), (x0, yc(x0) + meia)],
+        alpha(fundo, fundo[3] * vis + 15 * sai),
+    )
+    for borda, larg in ((meia, 4), (meia + 9, 1)):
+        for s in (-1, 1):
+            r.draw_ui_line(
+                x0, yc(x0) + s * borda, x1, yc(x1) + s * borda, alpha(cor, 230 * vis), larg
+            )
+    for i in range(18):  # o vento da faixa: riscos que correm no sentido dela
+        v = (_ruido(i * 3.7) * 2) * meia * 0.9
+        comp = 90 + 140 * abs(_ruido(i * 1.3))
+        xs = ((i * 151 + relogio * 2200) % 1400) - 220
+        xs = xs if lado > 0 else LARGURA - xs
+        xa, xb = xs + desliza, xs + desliza - lado * comp
+        r.draw_ui_line(xa, yc(xa) + v, xb, yc(xb) + v, alpha(TINTA, 60 * vis), 2)
+    # a silhueta em pose, saindo da faixa
+    xf = (770 if not rival else 190) + desliza
+    desenhar_lutador(
+        r,
+        xf,
+        yc(xf) + meia - 6,
+        1.8 * (1 - sai * 0.2),
+        alpha(PRETO, 255 * vis),
+        alpha(cor, 235 * vis),
+        estilo=estilo,
+        tempo=relogio,
+        ataque=0.9,
+        respiro=0.0,
+    )
+    xk = (220 if not rival else 740) + desliza
+    tam = 150 + 8 * round(5 * (1 - entra))  # o kanji chega grande e assenta
+    a_txt = 255 * entra * vis
+    r.draw_text(xk + 7, yc(xk) + 5, kanji, tam, alpha(cor, a_txt * 0.6), "center", FONTE_PINCEL)
+    r.draw_text(xk, yc(xk), kanji, tam, alpha(TINTA, a_txt), "center", FONTE_PINCEL)
+    xn = (318 if not rival else 642) + desliza
+    ancora = "topleft" if not rival else "topright"
+    tam_nome = 38 if len(nome) <= 18 else max(26, round(38 * 18 / len(nome)))
+    y_nome = yc(xn) - 30
+    if rotulo:
+        r.draw_text(xn, y_nome - 24, rotulo, 16, alpha(cor, a_txt * 0.9), ancora, FONTE_PINCEL)
+    r.draw_text(xn, y_nome, nome, tam_nome, alpha(TINTA, a_txt), ancora, FONTE_PINCEL)
+    if origem:
+        y_or = y_nome + tam_nome + 8
+        r.draw_text(xn, y_or, f"※ {origem}", 15, alpha(TINTA, a_txt * 0.6), ancora, FONTE_PINCEL)
+    if sai > 0:  # a saída: a faixa vira um corte de luz
+        r.draw_ui_line(x0, yc(x0), x1, yc(x1), alpha(BRANCO, 255 * vis), 3)
+
+
+def linhas_de_velocidade(
+    r: IRenderer, x: float, y: float, k: float, relogio: float, cor: Cor = TINTA
+) -> None:
+    """As linhas de foco do anime: riscos das bordas para o alvo (golpes rápidos)."""
+    if not 0 <= k < 1:
+        return
+    s = _sino(k)
+    semente = math.floor(relogio * 24)
+    for i in range(32):
+        ang = i * 2 * math.pi / 32 + _ruido(semente + i) * 0.12
+        d0 = 250 + 140 * abs(_ruido(semente * 1.3 + i * 7))
+        c, sn = math.cos(ang), math.sin(ang)
+        r.draw_ui_line(
+            x + c * d0,
+            y + sn * d0,
+            x + c * 800,
+            y + sn * 800,
+            alpha(cor, 75 * s),
+            3 if i % 3 else 2,
+        )
+
+
+def perigo(r: IRenderer, relogio: float, forca: float = 1.0) -> None:
+    """O aviso de perigo: as bordas da tela pulsam em vermelho (só nas bordas: o meio e
+    as barras ficam livres)."""
+    pulso = 0.5 + 0.5 * math.sin(relogio * 5.5)
+    a = forca * (0.4 + 0.6 * pulso)
+    for larg, op in ((14, 40), (7, 55), (3, 120)):
+        cor = alpha(SANGUE_VIVO, op * a)
+        r.draw_ui_rect(0, 0, LARGURA, larg, cor)
+        r.draw_ui_rect(0, ALTURA - larg, LARGURA, larg, cor)
+        r.draw_ui_rect(0, 0, larg, ALTURA, cor)
+        r.draw_ui_rect(LARGURA - larg, 0, larg, ALTURA, cor)
+    linha = alpha(SANGUE_VIVO, 230 * a)
+    m, c = 10, 46  # os cantos: colchetes vermelhos
+    for cx, cy, sx, sy in (
+        (m, m, 1, 1),
+        (LARGURA - m, m, -1, 1),
+        (m, ALTURA - m, 1, -1),
+        (LARGURA - m, ALTURA - m, -1, -1),
+    ):
+        r.draw_ui_line(cx, cy, cx + sx * c, cy, linha, 3)
+        r.draw_ui_line(cx, cy, cx, cy + sy * c, linha, 3)
+
+
+def brilho_perigo(r: IRenderer, x: float, y: float, raio: float, relogio: float) -> None:
+    """O rival que prepara o golpe perigoso: um halo vermelho que pulsa atrás dele."""
+    pulso = 0.5 + 0.5 * math.sin(relogio * 5.5)
+    r.draw_ui_circle(x, y, raio * (1.05 + 0.08 * pulso), alpha(SANGUE_VIVO, 18 + 22 * pulso))
+    giro = relogio * 1.6
+    r.draw_ui_arc(x, y, raio * 1.12, giro, giro + 2.2, alpha(SANGUE_VIVO, 120 + 80 * pulso), 3)
+    r.draw_ui_arc(
+        x, y, raio * 1.12, giro + 3.1, giro + 5.3, alpha(SANGUE_VIVO, 120 + 80 * pulso), 3
+    )
+
+
+def estilhaco(r: IRenderer, x: float, y: float, k: float, escala: float = 1.0) -> None:
+    """A guarda quebrando: riscos que se abrem e cacos que voam e caem."""
+    if not 0 <= k < 1:
+        return
+    if k < 0.35:
+        _rachaduras(r, x, y, k / 0.35 * 0.2, alpha(BRANCO, 240 * (1 - k / 0.35)), 7)
+    r.draw_ui_circle(x, y, (30 + 110 * ease_out(k)) * escala, alpha(BRANCO, 220 * (1 - k)), 3)
+    for i in range(16):
+        ang = i * 2 * math.pi / 16 + _ruido(i) * 0.6
+        v = (110 + 100 * abs(_ruido(i * 3.1))) * escala
+        d = v * ease_out(k)
+        cx = x + math.cos(ang) * d
+        cy = y + math.sin(ang) * d + 170 * k * k * escala
+        tam = (8 + 7 * abs(_ruido(i * 5))) * escala * (1 - k * 0.4)
+        giro = ang + k * 7 * _ruido(i * 7)
+        pts = [
+            (cx + math.cos(giro + j * 2.3) * tam, cy + math.sin(giro + j * 2.3) * tam)
+            for j in range(3)
+        ]
+        cor = (200, 220, 255, 255) if i % 3 else BRANCO
+        r.draw_ui_polygon(pts, alpha(cor, 235 * (1 - k)))
+
+
+def tonto(r: IRenderer, x: float, y: float, relogio: float, escala: float = 1.0) -> None:
+    """Tonto (guarda quebrada): estrelinhas girando em volta da cabeça e um redemoinho."""
+    for i in range(3):
+        ang = relogio * 4 + i * 2 * math.pi / 3
+        sx = x + math.cos(ang) * 28 * escala
+        sy = y + math.sin(ang) * 9 * escala
+        frente = math.sin(ang) > 0
+        _estrela(
+            r,
+            sx,
+            sy,
+            (7 if frente else 5) * escala,
+            alpha(AMARELO, 245 if frente else 140),
+            relogio * 3,
+        )
+    for i in range(2):
+        ini = relogio * 6 + i * math.pi
+        r.draw_ui_arc(x, y - 2, (12 - 4 * i) * escala, ini, ini + 3.6, alpha(TINTA, 150), 2)
+
+
+def selo_mecanica(
+    r: IRenderer, x: float, y: float, kanji: str, raio: float, cor: Cor, fundo: Cor = PRETO
+) -> None:
+    """Um selo redondo pequeno com um kanji (afixo, mecânica, ressonância)."""
+    r.draw_ui_circle(x, y, raio + 2, alpha(fundo, 200))
+    r.draw_ui_circle(x, y, raio, cor, 2)
+    tam = max(10, round(raio * 1.25))
+    r.draw_text(x, y - 1, kanji, tam, cor, anchor="center", font_id=FONTE_PINCEL)
+
+
+def roda_adapta(r: IRenderer, x: float, y: float, k: float, giro: float) -> None:
+    """Mahoraga se adapta: a roda grande aparece, gira uma casa com um estalo e
+    mostra 適応."""
+    if not 0 <= k < 1:
+        return
+    s = _sino(min(1.0, k * 1.1))
+    vira = giro + math.pi / 4 * ease_out(max(0.0, min(1.0, (k - 0.25) / 0.18)))
+    if 0.25 <= k < 0.45:  # o estalo
+        r.draw_ui_circle(x, y, 90, alpha(OURO, 90 * (1 - (k - 0.25) / 0.2)))
+    desenhar_roda(r, x, y, 62 * (0.7 + 0.3 * s), vira, alpha(OURO, 250 * s))
+    r.draw_text(x, y + 84, "適応", 34, alpha(OURO, 255 * s), anchor="center", font_id=FONTE_PINCEL)
+
+
+def selo_contrato(r: IRenderer, x: float, y: float, k: float) -> None:
+    """Makima: o contrato cobra. O selo vermelho se abre e as correntes saem dele."""
+    if not 0 <= k < 1:
+        return
+    s = _sino(k)
+    raio = 40 + 30 * ease_out(min(1.0, k * 2))
+    r.draw_ui_circle(x, y, raio, alpha(SANGUE_VIVO, 70 * s))
+    r.draw_ui_circle(x, y, raio, alpha(SANGUE_VIVO, 240 * s), 3)
+    r.draw_ui_circle(x, y, raio * 0.78, alpha(SANGUE_VIVO, 200 * s), 1)
+    r.draw_text(x, y - 2, "契", 44, alpha(BRANCO, 255 * s), anchor="center", font_id=FONTE_PINCEL)
+    for i in range(4):
+        ang = i * math.pi / 2 + math.pi / 4 + k
+        fim = (x + math.cos(ang) * (raio + 120 * k), y + math.sin(ang) * (raio + 120 * k))
+        _corrente(
+            r, (x + math.cos(ang) * raio, y + math.sin(ang) * raio), fim, alpha(OURO, 200 * s)
+        )
+
+
+def carga(r: IRenderer, x: float, y: float, n: int, relogio: float, escala: float = 1.0) -> None:
+    """Leigan: as cargas do Disparo, esferas que giram em volta dele e um brilho que cresce."""
+    if n <= 0:
+        return
+    pulso = 0.5 + 0.5 * math.sin(relogio * 7)
+    r.draw_ui_circle(x, y, (70 + 12 * n) * escala, alpha(AZUL_CHAKRA, (18 + 12 * pulso) * n))
+    for i in range(n * 2):
+        ang = relogio * 2.4 + i * math.pi / n
+        px = x + math.cos(ang) * 62 * escala
+        py = y + math.sin(ang) * 22 * escala - 10 * escala
+        r.draw_ui_circle(px, py, 7 * escala, alpha(AZUL_CHAKRA, 220))
+        r.draw_ui_circle(px, py, 3.5 * escala, alpha(BRANCO, 240))
+
+
+def armadura(r: IRenderer, x: float, y: float, k: float, escala: float = 1.0) -> None:
+    """O Susanoo: costelas de energia se fecham em volta do corpo."""
+    if not 0 <= k < 1:
+        return
+    s = _sino(k)
+    cor = alpha((150, 110, 230, 255), 220 * s)
+    for i in range(4):
+        raio = (58 + i * 14) * escala * (0.6 + 0.4 * ease_out(min(1.0, k * 2)))
+        r.draw_ui_arc(x, y + 10 * escala, raio, math.radians(200), math.radians(340), cor, 4)
+        r.draw_ui_arc(x, y + 10 * escala, raio, math.radians(20), math.radians(160), cor, 2)
+
+
+def vortice(r: IRenderer, x: float, y: float, k: float, escala: float = 1.0) -> None:
+    """Kamui: o corpo vira um redemoinho e o golpe atravessa."""
+    if not 0 <= k < 1:
+        return
+    s = _sino(k)
+    for i in range(5):
+        ini = k * 12 + i * 1.25
+        raio = (14 + i * 12) * escala
+        r.draw_ui_arc(x, y, raio, ini, ini + 2.4, alpha((40, 30, 50, 255), 220 * s), 3)
+        r.draw_ui_arc(x, y, raio, ini + 3.1, ini + 4.4, alpha(TINTA, 150 * s), 1)
+
+
+def petalas(r: IRenderer, x: float, y: float, relogio: float, escala: float = 1.0) -> None:
+    """Senbonzakura: pétalas que giram em volta dele o tempo todo."""
+    for i in range(14):
+        fase = (relogio * 0.35 + i / 14) % 1.0
+        ang = i * 2.4 + relogio * 1.3
+        px = x + math.cos(ang) * (70 + 30 * math.sin(i)) * escala
+        py = y - 60 * escala + fase * 150 * escala + math.sin(ang) * 14 * escala
+        r.draw_ui_circle(px, py, 3.2 * escala, alpha(ROSA, 200 * _sino(fase)))
+
+
 def _hesitar(r, a, b, k, t, forte):
     """Sem efeito: o turno passa."""
 
@@ -542,6 +1117,16 @@ EFEITOS: dict[str, Efeito] = {
     "veneno": Efeito(_veneno, 0.8),
     "vento": Efeito(_vento, 0.7),
     "explosao": Efeito(_explosao, 1.0),
+    # fusões e assinaturas novas
+    "feixe": Efeito(_feixe, 1.1),
+    "raio_na_mao": Efeito(_raio_na_mao, 0.9),
+    "punho_gigante": Efeito(_punho_gigante, 1.0),
+    "trovao_flamejante": Efeito(_trovao_flamejante, 0.8),
+    "vermelho": Efeito(_vermelho, 1.0),
+    "espirais": Efeito(_espirais, 1.1),
+    "transmutacao": Efeito(_transmutacao, 1.1),
+    "roda_dharma": Efeito(_roda_dharma, 1.1),
+    "espelho": Efeito(_espelho, 1.0),
 }
 
 POR_HABILIDADE = {
@@ -744,6 +1329,17 @@ POR_HABILIDADE = {
     "desvio_dimensional": "tempo",
     "lua_sem_fim": "presa",
     "disparo_espiritual": "espiral",
+    "general_da_roda": "roda_dharma",
+    "flor_no_espelho": "espelho",
+    # as técnicas que só nascem de fusão (data/fusoes.json)
+    "corta_raio": "raio_na_mao",
+    "punho_colossal": "punho_gigante",
+    "onda_carmesim": "feixe",
+    "trovao_em_chamas": "trovao_flamejante",
+    "repulsao_escarlate": "vermelho",
+    "tempestade_de_espirais": "espirais",
+    "relampago_ligeiro": "trovao",
+    "palmas_da_verdade": "transmutacao",
 }
 TELA_CHEIA = {"dominio", "tempo", "ilusao", "corte_mundo", "demonio", "repulsao"}
 
@@ -950,17 +1546,118 @@ def correntes_fechando(r: IRenderer, x: float, y: float, k: float) -> None:
             r.draw_ui_circle(x, y + dy, 9, SANGUE_VIVO, 3)
 
 
-def dissolver(r: IRenderer, x: float, y: float, k: float, cor: Cor) -> None:
-    """A vitória: o rival se desfaz em gotas de tinta que sobem e se espalham."""
-    for i in range(46):
+def dissolver(r: IRenderer, x: float, y: float, k: float, cor: Cor, escala: float = 1.0) -> None:
+    """A vitória: o rival se desfaz em gotas de tinta que sobem e se espalham.
+    `escala` < 1 para quem é menor (uma invocação que vai embora)."""
+    n = 46 if escala >= 0.8 else 24
+    for i in range(n):
         s = i * 2.39
-        ox = math.sin(s * 3.1) * 46
-        oy = -20 - (math.sin(s * 1.7) * 0.5 + 0.5) * 150
-        sobe = k * (60 + 90 * (math.sin(s * 5.3) ** 2))
-        px = x + ox * (1 + k * 1.5) + math.sin(s) * 40 * k
+        ox = math.sin(s * 3.1) * 46 * escala
+        oy = (-20 - (math.sin(s * 1.7) * 0.5 + 0.5) * 150) * escala
+        sobe = k * (60 + 90 * (math.sin(s * 5.3) ** 2)) * escala
+        px = x + ox * (1 + k * 1.5) + math.sin(s) * 40 * k * escala
         py = y + oy - sobe
         clara = mistura(cor, TINTA, 0.55)  # a tinta do rival, clara o bastante para o fundo escuro
-        r.draw_ui_circle(px, py, 4.5 * (1 - k) + 1.5, alpha(clara, 240 * (1 - k)))
+        raio = (4.5 * (1 - k) + 1.5) * max(0.6, escala)
+        r.draw_ui_circle(px, py, raio, alpha(clara, 240 * (1 - k)))
+
+
+def mancha_de_tinta(r: IRenderer, x: float, y: float, k: float, escala: float = 1.0) -> None:
+    """Uma invocação chega: a tinta se esparrama no chão e se recolhe (k: 0 → 1)."""
+    if not 0 <= k < 1:
+        return
+    abre = 1 - (1 - min(1.0, k / 0.35)) ** 3
+    some = 1 - max(0.0, k - 0.45) / 0.55
+    raio = (16 + 46 * abre) * escala * (0.4 + 0.6 * some)
+    cor = alpha(PRETO, 235 * some)
+    r.draw_ui_polygon(
+        [
+            (
+                x + math.cos(a) * raio * (0.85 + 0.2 * math.sin(a * 3 + 1.3)),
+                y + math.sin(a) * raio * 0.32,
+            )
+            for a in (i * math.pi / 9 for i in range(18))
+        ],
+        cor,
+    )
+    for i in range(8):  # respingos que saltam e caem
+        a = i * 0.785 + 0.4
+        d = raio * (1.15 + 0.35 * math.sin(i * 2.1))
+        alto = math.sin(min(1.0, k / 0.6) * math.pi) * 26 * escala * (0.5 + (i % 3) * 0.3)
+        r.draw_ui_circle(
+            x + math.cos(a) * d, y + math.sin(a) * d * 0.32 - alto, (2 + i % 3) * escala, cor
+        )
+    if k < 0.5:  # a coluna de tinta de onde ela sobe
+        alto = 120 * escala * math.sin(k / 0.5 * math.pi)
+        r.draw_ui_polygon(
+            [
+                (x - 10 * escala, y),
+                (x + 10 * escala, y),
+                (x + 4 * escala, y - alto),
+                (x - 4 * escala, y - alto),
+            ],
+            alpha(PRETO, 200 * some),
+        )
+
+
+def nuvem(r: IRenderer, x: float, y: float, k: float, escala: float = 1.0) -> None:
+    """O clone desfeito: uma nuvem de fumaça branca que estoura e se espalha (poof)."""
+    if not 0 <= k < 1:
+        return
+    abre = 1 - (1 - k) ** 2
+    for i in range(9):
+        a = i * 0.698 + 0.3
+        d = (8 + 34 * abre) * escala * (0.7 + 0.3 * math.sin(i * 1.7))
+        raio = (10 + 18 * abre) * escala * (0.8 + 0.25 * math.cos(i * 2.3))
+        cinza = mistura(BRANCO, TINTA, 0.35 + 0.1 * (i % 3))
+        r.draw_ui_circle(
+            x + math.cos(a) * d,
+            y + math.sin(a) * d * 0.7 - 14 * abre * escala,
+            raio,
+            alpha(cinza, 170 * (1 - k) ** 1.5),
+        )
+    if k < 0.25:
+        r.draw_ui_circle(x, y, 26 * escala * (k / 0.25), alpha(BRANCO, 200 * (1 - k / 0.25)))
+
+
+def clarao_de_golpe(r: IRenderer, x: float, y: float, k: float, forca: float = 1.0) -> None:
+    """O instante do golpe forte: um estouro branco e riscos que saem do alvo."""
+    if not 0 <= k < 1:
+        return
+    a = 1 - k
+    r.draw_ui_circle(x, y, (30 + 50 * k) * forca, alpha(BRANCO, 150 * a**2))
+    r.draw_ui_circle(x, y, (44 + 70 * k) * forca, alpha(BRANCO, 220 * a), max(1, round(4 * a)))
+    for i in range(12):
+        ang = i * math.pi / 6 + 0.2
+        d0 = (24 + 40 * k) * forca
+        d1 = d0 + (40 + 30 * math.sin(i * 1.9)) * forca * a
+        r.draw_ui_line(
+            x + math.cos(ang) * d0,
+            y + math.sin(ang) * d0,
+            x + math.cos(ang) * d1,
+            y + math.sin(ang) * d1,
+            alpha(BRANCO, 230 * a),
+            3,
+        )
+
+
+def mordida(r: IRenderer, x: float, y: float, k: float, cor: Cor, escala: float = 1.0) -> None:
+    """O golpe de uma invocação no alvo: três riscos na cor dela e um estouro."""
+    if not 0 <= k < 1:
+        return
+    a = 1 - k
+    abre = 1 - (1 - k) ** 2
+    for i in (-1, 0, 1):
+        dx = i * 12 * escala
+        r.draw_ui_line(
+            x + dx - 22 * escala * abre,
+            y - 26 * escala * abre,
+            x + dx + 22 * escala * abre,
+            y + 26 * escala * abre,
+            alpha(cor, 240 * a),
+            max(1, round(4 * escala)),
+        )
+    r.draw_ui_circle(x, y, (12 + 30 * abre) * escala, alpha(cor, 170 * a), 3)
 
 
 # ----------------------------------------------------------------------- clima sombrio

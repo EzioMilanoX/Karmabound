@@ -37,6 +37,50 @@ DICAS: dict[str, tuple[str, str, str]] = {  # id -> (kanji, título, texto)
         "golpe fosse te matar, você desperta sozinho e ele não vem. Depois da luta, o "
         "próximo giro sai Divino.",
     ),
+    "caminho": (
+        "岐",
+        "O caminho",
+        "Antes de cada luta que não é de chefe, três portas (1–3, ou ← → e Enter). Rival: "
+        "um lutador. Bando: dois ou três, cada um com um papel. Elite: mais forte, e "
+        "vencer garante uma Relíquia. Encruzilhada: sem luta, uma escolha com preço. "
+        "Olhe a sua vida antes de escolher.",
+    ),
+    "encruzilhada": (
+        "辻",
+        "Encruzilhada",
+        "Um encontro sem luta. Cada opção dá algo e cobra algo: vida, vida máxima, Carma. "
+        "A que pede mais Carma do que você tem fica apagada. Algumas levam a um giro de "
+        "Técnica ou de Relíquia. Depois, o caminho segue.",
+    ),
+    "bando": (
+        "群",
+        "Bando",
+        "Vários rivais, cada um com um papel: a Lâmina (刃) bate forte, o Guardião (盾) "
+        "protege o mais ferido, o Curandeiro (癒) fecha as feridas, o Xamã (呪) amaldiçoa, o "
+        "Comandante (将) faz todos baterem mais. Em quem bater é a luta: ↑ ↓ ou Tab troca "
+        "o alvo. Derrube o Curandeiro primeiro.",
+    ),
+    "nemesis": (
+        "仇",
+        "Nêmesis",
+        "Quem te matou numa run passada voltou, mais forte e com o golpe que te matou. "
+        "Vencer: Relíquia, Carma, um Despertar guardado e Memória a mais. Perder de novo a "
+        "deixa ainda mais forte. Ela aparece uma vez por run.",
+    ),
+    "treino": (
+        "修",
+        "Treino",
+        "Os rivais ganham vida a cada luta. Depois de cada vitória você escolhe um treino "
+        "(1–3), e ele fica pelo resto da run: vida, dano, Velocidade, Percepção, fôlego ou "
+        "Carma.",
+    ),
+    "chefe": (
+        "鬼",
+        "Chefe",
+        "O chefe tem postura: um golpe só tira no máximo 30% da vida dele. As feridas que "
+        "duram (chama, veneno, sangramento, Marca) passam pela postura. Na metade da vida "
+        "ele revela a segunda forma: mais dano e todas as técnicas prontas de novo.",
+    ),
     "tecnicas": (
         "技",
         "Técnicas",
@@ -66,5 +110,56 @@ DICAS: dict[str, tuple[str, str, str]] = {  # id -> (kanji, título, texto)
         "O voto de luta",
         "Toda luta oferece um voto rápido: uma Promessa, uma Revelação ou um Selo. Aperte V "
         "para ver e jurar; não gasta o turno. Promessa cumprida dá prêmio, quebrada cobra.",
+    ),
+    "fusao": (
+        "融",
+        "Fusão",
+        "Algumas peças se completam: duas ou três técnicas, o seu Dom, a Linhagem, uma "
+        "Relíquia ou um Despertar. Juntas, nasce uma técnica nova, uma vez por run, no "
+        "lugar da primeira peça. Na escolha de técnica, o selo 融 marca a peça que falta; "
+        "o Grimório guarda as receitas que você já descobriu.",
+    ),
+    "ressonancia": (
+        "共",
+        "Ressonância",
+        "Três técnicas equipadas do mesmo anime ressoam: um bônus temático vale enquanto "
+        "elas estiverem na mão; com quatro, o bônus sobe de nível. O selo 共 na escolha "
+        "mostra quem forma ou avança uma; a pausa (Esc) mostra as ativas.",
+    ),
+    "guarda": (
+        "崩",
+        "Quebra de guarda",
+        "Cada golpe que fere enche a guarda do rival; golpes múltiplos enchem mais. Quando "
+        "ela quebra, ele perde o próximo turno e sofre +25% até agir de novo. A guarda "
+        "esvazia um pouco a cada turno dele: pressione sem parar. No chefe, ela aguenta "
+        "mais e não fura a postura.",
+    ),
+    "afixo": (
+        "強",
+        "Afixos de elite",
+        "A elite chega com afixos sorteados ao entrar: Vampírico, Espinhos, Veloz, "
+        "Blindado e outros. Cada um muda o jeito de lutar contra ela; o painel do rival "
+        "diz quais. Vencer a elite garante uma Relíquia.",
+    ),
+    "aliado": (
+        "伴",
+        "Aliado",
+        "Alguém luta do seu lado. Os rivais nunca o atacam: ele age no começo dos seus "
+        "turnos (fere, cura, protege, expõe ou envenena) e cresce um nível a cada luta "
+        "vencida. Só um por run: um novo toma o lugar do antigo.",
+    ),
+    "mecanica": (
+        "魔",
+        "A mecânica do chefe",
+        "Cada chefe tem um truque próprio (pétalas que passam pelos clones, armadura que "
+        "se renova, uma balança que decide quem obedece). O nome e o que ele faz aparecem "
+        "no painel do chefe: leia antes de gastar as suas melhores técnicas.",
+    ),
+    "ascensao": (
+        "昇",
+        "Ascensão",
+        "Você venceu: a mesma dificuldade agora tem um degrau acima. Na escolha da "
+        "dificuldade, ← → escolhe a Ascensão; cada nível soma a sua regra às de baixo. "
+        "Vencer na Ascensão mais alta abre a próxima.",
     ),
 }

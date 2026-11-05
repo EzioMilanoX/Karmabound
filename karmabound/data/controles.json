@@ -42,6 +42,10 @@
     "KEY_S",
     "PAD_DOWN"
   ],
+  "alvo": [
+    "KEY_TAB",
+    "PAD_LB"
+  ],
   "confirmar": [
     "KEY_RETURN",
     "KEY_SPACE",
@@ -50,6 +54,11 @@
   "cancelar": [
     "KEY_BACKSPACE",
     "PAD_B"
+  ],
+  "acelerar": [
+    "KEY_LEFT SHIFT",
+    "KEY_RIGHT SHIFT",
+    "PAD_X"
   ],
   "sofrer_dano": "KEY_D",
   "pagar_custo": "KEY_C",

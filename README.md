@@ -42,6 +42,10 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 | Luta | Despertar (com o Carma cheio; não gasta o turno) | E |
 | Luta | Voto de luta: ver e jurar o voto que a luta oferece (não gasta o turno) | V |
 | Luta | Contrato: escolher a técnica sacrificada / desistir | 1–5 / Backspace |
+| Luta contra bando | Trocar o alvo | ↑ ↓ ou Tab (LB) |
+| Luta | Acelerar as animações e o turno dos rivais (segurar) | Shift ou Enter (X) |
+| Caminho | Escolher a porta | 1–3 (ou ← → e Enter) |
+| Encruzilhada | Escolher | 1–3 (ou ↑ ↓ e Enter) |
 | Espaços cheios | Trocar uma técnica / descartar a nova | 1–4 / Backspace |
 | Altar | Mover / marcar restrição ou escolher opção / voltar | ↑ ↓ / Enter / Backspace |
 | Altar (compra) | Comprar um nível do ganho / devolver / voltar | → ou Enter / ← / Backspace |
@@ -49,7 +53,7 @@ No Windows, **`run.bat`** na raiz faz o mesmo com duplo clique, e **`build.bat`*
 
 ### Uma run
 
-Título (o **modo de jogo** e a dificuldade) → **Linhagem** (seu sangue) → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Depois de cada vitória: 30% de cura e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. Toda luta oferece um **voto de luta** (V). No fim dos capítulos 1 e 2 abre o **Altar dos Votos**. A run acaba ao vencer as 12 lutas — ou ao cair.
+Título (o **modo de jogo** e a dificuldade) → **Linhagem** (seu sangue) → **Destino** (seu Dom) → para cada um dos 3 capítulos: **Arco** (a regra do capítulo) → 3 lutas e o chefe. Antes de cada luta que não é de chefe, você escolhe **1 de 3 portas** (rival, bando, elite, encruzilhada ou a sua Nêmesis). Depois de cada vitória: 65% de cura, um **Treino** (escolhe 1 de 3) e um giro de **Técnicas** (escolhe 1 de 3; com os 4 espaços cheios, troca uma). Às vezes, um giro de **Relíquias**. Toda luta oferece um **voto de luta** (V). No fim dos capítulos 1 e 2 abre o **Altar dos Votos**. A run acaba ao vencer as 12 lutas — ou ao cair.
 
 ### Modos de jogo
 
@@ -119,12 +123,29 @@ O Carma é um **pity compartilhado entre todas as rodas**. Ele enche com giros r
 Duelo 1v1, turnos alternados, regras curtas:
 
 - Você usa **uma técnica pronta** por turno; ela fica fora por alguns turnos seus. O **Golpe básico** nunca entra em recarga.
-- **4 espaços** de técnica. **Vida persiste** na run, com 30% de cura entre lutas.
+- **4 espaços** de técnica. **Vida persiste** na run, com 65% de cura entre lutas.
+- **Treino:** depois de cada vitória, escolha 1 de 3 (vida, dano, Velocidade, Percepção, fôlego ou Carma). Fica pelo resto da run: os rivais crescem, você também.
+- **Bandos:** até 3 rivais, cada um com um papel: 刃 Lâmina bate, 盾 Guardião protege o mais ferido, 癒 Curandeiro cura, 呪 Xamã amaldiçoa e 将 Comandante (só na elite) inspira o bando. Você escolhe em quem bater (↑/↓ ou Tab); técnicas de explosão pegam todos.
+- **O caminho:** 敵 Rival, 群 Bando, 強 Elite (vencer garante Relíquia), 岐 Encruzilhada (um encontro sem luta, com escolha e preço) e 仇 Nêmesis.
+- **O Legado (entre runs):** você começa com 7 animes nas rodas e cada 6 de **Memória** abre mais um; uma técnica usada 20 vezes chega já evoluída (**Maestria** ★, 60 vezes ★★); e quem te matou volta como a sua **Nêmesis**, mais forte e com o golpe que te matou.
+- **Fusões:** junte as peças certas e uma técnica nova nasce. Olhos que Tudo Veem (Dom) + Vazio Infinito (Despertar) → **Vazio Púrpura**; Rasengan + Foice de Vento → Shuriken Espiral; Uchiha + Tsukuyomi + Amaterasu → Susanoo; e mais nove. As descobertas ficam no Grimório.
+- **Ressonância:** 3 técnicas do mesmo anime dão um bônus temático (4, um nível a mais): os clones de Naruto, o Haki de One Piece, a pressão espiritual de Bleach…
+- **Quebra de guarda:** pressão concentrada quebra a guarda de qualquer rival: ele perde o turno e sofre mais.
+- **Chefes com regra própria:** o Mahoraga se adapta à técnica repetida, o Aizen mente no anúncio, a Makima ignora o primeiro golpe, o Kamui deixa golpes atravessarem…
+- **Elites com afixos** (Vampírico, Espinhos, Veloz, Invocador, Blindado, Furioso, Amaldiçoado, Gélido) e um **aliado** por run, que age no começo do seu turno.
+- **Ascensão:** dez níveis acumulados por dificuldade para quem já vence.
+- **Chefes:** têm **postura** (um golpe só tira no máximo 30% da vida deles; as feridas que duram passam) e, na metade da vida, revelam a **segunda forma** (+30% de dano, técnicas prontas de novo).
 - **Velocidade** decide quem começa — e quem começa tenta um **ataque surpresa** (+50% de dano se não for percebido).
 - **Percepção é sentir o perigo:** contra golpe perigoso, se a sua Percepção for ≥ a **Sutileza** do golpe, você leva metade e devolve um golpe. Determinístico, sem dado; calibrado para salvar ~33% das vezes.
 - **O rival anuncia** a próxima ação e cumpre. Sua Percepção decide o quanto você vê: nada, o tipo, ou a técnica.
 - **Além de dano, bloqueio e cura:** sangrar, bomba, detonar, silenciar, desarmar, cegar, expor, drenar, executar, acumular, combo, gravidade, desespero, fera, instinto, intocável, espelho e acelerar. Algumas técnicas de preparo **não gastam o turno** ("livre" no selo).
-- **O que fere com o tempo:** o **sangramento** dura 3 turnos; o **veneno** acumula doses que ferem e caem 1 por turno; a **chama negra** não apaga e cresce 1 a cada turno até o fim da luta. **Purificar** tira sangramento, veneno, Marca e selos — a chama negra, nunca.
+- **O que fere com o tempo** faz mais do que ferir:
+  - **血 sangramento** (cortes e queimaduras): dura 3 turnos, e quem sangra recebe só metade da cura;
+  - **毒 veneno**: doses que se somam, ferem e caem 1 por turno, e o envenenado causa −5% de dano por dose (até −50%);
+  - **炎 chama negra**: não apaga e cresce 1 a cada turno, e quando a vida cai a 2× a chama, o que sobra vira cinza;
+  - **呪 Marca**: fere a cada turno e sela, e cada técnica do amaldiçoado demora 1 turno a mais para voltar.
+
+  **Purificar** tira sangramento, veneno, Marca e selos — a chama negra, nunca.
 - **Gelo:** congelar tira o turno do rival, e o próximo golpe nele causa ×2 e quebra o gelo.
 - **Quem luta ao seu lado:** **clones** atacam junto (40% do golpe) e somem no lugar de um golpe que você levaria; **invocações** ferem sozinhas a cada turno seu, por alguns turnos.
 - **Transformações** (Modo Sábio, Super Saiyajin, Bankai, Gear, Godspeed, Titã, Expansão de Domínio...): por alguns turnos você fica mais forte, sem gastar o turno, e quando a forma acaba vem o preço — vida por turno, turnos perdidos, técnicas em recarga ou vida máxima perdida para sempre. Uma forma por vez; trocar de forma cobra a anterior.
@@ -135,10 +156,10 @@ Calibrados com um piloto automático simples em 12 lutas — um jogador de verda
 
 | Modo | Vitória (piloto) | Rivais | Sua vida |
 |---|---|---|---|
-| Acessível | ~45% | 12 + 3,19 por luta, chefe ×1,2 | 80 |
-| Equilibrado | ~36% | 12 + 3,46 por luta, chefe ×1,2 | 76 |
-| **Difícil** (padrão) | ~25% | 12 + 3,87 por luta, chefe ×1,25 | 70 |
-| Brutal | ~10% | 12 + 5,21 por luta, chefe ×1,25 | 68 |
+| Acessível | ~45% | 24 + 4,94 por luta, chefe com postura | 127 |
+| Equilibrado | ~36% | 24 + 5,70 por luta, chefe com postura | 119 |
+| **Difícil** (padrão) | ~25% | 24 + 6,61 por luta, chefe com postura | 110 |
+| Brutal | ~10% | 24 + 9,28 por luta, chefe com postura | 107 |
 
 ### Poderes com preço
 

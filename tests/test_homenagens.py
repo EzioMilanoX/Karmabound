@@ -258,6 +258,18 @@ def test_toda_habilidade_tem_a_sua_origem(ctx):
             assert " · " in f.origem, f"{f.id} sem origem"
 
 
+def test_chefes_e_aliados_tem_a_sua_origem_e_o_seu_kanji(ctx):
+    from karmabound.aliados import carregar_aliados
+    from karmabound.rodas import carregar_mecanicas
+
+    for f in ctx.chefes:
+        assert " · " in f.origem and f.kanji and f.mecanica, f"{f.id} sem origem/kanji"
+    for m in carregar_mecanicas().values():
+        assert m["kanji"]
+    for a in carregar_aliados():
+        assert " · " in a.origem and a.kanji, f"{a.id} sem origem/kanji"
+
+
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
     assert contagem == {
@@ -286,9 +298,21 @@ def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
         return pygame.image.tobytes(fonte.render(c, True, (255, 255, 255)), "RGBA")
 
     ausente = desenho("")
-    texto = json.dumps(
-        json.loads((raiz / "karmabound" / "data" / "rodas.json").read_text(encoding="utf-8")),
-        ensure_ascii=False,
+    texto = "".join(
+        json.dumps(
+            json.loads((raiz / "karmabound" / "data" / nome).read_text(encoding="utf-8")),
+            ensure_ascii=False,
+        )
+        for nome in (
+            "rodas.json",
+            "treinos.json",
+            "caminho.json",
+            "fusoes.json",
+            "ressonancias.json",
+            "ascensao.json",
+            "chefes.json",
+            "aliados.json",
+        )
     )
     for modulo in (
         "tela_luta",
@@ -297,6 +321,8 @@ def test_a_fonte_de_pincel_tem_todo_caractere_do_jogo():
         "tela_grimorio",
         "tela_pausa",
         "tela_cronica",
+        "tela_caminho",
+        "game",
         "cronica",
         "dicas",
         "vfx",
@@ -383,3 +409,30 @@ def test_dragao_negro_pode_encerrar_a_luta_no_despertar(ctx):
     lt.despertar()
     assert lt.acabou and lt.vencedor is e.jogador
     assert run_mod.encerrar_luta(e, ctx, lt)
+
+
+def test_fusoes_ressonancias_e_ascensao_tem_kanji_na_fonte_e_homenagem(ctx):
+    """O kanji de cada fusão, ressonância e degrau da Ascensão existe na fonte; toda técnica
+    de fusão diz de onde vem, e toda ressonância é de um anime das rodas."""
+    from pathlib import Path
+
+    import pygame
+
+    from karmabound.ascensao import carregar_ascensao
+    from karmabound.fusoes import tecnicas_de_fusao
+    from karmabound.ressonancia import carregar_ressonancias
+    from karmabound.rodas import anime_de
+
+    raiz = Path(__file__).resolve().parent.parent
+    pygame.font.init()
+    fonte = pygame.font.Font(str(raiz / "assets" / "fonts" / "YujiSyuku-Regular.ttf"), 20)
+    tabela = carregar_ressonancias()
+    kanji = "".join(f.kanji for f in tecnicas_de_fusao().values())
+    kanji += "".join(b.kanji for b in [*tabela.animes.values(), tabela.generico])
+    kanji += "".join(n.kanji for n in carregar_ascensao())
+    faltando = [k for k, m in zip(kanji, fonte.metrics(kanji), strict=True) if m is None]
+    assert not faltando
+    for f in tecnicas_de_fusao().values():
+        assert " · " in f.origem and anime_de(f.origem), f"{f.id} sem origem"
+    animes = {anime_de(f.origem) for f in ctx.rodas["tecnicas"].fatias}
+    assert set(tabela.animes) <= animes

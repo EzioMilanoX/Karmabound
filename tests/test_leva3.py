@@ -216,7 +216,7 @@ def test_trocar_de_forma_cobra_a_anterior():
 def test_efeitos_passivos_da_leva():
     inicio = lut(efeitos=Efeitos(clones_inicio=1, invocar_inicio=3))
     inicio.nova_luta()
-    assert inicio.clones == 1 and inicio.invocacoes == [[3, 3]]
+    assert inicio.clones == 1 and inicio.invocacoes == [[3, 3, "invocacao_inicio"]]
     e = Efeitos(veneno_ao_ferir=2, dot_mult=2.0)
     j, r = lut(efeitos=e), lut("R", tecnicas=[GUARDA], efeitos=Efeitos(veneno_espinhos=2))
     lt = luta(j, r)
@@ -225,3 +225,58 @@ def test_efeitos_passivos_da_leva():
     vida = r.vida
     lt.resolver(GUARDA)
     assert vida - r.vida == 4  # o veneno de quem tem dot_mult ×2
+
+
+# --- cada ferida que dura tem o seu jeito, além do dano -------------------------------
+
+
+def test_sangramento_abre_a_ferida_e_a_cura_cai_a_metade():
+    cura = Tecnica("cura", "Cura", "defesa", cura=10)
+    j, r = lut(tecnicas=[cura], vida=100), lut("R")
+    j.vida = 50
+    j.sangue, j.sangue_turnos = 1, 3
+    luta(j, r).resolver(cura)
+    assert j.vida == 50 - 1 + 5  # sangrou 1 e a cura de 10 só fechou 5
+
+
+def test_veneno_amolece_o_golpe_de_quem_esta_envenenado():
+    soco = Tecnica("soco", "Soco", "ataque", dano=20)
+    j, r = lut(tecnicas=[soco]), lut("R", tecnicas=[GUARDA])
+    j.veneno = 5  # no começo do turno ele fere e cai a 4
+    assert luta(j, r).resolver(soco).dano == 16  # 4 doses: -20%
+    j2, r2 = lut(tecnicas=[soco]), lut("R", tecnicas=[GUARDA])
+    j2.veneno = 30
+    assert luta(j2, r2).resolver(soco).dano == 10  # o teto: -50%
+
+
+def test_chama_negra_incinera_o_que_sobra():
+    j, r = lut(tecnicas=[GUARDA]), lut("R", tecnicas=[GUARDA], vida=100)
+    r.chama, r.vida = 5, 16
+    lt = luta(j, r)
+    lt.vez = r
+    acao = lt.resolver(GUARDA)  # queima 5, fica 11; a chama sobe a 6 e 11 <= 12: cinzas
+    assert not r.vivo and r.incinerado and acao.incinerou
+    assert lt.acabou
+
+
+def test_chama_negra_nao_incinera_quem_ainda_tem_vida():
+    j, r = lut(tecnicas=[GUARDA]), lut("R", tecnicas=[GUARDA], vida=100)
+    r.chama, r.vida = 5, 40
+    lt = luta(j, r)
+    lt.vez = r
+    lt.resolver(GUARDA)
+    assert r.vida == 35 and not r.incinerado
+
+
+def test_marca_sela_e_a_tecnica_demora_mais_a_voltar():
+    lamina = Tecnica("lamina", "Lâmina", "ataque", dano=5, recarga=2)
+    j, r = lut(tecnicas=[lamina]), lut("R", tecnicas=[GUARDA])
+    lt = luta(j, r)
+    j.marca = 1
+    lt.resolver(lamina)
+    assert j.recargas["lamina"] == 3  # 2 + 1 da maldição
+    j.marca = 0
+    j.recargas.clear()
+    lt.vez = j
+    lt.resolver(lamina)
+    assert j.recargas["lamina"] == 2

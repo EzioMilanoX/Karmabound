@@ -1,5 +1,6 @@
 import pytest
 
+from karmabound.caminho import escolher_opcao_auto, escolher_porta_auto
 from karmabound.combate import escolher_jogador_auto
 from karmabound.jornada import Jornada
 from karmabound.mesa import Giro
@@ -16,6 +17,10 @@ def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
             j.girar_destino()
         elif j.fase == "arco":
             j.girar_arco()
+        elif j.fase == "caminho":
+            j.escolher_caminho(escolher_porta_auto(j.oferta_caminho, j.jogador))
+        elif j.fase == "encruzilhada":
+            j.escolher_encruzilhada(escolher_opcao_auto(j.encruzilhada, j.jogador))
         elif j.fase == "luta":
             if j.luta.acabou:
                 j.terminar_luta()
@@ -23,6 +28,8 @@ def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
                 j.luta.resolver(escolher_jogador_auto(j.luta))
             else:
                 j.luta.turno_rival()
+        elif j.fase == "treino":
+            j.escolher_treino(0)
         elif j.fase == "tecnica":
             j.girar_tecnica()
             j.escolher_tecnica(0)
@@ -43,6 +50,7 @@ def test_jornada_termina_em_vitoria_ou_derrota(seed):
     fases = jogar_ate_o_fim(j)
     assert j.fase in ("vitoria", "derrota")
     assert fases[:3] == ["linhagem", "destino", "arco"]
+    assert "caminho" in fases  # as portas aparecem antes das lutas que não são de chefe
     if j.fase == "vitoria":
         # a Invasão acrescenta uma luta a um capítulo, e o Torneio do Poder tira uma
         assert j.estado.lutas_vencidas >= j.ctx.lutas - j.ctx.capitulos
@@ -75,7 +83,7 @@ def test_espacos_cheios_pedem_substituicao():
     sai = j.jogador.tecnicas[1]
     j.substituir(sai)
     assert any(t.id == "lamina_de_sangue" for t in j.jogador.tecnicas)
-    assert j.fase in ("reliquia", "luta", "arco")
+    assert j.fase in ("reliquia", "luta", "arco", "caminho")
 
 
 def test_fim_de_capitulo_abre_o_altar_e_jurar_aplica_o_voto():
@@ -92,7 +100,7 @@ def test_fim_de_capitulo_abre_o_altar_e_jurar_aplica_o_voto():
     proposta = j.propor_voto(["sem_descanso", "corpo_ofertado"])
     assert proposta is not None and proposta.voto.restricoes
     j.jurar(proposta)
-    assert j.estado.votos.ativos and j.fase in ("luta", "arco")
+    assert j.estado.votos.ativos and j.fase in ("luta", "arco", "caminho")
 
 
 def test_carma_transbordado_espera_a_luta():
@@ -103,6 +111,8 @@ def test_carma_transbordado_espera_a_luta():
     j.carma.valor = j.carma.config.maximo
     giro = j.girar_arco()
     assert not giro.despertar and j.carma.transbordando
+    if j.fase == "caminho":  # a porta do Rival (sempre a primeira)
+        j.escolher_caminho(0)
     assert j.luta.pode_despertar()
     j.luta.despertar()
     assert j.despertares == 1 and j.carma.valor == 0

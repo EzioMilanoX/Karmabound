@@ -108,6 +108,8 @@ def test_sacrificio_do_contrato_pelo_cursor():
     j.girar_arco()
     contrato = Tecnica.de_fatia(j.ctx.tecnicas["contrato"])
     j.jogador.tecnicas.append(contrato)
+    if j.fase == "caminho":  # antes da luta, o caminho oferece portas: atravessa a de luta
+        j.escolher_caminho(next(i for i, p in enumerate(j.oferta_caminho) if p.tipo != "evento"))
     luta = j.luta
     luta.vez = j.jogador
     e = Entrada()

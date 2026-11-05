@@ -52,7 +52,7 @@
   "combate": {
     "_nota": "Rascunho para a simulação medir; poderes Malditos/Divinos com efeito provisório até a conversa sobre custos.",
     "espacos": 4,
-    "cura_entre_lutas": 0.3,
+    "cura_entre_lutas": 0.65,
     "golpe_basico": {
       "id": "golpe_basico",
       "nome": "Golpe",
@@ -64,7 +64,7 @@
     },
     "bonus_surpresa": 0.5,
     "jogador": {
-      "vida": 70,
+      "vida": 100,
       "velocidade": 2,
       "percepcao": 1,
       "tecnicas": [
@@ -73,9 +73,9 @@
       ]
     },
     "rivais": {
-      "vida_base": 12,
+      "vida_base": 24,
       "vida_por_luta": 6.2,
-      "chefe_multiplicador": 1.25,
+      "chefe_multiplicador": 1.0,
       "tecnicas_base": 2,
       "tecnicas_por_capitulo": 1,
       "velocidade": [
@@ -110,44 +110,44 @@
         "nome": "Acessível",
         "alvo_vitoria": 0.45,
         "rivais": {
-          "vida_por_luta": 3.19,
-          "chefe_multiplicador": 1.2
+          "vida_por_luta": 4.94,
+          "chefe_multiplicador": 1.0
         },
         "jogador": {
-          "vida": 80
+          "vida": 127
         }
       },
       "equilibrado": {
         "nome": "Equilibrado",
         "alvo_vitoria": 0.36,
         "rivais": {
-          "vida_por_luta": 3.46,
-          "chefe_multiplicador": 1.2
+          "vida_por_luta": 5.7,
+          "chefe_multiplicador": 1.0
         },
         "jogador": {
-          "vida": 76
+          "vida": 119
         }
       },
       "dificil": {
         "nome": "Difícil",
         "alvo_vitoria": 0.25,
         "rivais": {
-          "vida_por_luta": 3.87,
-          "chefe_multiplicador": 1.25
+          "vida_por_luta": 6.61,
+          "chefe_multiplicador": 1.0
         },
         "jogador": {
-          "vida": 70
+          "vida": 110
         }
       },
       "brutal": {
         "nome": "Brutal",
         "alvo_vitoria": 0.1,
         "rivais": {
-          "vida_por_luta": 5.21,
-          "chefe_multiplicador": 1.25
+          "vida_por_luta": 9.28,
+          "chefe_multiplicador": 1.0
         },
         "jogador": {
-          "vida": 68
+          "vida": 107
         }
       }
     }

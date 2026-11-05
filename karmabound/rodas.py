@@ -37,6 +37,7 @@ class Fatia:
     regra: dict | None = field(default=None, hash=False, compare=False)  # Arcos
     despertar: dict | None = field(default=None, hash=False, compare=False)  # Roda do Despertar
     inicial: str = ""  # Linhagem: técnica (da roda de Técnicas) que já começa num espaço
+    mecanica: str = ""  # técnica-assinatura de chefe: a mecânica que o chefe ganha com ela
 
 
 @dataclass(frozen=True)
@@ -66,6 +67,12 @@ def carregar_chefes(caminho: Path | None = None) -> tuple[Fatia, ...]:
     """As técnicas-assinatura dos chefes (data/chefes.json): Fatias com `combate`."""
     bruto = json.loads((caminho or DADOS / "chefes.json").read_text(encoding="utf-8"))
     return tuple(Fatia(**f) for f in bruto["tecnicas"])
+
+
+def carregar_mecanicas(caminho: Path | None = None) -> dict[str, dict]:
+    """As mecânicas dos chefes (data/chefes.json, `mecanicas`): id -> nome, kanji e texto."""
+    bruto = json.loads((caminho or DADOS / "chefes.json").read_text(encoding="utf-8"))
+    return bruto["mecanicas"]
 
 
 _MARCADOR = re.compile(r"\{(\w+)(%|\+%|-%)?\}")
