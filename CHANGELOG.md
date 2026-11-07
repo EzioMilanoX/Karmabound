@@ -6,6 +6,7 @@ estas notas (o "Como jogar" entra sozinho, por `tools/notas_da_versao.py`).
 
 ## Ainda sem versão
 
+## v0.4.0 — Vilões, o Dono da Roda e o modo História (2026-11-07)
 Os chefes agora têm nome, o torneio tem um dono, e cada anime virou um mundo inteiro.
 
 ### Novidades
