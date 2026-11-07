@@ -100,7 +100,7 @@ def test_a_fusao_e_anunciada_antes_da_proxima_tela(loop, monkeypatch):
     j.grimorio = fluxo.grimorio
     fluxo.jornada = j
     _despertar_vazio(j, monkeypatch)
-    j.estado.mesa.__dict__.pop("girar")  # o giro de teste não vai para o save
+    monkeypatch.undo()  # o giro de teste não vai para o save
     fluxo.passo()
     cena = loop.current_scene
     assert isinstance(cena, FusaoScene)
@@ -129,7 +129,7 @@ def test_a_fusao_sem_espaco_anuncia_e_depois_abre_a_troca(loop, monkeypatch):
     while len(j.jogador.tecnicas) < espacos(j.estado, j.ctx):
         j.jogador.tecnicas.append(replace(investida, id=f"investida{len(j.jogador.tecnicas)}"))
     _despertar_vazio(j, monkeypatch)
-    j.estado.mesa.__dict__.pop("girar")  # o giro de teste não vai para o save
+    monkeypatch.undo()  # o giro de teste não vai para o save
     assert j.fase == "substituir"
     fluxo.passo()
     assert isinstance(loop.current_scene, FusaoScene)
