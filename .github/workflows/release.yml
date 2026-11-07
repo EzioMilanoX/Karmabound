@@ -1,0 +1,87 @@
+# O release do Karmabound: uma tag v* (criada por tools/release.ps1) gera o executável
+# do Windows, testa e cria o Release como RASCUNHO, com as notas do CHANGELOG.md.
+# Publicar é com você, no GitHub. Rodar à mão (workflow_dispatch) só gera o zip.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      OPENBLAS_NUM_THREADS: "1"
+      PYTHONIOENCODING: utf-8
+      KARMABOUND_SAVE: ${{ github.workspace }}\save
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Karmabound
+
+      # a engine fica ao lado, como no PC (requirements.txt: -e ../OuroborosEngine), no
+      # commit que o tools/release.ps1 gravou em engine.ref
+      - name: Commit da engine
+        id: engine
+        shell: bash
+        run: echo "ref=$(tr -d '[:space:]' < Karmabound/engine.ref)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: EzioMilanoX/OuroborosEngine
+          ref: ${{ steps.engine.outputs.ref }}
+          path: OuroborosEngine
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Dependências
+        working-directory: Karmabound
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller pytest ruff
+
+      - name: Lint e testes
+        working-directory: Karmabound
+        run: |
+          python -m ruff check .
+          python -m pytest -q -p no:cacheprovider
+
+      - name: Executável
+        working-directory: Karmabound
+        run: |
+          python tools/gerar_icone.py
+          python -m PyInstaller --noconfirm karmabound.spec
+
+      # o .exe é de janela (sem console): Start-Process -Wait para pegar o código de saída
+      - name: O executável abre
+        working-directory: Karmabound
+        run: |
+          $p = Start-Process -FilePath dist\Karmabound\Karmabound.exe -ArgumentList "--headless" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Karmabound.exe --headless saiu com $($p.ExitCode)" }
+
+      - name: Zip
+        working-directory: Karmabound
+        run: Compress-Archive -Path dist\Karmabound -DestinationPath Karmabound-windows.zip
+
+      - name: Release (rascunho)
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: Karmabound
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python tools/notas_da_versao.py $env:GITHUB_REF_NAME --arquivos
+          $titulo = Get-Content titulo.txt -Encoding utf8 -Raw
+          gh release create $env:GITHUB_REF_NAME Karmabound-windows.zip --draft --title "$titulo" --notes-file notas.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Karmabound-windows
+          path: Karmabound/Karmabound-windows.zip

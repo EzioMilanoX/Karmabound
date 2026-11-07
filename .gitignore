@@ -9,3 +9,7 @@ dist/
 # ferramentas locais de IA (não publicadas)
 CLAUDE.md
 .claude/
+
+# notas geradas pelo release (tools/notas_da_versao.py --arquivos)
+notas.md
+titulo.txt
