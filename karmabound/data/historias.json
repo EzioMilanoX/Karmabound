@@ -1,0 +1,2720 @@
+{
+  "_nota": "O modo História (karmabound/historias.py): a campanha do Torneio da Roda e uma por anime. `arcos`: os Arcos que só existem nas campanhas originais.",
+  "historias": [
+    {
+      "id": "torneio_da_roda",
+      "nome": "O Torneio da Roda",
+      "anime": "",
+      "kanji": "輪",
+      "resumo": "Um amaldiçoado sem nome luta pelo único giro sem preço. Mas todo giro tem preço.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: A Arena dos Sem Nome",
+          "arco": "arena_dos_sem_nome",
+          "rivais": [
+            "menino_da_corda",
+            "carpideira_de_ferro"
+          ],
+          "chefe": "leao_acorrentado",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Entre os mundos gira a Roda. Ela decide quem vive, quem perde e quem morre cedo."
+            },
+            {
+              "quem": "",
+              "texto": "Quem fugiu do que ela escreveu carrega a marca. Chamam de Carma: o azar que não para de juntar."
+            },
+            {
+              "quem": "",
+              "texto": "Você acorda na areia de uma arena sem céu. Sem nome. Sem lembrança. Só a marca, quente no peito."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "Bem-vindos, amaldiçoados. Quem vencer gira a Roda uma vez, sem preço. Reescreva o que quiser."
+            },
+            {
+              "quem": "voce",
+              "texto": "Sem preço."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Os sem nome caem um a um. A areia bebe tudo e continua com sede."
+            },
+            {
+              "quem": "",
+              "texto": "Quando o azar transborda, os outros amaldiçoados afundam. Você não. Você acorda."
+            },
+            {
+              "quem": "leao_acorrentado",
+              "texto": "Noventa e nove lutas. Noventa e nove vitórias. A Roda diz que eu morro na centésima."
+            },
+            {
+              "quem": "leao_acorrentado",
+              "texto": "Você tem cara de centésima."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então vem."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Leão cai de joelhos. As correntes dele, enfim, ficam quietas."
+            },
+            {
+              "quem": "leao_acorrentado",
+              "texto": "Fugi dela a vida inteira, e ela me esperou aqui. Sem pressa."
+            },
+            {
+              "quem": "leao_acorrentado",
+              "texto": "Escuta, sem nome. Ninguém nunca viu o vencedor ir embora. Nem um."
+            },
+            {
+              "quem": "",
+              "texto": "No chão da arena abre-se uma porta. Atrás dela, corredores, e o som de dados rolando."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: O Labirinto das Apostas",
+          "arco": "labirinto_das_apostas",
+          "rivais": [
+            "jogador_de_ossos",
+            "carpideira_de_ferro"
+          ],
+          "chefe": "banqueira_de_destinos",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Depois da arena, corredores. Cada porta é uma aposta, e cada aposta cobra alguém."
+            },
+            {
+              "quem": "jogador_de_ossos",
+              "texto": "Apostei meu nome numa mesa e perdi. Fugi antes de pagar. Agora jogo por ele de volta."
+            },
+            {
+              "quem": "jogador_de_ossos",
+              "texto": "E você? O que apostou para chegar aqui sem nada?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Não lembro."
+            },
+            {
+              "quem": "jogador_de_ossos",
+              "texto": "Ah. Então você ainda está devendo."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No centro do labirinto, uma mesa. Atrás dela, uma mulher conta fios de destino como quem conta moedas."
+            },
+            {
+              "quem": "banqueira_de_destinos",
+              "texto": "Empresto sorte a quem precisa. Os juros são pequenos. Um ano aqui, um filho ali."
+            },
+            {
+              "quem": "banqueira_de_destinos",
+              "texto": "Mas o seu azar vira força. Isso não está em livro nenhum. Isso me ofende."
+            },
+            {
+              "quem": "voce",
+              "texto": "Cobra, então."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "banqueira_de_destinos",
+              "texto": "Li o livro da Roda inteiro. Só uma página está em branco: a do primeiro vencedor."
+            },
+            {
+              "quem": "banqueira_de_destinos",
+              "texto": "Ele girou sem preço. E o preço foi pago assim mesmo. Pergunta a ele por quem."
+            },
+            {
+              "quem": "",
+              "texto": "Os fios dela se soltam da mesa e sobem, devagar, para um salão que não tem teto."
+            },
+            {
+              "quem": "",
+              "texto": "A Roda está perto. Dá para ouvir a madeira ranger."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: O Salão do Dono",
+          "arco": "salao_do_dono",
+          "rivais": [
+            "guarda_sem_rosto",
+            "jogador_de_ossos"
+          ],
+          "chefe": "dono_da_roda",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "O salão não tem paredes. Tem raios. Você está dentro da Roda, entre um raio e outro."
+            },
+            {
+              "quem": "guarda_sem_rosto",
+              "texto": "Cheguei aqui uma vez. Perdi a final. A Roda ficou com o meu rosto como troco."
+            },
+            {
+              "quem": "guarda_sem_rosto",
+              "texto": "Agora eu guardo a porta. Não por lealdade. Daqui eu ainda vejo a Roda girar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Sai da frente."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No eixo da Roda, um trono. No trono, um homem grande demais, costurado à madeira pelas costas."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "Fui o primeiro. Antes de mim não havia torneio. Só a Roda, eu e um destino que eu odiava."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "Girei sem preço. A Roda cobrou mesmo assim. Não de alguém: de mim. Eu virei o eixo."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "O torneio é a minha esperança. Que alguém me vença e fique preso aqui no meu lugar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então é isso que eu ganho."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "É isso que todos ganham. Venha descobrir se você é diferente."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Dono tomba. As costuras das costas dele se abrem, uma a uma, e a madeira o solta."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "Leve. Eu tinha esquecido como é ser leve."
+            },
+            {
+              "quem": "dono_da_roda",
+              "texto": "A Roda é sua para girar. Sem preço, ela diz. Ela sempre diz isso."
+            },
+            {
+              "quem": "",
+              "texto": "O eixo está vazio. A Roda para diante de você, esperando a mão."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "A Roda inteira é sua. Cada fio, cada amaldiçoado, cada azar que ela juntou nos mundos."
+        },
+        {
+          "quem": "",
+          "texto": "Girar sem preço não existe. Alguém senta no eixo, ou ninguém senta mais."
+        },
+        {
+          "quem": "",
+          "texto": "Você pode quebrá-la. Ou pode sentar."
+        },
+        {
+          "quem": "voce",
+          "texto": "..."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai. A areia, o labirinto, o salão: tanto faz. A Roda não para para ver."
+        },
+        {
+          "quem": "",
+          "texto": "O seu Carma escorre para o chão e some entre os raios. Em outro mundo, alguém vai herdar esse azar."
+        },
+        {
+          "quem": "dono_da_roda",
+          "texto": "Mais um sem nome. Guardem a vaga. A Roda sempre manda outro."
+        }
+      ],
+      "escolha": [
+        {
+          "id": "quebrar",
+          "nome": "Quebrar a Roda",
+          "texto": [
+            {
+              "quem": "",
+              "texto": "Você põe a mão no eixo e empurra para o lado errado. A madeira grita. Os raios partem, um a um."
+            },
+            {
+              "quem": "",
+              "texto": "Nos mundos, os amaldiçoados acordam sem marca. Sem Carma. Sem azar. E sem o resto."
+            },
+            {
+              "quem": "",
+              "texto": "O Leão dorme numa cama. A Banqueira esquece de cobrar. A Guarda toca o rosto e encontra um rosto."
+            },
+            {
+              "quem": "",
+              "texto": "Em você, o Carma esfria. O que transbordava não transborda mais. O que despertava dorme."
+            },
+            {
+              "quem": "",
+              "texto": "Você era o azar que virava poder. Sem a Roda, não é mais nada que tenha nome. E isso, enfim, é ser livre."
+            }
+          ]
+        },
+        {
+          "id": "tomar",
+          "nome": "Tomar a Roda",
+          "texto": [
+            {
+              "quem": "",
+              "texto": "Você senta no eixo. A madeira é morna. As costuras encontram as suas costas sem pedir licença."
+            },
+            {
+              "quem": "",
+              "texto": "Daqui você vê todos os fios. O seu ainda está em branco. Por enquanto."
+            },
+            {
+              "quem": "",
+              "texto": "A primeira coisa que você faz como Dono é escrever os convites."
+            },
+            {
+              "quem": "voce",
+              "texto": "Bem-vindos, amaldiçoados."
+            },
+            {
+              "quem": "",
+              "texto": "Em algum mundo, alguém sem nome acorda na areia de uma arena sem céu. A Roda gira."
+            }
+          ]
+        }
+      ],
+      "convite": [
+        {
+          "quem": "",
+          "texto": "A Roda range. Não à sua frente: atrás."
+        },
+        {
+          "quem": "",
+          "texto": "Entre os raios, uma luz que não é de mundo nenhum. Alguém espera do outro lado."
+        },
+        {
+          "quem": "",
+          "texto": "Você já esteve neste eixo. Três vezes. Três finais, e nenhum era seu."
+        },
+        {
+          "quem": "voce",
+          "texto": "Ainda não acabou."
+        }
+      ],
+      "alem": {
+        "nome": "Capítulo Secreto: Além da Roda",
+        "arco": "alem_da_roda",
+        "rivais": [
+          "menino_da_corda",
+          "carpideira_de_ferro"
+        ],
+        "chefe": "reflexo",
+        "abertura": [
+          {
+            "quem": "",
+            "texto": "Do outro lado da Roda não há arena. Há neve, e um silêncio que ninguém decidiu."
+          },
+          {
+            "quem": "",
+            "texto": "Aqui ficam os destinos dos que fugiram. Eles não somem. Esperam."
+          },
+          {
+            "quem": "menino_da_corda",
+            "texto": "Eu sou o que não fugiu da corda. Doeu pouco. Muito menos que fugir."
+          },
+          {
+            "quem": "voce",
+            "texto": "Quem mais está aqui?"
+          },
+          {
+            "quem": "menino_da_corda",
+            "texto": "Você. O você que ficou."
+          }
+        ],
+        "antes_do_chefe": [
+          {
+            "quem": "",
+            "texto": "No fim da neve, alguém de pé. A sua altura, as suas cicatrizes, o seu jeito de fechar os punhos."
+          },
+          {
+            "quem": "reflexo",
+            "texto": "Eu aceitei. Vivi o que a Roda escreveu até a última linha. Morri onde devia, e morri inteiro."
+          },
+          {
+            "quem": "reflexo",
+            "texto": "Quando você fugiu, deixou tudo comigo. O nome. As lembranças. Eu guardei."
+          },
+          {
+            "quem": "voce",
+            "texto": "Me devolve."
+          },
+          {
+            "quem": "reflexo",
+            "texto": "Ganha. Não é assim que você faz? Luta comigo. Com o que é seu."
+          }
+        ],
+        "depois": [
+          {
+            "quem": "",
+            "texto": "O Reflexo cai na neve sem barulho. Do peito dele sobe uma coisa pequena e quente: um nome. O seu."
+          },
+          {
+            "quem": "reflexo",
+            "texto": "Toma. Sempre foi seu. Eu só segurei enquanto você corria."
+          },
+          {
+            "quem": "reflexo",
+            "texto": "A Roda precisa de alguém no eixo. Eu sei aceitar. É a única coisa que eu sempre soube."
+          },
+          {
+            "quem": "",
+            "texto": "Ele senta no eixo. A Roda não pede torneio a quem aceita. Gira devagar, e não cobra ninguém."
+          },
+          {
+            "quem": "",
+            "texto": "Nos mundos, o Dono acorda leve. Os amaldiçoados acordam com o azar, só o azar, e nenhuma sentença."
+          },
+          {
+            "quem": "",
+            "texto": "Você diz o seu nome em voz alta, uma vez. A marca ainda arde no peito. Agora ela é sua."
+          }
+        ]
+      }
+    },
+    {
+      "id": "naruto",
+      "nome": "A Lua que Sonha",
+      "anime": "Naruto",
+      "kanji": "忍",
+      "resumo": "Da floresta do exame à guerra sob a lua vermelha: atravesse o mundo ninja e recuse o sonho eterno.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: A Floresta que Devora",
+          "arco": "floresta_da_morte",
+          "rivais": [
+            "espiao_de_oculos"
+          ],
+          "chefe": "sannin_das_serpentes",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda gira e te cospe numa floresta onde as árvores são torres e tudo que respira está com fome."
+            },
+            {
+              "quem": "",
+              "texto": "É dia de exame na vila escondida. Pergaminhos trocam de mão, e quem perde o pergaminho perde a vida."
+            },
+            {
+              "quem": "espiao_de_oculos",
+              "texto": "Um forasteiro sem bandana? Fique perto de mim. Eu conheço um atalho."
+            },
+            {
+              "quem": "voce",
+              "texto": "Seus olhos dizem outra coisa."
+            },
+            {
+              "quem": "espiao_de_oculos",
+              "texto": "Hm. Bons instintos. Que pena."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "A floresta fica muda. Uma língua comprida demais lambe o ar entre as raízes."
+            },
+            {
+              "quem": "sannin_das_serpentes",
+              "texto": "A Roda te marcou com tanto carinho... Deixe eu ver o que existe dentro dessa maldição."
+            },
+            {
+              "quem": "",
+              "texto": "Só o olhar dele já prende os seus pés no chão. Você sente a própria morte, nítida, antes de acontecer."
+            },
+            {
+              "quem": "voce",
+              "texto": "Se é para morrer, que seja andando."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "sannin_das_serpentes",
+              "texto": "Hehe... Saia da floresta, forasteiro. Eu tenho tempo. Uma cobra sempre tem tempo."
+            },
+            {
+              "quem": "",
+              "texto": "A pele dele fica no chão, vazia. O dono já tinha ido embora por baixo da terra."
+            },
+            {
+              "quem": "",
+              "texto": "No seu pescoço, três vírgulas negras ardem um instante e somem. Não foi a Roda quem as pôs ali."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: A Chuva que Reza",
+          "arco": "treino_na_montanha",
+          "rivais": [
+            "anjo_de_papel",
+            "espiao_de_oculos"
+          ],
+          "chefe": "deus_da_dor",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Você sobe a montanha dos sapos para aprender a ficar parado. A natureza só empresta força a quem sabe esperar."
+            },
+            {
+              "quem": "",
+              "texto": "Lá embaixo, a vila cai em silêncio. Seis vultos de capa negra e nuvens vermelhas andam pelas ruas."
+            },
+            {
+              "quem": "anjo_de_papel",
+              "texto": "Ele não é um homem. É um deus que aprendeu a dor. Vá embora antes que ele te ensine também."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu já aprendi a dor. Foi a Roda que me ensinou."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "A vila não existe mais. No fundo da cratera, um homem de olhos em anéis espera, sem pressa."
+            },
+            {
+              "quem": "deus_da_dor",
+              "texto": "Você carrega Carma como eu carrego esta guerra. Diga, forasteiro: o que a sua dor te ensinou?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Que ela não é desculpa."
+            },
+            {
+              "quem": "deus_da_dor",
+              "texto": "Então sinta a dor do mundo, e me responda de novo."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "deus_da_dor",
+              "texto": "Talvez exista outra resposta. Eu não vou estar aqui para vê-la."
+            },
+            {
+              "quem": "anjo_de_papel",
+              "texto": "Ele te reconheceu. Leve isto: uma flor de papel. Ela não murcha."
+            },
+            {
+              "quem": "",
+              "texto": "Longe dos dois, alguém de máscara laranja observa por um único olho e some numa espiral."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: A Lua Vermelha",
+          "arco": "quarta_guerra",
+          "rivais": [
+            "mascarado_da_espiral",
+            "anjo_de_papel"
+          ],
+          "chefe": "fantasma_uchiha",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Todas as vilas marcham juntas. Do outro lado, soldados brancos brotam do chão e os mortos voltam a lutar."
+            },
+            {
+              "quem": "mascarado_da_espiral",
+              "texto": "Eu não sou ninguém. Logo, ninguém vai precisar ser alguém. O sonho cobre tudo."
+            },
+            {
+              "quem": "voce",
+              "texto": "Um sonho que ninguém pediu é só uma prisão bonita."
+            },
+            {
+              "quem": "mascarado_da_espiral",
+              "texto": "Você fala igual a um velho amigo. Ele também perdeu tudo, e também não aprendeu."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O campo virou um deserto de crateras. No céu, a lua começa a ficar vermelha."
+            },
+            {
+              "quem": "fantasma_uchiha",
+              "texto": "O forasteiro da Roda. Sabe o que eu vejo? Um mundo que te amaldiçoou sem perguntar."
+            },
+            {
+              "quem": "fantasma_uchiha",
+              "texto": "No meu sonho não existe Roda, nem Carma. Fique. Durma."
+            },
+            {
+              "quem": "voce",
+              "texto": "Prefiro o meu azar a um sonho emprestado."
+            },
+            {
+              "quem": "fantasma_uchiha",
+              "texto": "Então dance comigo. Faz tempo que ninguém me diverte."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "fantasma_uchiha",
+              "texto": "A realidade venceu de novo... No fim, eu também só estava sozinho."
+            },
+            {
+              "quem": "",
+              "texto": "A lua volta a ser branca. Ninguém acorda, porque ninguém chegou a dormir."
+            },
+            {
+              "quem": "",
+              "texto": "Por um instante, entre as nuvens, você vê o contorno de uma roda enorme girando devagar."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "O mundo ninja enterra os seus mortos e acende fogueiras para os vivos."
+        },
+        {
+          "quem": "",
+          "texto": "Ninguém aqui sabe o seu nome. Mesmo assim, deixam uma bandana sem símbolo sobre a sua mochila."
+        },
+        {
+          "quem": "voce",
+          "texto": "Não é a minha vila. Mas eu lutei por ela."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira de novo e te leva. Em algum lugar, o Dono da Roda risca um mundo da lista."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai, e o mundo ninja segue em frente sem olhar para trás."
+        },
+        {
+          "quem": "",
+          "texto": "Lá em cima, a lua começa a ficar vermelha. Não vai ter ninguém acordado para ver."
+        },
+        {
+          "quem": "fantasma_uchiha",
+          "texto": "Mais um que a Roda descartou. No meu sonho, você teria tido um nome."
+        }
+      ]
+    },
+    {
+      "id": "one_piece",
+      "nome": "O Fim de uma Era",
+      "anime": "One Piece",
+      "kanji": "海",
+      "resumo": "Da ilha sem noite ao inferno no fundo do mar e à guerra que encerra uma era: navegue onde o azar tem dono.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: A Ilha Sem Noite",
+          "arco": "ilha_da_justica",
+          "rivais": [
+            "carpinteiro_de_quatro_laminas"
+          ],
+          "chefe": "leopardo_do_governo",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te larga numa ilha onde o sol nunca se põe. Aqui, a Justiça tem tribunal, canhões e uma ponte para o fim do mundo."
+            },
+            {
+              "quem": "",
+              "texto": "Um bando de piratas invadiu a ilha inteira para buscar uma única amiga. Você caiu no meio da guerra deles."
+            },
+            {
+              "quem": "carpinteiro_de_quatro_laminas",
+              "texto": "Mais um invasor? Nada pessoal. Eu só corto o que a Justiça manda."
+            },
+            {
+              "quem": "voce",
+              "texto": "E quem corta a Justiça?"
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No alto da torre, um homem de cartola e um pombo no ombro calça as luvas sem pressa."
+            },
+            {
+              "quem": "leopardo_do_governo",
+              "texto": "Sem bandeira e sem nome. Que conveniente: ninguém vai procurar o seu corpo."
+            },
+            {
+              "quem": "leopardo_do_governo",
+              "texto": "Eu sou a Justiça das Trevas. Mato em nome da paz."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então a paz te deve muitas desculpas."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "leopardo_do_governo",
+              "texto": "A força do governo... perdeu para um ninguém."
+            },
+            {
+              "quem": "",
+              "texto": "Os navios da Marinha começam a bombardear a própria ilha. A Justiça prefere cinzas a uma derrota."
+            },
+            {
+              "quem": "",
+              "texto": "Você salta no mar junto com os piratas. Ninguém pergunta quem você é. Aqui, isso basta."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: O Inferno Submarino",
+          "arco": "prisao_submarina",
+          "rivais": [
+            "carcereiro_da_chuva",
+            "carpinteiro_de_quatro_laminas"
+          ],
+          "chefe": "diretor_do_inferno",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te arrasta para o fundo do mar: uma prisão de seis andares, cada um pior que o de cima."
+            },
+            {
+              "quem": "",
+              "texto": "O irmão de um pirata famoso vai ser executado. Metade dos presos quer fugir; a outra metade quer assistir."
+            },
+            {
+              "quem": "carcereiro_da_chuva",
+              "texto": "Um preso novo. Que sorte a minha: eu estava com tédio, e a espada com sede."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não sou preso."
+            },
+            {
+              "quem": "carcereiro_da_chuva",
+              "texto": "Aqui embaixo, todo mundo é."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O ar fica roxo. Os guardas recuam, e até os presos mais velhos param de rir."
+            },
+            {
+              "quem": "diretor_do_inferno",
+              "texto": "Ninguém escapa desta prisão. Eu sou a prisão."
+            },
+            {
+              "quem": "diretor_do_inferno",
+              "texto": "O seu Carma não me assusta. O meu veneno já matou coisa pior que azar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então abre caminho. Eu tenho pressa."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "diretor_do_inferno",
+              "texto": "Um preso passou pelo diretor... Este inferno perdeu o fundo."
+            },
+            {
+              "quem": "",
+              "texto": "No nível mais fundo, uma cela está vazia. Quem estava nela saiu pela porta que você abriu."
+            },
+            {
+              "quem": "carcereiro_da_chuva",
+              "texto": "Obrigado pela porta, forasteiro. Agora eu tenho um capitão novo, e ele ri muito alto."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: O Fim de uma Era",
+          "arco": "arco_do_juizo",
+          "rivais": [
+            "atirador_do_destino",
+            "carcereiro_da_chuva"
+          ],
+          "chefe": "abismo_sorridente",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A praça da Marinha vira campo de guerra. Piratas e almirantes lutam pelo irmão que está no cadafalso."
+            },
+            {
+              "quem": "",
+              "texto": "O homem mais forte do mundo racha o ar com o punho. Velho, ferido, e ainda assim ninguém o alcança."
+            },
+            {
+              "quem": "atirador_do_destino",
+              "texto": "O destino escreveu este dia há muito tempo. Você é só uma vírgula, forasteiro."
+            },
+            {
+              "quem": "voce",
+              "texto": "Vírgulas mudam frases."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O velho morreu de pé. Um homem barbudo e sorridente se aproxima do corpo, com uma cortina negra nas mãos."
+            },
+            {
+              "quem": "abismo_sorridente",
+              "texto": "Zehahaha! Que dia bonito para o mundo mudar de dono!"
+            },
+            {
+              "quem": "abismo_sorridente",
+              "texto": "Você também carrega azar, né? Eu também! É por isso que o destino gosta da gente!"
+            },
+            {
+              "quem": "voce",
+              "texto": "O destino não gosta de ninguém."
+            },
+            {
+              "quem": "abismo_sorridente",
+              "texto": "Então vamos ver de quem ele gosta mais!"
+            }
+          ],
+          "depois": [
+            {
+              "quem": "abismo_sorridente",
+              "texto": "Zehaha... Que dor! A escuridão puxa tudo, até isso."
+            },
+            {
+              "quem": "",
+              "texto": "Os seus o carregam para longe, rindo na fumaça. Ninguém consegue matar um homem que nunca dorme."
+            },
+            {
+              "quem": "",
+              "texto": "A guerra acaba, e uma era com ela. Na praça, só fica um chapéu de palha esquecido e o barulho do mar."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "Num navio sem bandeira, um cozinheiro te serve um prato quente sem perguntar o seu nome."
+        },
+        {
+          "quem": "",
+          "texto": "Dizem que o mar guarda um tesouro para quem chegar ao fim dele. Você só queria chegar ao fim do dia."
+        },
+        {
+          "quem": "voce",
+          "texto": "Hoje deu."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira, e o navio fica para trás. Em algum lugar, o Dono da Roda anota alguma coisa e sorri."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "O mar te engole sem pressa. Na superfície, ninguém sabe que você existiu."
+        },
+        {
+          "quem": "",
+          "texto": "Num bar de porto, alguém ri alto e brinda ao azar dos outros."
+        },
+        {
+          "quem": "abismo_sorridente",
+          "texto": "Zehahaha! O destino escolheu, e não foi você!"
+        }
+      ]
+    },
+    {
+      "id": "bleach",
+      "nome": "Acima do Céu",
+      "anime": "Bleach",
+      "kanji": "死",
+      "resumo": "Da colina da execução ao deserto sem sol e à cidade de mentira: corte caminho até quem quer ocupar o céu.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: A Colina da Execução",
+          "arco": "corte_das_almas",
+          "rivais": [
+            "tenente_tatuado"
+          ],
+          "chefe": "nobre_das_cerejeiras",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te joga atrás de muralhas brancas. Aqui vivem as almas, e quem guarda as almas mata como ninguém."
+            },
+            {
+              "quem": "",
+              "texto": "Uma condenada vai morrer na colina em poucos dias. Um rapaz de cabelo laranja invadiu a cidade para salvá-la."
+            },
+            {
+              "quem": "tenente_tatuado",
+              "texto": "Você não é ceifador nem gente viva direito. O que é você?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Alguém de passagem."
+            },
+            {
+              "quem": "tenente_tatuado",
+              "texto": "Então passa por cima de mim primeiro."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Pétalas cor-de-rosa caem onde não existe cerejeira nenhuma. Cada uma tem fio."
+            },
+            {
+              "quem": "nobre_das_cerejeiras",
+              "texto": "A lei condenou a minha irmã. A mesma lei condena você, por respirar aqui."
+            },
+            {
+              "quem": "voce",
+              "texto": "E você obedece até quando a lei está errada?"
+            },
+            {
+              "quem": "nobre_das_cerejeiras",
+              "texto": "Cale-se. A minha lâmina não precisa de razões."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "nobre_das_cerejeiras",
+              "texto": "A lei me prendeu até hoje... Esta derrota, eu aceito."
+            },
+            {
+              "quem": "",
+              "texto": "Na colina, a execução para no último segundo. Quem a armou não estava onde todos pensavam."
+            },
+            {
+              "quem": "",
+              "texto": "Um capitão de óculos, que todos choravam como morto, sobe ao céu numa coluna de luz, sorrindo."
+            },
+            {
+              "quem": "senhor_das_ilusoes",
+              "texto": "Ninguém ocupa o céu desde o começo. Nem vocês, nem eu, nem deus. De hoje em diante, eu ocupo."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: O Deserto Sem Sol",
+          "arco": "hueco_mundo",
+          "rivais": [
+            "pantera_azul",
+            "tenente_tatuado"
+          ],
+          "chefe": "arauto_do_vazio",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Abaixo de tudo existe um deserto branco sob uma lua que nunca se mexe. É o lar dos ocos, os que comem almas."
+            },
+            {
+              "quem": "",
+              "texto": "Uma moça que cura qualquer ferida foi levada para o palácio no centro do deserto. Gente demais foi buscá-la."
+            },
+            {
+              "quem": "pantera_azul",
+              "texto": "Ei, você! Esse olhar é de quem já morreu e voltou. Finalmente alguém que vale a pena esmagar!"
+            },
+            {
+              "quem": "voce",
+              "texto": "Tenta."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No topo da cúpula, o céu falso termina e o verdadeiro começa: preto, sem estrelas."
+            },
+            {
+              "quem": "arauto_do_vazio",
+              "texto": "Você luta porque acredita que existe algo dentro de você. Eu já abri muitos peitos. Nunca vi nada."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então você nunca olhou direito."
+            },
+            {
+              "quem": "arauto_do_vazio",
+              "texto": "Lixo. Vou te mostrar a desesperança, e você vai entender."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "arauto_do_vazio",
+              "texto": "Entendo... Então isto... é o coração."
+            },
+            {
+              "quem": "",
+              "texto": "O corpo dele vira cinza, e o vento do deserto leva tudo. A mão fica estendida para algo que você não vê."
+            },
+            {
+              "quem": "",
+              "texto": "No palácio vazio, uma voz calma ecoa: o rei deste lugar já partiu para a cidade dos vivos."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: A Cidade de Mentira",
+          "arco": "cidade_falsa",
+          "rivais": [
+            "raposa_sorridente",
+            "pantera_azul"
+          ],
+          "chefe": "senhor_das_ilusoes",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A cidade dos vivos foi trocada por uma cópia perfeita. Ninguém mora nela: é um tabuleiro para a guerra."
+            },
+            {
+              "quem": "",
+              "texto": "Capitães e ocos de elite se enfrentam sobre telhados vazios. Ninguém sabe ainda o que é real."
+            },
+            {
+              "quem": "raposa_sorridente",
+              "texto": "Ah, o forasteiro da Roda. Que pena. Eu já tinha te dito adeus antes de você chegar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Você sorri demais para quem está do lado errado."
+            },
+            {
+              "quem": "raposa_sorridente",
+              "texto": "Ah, e quem disse que eu estou de algum lado?"
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Os capitães estão no chão. Um homem de cabelo para trás atravessa o fogo como quem atravessa um corredor."
+            },
+            {
+              "quem": "senhor_das_ilusoes",
+              "texto": "Desde quando você acha que está vendo o que eu realmente sou?"
+            },
+            {
+              "quem": "senhor_das_ilusoes",
+              "texto": "A Roda, o Carma, este torneio... Tudo isso é só mais um trono vazio esperando alguém digno."
+            },
+            {
+              "quem": "voce",
+              "texto": "E você acha que é digno."
+            },
+            {
+              "quem": "senhor_das_ilusoes",
+              "texto": "Não acho. Eu sei. Venha, e me mostre o que um amaldiçoado enxerga."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "senhor_das_ilusoes",
+              "texto": "Impossível... A joia... está me rejeitando?"
+            },
+            {
+              "quem": "",
+              "texto": "Correntes de luz o prendem e o puxam para um lugar onde ninguém vai visitá-lo por milênios."
+            },
+            {
+              "quem": "",
+              "texto": "Ninguém sabe se você o venceu ou se ele só deixou de enxergar você. Nesta cidade, as duas coisas são verdade."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "A cidade de mentira volta para o lugar dela, com as pessoas de verdade dentro, dormindo, sem saber de nada."
+        },
+        {
+          "quem": "",
+          "texto": "Num telhado, uma ceifadora baixinha te agradece com uma reverência curta e some num passo."
+        },
+        {
+          "quem": "voce",
+          "texto": "Ninguém está acima do céu. Nem a Roda."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira, e o céu fica para trás. Longe dali, o Dono da Roda fecha os olhos e escuta."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "A sua alma se solta do corpo, e uma corrente pende do seu peito."
+        },
+        {
+          "quem": "",
+          "texto": "Sem ninguém para te guiar, a corrente vai roendo até virar um buraco. É assim que nascem os ocos."
+        },
+        {
+          "quem": "senhor_das_ilusoes",
+          "texto": "Você lutou bem contra o que viu. Pena que nada do que você viu era eu."
+        }
+      ]
+    },
+    {
+      "id": "hunter_x_hunter",
+      "nome": "Licença para Caçar",
+      "anime": "Hunter x Hunter",
+      "kanji": "狩",
+      "resumo": "Da torre que fura as nuvens ao palácio do Rei: um forasteiro sem licença no mundo dos caçadores.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: A Torre dos Duzentos Andares",
+          "arco": "torre_celestial",
+          "rivais": [
+            "punho_do_tigre"
+          ],
+          "chefe": "palhaco_magico",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda gira e cospe você no saguão de uma torre que fura as nuvens. Aqui, cada andar se compra com sangue."
+            },
+            {
+              "quem": "",
+              "texto": "Acima do ducentésimo andar, os lutadores usam uma força que a sua carne ainda não conhece: a aura da vida, moldada."
+            },
+            {
+              "quem": "punho_do_tigre",
+              "texto": "Um forasteiro sem aura no andar dos mestres? Suba, então. Eu desço você."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não vim pelos andares."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No último andar, um homem embaralha cartas sem olhar para elas. Sorri como quem já viu o fim da luta."
+            },
+            {
+              "quem": "palhaco_magico",
+              "texto": "Uma fruta trazida de outro mundo... Ainda verde. Que vontade de ver amadurecer."
+            },
+            {
+              "quem": "palhaco_magico",
+              "texto": "Minha aura tem as propriedades da borracha e do chiclete. Guarde isso antes de piscar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Embaralhe. Eu corto."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O palhaço ri caído, com sangue no canto da boca, e guarda as cartas com o cuidado de quem vai voltar."
+            },
+            {
+              "quem": "palhaco_magico",
+              "texto": "Vou te deixar crescer. Quando estiver madura, eu colho."
+            },
+            {
+              "quem": "",
+              "texto": "Num papel deixado no chão, um endereço e uma data: o leilão da cidade que nunca dorme."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: Réquiem na Cidade do Leilão",
+          "arco": "leilao_subterraneo",
+          "rivais": [
+            "gigante_da_trupe"
+          ],
+          "chefe": "lider_da_trupe",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A cidade do leilão nunca dorme. Neste ano, os ladrões da aranha de doze pernas vieram levar tudo, sem pagar."
+            },
+            {
+              "quem": "",
+              "texto": "Nos porões, olhos escarlates são vendidos em potes de vidro. Alguém ainda vai cobrar essa dívida."
+            },
+            {
+              "quem": "gigante_da_trupe",
+              "texto": "Pode mirar no meu peito. Bala, faca ou míssil: eu aguento tudo de peito aberto."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então aguente isto."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No alto de um prédio, sob a chuva, um homem de casaco rege uma orquestra que ninguém mais ouve."
+            },
+            {
+              "quem": "lider_da_trupe",
+              "texto": "Hoje enterramos um dos nossos. Toque comigo o réquiem, forasteiro."
+            },
+            {
+              "quem": "lider_da_trupe",
+              "texto": "E esse poder que a Roda te deu... combina com as páginas do meu livro."
+            },
+            {
+              "quem": "voce",
+              "texto": "Venha arrancar a página."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "A aranha perde a cabeça e não morre: as pernas somem na chuva, cada uma para um lado."
+            },
+            {
+              "quem": "lider_da_trupe",
+              "texto": "Pode guardar a vitória. O poder que valia a pena, eu já anotei."
+            },
+            {
+              "quem": "",
+              "texto": "Do outro lado do mar, um reino pequeno some do mapa numa noite. Dizem que ali nasceu um rei."
+            },
+            {
+              "quem": "voce",
+              "texto": "Um rei. A Roda gosta de reis."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: O Palácio do Rei Sem Nome",
+          "arco": "ninho_da_rainha",
+          "rivais": [
+            "gato_do_rei"
+          ],
+          "chefe": "rei_sem_nome",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "As formigas comem gente e herdam o que comem. A rainha morreu, e o filho rasgou o ventre dela para nascer."
+            },
+            {
+              "quem": "",
+              "texto": "O palácio está cercado de soldados que já foram homens. Cada um guarda um pedaço de quem devorou."
+            },
+            {
+              "quem": "gato_do_rei",
+              "texto": "Nyaa... você tem cheiro de outro mundo. O Rei vai gostar. Mas primeiro, eu brinco."
+            },
+            {
+              "quem": "voce",
+              "texto": "Saia do caminho."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Na sala do trono, o Rei joga um jogo de tabuleiro com uma menina cega. Ele perde, e não entende por quê."
+            },
+            {
+              "quem": "rei_sem_nome",
+              "texto": "Interrompeu a partida. Diga o seu nome, forasteiro, se achar que vale a pena eu lembrar."
+            },
+            {
+              "quem": "voce",
+              "texto": "A Roda não me deu nome."
+            },
+            {
+              "quem": "rei_sem_nome",
+              "texto": "Então somos dois. Mostre-me o que vale um homem sem nome."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Rei se senta ao lado do tabuleiro. O veneno da rosa já corre no sangue dele, e no da menina também."
+            },
+            {
+              "quem": "rei_sem_nome",
+              "texto": "Vá embora. Eu quero passar o fim jogando com ela."
+            },
+            {
+              "quem": "",
+              "texto": "Você não toca no tabuleiro. Algumas partidas não pertencem à Roda."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "O palácio cai em silêncio. Ninguém deste mundo vai saber quem enfrentou o Rei, e você prefere assim."
+        },
+        {
+          "quem": "",
+          "texto": "Num lugar sem chão, o Dono da Roda risca uma linha num livro e sorri: mais um mundo atravessado."
+        },
+        {
+          "quem": "voce",
+          "texto": "Próximo."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "A sua aura se apaga como uma vela ao vento. Neste mundo, quem não molda a vida vira comida."
+        },
+        {
+          "quem": "",
+          "texto": "Ninguém caça o caçador que caiu. Ninguém lembra do forasteiro sem licença."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira sem você. Algum dia, outro amaldiçoado sobe a torre no seu lugar."
+        }
+      ]
+    },
+    {
+      "id": "jujutsu_kaisen",
+      "nome": "Vinte Dedos",
+      "anime": "Jujutsu Kaisen",
+      "kanji": "呪",
+      "resumo": "Um amaldiçoado da Roda entre feiticeiros e maldições, do jogo das escolas ao rei dos vinte dedos.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: Escola Contra Escola",
+          "arco": "encontro_de_intercambio",
+          "rivais": [
+            "irmao_da_podridao"
+          ],
+          "chefe": "remendador_de_almas",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda deixa você numa floresta cercada por um véu negro. Duas escolas de feiticeiros caçam maldições aqui dentro."
+            },
+            {
+              "quem": "",
+              "texto": "Mas alguém abriu o véu por fora. O cofre dos dedos podres foi saqueado, e as maldições entraram juntas."
+            },
+            {
+              "quem": "irmao_da_podridao",
+              "texto": "Somos irmãos de sangue, nascidos de um ventre maldito. E o nosso sangue apodrece o seu."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então sangre longe de mim."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No depósito saqueado, um rapaz de rosto costurado brinca com o que sobrou de um homem. Ele chama isso de arte."
+            },
+            {
+              "quem": "remendador_de_almas",
+              "texto": "Ah, um humano diferente! A alma vem antes do corpo, sabia? Vamos ver que forma a sua aceita."
+            },
+            {
+              "quem": "voce",
+              "texto": "Toque em mim e descubra."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O remendador se desfaz em pedaços que rastejam para fora do véu. Uma maldição assim não morre de uma vez."
+            },
+            {
+              "quem": "remendador_de_almas",
+              "texto": "Que divertido! Te vejo na noite das bruxas. Vai ser uma festa enorme."
+            },
+            {
+              "quem": "",
+              "texto": "No chão do depósito, a marca de vinte dedos que já não estão lá."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: A Noite das Bruxas",
+          "arco": "maldicao_coletiva",
+          "rivais": [
+            "furia_do_vulcao"
+          ],
+          "chefe": "ladrao_de_corpos",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Noite das bruxas. Uma cortina negra cai sobre o bairro das estações, e milhares de pessoas ficam presas lá dentro."
+            },
+            {
+              "quem": "",
+              "texto": "Dizem que lá dentro está o homem mais forte deste mundo. As maldições montaram a noite inteira só para ele."
+            },
+            {
+              "quem": "furia_do_vulcao",
+              "texto": "Os humanos são a mentira. Nós, maldições, somos os verdadeiros humanos. Queime e entenda."
+            },
+            {
+              "quem": "voce",
+              "texto": "Já queimei por coisa pior."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No subsolo, um monge de pontos na testa segura um cubo. O homem mais forte do mundo já está dentro dele."
+            },
+            {
+              "quem": "ladrao_de_corpos",
+              "texto": "Um minuto que vira mil anos. Foi o que bastou para ele. E você, quanto tempo aguenta?"
+            },
+            {
+              "quem": "ladrao_de_corpos",
+              "texto": "Este rosto pertence a um morto. Eu só o visto. Mil anos de planos não caem por um forasteiro."
+            },
+            {
+              "quem": "voce",
+              "texto": "A Roda não liga para os seus planos."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O monge ri com o sangue escorrendo pela costura da testa. Mesmo assim, o cubo some na mão dele."
+            },
+            {
+              "quem": "ladrao_de_corpos",
+              "texto": "Pode ficar com a noite. O jogo que eu preparei começa agora, no país inteiro."
+            },
+            {
+              "quem": "",
+              "texto": "Pelas ruas, gente comum acorda com poderes que não pediu, e com regras gravadas dentro da cabeça."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: O Jogo das Colônias",
+          "arco": "jogo_das_colonias",
+          "rivais": [
+            "trovao_de_quatro_seculos"
+          ],
+          "chefe": "senhor_dos_vinte_dedos",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "O país virou tabuleiro. Em cada colônia, quem mata ganha pontos, e quem não joga perde a técnica e a vida."
+            },
+            {
+              "quem": "",
+              "texto": "Feiticeiros de mil anos atrás voltaram em corpos emprestados. Quase todos querem a mesma coisa: lutar com o rei."
+            },
+            {
+              "quem": "trovao_de_quatro_seculos",
+              "texto": "Quatrocentos anos esperando alguém mais forte. Você serve de aperitivo antes do prato principal."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não sou aperitivo."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O prazo do jogo acaba numa cidade arrasada. No centro, um rei de quatro braços está de pé sobre os escombros."
+            },
+            {
+              "quem": "",
+              "texto": "Ele tomou o corpo de um menino das sombras. Dentro dele, a roda do general que se adapta ainda gira."
+            },
+            {
+              "quem": "senhor_dos_vinte_dedos",
+              "texto": "Conheça o seu lugar, forasteiro. Um amaldiçoado da Roda não é nada diante de mim."
+            },
+            {
+              "quem": "voce",
+              "texto": "Gire a sua roda. Eu giro a minha."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O rei cai de joelhos, e os quatro braços se desfazem em cinza, um a um. Ele não pede nada."
+            },
+            {
+              "quem": "senhor_dos_vinte_dedos",
+              "texto": "Hah. Vivi como quis e morro do mesmo jeito. Fique com o título, se ele te serve."
+            },
+            {
+              "quem": "",
+              "texto": "As colônias se calam. Os pontos não valem mais nada."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "Sem o rei, as maldições voltam a ser o que eram: o medo pequeno de gente comum. Vai bastar, por um tempo."
+        },
+        {
+          "quem": "",
+          "texto": "Num lugar sem chão, o Dono da Roda conta vinte dedos dentro de uma caixa e fecha a tampa."
+        },
+        {
+          "quem": "voce",
+          "texto": "Mais um mundo."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "A sua alma é cortada em fatias finas, do jeito que só o rei corta."
+        },
+        {
+          "quem": "",
+          "texto": "Num jogo de pontos, você virou ponto. Alguém, em alguma colônia, ganha cinco pelo seu nome."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira de novo."
+        }
+      ]
+    },
+    {
+      "id": "dragon_ball",
+      "nome": "Três Torneios",
+      "anime": "Dragon Ball",
+      "kanji": "武",
+      "resumo": "Do ringue de pedra de uma ilha ao torneio entre universos: o forasteiro da Roda sobe ao ringue três vezes.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: O Grande Torneio",
+          "arco": "torneio_regular",
+          "rivais": [
+            "assassino_de_aluguel"
+          ],
+          "chefe": "filho_do_rei_demonio",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda deixa você numa ilha quente, diante de um ringue de pedra. Hoje é o grande torneio de artes marciais."
+            },
+            {
+              "quem": "",
+              "texto": "O público grita, os monges apostam, e entre os inscritos há um assassino que cobra por cabeça."
+            },
+            {
+              "quem": "assassino_de_aluguel",
+              "texto": "Pelo preço certo, mato até um deus. Por você, me pagaram pouco. Vai ser rápido."
+            },
+            {
+              "quem": "voce",
+              "texto": "Pagaram pouco mesmo."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Na final, sobe ao ringue um homem verde de turbante e capa. O céu escurece quando ele tira a capa."
+            },
+            {
+              "quem": "filho_do_rei_demonio",
+              "texto": "Meu pai foi o Rei Demônio. Eu nasci do último ovo que ele cuspiu, para terminar o que ele começou."
+            },
+            {
+              "quem": "filho_do_rei_demonio",
+              "texto": "Este torneio é só o primeiro passo. Depois dele, o mundo inteiro se ajoelha."
+            },
+            {
+              "quem": "voce",
+              "texto": "Desça do ringue, ou caia dele."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O demônio verde cai fora do ringue. Pela regra, perdeu. Pela cara dele, ainda não."
+            },
+            {
+              "quem": "filho_do_rei_demonio",
+              "texto": "Lembre do meu rosto. Um dia vamos lutar do mesmo lado, e eu vou odiar cada minuto."
+            },
+            {
+              "quem": "",
+              "texto": "Anos depois, uma voz corta todas as transmissões do planeta: um ser perfeito convida o mundo para os seus jogos."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: Os Jogos do Perfeito",
+          "arco": "jogos_do_perfeito",
+          "rivais": [
+            "androide_rebelde"
+          ],
+          "chefe": "bioandroide_perfeito",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Num descampado, um ringue novo, erguido pelo próprio anfitrião. Dez dias para o mundo mandar os seus lutadores."
+            },
+            {
+              "quem": "",
+              "texto": "Ele foi feito com células dos maiores guerreiros da terra e do espaço, e engoliu duas máquinas para ficar perfeito."
+            },
+            {
+              "quem": "androide_rebelde",
+              "texto": "Fui feito para caçar um homem só. Ele não está aqui. Você serve para passar o tédio."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não sou passatempo."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No ringue, o anfitrião espera de braços cruzados. Deixa os desafiantes comerem sementes de cura: quer todos inteiros."
+            },
+            {
+              "quem": "bioandroide_perfeito",
+              "texto": "Bem-vindo aos meus Jogos. Venha me mostrar algo que eu ainda não absorvi."
+            },
+            {
+              "quem": "bioandroide_perfeito",
+              "texto": "Não se preocupe com a regra de cair do ringue. Daqui, ninguém sai andando."
+            },
+            {
+              "quem": "voce",
+              "texto": "Você fala demais para um inseto."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "A luz arranca o corpo dele pedaço por pedaço. Desta vez não sobra núcleo nem célula para voltar."
+            },
+            {
+              "quem": "bioandroide_perfeito",
+              "texto": "Perfeito... eu era perfeito..."
+            },
+            {
+              "quem": "",
+              "texto": "Bem longe dali, um anjo que serve a um deus da destruição anota o seu nome numa lista."
+            },
+            {
+              "quem": "",
+              "texto": "Um torneio entre universos. Quem perde é apagado. Para fechar o time, tiram até um velho tirano do inferno."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: O Torneio dos Universos",
+          "arco": "torneio_do_poder",
+          "rivais": [
+            "juiz_do_orgulho",
+            "androide_rebelde"
+          ],
+          "chefe": "tirano_das_estrelas",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Uma arena flutuante no vazio. Oito universos, oitenta lutadores, nenhuma regra além de cair ou ficar."
+            },
+            {
+              "quem": "",
+              "texto": "Os deuses assistem das arquibancadas. O universo que perder some inteiro, com tudo o que tem dentro."
+            },
+            {
+              "quem": "juiz_do_orgulho",
+              "texto": "Pela justiça do meu universo, nenhum forasteiro sai desta arena de pé."
+            },
+            {
+              "quem": "androide_rebelde",
+              "texto": "De novo você? Agora tenho uma família para proteger. Nada pessoal."
+            },
+            {
+              "quem": "voce",
+              "texto": "Comigo, nada nunca é pessoal."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No canto da arena, um tirano branco e pequeno sorri. Voltou do inferno por um dia e não pretende voltar para lá."
+            },
+            {
+              "quem": "tirano_das_estrelas",
+              "texto": "Ora, ora. Um lutador da Roda. Ajoelhe-se, e talvez eu o deixe trabalhar para mim."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não trabalho para ninguém."
+            },
+            {
+              "quem": "tirano_das_estrelas",
+              "texto": "Que pena. Eu adoro quebrar o que não se ajoelha."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O tirano cai da arena gritando, e o grito some no vazio antes de ele tocar em qualquer coisa."
+            },
+            {
+              "quem": "tirano_das_estrelas",
+              "texto": "Isto não acabou! Eu sou o imperador do universo!"
+            },
+            {
+              "quem": "",
+              "texto": "Nas arquibancadas, um deus de roupão boceja. Ninguém repara que um universo a mais ficou de pé."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "O torneio acaba. Um dragão de estrelas concede um desejo, e ninguém pensa em pedir nada por você."
+        },
+        {
+          "quem": "",
+          "texto": "Num lugar sem chão, o Dono da Roda aplaude devagar. Ele também gosta de torneios."
+        },
+        {
+          "quem": "voce",
+          "texto": "O meu desejo é outro: girar uma vez, sem preço."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai da arena. No vazio, não há chão para bater nem ninguém para ouvir o grito."
+        },
+        {
+          "quem": "",
+          "texto": "Um universo a menos não faz diferença para os deuses. Um amaldiçoado a menos, menos ainda."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira de novo."
+        }
+      ]
+    },
+    {
+      "id": "demon_slayer",
+      "nome": "Até o Sol Nascer",
+      "anime": "Demon Slayer",
+      "kanji": "刃",
+      "resumo": "Um forasteiro caça demônios entre trens, castelos e ruas, até a noite mais longa acabar.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: O Trem do Sonho",
+          "arco": "trem_do_sonho",
+          "rivais": [
+            "demonio_do_sono"
+          ],
+          "chefe": "punho_da_bussola",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "O Torneio da Roda te larga num vagão em movimento. Lá fora, a floresta passa escura."
+            },
+            {
+              "quem": "",
+              "texto": "Um condutor de olhar vazio picota o seu bilhete. O sono chega pesado, doce demais."
+            },
+            {
+              "quem": "demonio_do_sono",
+              "texto": "Durma, forasteiro. No sonho você ainda tem uma casa."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não tenho casa. Só a Roda."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O trem descarrila. Na beira dos trilhos, alguém aplaude devagar."
+            },
+            {
+              "quem": "",
+              "texto": "Um homem de pele riscada de azul sorri. Nos olhos dele, um número: três."
+            },
+            {
+              "quem": "punho_da_bussola",
+              "texto": "Que espírito bonito! Vire demônio, e lutamos até o fim dos tempos."
+            },
+            {
+              "quem": "voce",
+              "texto": "Já sou amaldiçoado. Não preciso de mais."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "Ele tenta correr para a sombra da floresta. O primeiro raio de sol chega antes."
+            },
+            {
+              "quem": "",
+              "texto": "No chão revirado, um corvo grita um nome que você não conhece."
+            },
+            {
+              "quem": "voce",
+              "texto": "A Roda gira. Eu sigo."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: O Castelo Sem Fim",
+          "arco": "castelo_infinito",
+          "rivais": [
+            "irmaos_do_distrito",
+            "demonio_do_sono"
+          ],
+          "chefe": "lua_de_seis_olhos",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "O chão se abre. Você cai num castelo de corredores que viram de cabeça para baixo."
+            },
+            {
+              "quem": "",
+              "texto": "Um alaúde toca em algum lugar, e as portas trocam de lugar a cada nota."
+            },
+            {
+              "quem": "",
+              "texto": "Demônios que já caíram andam de novo pelos corredores. A Roda devolve o que perdeu."
+            },
+            {
+              "quem": "irmaos_do_distrito",
+              "texto": "Mais um feio para a coleção! Irmão, este é seu."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Num salão de tatame, um samurai sem pressa espera. Seis olhos se abrem no rosto dele."
+            },
+            {
+              "quem": "lua_de_seis_olhos",
+              "texto": "Você não respira como os caçadores. Que lâmina carrega, então?"
+            },
+            {
+              "quem": "voce",
+              "texto": "A que a Roda me deu."
+            },
+            {
+              "quem": "lua_de_seis_olhos",
+              "texto": "Então que a Roda veja como a lua corta."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O samurai olha a própria lâmina e vê, no reflexo, o monstro que virou."
+            },
+            {
+              "quem": "",
+              "texto": "Ele se desfaz em silêncio. Sobra só uma flauta de bambu, rachada ao meio."
+            },
+            {
+              "quem": "",
+              "texto": "O castelo inteiro treme. Algo muito antigo acordou lá embaixo."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: Até o Amanhecer",
+          "arco": "ate_o_amanhecer",
+          "rivais": [
+            "sacerdote_do_gelo",
+            "irmaos_do_distrito"
+          ],
+          "chefe": "primeiro_demonio",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "O castelo sobe e desaba no meio da cidade. Faltam horas para o sol."
+            },
+            {
+              "quem": "",
+              "texto": "Caçadores feridos gritam pelas ruas a mesma ordem: segurem ele até o amanhecer."
+            },
+            {
+              "quem": "sacerdote_do_gelo",
+              "texto": "Ah, que pena de você! Venha, deixe eu te salvar. Dentro de mim não dói."
+            },
+            {
+              "quem": "voce",
+              "texto": "Já ouvi promessas assim. Todas cobravam."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Um homem pálido sai dos escombros. A carne dele se abre em bocas e chicotes."
+            },
+            {
+              "quem": "primeiro_demonio",
+              "texto": "Pense em mim como uma calamidade. Ninguém se vinga da chuva."
+            },
+            {
+              "quem": "voce",
+              "texto": "A chuva não foge do sol. Você foge."
+            },
+            {
+              "quem": "primeiro_demonio",
+              "texto": "Insolente. Vou apagar até o seu nome da Roda."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O céu clareia. O primeiro demônio incha e tenta se esconder dentro da própria carne."
+            },
+            {
+              "quem": "",
+              "texto": "O sol o alcança mesmo assim. Mil anos viram cinza em um minuto."
+            },
+            {
+              "quem": "voce",
+              "texto": "Esta noite acabou."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "Os caçadores que sobraram olham o sol como quem nunca o viu."
+        },
+        {
+          "quem": "",
+          "texto": "Ninguém sabe o seu nome. Ninguém pergunta. Você já está sumindo."
+        },
+        {
+          "quem": "",
+          "texto": "Longe dali, quem segura a Roda anota mais uma vitória e sorri."
+        },
+        {
+          "quem": "voce",
+          "texto": "Mais um mundo. Gire."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai antes do sol. A noite engole mais um caçador sem nome."
+        },
+        {
+          "quem": "",
+          "texto": "Em algum lugar, a Roda gira de novo, sem você."
+        },
+        {
+          "quem": "voce",
+          "texto": "...Ainda não."
+        }
+      ]
+    },
+    {
+      "id": "jojo",
+      "nome": "Rixa de Sangue e Estrela",
+      "anime": "JoJo's Bizarre Adventure",
+      "kanji": "奇",
+      "resumo": "Um forasteiro atravessa meio século de uma rixa de sangue, até o vampiro que para o tempo.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: Os Homens do Pilar",
+          "arco": "homens_do_pilar",
+          "rivais": [
+            "mestre_da_mascara"
+          ],
+          "chefe": "ser_supremo",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te larga numa cidade de pedra antiga, anos antes da guerra."
+            },
+            {
+              "quem": "",
+              "texto": "Nos subterrâneos, três homens dormem dentro de pilares há milênios. Um deles abre os olhos."
+            },
+            {
+              "quem": "mestre_da_mascara",
+              "texto": "Eu respirava luz. Hoje bebo sangue. Qual dos dois vai te matar?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Nenhum, se eu girar primeiro."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O pilar racha. O mais alto dos três sai sem pressa, com uma pedra vermelha na mão."
+            },
+            {
+              "quem": "ser_supremo",
+              "texto": "Mil anos escondido do sol. Com esta pedra, nunca mais."
+            },
+            {
+              "quem": "ser_supremo",
+              "texto": "Você é forte. Isso só faz de você uma refeição melhor."
+            },
+            {
+              "quem": "voce",
+              "texto": "Venha comer, então."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O vulcão cospe o ser supremo para o céu, e ele não volta. Parou de pensar, não de existir."
+            },
+            {
+              "quem": "",
+              "texto": "A Roda gira. Meio século passa num piscar."
+            },
+            {
+              "quem": "voce",
+              "texto": "Sinto cheiro de sangue velho. É a mesma rixa."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: A Mansão do Vampiro",
+          "arco": "mansao_do_vampiro",
+          "rivais": [
+            "pistoleiro_de_aluguel",
+            "mestre_da_mascara"
+          ],
+          "chefe": "servo_do_vazio",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Cairo, fim dos anos oitenta. Uma mansão que é maior por dentro do que por fora."
+            },
+            {
+              "quem": "",
+              "texto": "Os criados te olham das sombras. Ninguém diz o nome do dono da casa."
+            },
+            {
+              "quem": "pistoleiro_de_aluguel",
+              "texto": "Ei, forasteiro! Melhor ser o número dois e vivo. Que tal sair da frente?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não sou número nenhum."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Um buraco redondo aparece na parede. Depois no chão. Depois onde você estava."
+            },
+            {
+              "quem": "servo_do_vazio",
+              "texto": "Você subiu a escada do mestre. Isso já é crime que merece o vazio."
+            },
+            {
+              "quem": "voce",
+              "texto": "O seu mestre manda você morrer por ele?"
+            },
+            {
+              "quem": "servo_do_vazio",
+              "texto": "Eu dou a minha cabeça por ele. Literalmente, se ele pedir."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O servo, já vampiro, rola até a luz da janela e vira cinza sem um grito."
+            },
+            {
+              "quem": "",
+              "texto": "Do terraço, uma voz calma ri baixo. O relógio do corredor para de bater."
+            },
+            {
+              "quem": "voce",
+              "texto": "Falta um."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: A Noite do Cairo",
+          "arco": "noite_do_cairo",
+          "rivais": [
+            "padre_do_ceu",
+            "pistoleiro_de_aluguel"
+          ],
+          "chefe": "vampiro_do_tempo",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "As ruas do Cairo à noite. Carros parados, gente parada, um relógio sem segundos."
+            },
+            {
+              "quem": "padre_do_ceu",
+              "texto": "Ele me mostrou o céu, forasteiro. Não vou deixar você fechar a porta."
+            },
+            {
+              "quem": "voce",
+              "texto": "O seu céu tem cheiro de sangue."
+            },
+            {
+              "quem": "padre_do_ceu",
+              "texto": "Todo céu tem. Conte comigo: dois, três, cinco, sete..."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Num telhado, um homem loiro desce sem pressa. Atrás dele, um vulto dourado de punhos cerrados."
+            },
+            {
+              "quem": "vampiro_do_tempo",
+              "texto": "Oh? Você se aproxima? Em vez de fugir, vem direto até mim?"
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não me aproximo. Eu giro."
+            },
+            {
+              "quem": "vampiro_do_tempo",
+              "texto": "Então gire. Eu paro o tempo, e a sua Roda para junto."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O vampiro cai partido no asfalto, e o sol do Cairo nasce sobre ele."
+            },
+            {
+              "quem": "",
+              "texto": "O corpo vira poeira. O relógio da praça volta a contar os segundos."
+            },
+            {
+              "quem": "voce",
+              "texto": "Nove segundos. Era tudo o que ele tinha de seu."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "Uma rixa de sangue de cem anos acaba numa rua comum, de manhã."
+        },
+        {
+          "quem": "",
+          "texto": "Ninguém vai contar que um forasteiro marcado pela Roda passou por aqui."
+        },
+        {
+          "quem": "",
+          "texto": "Só o Dono da Roda vira a página e escreve: próximo."
+        },
+        {
+          "quem": "voce",
+          "texto": "Gire."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Um piscar, e você já está no chão. Ninguém viu o golpe chegar."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda recolhe mais um amaldiçoado. A rixa segue sem você."
+        },
+        {
+          "quem": "voce",
+          "texto": "...Ainda tenho Carma para gastar."
+        }
+      ]
+    },
+    {
+      "id": "my_hero_academia",
+      "nome": "A Era Sem Símbolo",
+      "anime": "My Hero Academia",
+      "kanji": "英",
+      "resumo": "Num mundo onde quase todos nascem com um poder, você gira pelo seu e cruza a guerra entre heróis e vilões.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: Noite dos Becos",
+          "arco": "noite_dos_becos",
+          "rivais": [
+            "menina_que_bebe_sangue"
+          ],
+          "chefe": "o_purificador",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te cospe num beco molhado. Neste mundo, quase todos nascem com um poder. Quem não nasce, assiste."
+            },
+            {
+              "quem": "",
+              "texto": "Sirenes ao longe. Criaturas de cérebro exposto rasgam a avenida, e os heróis de capa não dão conta."
+            },
+            {
+              "quem": "menina_que_bebe_sangue",
+              "texto": "Olha só, alguém novo! Você tem cheiro de quem já sangrou muito. Que lindo."
+            },
+            {
+              "quem": "voce",
+              "texto": "Sai do caminho."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No fundo do beco, um herói jovem está caído, paralisado. Sobre ele, um homem de cachecol vermelho lambe a lâmina."
+            },
+            {
+              "quem": "o_purificador",
+              "texto": "Você não usa capa. Não pede recompensa. Então o que você é?"
+            },
+            {
+              "quem": "voce",
+              "texto": "O que a Roda trouxe."
+            },
+            {
+              "quem": "o_purificador",
+              "texto": "Então mostre. Se for falso, morre como os outros."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Purificador cai de joelhos. Mesmo assim, os heróis de verdade recuam diante dele."
+            },
+            {
+              "quem": "o_purificador",
+              "texto": "Não sou eu o errado. É o mundo, que chama de herói quem só quer fama."
+            },
+            {
+              "quem": "",
+              "texto": "As telas da cidade repetem o rosto dele. Nas sombras, uma liga de vilões ouve cada palavra e sorri."
+            },
+            {
+              "quem": "voce",
+              "texto": "O Carma pesou mais. A Roda ainda não acabou comigo."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: A Onda de Pó",
+          "arco": "onda_de_po",
+          "rivais": [
+            "menina_que_bebe_sangue",
+            "homem_dividido"
+          ],
+          "chefe": "herdeiro_das_maos",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Meses depois, os heróis invadem o esconderijo de um exército de cem mil. A Roda te joga no meio da invasão."
+            },
+            {
+              "quem": "homem_dividido",
+              "texto": "Mais um herói! Não, não é herói. Eu te conheço? Nunca te vi! Somos amigos!"
+            },
+            {
+              "quem": "",
+              "texto": "Longe dali, num hospital de luzes apagadas, alguém acorda antes da hora."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu atravesso."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "A cidade começa a desmanchar. Prédios viram areia, ruas viram pó, numa onda que corre do centro para fora."
+            },
+            {
+              "quem": "",
+              "texto": "No meio dela, um rapaz pálido de cabelo branco coça o pescoço até sangrar. Mãos cortadas pendem do corpo dele."
+            },
+            {
+              "quem": "herdeiro_das_maos",
+              "texto": "Você não é herói. Não é vilão. Então por que está aqui, atrapalhando?"
+            },
+            {
+              "quem": "voce",
+              "texto": "A Roda gira. Eu sigo."
+            },
+            {
+              "quem": "herdeiro_das_maos",
+              "texto": "Então eu desfaço a Roda junto com você."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Herdeiro das Mãos cai, e o corpo dele se refaz devagar. Algo lá dentro fala com outra voz."
+            },
+            {
+              "quem": "herdeiro_das_maos",
+              "texto": "Mestre... ele está aqui. Ele também tem um poder que vale roubar."
+            },
+            {
+              "quem": "",
+              "texto": "Os heróis contam os mortos. A cidade virou um deserto de pó."
+            },
+            {
+              "quem": "voce",
+              "texto": "Quem fala dentro dele?"
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: A Última Guerra",
+          "arco": "ultima_guerra",
+          "rivais": [
+            "homem_dividido",
+            "filho_queimado"
+          ],
+          "chefe": "rei_sem_rosto",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A guerra final começa. Fortalezas flutuam sobre a cidade, e cada herói do país tem um inimigo marcado."
+            },
+            {
+              "quem": "",
+              "texto": "As cópias de um homem morto ainda andam pelas ruas, rindo e chorando ao mesmo tempo."
+            },
+            {
+              "quem": "filho_queimado",
+              "texto": "Você queimou meu caminho até aqui. Agora eu queimo o seu, e depois o resto da família."
+            },
+            {
+              "quem": "",
+              "texto": "Fogo azul sobe até as nuvens. Por baixo dele, uma presença antiga respira por tubos."
+            },
+            {
+              "quem": "voce",
+              "texto": "Ele está perto."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "No centro das ruínas, um homem sem rosto ergue a cabeça. O corpo é jovem, roubado de anos que não eram dele."
+            },
+            {
+              "quem": "rei_sem_rosto",
+              "texto": "Um forasteiro marcado pela Roda. Um poder que o sorteio dá e tira. Que coisa linda."
+            },
+            {
+              "quem": "rei_sem_rosto",
+              "texto": "Eu tirei tudo de todos por séculos. A sua sorte vai ser só mais uma peça da coleção."
+            },
+            {
+              "quem": "voce",
+              "texto": "Tenta tirar."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Rei Sem Rosto desaba. Os poderes roubados escapam dele como fumaça e procuram os donos que ainda vivem."
+            },
+            {
+              "quem": "rei_sem_rosto",
+              "texto": "Tantos séculos... e quem me derruba é alguém que nem pertence a este mundo."
+            },
+            {
+              "quem": "",
+              "texto": "Os heróis olham para você sem saber se agradecem ou se prendem."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "A paz volta devagar, cheia de cicatrizes. Num mundo onde todos têm um poder, você foi o único que girou por ele."
+        },
+        {
+          "quem": "",
+          "texto": "Um estudante de cabelo bagunçado estende a mão para você, como estendia para todo mundo. Até para os vilões."
+        },
+        {
+          "quem": "voce",
+          "texto": "Ainda não. A Roda me espera."
+        },
+        {
+          "quem": "",
+          "texto": "Entre as nuvens, por um instante, a Roda gira. O Dono da Roda olha e não diz nada."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai no meio do pó, e a cidade continua a desmanchar ao seu redor."
+        },
+        {
+          "quem": "",
+          "texto": "Ninguém estende a mão. Neste mundo, heróis chegam tarde para quem não tem nome."
+        },
+        {
+          "quem": "",
+          "texto": "A Roda gira de novo. O Carma não esquece, e o Torneio ainda quer você."
+        }
+      ]
+    },
+    {
+      "id": "attack_on_titan",
+      "nome": "Além das Muralhas",
+      "anime": "Attack on Titan",
+      "kanji": "壁",
+      "resumo": "Você cai dentro das muralhas e atravessa os anos em que os gigantes devoraram o mundo, e o mundo devorou de volta.",
+      "capitulos": [
+        {
+          "nome": "Capítulo 1: Mata dos Troncos Gigantes",
+          "arco": "mata_dos_troncos",
+          "rivais": [
+            "gigante_da_muralha"
+          ],
+          "chefe": "tita_de_cristal",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A Roda te larga do lado de fora das muralhas, entre gigantes nus que sorriem sem motivo."
+            },
+            {
+              "quem": "",
+              "texto": "Soldados de capa com asas passam a cavalo e te puxam para a garupa. Aqui, quem fica parado é comido."
+            },
+            {
+              "quem": "gigante_da_muralha",
+              "texto": "Você não é de nenhuma das muralhas. De onde veio? Não, esquece. Melhor eu não saber."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu também não sei."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Fumaça preta sobe no flanco direito. Algo corre pela formação, rápido e certeiro demais para um gigante comum."
+            },
+            {
+              "quem": "",
+              "texto": "Entre os troncos imensos ela aparece: uma titã de músculos à mostra, que sabe exatamente onde mirar."
+            },
+            {
+              "quem": "tita_de_cristal",
+              "texto": "Você não é um deles. Mas está no meu caminho, igual a eles."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então passa por mim."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "A Titã de Cristal cai. Antes do último golpe, ela se fecha num cristal que nenhuma lâmina racha."
+            },
+            {
+              "quem": "",
+              "texto": "Lá dentro, uma moça de olhos frios dorme, guardando tudo o que sabe."
+            },
+            {
+              "quem": "gigante_da_muralha",
+              "texto": "Ela não vai falar nada. Nem eu."
+            },
+            {
+              "quem": "voce",
+              "texto": "Quantos de vocês estão escondidos aqui dentro?"
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 2: De Volta à Primeira Muralha",
+          "arco": "primeira_muralha",
+          "rivais": [
+            "gigante_da_muralha",
+            "guerreiro_de_couraca"
+          ],
+          "chefe": "bestial_que_arremessa",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "A tropa volta à primeira muralha que caiu, para tapar o buraco e abrir um porão que guarda a verdade."
+            },
+            {
+              "quem": "guerreiro_de_couraca",
+              "texto": "Sou guerreiro. Chegamos longe demais para voltar atrás. Você também."
+            },
+            {
+              "quem": "",
+              "texto": "No alto do muro, o gigante de vapor espera. Mais atrás, um macaco enorme separa as pedras."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eles sabiam que a gente vinha."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "O comandante ergue a espada e manda todos para a morte, por uma única chance de alguém chegar ao macaco."
+            },
+            {
+              "quem": "",
+              "texto": "Os cavalos caem. As pedras chovem. Você corre por cima dos telhados que ainda estão de pé."
+            },
+            {
+              "quem": "bestial_que_arremessa",
+              "texto": "Sobrou um! Bom. Eu gosto de quem rebate."
+            },
+            {
+              "quem": "voce",
+              "texto": "Desce daí."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "O Bestial despenca, cortado por uma lâmina rápida demais. Um titã de quatro patas o arrasta para longe."
+            },
+            {
+              "quem": "bestial_que_arremessa",
+              "texto": "Eu volto. Tudo o que nasceu deste sangue precisa acabar. E eu vou acabar com ele."
+            },
+            {
+              "quem": "",
+              "texto": "No porão, os livros contam tudo: além do mar existe um mundo inteiro que quer esta ilha morta."
+            },
+            {
+              "quem": "voce",
+              "texto": "O inimigo nunca foi o gigante."
+            }
+          ]
+        },
+        {
+          "nome": "Capítulo 3: Quando a Terra Treme",
+          "arco": "rugido_da_terra",
+          "rivais": [
+            "guerreiro_de_couraca",
+            "seguidor_do_demonio"
+          ],
+          "chefe": "o_que_avanca",
+          "abertura": [
+            {
+              "quem": "",
+              "texto": "Anos depois, as muralhas se desfazem. Dentro delas dormiam milhões de colossos, e agora todos acordam."
+            },
+            {
+              "quem": "",
+              "texto": "O chão treme. Os colossos marcham para o mar e não vão parar enquanto houver alguém do outro lado."
+            },
+            {
+              "quem": "seguidor_do_demonio",
+              "texto": "Vai atrás dele? Então passa por quem escolheu o demônio."
+            },
+            {
+              "quem": "voce",
+              "texto": "Eu não escolhi lado. Escolhi parar isso."
+            }
+          ],
+          "antes_do_chefe": [
+            {
+              "quem": "",
+              "texto": "Sobre a marcha anda um esqueleto maior que qualquer muralha. Preso à espinha dele, um rapaz de cabelo comprido."
+            },
+            {
+              "quem": "o_que_avanca",
+              "texto": "Eu vi você chegar. Muito antes de você cair neste mundo. Vi o seu fim também."
+            },
+            {
+              "quem": "o_que_avanca",
+              "texto": "Eu sigo avançando. Até não restar nenhum inimigo da minha gente."
+            },
+            {
+              "quem": "voce",
+              "texto": "Então eu sou só mais um."
+            },
+            {
+              "quem": "o_que_avanca",
+              "texto": "Não. Você é livre. Por isso vai lutar."
+            }
+          ],
+          "depois": [
+            {
+              "quem": "",
+              "texto": "A cabeça se solta da espinha. O esqueleto desmorona, e os colossos param, um a um, no meio do caminho."
+            },
+            {
+              "quem": "o_que_avanca",
+              "texto": "Eu não sei por quê. Eu só queria ver o fim."
+            },
+            {
+              "quem": "",
+              "texto": "O vapor sobe como uma nuvem branca sobre o mundo achatado. Um pássaro pousa no ombro de quem sobrou."
+            }
+          ]
+        }
+      ],
+      "fim": [
+        {
+          "quem": "",
+          "texto": "A marcha acabou, e boa parte do mundo acabou com ela. Os que restam enterram os mortos dos dois lados."
+        },
+        {
+          "quem": "",
+          "texto": "Numa colina, embaixo de uma árvore, alguém deixa um cachecol vermelho e não diz nada."
+        },
+        {
+          "quem": "voce",
+          "texto": "Liberdade custa isto?"
+        },
+        {
+          "quem": "",
+          "texto": "Atrás das nuvens, a Roda gira. O Dono da Roda anota mais uma vitória, e o Torneio te chama de volta."
+        }
+      ],
+      "derrota": [
+        {
+          "quem": "",
+          "texto": "Você cai, e a terra continua a tremer. Os passos dos colossos não param por ninguém."
+        },
+        {
+          "quem": "",
+          "texto": "Do outro lado da muralha, ninguém vai saber o seu nome. Você nem tinha um."
+        },
+        {
+          "quem": "",
+          "texto": "Na escuridão, o Carma te segura. A Roda gira, e o Torneio ainda não acabou com você."
+        }
+      ]
+    }
+  ],
+  "arcos": [
+    {
+      "id": "arena_dos_sem_nome",
+      "nome": "Arena dos Sem Nome",
+      "kanji": "名",
+      "raridade": "cinza",
+      "texto": "Ninguém aqui tem nome a perder: +1 luta neste capítulo, e toda vitória dá 10 de Carma.",
+      "origem": "",
+      "regra": {
+        "luta_extra": 1,
+        "carma_por_vitoria": 10
+      },
+      "arena": {
+        "marco": "arena",
+        "ceu": [
+          "#1f1a1c",
+          "#4a3b36"
+        ],
+        "chao": "#2b2520",
+        "particulas": "cinzas",
+        "lua": false
+      }
+    },
+    {
+      "id": "labirinto_das_apostas",
+      "nome": "Labirinto das Apostas",
+      "kanji": "賭",
+      "raridade": "sangue",
+      "texto": "Cada porta é uma aposta: mais encruzilhadas e mais elites no caminho, mas toda vitória dá uma Relíquia.",
+      "origem": "",
+      "regra": {
+        "portas": {
+          "encruzilhada": 2,
+          "elite": 1.5
+        },
+        "reliquia_garantida": true
+      },
+      "arena": {
+        "marco": "cristais",
+        "ceu": [
+          "#16141f",
+          "#352c40"
+        ],
+        "chao": "#1f1a26",
+        "particulas": "faiscas",
+        "lua": true
+      }
+    },
+    {
+      "id": "salao_do_dono",
+      "nome": "Salão do Dono",
+      "kanji": "殿",
+      "raridade": "sangue",
+      "texto": "A Roda está perto: seu Carma enche 50% mais rápido, e os golpes dos rivais vêm mais escondidos.",
+      "origem": "",
+      "regra": {
+        "carma_mult": 1.5,
+        "sutileza_rivais": 1
+      },
+      "arena": {
+        "marco": "trono",
+        "ceu": [
+          "#120d10",
+          "#3a1c20"
+        ],
+        "chao": "#1a1214",
+        "particulas": "brasas",
+        "lua": false
+      }
+    },
+    {
+      "id": "alem_da_roda",
+      "nome": "Além da Roda",
+      "kanji": "外",
+      "raridade": "maldito",
+      "texto": "Nada aqui foi decidido: todos perdem 2 de vida no começo do próprio turno, e o chefe vem 60% mais forte.",
+      "origem": "",
+      "regra": {
+        "chefe_mult": 1.6,
+        "sangria_todos": 2
+      },
+      "arena": {
+        "marco": "vazio",
+        "ceu": [
+          "#0b0b10",
+          "#25232e"
+        ],
+        "chao": "#121118",
+        "particulas": "neve",
+        "lua": true
+      }
+    }
+  ]
+}

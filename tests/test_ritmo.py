@@ -127,7 +127,8 @@ def _vencer_uma_luta(seed=4):
 
 def test_depois_da_vitoria_vem_o_treino_e_depois_a_tecnica():
     j = _vencer_uma_luta()
-    assert j.fase == "treino" and len(j.oferta_treino) == 3
+    extra = j.estado.regra.get("treino_extra", 0)  # um Arco pode oferecer um a mais
+    assert j.fase == "treino" and len(j.oferta_treino) == 3 + extra
     antes = j.jogador.base_vida_max
     escolhido = j.escolher_treino(0)
     assert j.fase == "tecnica" and not j.oferta_treino

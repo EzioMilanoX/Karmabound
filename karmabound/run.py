@@ -54,6 +54,12 @@ from karmabound.combate import (
 )
 from karmabound.efeitos import Efeitos, somar
 from karmabound.fusoes import Fusao, carregar_fusoes, fundir
+from karmabound.historias import (
+    ARCO_ALEM,
+    Historia,
+    carregar_arcos_da_historia,
+    carregar_historias,
+)
 from karmabound.mesa import Giro, Mesa
 from karmabound.ressonancia import efeitos_de_ressonancia
 from karmabound.rodas import (
@@ -69,6 +75,16 @@ from karmabound.rodas import (
 from karmabound.treino import Treino, carregar_treinos, oferecer
 from karmabound.treino import aplicar as aplicar_treino
 from karmabound.treino import escolher_auto as escolher_treino_auto
+from karmabound.viloes import (
+    DONO,
+    MECANICA_REFLEXO,
+    REFLEXO,
+    Elenco,
+    Vilao,
+    carregar_viloes,
+    escolher_chefe,
+    escolher_tenente,
+)
 from karmabound.votos import Catalogo, Voto, Votos, carregar_catalogo, lutas_da_duracao
 from karmabound.votos_luta import VotoDeLuta, carregar_votos_luta
 
@@ -100,6 +116,13 @@ class Contexto:
     nemesis: dict | None = None  # quem te matou numa run passada, à espera
     fusoes: tuple[Fusao, ...] = ()  # técnicas que nascem de requisitos (fusoes.py)
     ascensao: int = 0  # o degrau da Ascensão (ascensao.py): já aplicado nos dados
+    # Leva 5: os vilões, o modo História e o capítulo secreto
+    elenco: Elenco | None = None  # rivais e chefes com nome (viloes.py); None: anônimos
+    animes: frozenset[str] | None = None  # as obras abertas pelo Legado (None: todas)
+    historia: Historia | None = None  # a campanha do modo História
+    arcos_fixos: dict[str, Fatia] = field(default_factory=dict)  # Arcos fora da roda
+    alem: bool = False  # o capítulo secreto já está aberto (Legado): o Dono convida
+    assinaturas: dict[str, Fatia] = field(default_factory=dict)  # todas as de chefe, por id
 
     @property
     def lutas(self) -> int:
@@ -132,10 +155,15 @@ class Contexto:
         maestria: dict[str, int] | None = None,
         nemesis: dict | None = None,
         ascensao: int = 0,
+        historia: str = "",
+        alem: bool = False,
+        viloes: bool = True,
     ) -> Contexto:
         """`abertos`: os animes que o Legado já abriu (None: todos). `maestria` e
         `nemesis`: do Legado de quem joga. `caminho=False`: luta atrás de luta.
-        `ascensao`: o degrau da Ascensão (0: nenhum)."""
+        `ascensao`: o degrau da Ascensão (0: nenhum). `historia`: a campanha do modo
+        História. `alem`: o capítulo secreto está aberto. `viloes=False`: rivais e
+        chefes anônimos, como antes da Leva 5 (para medir)."""
         if jogo not in JOGOS:
             raise ValueError(f"modo de jogo '{jogo}' não existe (use: {', '.join(JOGOS)})")
         bal = balanceamento or carregar_balanceamento()
@@ -151,7 +179,16 @@ class Contexto:
             forma = {"capitulos": CAPITULOS_TORRE}
         elif jogo == "chefes":
             forma = {"capitulos": 3, "lutas_por_capitulo": 2, "todos_chefes": True}
-        elif jogo == "anime":
+        campanha = None
+        if jogo == "historia":
+            campanha = carregar_historias().get(historia or ORIGINAL)
+            if campanha is None:
+                raise ValueError(f"a campanha '{historia}' não existe")
+            anime = campanha.anime
+        elif historia:
+            raise ValueError("`historia` só vale no modo História")
+        assinaturas = {c.id: c for c in chefes}  # todas: um vilão leva as dele em qualquer modo
+        if jogo == "anime" or (jogo == "historia" and anime):
             if not anime:
                 raise ValueError("o Mundo de um anime precisa do anime")
             fixas = set(cfg["jogador"]["tecnicas"])
@@ -159,6 +196,7 @@ class Contexto:
             rodas = filtrar_anime(rodas, anime, frozenset(fixas))
             chefes = tuple(c for c in chefes if anime_de(c.origem) == anime) or chefes
         treinos, oferta = carregar_treinos()
+        elenco = carregar_viloes() if viloes else None
         ctx = cls(
             rodas=rodas,
             raridades=raridades,
@@ -169,13 +207,19 @@ class Contexto:
             chefes=chefes,
             votos_luta=carregar_votos_luta(),
             jogo=jogo,
-            anime=anime if jogo == "anime" else "",
+            anime=anime if jogo in ("anime", "historia") else "",
             treinos=treinos,
             oferta_treino=oferta,
             caminho=carregar_caminho() if caminho and jogo != "chefes" else None,
             maestria=dict(maestria or {}),
             nemesis=nemesis,
             fusoes=carregar_fusoes(),
+            elenco=elenco,
+            assinaturas=assinaturas,
+            animes=abertos,
+            historia=campanha,
+            arcos_fixos=carregar_arcos_da_historia(),
+            alem=alem and jogo in ("classico", "historia") and not (campanha and campanha.anime),
             **forma,
         )
         return aplicar_ascensao(ctx, ascensao)
@@ -185,16 +229,24 @@ class Contexto:
 
 JOGOS = {
     "classico": "Clássico",
+    "historia": "História",
     "torre": "Torre sem fim",
     "chefes": "Desfile de chefes",
     "anime": "Mundo de um anime",
 }
 DESCRICAO_JOGO = {
     "classico": "3 capítulos, 12 lutas",
+    "historia": "capítulos, cenas e chefes fixos",
     "torre": "até onde você sobe?",
     "chefes": "6 lutas, só chefes",
     "anime": "um anime só",
 }
+MECANICAS_ANTIGAS = frozenset(  # as mecânicas de chefe de antes dos vilões finais
+    "petalas armadura repulsao intangivel preco carregar contrato balanca regenera adaptar "
+    "ilusao".split()
+)
+ORIGINAL = "torneio_da_roda"  # a campanha principal do modo História
+TORRE_DONO_CADA = 5  # na Torre sem fim, o Dono da Roda guarda cada 5º capítulo
 CAPITULOS_TORRE = 10_000
 HORIZONTE_TORRE = 12  # o Altar e o piloto projetam a Torre como uma run de 12 lutas
 MINIMO_ANIME = 10  # técnicas de um anime para ele ter o próprio Mundo
@@ -267,6 +319,11 @@ class EstadoRun:
     # o aliado (aliados.py): um por run; o novo substitui o antigo
     aliado: str = ""  # o id ("" = sem aliado)
     aliado_nivel: int = 0  # começa no 1 e sobe a cada luta vencida
+    # Leva 5
+    viloes_vistos: list[str] = field(default_factory=list)  # quem já apareceu nesta run
+    alem: bool = False  # aceitou o convite: o capítulo secreto, além da Roda
+    final: str = ""  # o final escolhido no modo História (quebrar | tomar)
+    dono_vencido: bool = False  # venceu o Dono da Roda nesta run
 
     @property
     def acabou(self) -> bool:
@@ -295,6 +352,7 @@ class EstadoRun:
         clone.fragmentos = Counter(self.fragmentos)
         clone.despertares_ids = list(self.despertares_ids)
         clone.fusoes_nascidas = list(self.fusoes_nascidas)
+        clone.viloes_vistos = list(self.viloes_vistos)
         return clone
 
 
@@ -325,10 +383,17 @@ def atualizar_efeitos(estado: EstadoRun) -> None:
 
 def girar(estado: EstadoRun, ctx: Contexto, roda: str) -> Giro:
     """Gira uma roda da run. Depois de um Despertar na luta, o giro vem Divino garantido."""
-    if estado.divino_pendente:
-        estado.divino_pendente -= 1
-        return estado.mesa.girar(roda, forcar_despertar=True)
-    return estado.mesa.girar(roda, permitir_despertar=False)
+    mais = estado.regra.get("opcoes_tecnica", 0) if roda == "tecnicas" else 0
+    rodas = estado.mesa.rodas
+    if mais:  # o Arco oferece uma técnica a mais na escolha (só neste giro)
+        estado.mesa.rodas = {**rodas, roda: replace(rodas[roda], opcoes=rodas[roda].opcoes + mais)}
+    try:
+        if estado.divino_pendente:
+            estado.divino_pendente -= 1
+            return estado.mesa.girar(roda, forcar_despertar=True)
+        return estado.mesa.girar(roda, permitir_despertar=False)
+    finally:
+        estado.mesa.rodas = rodas
 
 
 # ----------------------------------------------------------------------- passos
@@ -379,6 +444,26 @@ def aplicar_linhagem(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
     j.vida = j.vida_max  # a run começa com a vida cheia da Linhagem
 
 
+def arco_fixo(estado: EstadoRun, ctx: Contexto) -> Fatia | None:
+    """O Arco que este capítulo não sorteia: o do capítulo secreto e os da História."""
+    if estado.alem and estado.capitulo > ctx.capitulos:
+        return ctx.arcos_fixos.get(ARCO_ALEM)
+    if ctx.historia is not None:
+        cap = ctx.historia.capitulo(estado.capitulo)
+        if cap is not None:
+            na_roda = {f.id: f for f in ctx.rodas["arco"].fatias}
+            return ctx.arcos_fixos.get(cap.arco) or na_roda.get(cap.arco)
+    return None
+
+
+def girar_arco(estado: EstadoRun, ctx: Contexto) -> Giro:
+    """O giro do Arco: o fixo cai sem sorteio (e sem mexer no Carma)."""
+    fixo = arco_fixo(estado, ctx)
+    if fixo is not None:
+        return Giro(ctx.rodas["arco"], [fixo])
+    return girar(estado, ctx, "arco")
+
+
 def aplicar_arco(estado: EstadoRun, ctx: Contexto, fatia: Fatia) -> None:
     estado.arco = fatia
     estado.tamanho_capitulo = ctx.lutas_por_capitulo + estado.regra.get("luta_extra", 0)
@@ -401,6 +486,68 @@ def _pool_do_rival(ctx: Contexto, capitulo: int) -> tuple[list[Fatia], int]:
     return pool, n_tec
 
 
+def _ultimo_capitulo(estado: EstadoRun, ctx: Contexto) -> bool:
+    """O capítulo do chefe fixo (o Dono, ou o final do anime)."""
+    if ctx.jogo == "torre":
+        return estado.capitulo % TORRE_DONO_CADA == 0
+    if ctx.todos_chefes:  # Desfile: só a última luta de todas
+        return estado.capitulo >= ctx.capitulos and estado.chefe
+    return estado.capitulo >= ctx.capitulos
+
+
+def vilao_chefe(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Vilao | None:
+    """O chefe com nome deste capítulo (None: sem elenco, o chefe é anônimo)."""
+    el = ctx.elenco
+    if el is None:
+        return None
+    if estado.alem and estado.capitulo > ctx.capitulos:
+        return el.get(REFLEXO)
+    if ctx.historia is not None:
+        cap = ctx.historia.capitulo(estado.capitulo)
+        if cap is not None and el.get(cap.chefe) is not None:
+            return el[cap.chefe]
+    return escolher_chefe(
+        el,
+        estado.capitulo,
+        _ultimo_capitulo(estado, ctx),
+        rng,
+        animes=ctx.animes,
+        anime=ctx.anime,
+        vistos=estado.viloes_vistos,
+    )
+
+
+def vilao_rival(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Vilao | None:
+    """O rival com nome de uma luta comum (na História, os da cena do capítulo)."""
+    el = ctx.elenco
+    if el is None:
+        return None
+    lista: tuple[str, ...] = ()
+    if ctx.historia is not None:
+        cap = ctx.historia.capitulo(estado.capitulo)
+        lista = cap.rivais if cap is not None else ()
+    return escolher_tenente(
+        el,
+        min(estado.capitulo, 3),
+        rng,
+        animes=ctx.animes,
+        anime=ctx.anime,
+        vistos=estado.viloes_vistos,
+        lista=lista,
+    )
+
+
+def _vestir(rival: Lutador, vilao: Vilao | None, estado: EstadoRun, padrao: str) -> None:
+    """O rival ganha o nome, a figura e a cor do vilão (e entra nos vistos da run)."""
+    if vilao is None:
+        rival.estilo = padrao
+        return
+    rival.nome = rival.titulo = vilao.nome
+    rival.estilo = vilao.estilo or padrao
+    rival.vilao, rival.cor = vilao.id, vilao.cor
+    estado.viloes_vistos.append(vilao.id)
+
+
 def gerar_oponentes(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> list[Lutador]:
     """Quem espera atrás da porta escolhida: um rival, um bando, a elite ou a Nêmesis.
     Luta de chefe (ou sem caminho): um rival, como sempre."""
@@ -408,8 +555,9 @@ def gerar_oponentes(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> lis
     porta, cam = estado.porta, ctx.caminho
     n, cap = estado.proxima_luta, estado.capitulo
     if chefe or porta is None or cam is None or porta.tipo == "rival":
-        rival = gerar_rival(ctx, n, rng, cap, chefe)
-        rival.estilo = estilo_do_rival(n, cap, rival.chefe)
+        vilao = vilao_chefe(estado, ctx, rng) if chefe else vilao_rival(estado, ctx, rng)
+        rival = gerar_rival(ctx, n, rng, cap, chefe, vilao=vilao)
+        _vestir(rival, vilao, estado, estilo_do_rival(n, cap, rival.chefe))
         return [rival]
     if porta.papeis:  # um bando (a elite às vezes vem com Comandante)
         cfg = ctx.combate["rivais"]
@@ -432,10 +580,12 @@ def gerar_oponentes(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> lis
                 fortalecer_elite(cam, r, bando=True, rng=sorte, capitulo=cap)
         return bando
     if porta.tipo == "elite":
-        rival = gerar_rival(ctx, n, rng, cap, False, mais_tecnicas=cam.elite["tecnicas_mais"])
-        rival.estilo = estilo_do_rival(n, cap, False)
+        vilao = vilao_rival(estado, ctx, rng)
+        mais = cam.elite["tecnicas_mais"]
+        rival = gerar_rival(ctx, n, rng, cap, False, mais_tecnicas=mais, vilao=vilao)
         fortalecer_elite(cam, rival, rng=rng, capitulo=cap)
         rival.nome = rival.titulo = f"Elite {n}"
+        _vestir(rival, vilao, estado, estilo_do_rival(n, cap, False))
         return [rival]
     if porta.tipo == "nemesis" and ctx.nemesis is not None:
         rival = gerar_rival(ctx, n, rng, cap, False)
@@ -445,8 +595,9 @@ def gerar_oponentes(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> lis
         golpe = Tecnica.de_fatia(fatia) if fatia is not None and fatia.combate else None
         fortalecer_nemesis(cam, rival, ctx.nemesis, golpe)
         return [rival]
-    rival = gerar_rival(ctx, n, rng, cap, False)
-    rival.estilo = estilo_do_rival(n, cap, False)
+    vilao = vilao_rival(estado, ctx, rng)
+    rival = gerar_rival(ctx, n, rng, cap, False, vilao=vilao)
+    _vestir(rival, vilao, estado, estilo_do_rival(n, cap, False))
     return [rival]
 
 
@@ -457,7 +608,10 @@ def gerar_rival(
     capitulo: int | None = None,
     chefe: bool | None = None,
     mais_tecnicas: int = 0,
+    vilao: Vilao | None = None,
 ) -> Lutador:
+    """Um rival da luta `n_luta`. Com `vilao`, ele leva primeiro as técnicas do vilão que
+    cabem nas raridades do capítulo, e as assinaturas dele (se for chefe)."""
     cfg = ctx.combate["rivais"]
     if capitulo is None:
         capitulo = (n_luta - 1) // ctx.lutas_por_capitulo + 1
@@ -467,10 +621,24 @@ def gerar_rival(
     mais_tecnicas += cfg.get("chefe_tecnicas_extra", 0) if chefe else 0  # Ascensão
     n_tec = min(len(pool), n_tec + mais_tecnicas)
     vida = vida_do_rival(ctx, n_luta)
-    tecnicas = [Tecnica.de_fatia(f) for f in rng.sample(pool, n_tec)]
-    assinatura = rng.choice(ctx.chefes) if chefe and ctx.chefes else None
-    if assinatura is not None:  # a técnica-assinatura do chefe (e a mecânica que vem com ela)
-        tecnicas.append(Tecnica.de_fatia(assinatura))
+    if vilao is None:
+        fatias = rng.sample(pool, n_tec)
+    else:
+        no_pool = {f.id for f in pool}
+        dele = [ctx.tecnicas[t] for t in vilao.tecnicas if t in no_pool][:n_tec]
+        resto = [f for f in pool if f not in dele]
+        fatias = dele + rng.sample(resto, min(len(resto), n_tec - len(dele)))
+    tecnicas = [Tecnica.de_fatia(f) for f in fatias]
+    # as técnicas-assinatura do chefe (e a mecânica que vem com a primeira que tiver uma)
+    assinaturas = _assinaturas(ctx, vilao, chefe, rng)
+    tecnicas += [Tecnica.de_fatia(a) for a in assinaturas]
+    # a mecânica: a do vilão final (a que só ele tem) vem antes das que já existiam
+    novas = [a for a in assinaturas if a.mecanica and a.mecanica not in MECANICAS_ANTIGAS]
+    assinatura = next(iter(novas), None) or next((a for a in assinaturas if a.mecanica), None)
+    assinatura = assinatura or (assinaturas[0] if assinaturas else None)
+    mecanica = assinatura.mecanica if assinatura is not None else ""
+    if vilao is not None and vilao.papel == "secreto":
+        mecanica = MECANICA_REFLEXO  # ele copia as suas técnicas quando a luta começa
     return Lutador(
         nome=f"Rival {n_luta}" + (" (chefe)" if chefe else ""),
         vida_max=round(vida * (cfg["chefe_multiplicador"] if chefe else 1)),
@@ -478,9 +646,20 @@ def gerar_rival(
         percepcao=rng.randint(*cfg["percepcao"]) + (cfg["chefe_percepcao_extra"] if chefe else 0),
         tecnicas=tecnicas,
         chefe=chefe,
-        mecanica=assinatura.mecanica if assinatura is not None else "",
+        mecanica=mecanica,
         assinatura=assinatura.id if assinatura is not None else "",
     )
+
+
+def _assinaturas(
+    ctx: Contexto, vilao: Vilao | None, chefe: bool, rng: random.Random
+) -> list[Fatia]:
+    """As técnicas-assinatura de um chefe: as do vilão; sem vilão, uma sorteada."""
+    if not chefe:
+        return []
+    if vilao is not None and (vilao.assinaturas or vilao.papel == "secreto"):
+        return [ctx.assinaturas[a] for a in vilao.assinaturas if a in ctx.assinaturas]
+    return [rng.choice(ctx.chefes)] if ctx.chefes else []
 
 
 def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
@@ -499,6 +678,26 @@ def comecar_luta(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Luta:
         rival.percepcao += regra.get("percepcao_rivais", 0)  # Hueco Mundo
         if rival.chefe and regra.get("chefe_mult"):  # Arco do Juízo
             rival.dano_mult = regra["chefe_mult"]
+        if regra.get("dano_rivais_mult"):
+            rival.dano_mult *= regra["dano_rivais_mult"]
+        if regra.get("velocidade_rivais") or regra.get("sutileza_rivais"):
+            rival.aplicar_efeitos(
+                somar(
+                    [
+                        rival.efeitos,
+                        Efeitos(
+                            velocidade=regra.get("velocidade_rivais", 0),
+                            sutileza=regra.get("sutileza_rivais", 0),
+                        ),
+                    ]
+                )
+            )
+        rival.guarda_mult = regra.get("guarda_mult", 1.0)
+        if rival.mecanica == MECANICA_REFLEXO:  # o Reflexo: as suas técnicas, na mão dele
+            rival.tecnicas = [*jogador.tecnicas, *rival.tecnicas]
+    if regra.get("sangria_todos"):  # todos sangram, o capítulo inteiro
+        for lutador in (jogador, *rivais):
+            lutador.sangue, lutador.sangue_turnos = regra["sangria_todos"], ctx.max_turnos
     if regra.get("dano_todos"):
         jogador.dano_extra = regra["dano_todos"]
     if regra.get("dano_por_vitoria"):  # Torre Celestial: sobe um andar a cada vitória
@@ -566,12 +765,17 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
         jogador.vida += ganho
     if jogador.efeitos.carma_por_vitoria:
         carma.ganhar(jogador.efeitos.carma_por_vitoria)  # Rosário de Ossos
+    if estado.regra.get("carma_por_vitoria"):
+        carma.ganhar(estado.regra["carma_por_vitoria"])
+    if luta.rival.vilao == DONO:
+        estado.dono_vencido = True
     if luta.rival.chefe and estado.regra.get("carma_cheio_chefe"):
         carma.ganhar(carma.config.maximo)  # Arco do Juízo
     if luta.rival.chefe and estado.regra.get("despertar_chefe"):
         carma.guardados += 1  # Torneio do Poder: um Despertar guardado
     if not jogador.efeitos.sem_cura:
         fracao = estado.regra.get("cura_entre_lutas", ctx.combate["cura_entre_lutas"])
+        fracao += estado.regra.get("cura_por_vitoria", 0)
         fracao *= jogador.efeitos.cura_mult
         jogador.vida = min(jogador.vida_max, jogador.vida + round(jogador.vida_max * fracao))
     estado.votos.fim_de_luta()
@@ -580,7 +784,7 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
         estado.luta_no_capitulo = 1
         estado.arco = None
         estado.tamanho_capitulo = ctx.lutas_por_capitulo
-        estado.venceu = estado.capitulo > ctx.capitulos
+        estado.venceu = estado.capitulo > ctx.capitulos + estado.alem
         estado.altar_pendente = not estado.venceu  # o Altar abre entre capítulos
     else:
         estado.luta_no_capitulo += 1
@@ -588,8 +792,25 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
     return True
 
 
-def oferecer_treinos(ctx: Contexto, rng: random.Random) -> tuple[Treino, ...]:
-    return oferecer(ctx.treinos, ctx.oferta_treino, rng)
+def oferecer_treinos(
+    ctx: Contexto, rng: random.Random, estado: EstadoRun | None = None
+) -> tuple[Treino, ...]:
+    """Os treinos depois de uma vitória (o Arco pode oferecer um a mais)."""
+    extra = estado.regra.get("treino_extra", 0) if estado is not None else 0
+    return oferecer(ctx.treinos, ctx.oferta_treino + extra, rng)
+
+
+def aceitar_convite(estado: EstadoRun, ctx: Contexto) -> None:
+    """Depois do Dono: em vez de terminar, a run segue para além da Roda (capítulo 4)."""
+    if not ctx.alem or estado.alem or not estado.venceu:
+        raise RuntimeError("o convite para além da Roda não está aberto")
+    estado.alem, estado.venceu = True, False
+    estado.altar_pendente = estado.votos.pode_jurar()
+
+
+def convite_aberto(estado: EstadoRun, ctx: Contexto) -> bool:
+    """Venceu o Dono com o capítulo secreto aberto: a Roda range."""
+    return ctx.alem and estado.venceu and estado.dono_vencido and not estado.alem
 
 
 def tem_caminho(estado: EstadoRun, ctx: Contexto) -> bool:
@@ -611,7 +832,8 @@ def _sortear_portas(
     estado: EstadoRun, ctx: Contexto, rng: random.Random, n_luta: int
 ) -> tuple[Porta, ...]:
     nemesis = ctx.nemesis is not None and not estado.nemesis_vista
-    portas = oferecer_portas(ctx.caminho, rng, n_luta, estado.capitulo, nemesis)
+    mult = estado.regra.get("portas")
+    portas = oferecer_portas(ctx.caminho, rng, n_luta, estado.capitulo, nemesis, mult)
     if any(p.tipo == "nemesis" for p in portas):
         estado.nemesis_vista = True  # ela aparece uma vez por run: recusar também conta
     return portas
@@ -782,7 +1004,7 @@ def jogar_run(
                 estado.altares += 1
                 altar(estado, ctx, rng)
         if estado.arco is None:
-            aplicar_arco(estado, ctx, girar(estado, ctx, "arco").fatias[0])
+            aplicar_arco(estado, ctx, girar_arco(estado, ctx).fatias[0])
         if tem_caminho(estado, ctx):
             portas = oferecer_caminho(estado, ctx, rng)
             porta = portas[escolher_porta_auto(portas, estado.jogador)]
@@ -801,7 +1023,7 @@ def jogar_run(
             break
         _fundir_auto(estado, ctx)  # o Despertar da luta pode completar uma fusão
         if ctx.treinos:
-            oferta = oferecer_treinos(ctx, rng)
+            oferta = oferecer_treinos(ctx, rng, estado)
             aplicar_treino(estado.jogador, escolher_treino_auto(estado.jogador, oferta))
         _tecnica_auto(estado, ctx, rng, altar)
         if vai_ter_reliquia(estado, ctx, rng):

@@ -84,6 +84,8 @@ from karmabound.visual import (
 DURACAO_ACAO = 0.6
 DURACAO_ENTRADA = 1.7  # a entrada do rival (o chefe demora mais)
 DURACAO_ENTRADA_CHEFE = 2.6
+DURACAO_FALA = 1.6  # a entrada de um vilão que fala dura mais, para dar tempo de ler
+DURACAO_FALA_FURIA = 3.2  # a fala da segunda forma fica no alto da tela
 DURACAO_FIM = 1.3  # o rival se desfaz, ou as correntes se fecham
 DURACAO_DESPERTAR = 1.6
 PAUSA_RIVAL = 0.35
@@ -272,6 +274,16 @@ COR_ESTILO = {
 }
 
 
+def cor_do_rival(rival, estilo: str):
+    """A cor da figura: a do vilão (data/viloes.json), ou a do estilo."""
+    if getattr(rival, "cor", ""):
+        try:
+            return hex_cor(rival.cor)
+        except ValueError:
+            pass
+    return COR_ESTILO.get(estilo, COR_ESTILO["espadachim"])
+
+
 @dataclass
 class Texto:
     """Número ou palavra que sobe e some (dano, 'percebeu!', 'surpresa!').
@@ -344,9 +356,12 @@ class LutaScene(IScene):
         self.ao_sair = ao_sair
         self.relogio = 0.0
         self.entrada_ate = DURACAO_ENTRADA_CHEFE if self.luta.rival.chefe else DURACAO_ENTRADA
+        if self.fala(self.luta.rival, "entrada") and len(self.luta.rivais) == 1:
+            self.entrada_ate += DURACAO_FALA  # tempo de ler o que o vilão diz ao chegar
         self.anim_ate = self.entrada_ate  # ninguém age durante a entrada do rival
         self.proxima_rival = self.entrada_ate + PAUSA_RIVAL
         self.fim_inicio: float | None = None
+        self.fala_tela: tuple | None = None  # (fala, início, quem): a fala da segunda forma
         self.manchas: list[tuple[float, float, float, float]] = []  # o sangue no chão, até o fim
         self.primeiro_quadro = True
         self.cursor = 1 if self.j.jogador.tecnicas else 0
@@ -520,9 +535,22 @@ class LutaScene(IScene):
             return "Você"
         return (r.titulo or r.nome) if self.bando else "O rival"
 
+    def vilao(self, r: Lutador):
+        """O vilão por trás do rival (data/viloes.json), ou None."""
+        elenco = getattr(self.j.ctx, "elenco", None)
+        vid = getattr(r, "vilao", "")
+        return elenco.get(vid) if elenco is not None and vid else None
+
+    def fala(self, r: Lutador, momento: str) -> str:
+        """O que o vilão diz: entrada | furia | derrota | vitoria ("" sem vilão)."""
+        v = self.vilao(r)
+        return v.fala(momento) if v is not None else ""
+
     def _titulo(self, r: Lutador) -> str:
         """O nome do rival na tela."""
         estilo = NOME_ESTILO.get(self.estilos[id(r)], "Rival")
+        if self.vilao(r) is not None and not self.bando:
+            return f"Elite · {r.titulo}" if r.elite else r.titulo
         if r.chefe:
             return "Chefe do capítulo"
         if r.nemesis:
@@ -869,6 +897,9 @@ class LutaScene(IScene):
             forma = Texto(cx, cy - 160, "鬼 segunda forma", SANGUE_VIVO, t0, 28)
             self._por(forma)
             self.tremor[id(rival)] = t0 + 0.4
+            furia = self.fala(rival, "furia")
+            if furia:  # o vilão diz o que pensa enquanto muda
+                self.fala_tela = (furia, t0, rival)
             partes.append("o chefe revelou a segunda forma: mais forte, técnicas prontas")
         if acao.quebrou:
             self._quebrar(acao.quebrou, impacto, partes)
@@ -1501,6 +1532,7 @@ class LutaScene(IScene):
         self._modal_voto(r)
         self._cena_despertar(r)
         self._entrada_do_rival(r)
+        self._fala_na_tela(r)
         if self.modo == "fim" and self.relogio >= self.anim_ate:
             self._banner(r)
         transicoes.revelar(self, r, self.relogio)
@@ -1762,6 +1794,12 @@ class LutaScene(IScene):
                 if kanji and len(sub) + len(nome) < 66:
                     sub = f"{sub} · {kanji} {nome}"
             self._texto(r, x_nome + 2, y0 + 62, sub, 16, alpha(TINTA, brilho * 0.6))
+            fala = self.fala(rival, "entrada") if not self.bando else ""
+            if fala and k > 0.3:  # o que ele diz ao chegar, embaixo da pincelada
+                leitura = 255 * min(1.0, (k - 0.3) / 0.15) * some
+                for n, linha in enumerate(quebrar(f"“{fala}”", 70)[:2]):
+                    y = y0 + altura + 22 + n * 22
+                    self._texto(r, 480, y, linha, 18, alpha(TINTA, leitura), "center")
 
     def _tipo_de_porta(self, tipo: str, padrao: str) -> str:
         """O kanji da porta (do caminho.json), com um padrão quando não há caminho."""
@@ -1776,6 +1814,17 @@ class LutaScene(IScene):
         arco = self.j.arco.nome if self.j.arco else ""
         sub = f"Rival {self.j.n_luta} · {arco}"
         elite = any(x.elite for x in self.luta.rivais)
+        v = self.vilao(rival) if not self.bando else None
+        if v is not None:  # um vilão com nome: o kanji, o nome e quem ele é
+            quem = v.titulo or NOME_ESTILO.get(estilo, "Rival")
+            if rival.chefe:
+                sub = f"Capítulo {self.j.capitulo} · {quem}"
+                return v.kanji or KANJI_ESTILO[estilo], v.nome, sub, SANGUE_VIVO, TINTA
+            if elite:
+                sub = f"{quem} · vencer garante uma Relíquia"
+                return v.kanji or KANJI_ELITE, f"Elite · {v.nome}", sub, OURO, OURO
+            kanji = v.kanji or KANJI_ESTILO.get(estilo, "敵")
+            return kanji, v.nome, f"{quem} · {arco}", OURO, TINTA
         if rival.chefe:
             sub = f"Capítulo {self.j.capitulo} · {arco}"
             return KANJI_ESTILO[estilo], "Chefe do capítulo", sub, SANGUE_VIVO, TINTA
@@ -2086,7 +2135,7 @@ class LutaScene(IScene):
                 alpha(OURO, 150 + 60 * pulso),
             )
         if sumico:
-            vfx.dissolver(r, x, y, sumico, COR_ESTILO.get(estilo, COR_ESTILO["espadachim"]))
+            vfx.dissolver(r, x, y, sumico, cor_do_rival(rival, estilo))
         entrada = min(1.0, self.relogio / max(1e-6, self.entrada_ate * 0.45))
         if entrada < 1:  # a entrada: cada um surge da sua mancha de tinta
             raio = (140 * (1 - entrada) + 20) * escala
@@ -2105,7 +2154,7 @@ class LutaScene(IScene):
             x + dx,
             y + dy,
             escala,
-            alpha(COR_ESTILO.get(estilo, COR_ESTILO["espadachim"]), 255 * visivel),
+            alpha(cor_do_rival(rival, estilo), 255 * visivel),
             alpha(TINTA, 230 * visivel),
             guarda=1.0 if rival.bloqueio or rival.revide else 0.0,
             clarao=clarao,
@@ -2188,7 +2237,7 @@ class LutaScene(IScene):
         dx, dy = self._deslocamento(rival)
         escala = self._escala_rival()
         estilo = self.estilos[id(rival)]
-        cor_estilo = COR_ESTILO.get(estilo, COR_ESTILO["espadachim"])
+        cor_estilo = cor_do_rival(rival, estilo)
         if rival.chefe:
             r.draw_ui_circle(x, y - 66, 86, alpha(SANGUE_VIVO, 24))
         elif rival.nemesis:
@@ -2662,6 +2711,18 @@ class LutaScene(IScene):
         for k, linha in enumerate(quebrar(self.registro, largura)[:2]):
             self._texto(r, x, 598 + k * 18, linha, 14, alpha(TINTA, 150), "center")
 
+    def _fala_na_tela(self, r: IRenderer) -> None:
+        """A fala do vilão na segunda forma, no alto da tela, até sumir."""
+        if self.fala_tela is None:
+            return
+        fala, inicio, _quem = self.fala_tela
+        k = (self.relogio - inicio) / DURACAO_FALA_FURIA
+        if not 0 <= k <= 1:
+            return
+        brilho = 255 * min(1.0, k / 0.1, (1 - k) / 0.2)
+        for n, linha in enumerate(quebrar(f"“{fala}”", 70)[:2]):
+            self._texto(r, 480, 92 + n * 22, linha, 18, alpha(SANGUE_VIVO, brilho), "center")
+
     def _banner(self, r: IRenderer) -> None:
         venceu = self.luta.vencedor is self.j.jogador
         r.draw_ui_rect(0, 250, LARGURA, 150, alpha(FUNDO, 220))
@@ -2674,4 +2735,12 @@ class LutaScene(IScene):
         else:
             titulo, cor = ("敗  Você caiu", SANGUE_VIVO)
         self._texto(r, 480, 300, titulo, 44, cor, "center")
-        self._texto(r, 480, 356, "Enter para continuar", 16, alpha(TINTA, 140), "center")
+        quem = self.luta.rival
+        if not venceu:  # quem te matou: o vilão que deu o último golpe, se for um
+            quem = next((x for x in self.luta.rivais if x.vivo), quem)
+        fala = self.fala(quem, "derrota" if venceu else "vitoria") if not self.bando else ""
+        if fala:
+            linha = quebrar(f"“{fala}”", 78)[0]
+            self._texto(r, 480, 340, linha, 16, alpha(TINTA, 200), "center")
+        y_enter = 372 if fala else 356
+        self._texto(r, 480, y_enter, "Enter para continuar", 16, alpha(TINTA, 140), "center")

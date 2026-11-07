@@ -493,6 +493,40 @@ O Enzo pediu tudo da lista de ideias, mais "técnicas desbloqueadas quando tem c
 
 Efeito medido (piloto, Difícil, antes da recalibração): guarda +8 pontos de vitória, mecânicas de chefe −4, afixos −8, aliado ~0 (aparece pouco), fusões e ressonância ~0 no piloto (ele quase não monta combo; para quem joga, valem mais). A Makima é o chefe mais duro (morte 25% na luta 12). Depois de tudo, os modos foram recalibrados: os rivais ganharam vida por luta (Difícil 5,66 → 6,61; Acessível 4,94, Equilibrado 5,70, Brutal 9,28), com a vitória em 45 / 37 / 25 / 9%.
 
+## Leva 5: vilões, chefes fixos, modo História e mais Arcos (2026-11-07)
+
+Pedido do Enzo: chefes fixos especiais como em The Binding of Isaac, um modo história, um modo de cada anime só com os poderes, vilões, linhagens e arcos dele, e mais Arcos. Decidido com ele: chefes sorteados por capítulo com um final fixo e um chefe secreto que se desbloqueia; uma história original e uma campanha curta por anime; o Mundo completo para 10 animes; uns 12 Arcos novos (viraram 22, porque cada anime precisa de 3 para a campanha).
+
+**Os vilões** (`viloes.py`, `data/viloes.json`, 68). Cada anime tem 3 **tenentes** (rivais comuns com nome, a partir do capítulo deles), 2 **chefes** (capítulos 1 e 2, uma assinatura) e 1 **final** (o maior vilão da obra, duas assinaturas). O vilão leva primeiro as técnicas dele que cabem nas raridades do capítulo; o resto é sorteado como antes. Nome próprio, figura, cor e falas (`entrada`, `furia` na segunda forma, `derrota`, `vitoria`); a obra só na origem. Num mesmo run, um vilão não se repete enquanto houver outro.
+
+**Quem aparece onde:**
+
+| Modo | Rivais | Chefes dos capítulos 1 e 2 | Último capítulo |
+|---|---|---|---|
+| Clássico | tenentes das obras abertas (e os originais) | sorteados da lista do capítulo (no 2, também os finais das obras) | **o Dono da Roda**, sempre |
+| Mundo de um anime | tenentes da obra | os chefes da obra | o final da obra |
+| História | os da cena do capítulo | o do capítulo | o do capítulo |
+| Torre sem fim | como o Clássico | como o Clássico | o Dono a cada 5 capítulos |
+| Desfile de chefes | — | as listas, em ordem | o Dono na última luta |
+
+**O Dono da Roda e o capítulo secreto.** O Dono (original) gira a própria Roda (`giro_da_roda`): no 1º turno dele e a cada 3 (2 na segunda forma), sem gastar o turno, sorteia Sangue (+3 de dano para os dois), Ferrugem (suas técnicas +1 de recarga), Dívida (ele cura 6% por turno, a não ser que sangre ou queime) ou Juízo (seus golpes nele +25%). Todo giro te dá +10 de Carma: a Roda dele alimenta o seu Despertar. Vencer o Dono **3 vezes** (`legado.DONOS_PARA_ALEM`) abre o **capítulo secreto**: depois do Dono, a Roda range e você escolhe terminar ou ir além (capítulo 4, Arco Além da Roda). Lá espera **o Reflexo**, que luta com as suas técnicas (`reflexo`: copia as equipadas quando a luta começa). Vencê-lo é o final verdadeiro.
+
+**O modo História** (`historias.py`, `data/historias.json`, `tela_historia.py`). A campanha original, **O Torneio da Roda**, mais uma por anime (10). Cada capítulo fixa o Arco, os rivais e o chefe, e traz cenas: abertura, antes do chefe e depois. As rodas continuam sorteando poderes; o que a História fixa é o caminho. No fim do Torneio da Roda, dois finais à escolha: **Quebrar a Roda** ou **Tomar a Roda**; com o secreto aberto, o convite vem antes (e o capítulo secreto substitui a escolha). As campanhas de anime jogam com as rodas daquele anime. Fases novas da Jornada: `cena`, `convite`, `final`.
+
+**Mecânicas dos finais** (`chefes.json` → `mecanicas`; regras em `combate.py`, constantes no topo): Sonho Eterno (Madara: a lua cai dois turnos depois, só uma proteção a reflete), Escuridão (Barba Negra: sofre +20%, e o Vórtice que fere desfaz sua forma e trava as Malditas), Rei Renascido (Meruem: volta uma vez com 40%, envenenado), Domínio (Sukuna: 4 absolutos por turno seu, e um corte final de 15%), Cinco Minutos (Freeza: em 5 turnos dele o planeta explode, 40% em você, 10% nele), Amanhecer (Muzan: cura até o 6º turno, depois o sol o queima), O Mundo Para (Dio: 2 e depois 3 ações seguidas que ninguém percebe), O Roubo (All For One: toma a sua técnica mais forte, até 2), A Marcha (Eren: dano absoluto crescente a cada turno dele). Com duas assinaturas, a mecânica nova do final vence a antiga (`run.MECANICAS_ANTIGAS`). Os textos das mecânicas antigas ficaram genéricos (Ilusão, Contrato, Carregar, Adaptação), porque agora servem a vários vilões.
+
+**Os Arcos** (22 novos, 34 na roda e 4 só da História). Regras novas: `dano_rivais_mult`, `cura_por_vitoria`, `portas` (multiplica o peso de cada porta), `sangria_todos`, `sutileza_rivais`, `velocidade_rivais`, `guarda_mult`, `carma_por_vitoria`, `treino_extra`, `opcoes_tecnica` (4 técnicas na escolha; tecla 4). O cenário dos Arcos novos vem dos dados (`arena`: marco, céu, chão, partículas, lua), desenhado por `arenas._por_dado` com 14 marcos.
+
+**Conteúdo novo para os Mundos:** técnicas (Dragon Ball, Demon Slayer, JoJo, My Hero Academia, Attack on Titan e Bleach chegaram a 10 ou mais), 8 Linhagens.
+
+**Dois consertos que os vilões revelaram:**
+- O **enfraquecer** não tinha teto. Dois lutadores que se enfraqueciam de volta chegavam a 0 de dano e a luta não acabava. Agora o teto é −3 por luta (`ENFRAQUECER_MAX`): o Golpe sempre causa pelo menos 1.
+- A **luta longa** (`LUTA_LONGA` = 60 ações): daí em diante ninguém cura, e os dois se desgastam cada vez mais. Uma regeneração contra golpes fracos não prende mais ninguém.
+
+**Balanceamento.** Os vilões (que preferem as técnicas fortes da obra) e o Dono deixaram o jogo mais duro: o calibrador baixou a vida dos rivais por luta (Acessível 4,94 → 4,36, Equilibrado 5,7 → 4,99, Difícil 6,61 → 5,71, Brutal 9,28 → 8,14), com a vitória em 44,7 / 34,8 / 25,1 / 10,5%. As técnicas e Linhagens novas ainda não passaram pela régua (`tools/calibrar.py itens`).
+
+**Telas:** a entrada do vilão mostra kanji, nome, quem ele é e a fala; a fala da segunda forma aparece no alto; o banner do fim traz a última fala. Figuras com a cor do vilão. O título tem o modo História com a campanha (← →, 完 nas terminadas). O Grimório ganhou a aba **Vilões** (o bestiário). O Legado guarda as vitórias sobre o Dono, os finais vistos, os vilões vencidos e as campanhas terminadas.
+
 ## Poderes impossíveis de balancear
 
 Preocupação levantada em 2026-11-02: alguns arquétipos (parar o tempo, copiar, golpe que nunca erra, dano igual ao Carma) quebram qualquer luta.

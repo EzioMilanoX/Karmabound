@@ -61,11 +61,12 @@ def test_toda_assinatura_tem_uma_mecanica_com_nome_kanji_e_texto():
     mecanicas = carregar_mecanicas()
     chefes = carregar_chefes()
     assert {c.id for c in chefes} >= {"general_da_roda", "flor_no_espelho"}
-    for c in chefes:
-        assert c.mecanica in mecanicas, c.id
+    for c in chefes:  # a 2ª assinatura de um vilão final pode vir sem mecânica
+        assert c.mecanica in mecanicas or c.mecanica == "", c.id
     for m in mecanicas.values():
         assert m["nome"] and m["kanji"] and m["texto"]
-    assert {c.mecanica for c in chefes} == set(mecanicas)  # nenhuma sobra
+    # nenhuma sobra (o Reflexo ganha a dele do código, sem assinatura)
+    assert {c.mecanica for c in chefes} - {""} == set(mecanicas) - {"reflexo"}
 
 
 def test_o_chefe_da_run_ganha_a_mecanica_da_assinatura():

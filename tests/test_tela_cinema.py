@@ -50,7 +50,9 @@ def anda(cena, segundos, passo=1 / 60):
 def _luta(tipo="rival", papeis=(), seed=11, extras=(), aliado="", nivel=1, chefe=None):
     j = Jornada.nova("dificil", seed=seed, jogo="chefes" if chefe else "classico")
     if chefe:
-        j.ctx = replace(j.ctx, chefes=tuple(c for c in j.ctx.chefes if c.id == chefe))
+        # um chefe anônimo com esta assinatura (sem vilão, que traria as dele)
+        j.ctx = replace(j.ctx, chefes=tuple(c for c in j.ctx.chefes if c.id == chefe), elenco=None)
+    j.ctx = replace(j.ctx, elenco=None)  # rivais anônimos: estes testes olham a tela
     j.estado.aliado, j.estado.aliado_nivel = aliado, nivel
     j.girar_linhagem()
     j.girar_destino()
@@ -256,7 +258,7 @@ def test_chefe_mostra_a_mecanica_e_a_roda_gira_quando_adapta():
     tela, _ = _tela(j, dicas)
     r = j.luta.rival
     assert r.mecanica == "adaptar"
-    assert tela._rotulo_mecanica(r).startswith("輪 A Roda Gira")
+    assert tela._rotulo_mecanica(r).startswith("輪 Adaptação")
     tela.update(None, 1 / 60)
     assert "mecanica" in dicas
     _usar(tela, "golpe_basico")

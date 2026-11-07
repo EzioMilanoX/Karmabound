@@ -5,9 +5,12 @@ from karmabound.combate import escolher_jogador_auto
 from karmabound.jornada import Jornada
 from karmabound.mesa import Giro
 
+IMPASSE = 300  # turnos sem fim (veneno contra regeneração): o piloto passa a só bater
 
-def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
-    """Joga a Jornada inteira com o piloto, como faria uma pessoa apertando os botões."""
+
+def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000, seguir: bool = True) -> list[str]:
+    """Joga a Jornada inteira com o piloto, como faria uma pessoa apertando os botões.
+    `seguir`: aceita o convite para além da Roda."""
     fases = []
     for _ in range(max_passos):
         fases.append(j.fase)
@@ -24,6 +27,9 @@ def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
         elif j.fase == "luta":
             if j.luta.acabou:
                 j.terminar_luta()
+            elif j.luta.vez is j.jogador and j.luta.turnos > IMPASSE:
+                prontas = j.luta.prontas(j.jogador)  # o piloto empacou: uma pessoa só bateria
+                j.luta.resolver(max(prontas, key=lambda t: t.dano * max(1, t.golpes)))
             elif j.luta.vez is j.jogador:
                 j.luta.resolver(escolher_jogador_auto(j.luta))
             else:
@@ -39,6 +45,12 @@ def jogar_ate_o_fim(j: Jornada, max_passos: int = 5000) -> list[str]:
             j.recusar_altar()
         elif j.fase == "reliquia":
             j.girar_reliquia()
+        elif j.fase == "cena":
+            j.avancar_cena()
+        elif j.fase == "convite":
+            j.responder_convite(seguir)
+        elif j.fase == "final":
+            j.escolher_final(0)
         else:
             return fases
     raise AssertionError("a jornada não terminou")

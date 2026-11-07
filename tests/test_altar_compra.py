@@ -6,7 +6,7 @@ from karmabound.jornada import Jornada
 from karmabound.tela_menus import AltarScene
 
 
-def no_altar(seed=3) -> Jornada:
+def no_altar(seed=5) -> Jornada:
     j = Jornada.nova("acessivel", seed=seed)
     j.amostras_altar = 10
     j.girar_linhagem()

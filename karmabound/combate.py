@@ -27,6 +27,7 @@
 
 from __future__ import annotations
 
+import math
 import random
 from dataclasses import dataclass, field, replace
 
@@ -273,6 +274,19 @@ class Lutador:
     marca_ao_ferir: int = 0  # Amaldiçoado: quem ele fere fica com esta Marca (não soma)
     gelo: float = 0.0  # Gélido: chance de congelar quem ele fere
     veloz: int = 0  # Veloz: a cada N turnos dele, age duas vezes seguidas (0 = não)
+    # Leva 5: o vilão por trás do rival (a tela desenha e fala por aqui)
+    vilao: str = ""  # o id em data/viloes.json ("" = rival anônimo)
+    cor: str = ""  # o tom da figura
+    guarda_mult: float = 1.0  # regra do Arco: o limiar da quebra de guarda ×
+    # Leva 5: as mecânicas dos chefes finais (só da luta: o rival nasce a cada luta)
+    roubos: int = 0  # O Roubo: técnicas suas que ele já tomou nesta luta
+    marcha: int = 0  # A Marcha: o dano absoluto que você sofre a cada turno dele
+    renasceu: bool = False  # O Rei Renascido: já voltou da morte nesta luta
+    dominio: int = 0  # O Domínio: turnos dele que ainda faltam
+    contagem: int = 0  # Cinco Minutos: turnos dele até o planeta explodir
+    sonho: int = 0  # O Sonho Eterno: turnos até a lua cair
+    paradas: int = 0  # O Mundo Para: vezes que ele já parou o tempo nesta luta
+    parado: int = 0  # ações dele que ainda acontecem com o tempo parado
     base_vida_max: int = field(init=False)
     base_velocidade: int = field(init=False)
     base_percepcao: int = field(init=False)
@@ -422,6 +436,27 @@ ARMADURA_FRAC = 0.12  # ...de 12% da vida máxima dele
 PRECO = 0.5  # Mugetsu: depois da Lua Sem Fim, o dano dele cai à metade até o fim
 REGENERA = 0.04  # Kokushibo: cura 4% da vida por turno dele, se não sangra nem queima
 CONTRATO_CADA = 4  # Makima: o contrato se renova a cada 4 turnos dela
+# O Giro do Dono (o Dono da Roda): as fatias e o que cada uma faz enquanto vale
+# As mecânicas dos chefes finais (Leva 5; textos em data/chefes.json, `mecanicas`)
+ESCURIDAO_RECEBE = 1.2  # a Escuridão: ele sofre +20% de tudo
+ESCURIDAO_TRAVA = 2  # o Vórtice que fere: suas técnicas Malditas, Divinas e formas em recarga 2
+ROUBOS_MAX = 2  # o Roubo: técnicas suas que ele toma por luta
+MARCHA_MAX = 5  # a Marcha: o dano por turno dele para de crescer aqui
+DOMINIO_TURNOS, DOMINIO_CORTE, DOMINIO_FIM = 3, 4, 0.15  # o Domínio: duração, corte, o último
+CINCO_MINUTOS, CINCO_MINUTOS_DANO, CINCO_MINUTOS_PRECO = 5, 0.4, 0.1  # turnos, você, ele
+RENASCER_VIDA, RENASCER_DANO, RENASCER_VENENO = 0.4, 3, 2  # o Rei Renascido
+SONHO_TURNOS, SONHO_SONO = 2, 2  # o Sonho Eterno: turnos até a lua cair, turnos que você dorme
+AMANHECER_TURNO, AMANHECER_FRAC = 6, 0.05  # o Amanhecer: quando o sol nasce, cura e queimadura
+MUNDO_PARADO = (2, 3)  # O Mundo Para: ações dele na 1ª parada e da 2ª em diante
+SUTILEZA_TEMPO_PARADO = 99
+LUTA_LONGA, LUTA_LONGA_PASSO = 60, 10  # depois de 60 ações: sem cura, e um desgaste que cresce
+ENFRAQUECER_MAX = 3  # o quanto o enfraquecer tira, no total, de cada golpe (o Golpe causa 4)
+GIRO_FATIAS = ("sangue", "ferrugem", "divida", "juizo")
+GIRO_CADA, GIRO_CADA_FURIA = 3, 2  # gira a cada N turnos dele (2 na segunda forma)
+GIRO_CARMA = 10  # cada giro te dá Carma: é o erro dele
+GIRO_SANGUE = 3  # Sangue: os dois causam +3
+GIRO_DIVIDA = 0.06  # Dívida: ele cura 6% da vida máxima por turno (sangrando ou queimando, não)
+GIRO_JUIZO = 1.25  # Juízo: os seus golpes nele causam +25%
 CARGA_MAX = 2  # Leigan: cada turno dele sem disparar carrega o Disparo, até 2 cargas...
 CARGA_BONUS = 0.35  # ...+35% por carga; atordoar, selar, silenciar ou quebrar a guarda descarrega
 # Afixos de elite (os números de cada um estão em data/caminho.json)
@@ -431,9 +466,19 @@ BLINDADO_CADA = 3
 HESITAR = Tecnica("hesitar", "Hesitar", "defesa")
 
 
+def enfraquecer(alvo: Lutador, n: int) -> None:
+    """−N em todo golpe de `alvo` pelo resto da luta, até ENFRAQUECER_MAX no total.
+
+    Sem teto, dois lutadores que se enfraquecem de volta chegam a 0 de dano e a luta
+    não acaba nunca."""
+    if n > 0:
+        alvo.bonus_dano = max(alvo.bonus_dano - n, min(alvo.bonus_dano, -ENFRAQUECER_MAX))
+
+
 def limiar_guarda(r: Lutador) -> int:
     """Quanto o medidor de guarda de `r` aguenta antes de quebrar."""
-    return max(1, round(r.vida_max * (GUARDA_LIMIAR_CHEFE if r.chefe else GUARDA_LIMIAR)))
+    limiar = GUARDA_LIMIAR_CHEFE if r.chefe else GUARDA_LIMIAR
+    return max(1, round(r.vida_max * limiar * r.guarda_mult))
 
 
 @dataclass(frozen=True)
@@ -535,6 +580,7 @@ class Luta:
         self._iludiu = False  # o rival que age agora mentiu no anúncio (Aizen)
         self._verdade: dict[int, Tecnica] = {}  # Aizen: o que ele vai fazer, atrás da isca
         self._mecanica = ""  # a mecânica de chefe que agiu na ação em curso
+        self.roda_dono = ""  # o Giro do Dono: a fatia que vale agora (GIRO_FATIAS)
         for r in rivais:
             r.contrato = r.mecanica == "contrato"  # Makima chega com o contrato firmado
         # Cada rival já chega anunciando: se ele começa, é a emboscada; se não, a resposta.
@@ -900,8 +946,8 @@ class Luta:
             self._antes_da_liberacao = {}
 
     def _curar(self, lutador: Lutador, quanto: int) -> int:
-        if lutador.efeitos.sem_cura or not lutador.vivo:
-            return 0
+        if lutador.efeitos.sem_cura or not lutador.vivo or self.turnos >= LUTA_LONGA:
+            return 0  # numa luta longa demais, ninguém fecha as feridas
         antes = lutador.vida
         cura = quanto * lutador.efeitos.cura_mult
         if lutador.sangue_turnos:
@@ -982,6 +1028,8 @@ class Luta:
 
     def _inicio_do_turno(self, ator: Lutador) -> None:
         """O que acontece a quem age antes da ação: curas e preços por turno."""
+        if self.turnos >= LUTA_LONGA:  # a luta que não acaba: os dois se gastam, cada vez mais
+            ator.sofrer(1 + (self.turnos - LUTA_LONGA) // LUTA_LONGA_PASSO)
         if ator.efeitos.regen and ator.vida < ator.vida_max * ator.efeitos.regen_ate:
             self._curar(ator, ator.efeitos.regen)  # Carne que Volta
         if ator.regen_luta:
@@ -1062,6 +1110,119 @@ class Luta:
                 self._mecanica = "regenera"
         elif r.mecanica == "contrato" and n % CONTRATO_CADA == 0:
             r.contrato = True
+        elif r.mecanica == "giro_da_roda":
+            self._giro_do_dono(r, n)
+        elif r.mecanica == "dominio_sem_barreira" and r.dominio:
+            r.dominio -= 1
+            if not r.dominio:  # o domínio fecha com o último corte
+                j.sofrer(round(j.vida_max * DOMINIO_FIM))
+                self._mecanica = "dominio_sem_barreira"
+        elif r.mecanica == "cinco_minutos" and r.contagem:
+            r.contagem -= 1
+            if not r.contagem:  # o planeta explode: você e ele pagam
+                j.sofrer(round(j.vida_max * CINCO_MINUTOS_DANO))
+                j.clones, j.invocacoes = 0, []
+                r.sofrer(round(r.vida_max * CINCO_MINUTOS_PRECO))
+                self._mecanica = "cinco_minutos"
+        elif r.mecanica == "amanhecer":
+            if n < AMANHECER_TURNO:  # a noite: ele se refaz, a não ser que sangre ou envenene
+                if not (r.sangue_turnos or r.veneno):
+                    self._curar(r, math.ceil(r.vida_max * AMANHECER_FRAC))
+            else:  # o sol nasce, e queima
+                r.sofrer(math.ceil(r.vida_max * AMANHECER_FRAC))
+                self._mecanica = "amanhecer"
+        elif r.mecanica == "sonho_eterno" and r.sonho:
+            r.sonho -= 1
+            if not r.sonho:  # a lua cai: só uma proteção a reflete
+                if j.bloqueio:
+                    j.bloqueio = 0
+                elif j.escudos:
+                    j.escudos -= 1
+                elif j.espelho:
+                    j.espelho -= 1
+                elif j.clones:
+                    j.clones = 0
+                else:
+                    j.pular += SONHO_SONO
+                self._mecanica = "sonho_eterno"
+
+    def _assinaturas(self, r: Lutador) -> set[str]:
+        """As técnicas de chefe de `r` (as que trazem uma mecânica)."""
+        return {t.id for t in r.tecnicas if t.id == r.assinatura} | {r.assinatura}
+
+    def _dominio_corta(self, jogador: Lutador) -> None:
+        """O Domínio: no começo de cada turno seu, o corte que nada segura."""
+        for r in self.rivais:
+            if r.vivo and r.mecanica == "dominio_sem_barreira" and r.dominio:
+                jogador.sofrer(DOMINIO_CORTE)
+                self._mecanica = "dominio_sem_barreira"
+
+    def _mecanicas_finais(
+        self, ator: Lutador, alvo: Lutador, t: Tecnica, feriu: int, encadeada: bool
+    ) -> None:
+        """O que as mecânicas dos chefes finais fazem depois de uma ação."""
+        j = self.jogador
+        assinatura = t.id == ator.assinatura
+        if ator.mecanica == "escuridao" and assinatura and feriu > 0 and alvo is j:
+            j.modo, j.modo_id, j.modo_turnos = None, "", 0  # a forma se desfaz, sem preço
+            for x in j.tecnicas:
+                if x.raridade in ("maldito", "divino") or x.tipo == "modo":
+                    j.recargas[x.id] = max(j.recargas.get(x.id, 0), ESCURIDAO_TRAVA)
+            self._mecanica = "escuridao"
+        elif ator.mecanica == "roubar" and assinatura and feriu > 0 and alvo is j:
+            if ator.roubos < ROUBOS_MAX:
+                livres = [x for x in j.tecnicas if j.recargas.get(x.id, 0) < 99]
+                if livres:
+                    tomada = max(
+                        livres, key=lambda x: (x.dano * max(1, x.golpes), -j.recargas.get(x.id, 0))
+                    )
+                    j.recargas[tomada.id] = 99  # volta para você quando a luta acabar
+                    ator.tecnicas.append(tomada)
+                    ator.recargas[tomada.id] = 0
+                    ator.roubos += 1
+                    self._mecanica = "roubar"
+        elif ator.mecanica == "marcha" and not encadeada and t is not HESITAR:
+            if assinatura:
+                ator.marcha = max(ator.marcha, 1)
+            elif ator.marcha:
+                ator.marcha = min(MARCHA_MAX, ator.marcha + 1)
+                j.sofrer(ator.marcha)  # os colossos não param: nada segura o passo deles
+                self._mecanica = "marcha"
+        elif ator.mecanica == "dominio_sem_barreira" and assinatura:
+            ator.dominio = DOMINIO_TURNOS
+            j.clones, j.invocacoes = 0, []
+            self._mecanica = "dominio_sem_barreira"
+        elif ator.mecanica == "mundo_parado" and assinatura:
+            ator.paradas += 1
+            ator.parado = MUNDO_PARADO[min(ator.paradas, len(MUNDO_PARADO)) - 1]
+            ator.extras += ator.parado - 2  # a técnica já dá duas ações seguidas
+            self._mecanica = "mundo_parado"
+        elif ator.mecanica == "mundo_parado" and ator.parado:
+            ator.parado -= 1
+        elif ator.mecanica == "cinco_minutos" and assinatura and not ator.contagem:
+            ator.contagem = CINCO_MINUTOS
+            self._mecanica = "cinco_minutos"
+        for r in self.rivais:  # o Rei Renascido: a primeira morte não conta
+            if r.mecanica == "rei_renascido" and not r.vivo and not r.renasceu:
+                r.renasceu = r.segunda_forma = True
+                r.vida = math.ceil(r.vida_max * RENASCER_VIDA)
+                r.bonus_dano += RENASCER_DANO
+                r.chama = max(r.chama, RENASCER_VENENO)  # o veneno da rosa vem junto
+                self._mecanica = "rei_renascido"
+
+    def _giro_do_dono(self, r: Lutador, n: int) -> None:
+        """O Dono gira a Roda no 1º turno dele e a cada 3 (a cada 2 na segunda forma), sem
+        gastar o turno: a fatia vale até o próximo giro. Todo giro te dá Carma (o erro dele).
+        Na Dívida, ele se cura a cada turno, a não ser que sangre ou queime."""
+        cada = GIRO_CADA_FURIA if r.segunda_forma else GIRO_CADA
+        if n == 1 or (n - 1) % cada == 0:
+            opcoes = [f for f in GIRO_FATIAS if f != self.roda_dono]
+            self.roda_dono = self.rng.choice(opcoes)
+            if self.jogador.carma is not None:
+                self.jogador.carma.ganhar(GIRO_CARMA)
+            self._mecanica = "giro_da_roda"
+        if self.roda_dono == "divida" and not (r.sangue_turnos or r.chama):
+            self._curar(r, round(r.vida_max * GIRO_DIVIDA))
 
     def _aliado_age(self) -> tuple:
         """O seu companheiro age (no começo do seu turno). Devolve (id, efeito, valor)."""
@@ -1097,7 +1258,8 @@ class Luta:
             return t.recarga
         menos = ator.efeitos.recarga_menos + ator.recarga_menos_luta
         selo = RECARGA_AMALDICOADA if ator.marca else 0  # a maldição sela
-        return max(1, t.recarga - menos) + selo
+        ferrugem = 1 if self.roda_dono == "ferrugem" and ator is self.jogador else 0
+        return max(1, t.recarga - menos) + selo + ferrugem
 
     def resolver(self, t: Tecnica, sacrificio: Tecnica | None = None) -> Acao:
         """Usa `t`. `sacrificio`: a técnica que um Contrato destrói (padrão: a mais fraca)."""
@@ -1108,6 +1270,7 @@ class Luta:
         respingos: list[tuple[str, int]] = []
         protegido = curado = ""
         ator, alvo = self.vez, self.outro(self.vez)
+        vida_antes = alvo.vida
         if t not in self.prontas(ator):
             raise ValueError(f"{ator.nome} não pode usar {t.nome} agora")
         ator.cego = False  # a cegueira dura até o próximo turno de quem a sofreu
@@ -1129,6 +1292,7 @@ class Luta:
         self._inicio_do_turno(ator)
         aliado = ()
         if ator is self.jogador and not encadeada:
+            self._dominio_corta(ator)
             aliado = self._aliado_age()  # o companheiro age no começo do seu turno
             if not alvo.vivo and self.vivos:  # ele derrubou o alvo: a mira passa adiante
                 self._reajustar_alvo()
@@ -1142,8 +1306,12 @@ class Luta:
             else:  # a balança vira contra quem a ergueu
                 self._mecanica = "balanca_virou"
                 ator.pular += efetiva.atordoar
-                ator.bonus_dano -= efetiva.enfraquecer
+                enfraquecer(ator, efetiva.enfraquecer)
                 efetiva = replace(efetiva, atordoar=0, enfraquecer=0)
+        if ator.mecanica == "sonho_eterno" and efetiva.id in self._assinaturas(ator):
+            ator.sonho, ator.pular = SONHO_TURNOS, ator.pular + 1  # canaliza: a lua vem
+            efetiva = replace(efetiva, atordoar=0)
+            self._mecanica = "sonho_eterno"
         if efetiva.vinculo and alvo.vivo:  # o ritual vem antes do preço: a dor já é dividida
             ator.vinculo, ator.elo = max(ator.vinculo, efetiva.vinculo), alvo
         if efetiva.custo_vida:
@@ -1228,6 +1396,7 @@ class Luta:
             perdida = 1 - max(0, ator.vida) / ator.vida_max
             fervor = round(ator.efeitos.furia * perdida)  # Sangue Fervente
             base += ator.bonus_dano + ator.efeitos.bonus_dano + fervor + ator.dano_extra
+            base += GIRO_SANGUE if self.roda_dono == "sangue" else 0  # o Giro do Dono
             base += ator.dano_run
             modo = ator.modo
             if modo is not None:
@@ -1292,6 +1461,8 @@ class Luta:
             emboscada = surpresa and ator.efeitos.primeiro_sangue
             sangue_frio = surpresa and alvo.efeitos.sangue_frio
             sutileza = efetiva.sutileza + ator.efeitos.sutileza
+            if ator.parado:  # O Mundo Para: ninguém sente o que vem no tempo parado
+                sutileza = SUTILEZA_TEMPO_PARADO
             if modo is not None:
                 sutileza += modo.sutileza
             reagiu = (
@@ -1332,6 +1503,10 @@ class Luta:
                     recebido *= alvo.modo.recebido_mult
                 if alvo.quebrado:
                     recebido *= GUARDA_QUEBRADA  # a guarda quebrada (a postura ainda segura)
+                if self.roda_dono == "juizo" and alvo.mecanica == "giro_da_roda":
+                    recebido *= GIRO_JUIZO
+                if alvo.mecanica == "escuridao":  # a escuridão puxa tudo, até o golpe
+                    recebido *= ESCURIDAO_RECEBE
                 dano = round(dano * recebido)
                 if not absoluto:
                     if alvo.espelho:  # o golpe volta a quem golpeou
@@ -1454,7 +1629,7 @@ class Luta:
             alvo.pular += efetiva.atordoar  # Lua Ilusória
             atordoou = True
         if alvo.vivo:
-            alvo.bonus_dano -= efetiva.enfraquecer
+            enfraquecer(alvo, efetiva.enfraquecer)
             alvo.cegueira += efetiva.cegar
             alvo.exposto += efetiva.expor
             alvo.silencio += efetiva.silenciar
@@ -1534,6 +1709,7 @@ class Luta:
         if ator.mecanica == "carregar" and not encadeada and t is not HESITAR:
             disparou = t.id == ator.assinatura  # disparar descarrega; esperar carrega
             ator.carga = 0 if disparou else min(CARGA_MAX, ator.carga + 1)
+        self._mecanicas_finais(ator, alvo, t, vida_antes - alvo.vida, encadeada)
         if ator.mecanica == "preco" and t.id == ator.assinatura and not ator.preco:
             ator.preco = True  # Mugetsu: o poder inteiro num golpe, e o que sobra é metade
             ator.dano_mult *= PRECO

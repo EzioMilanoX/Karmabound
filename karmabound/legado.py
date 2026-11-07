@@ -29,6 +29,7 @@ from karmabound.rodas import Roda, anime_de
 INICIAIS = 7  # animes abertos desde a primeira run
 CUSTO_ANIME = 6  # Memória por anime novo
 MAESTRIA = (20, 60)  # usos para ★ e ★★
+DONOS_PARA_ALEM = 3  # vitórias sobre o Dono da Roda que abrem o capítulo secreto
 MEMORIA_LUTA, MEMORIA_CAPITULO, MEMORIA_VITORIA, MEMORIA_VINGANCA = 1, 2, 5, 3
 
 
@@ -57,6 +58,8 @@ class Fechamento:
     nemesis: str = ""  # "nasceu" | "cresceu" | "vingada" | ""
     nemesis_nome: str = ""
     ascensao_aberta: int = 0  # a Ascensão que esta vitória abriu (0: nenhuma)
+    alem_aberto: bool = False  # esta vitória sobre o Dono abriu o capítulo secreto
+    final_novo: str = ""  # um final que você ainda não tinha visto (quebrar | tomar | verdadeiro)
 
 
 class Legado:
@@ -69,6 +72,11 @@ class Legado:
         self.nemesis: dict | None = None
         self.vingancas = 0
         self.ascensoes: dict[str, int] = {}  # dificuldade -> a maior Ascensão aberta
+        # Leva 5: o Dono da Roda, os finais e o bestiário
+        self.donos = 0  # vezes que venceu o Dono da Roda (DONOS_PARA_ALEM abre o secreto)
+        self.finais: list[str] = []  # os finais já vistos
+        self.vencidos: Counter = Counter()  # vilão -> vezes que você o venceu
+        self.campanhas: list[str] = []  # as campanhas do modo História já terminadas
         if arquivo is not None and arquivo.exists():
             try:
                 d = json.loads(arquivo.read_text(encoding="utf-8"))
@@ -77,6 +85,10 @@ class Legado:
                 self.nemesis = d.get("nemesis")
                 self.vingancas = int(d.get("vingancas", 0))
                 self.ascensoes = {k: int(v) for k, v in d.get("ascensoes", {}).items()}
+                self.donos = int(d.get("donos", 0))
+                self.finais = list(d.get("finais", []))
+                self.vencidos = Counter(d.get("vencidos", {}))
+                self.campanhas = list(d.get("campanhas", []))
             except (ValueError, KeyError, TypeError, AttributeError):
                 self.memoria, self.usos, self.nemesis = memoria_inicial, Counter(), None
                 self.ascensoes = {}
@@ -95,6 +107,10 @@ class Legado:
             "nemesis": self.nemesis,
             "vingancas": self.vingancas,
             "ascensoes": self.ascensoes,
+            "donos": self.donos,
+            "finais": self.finais,
+            "vencidos": dict(self.vencidos),
+            "campanhas": self.campanhas,
         }
         self.arquivo.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
 
@@ -123,6 +139,13 @@ class Legado:
         """A maior Ascensão aberta nesta dificuldade (0: só a run normal)."""
         return self.ascensoes.get(dificuldade, 0)
 
+    # ------------------------------------------------------------- além da Roda
+
+    @property
+    def alem_aberto(self) -> bool:
+        """O capítulo secreto: abre depois de vencer o Dono da Roda DONOS_PARA_ALEM vezes."""
+        return self.donos >= DONOS_PARA_ALEM
+
     # ------------------------------------------------------------- fim de run
 
     def fechar_run(
@@ -137,11 +160,27 @@ class Legado:
         nomes: dict[str, str] | None = None,
         ascensao: int = 0,
         dificuldade: str = "",
+        dono: bool = False,
+        final: str = "",
+        vencidos: list[str] | None = None,
+        campanha: str = "",
     ) -> Fechamento:
         """Registra a run que acabou. `capitulos`: fechados; `usos`: técnica → usos na run;
         `assassino`: quem te matou ({nome, estilo, tecnica, nemesis}), se perdeu.
-        `ascensao`, `dificuldade`: vencer na Ascensão N abre a N+1 nessa dificuldade."""
+        `ascensao`, `dificuldade`: vencer na Ascensão N abre a N+1 nessa dificuldade.
+        `dono`: venceu o Dono da Roda; `final`: o final que viu; `vencidos`: os vilões que
+        caíram; `campanha`: a campanha do modo História que terminou."""
         f = Fechamento()
+        if dono:
+            antes = self.alem_aberto
+            self.donos += 1
+            f.alem_aberto = self.alem_aberto and not antes
+        if final and final not in self.finais:
+            self.finais.append(final)
+            f.final_novo = final
+        self.vencidos.update(vencidos or [])
+        if campanha and campanha not in self.campanhas:
+            self.campanhas.append(campanha)
         if venceu and dificuldade:
             nova = min(ascensao + 1, maximo_ascensao())
             if nova > self.ascensao_maxima(dificuldade):

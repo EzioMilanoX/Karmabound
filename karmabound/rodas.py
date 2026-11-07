@@ -38,6 +38,7 @@ class Fatia:
     despertar: dict | None = field(default=None, hash=False, compare=False)  # Roda do Despertar
     inicial: str = ""  # Linhagem: técnica (da roda de Técnicas) que já começa num espaço
     mecanica: str = ""  # técnica-assinatura de chefe: a mecânica que o chefe ganha com ela
+    arena: dict | None = field(default=None, hash=False, compare=False)  # Arcos: o cenário
 
 
 @dataclass(frozen=True)

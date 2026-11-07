@@ -1,0 +1,1526 @@
+{
+  "_nota": "Os vilões (karmabound/viloes.py): tenentes (rivais com nome), chefes de capítulo, o final de cada obra, o Dono da Roda e o Reflexo. Nome próprio; a obra só na origem.",
+  "viloes": [
+    {
+      "id": "menino_da_corda",
+      "nome": "O Menino da Corda",
+      "titulo": "o que fugiu da forca",
+      "origem": "",
+      "kanji": "縄",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "ninja",
+      "cor": "#5b5346",
+      "assinaturas": [],
+      "tecnicas": [
+        "fio_de_aco",
+        "substituicao",
+        "bomba_de_fumaca",
+        "rasteira"
+      ],
+      "falas": {
+        "entrada": "A corda ainda me procura. Se eu girar a Roda, ela esquece o meu pescoço.",
+        "derrota": "Ela me achou. Ela sempre acha."
+      }
+    },
+    {
+      "id": "carpideira_de_ferro",
+      "nome": "A Carpideira de Ferro",
+      "titulo": "a que fugiu do dia de enterrar os seus",
+      "origem": "",
+      "kanji": "弔",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#4a4f57",
+      "assinaturas": [],
+      "tecnicas": [
+        "canhao_do_braco",
+        "facas_de_arremesso",
+        "corpo_de_ferro",
+        "grito_de_guerra"
+      ],
+      "falas": {
+        "entrada": "Fugi do dia de enterrar os meus. Morreram sem mim. Vou girar e voltar a tempo.",
+        "derrota": "Pelo menos agora alguém vai cavar por mim."
+      }
+    },
+    {
+      "id": "jogador_de_ossos",
+      "nome": "O Jogador de Ossos",
+      "titulo": "o que apostou o próprio nome",
+      "origem": "",
+      "kanji": "博",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "ninja",
+      "cor": "#6b5a2e",
+      "assinaturas": [],
+      "tecnicas": [
+        "chiclete_elastico",
+        "bomba_relogio",
+        "disco_cortante",
+        "luz_cegante"
+      ],
+      "falas": {
+        "entrada": "Perdi meu nome numa mesa e fugi sem pagar. Girando, eu ganho ele de volta.",
+        "derrota": "Perdi de novo. Pelo menos dessa vez eu fico para pagar."
+      }
+    },
+    {
+      "id": "guarda_sem_rosto",
+      "nome": "A Guarda Sem Rosto",
+      "titulo": "a que perdeu a final",
+      "origem": "",
+      "kanji": "面",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "espadachim",
+      "cor": "#3c3a44",
+      "assinaturas": [],
+      "tecnicas": [
+        "corte_rapido",
+        "ultimo_corte",
+        "olhos_do_futuro",
+        "calmaria"
+      ],
+      "falas": {
+        "entrada": "Já estive onde você está. A Roda ficou com o meu rosto. Quero ele de volta.",
+        "derrota": "Vai. Pergunta a ele o que ele pagou. Eu nunca tive coragem."
+      }
+    },
+    {
+      "id": "leao_acorrentado",
+      "nome": "O Leão Acorrentado",
+      "titulo": "o campeão de noventa e nove lutas",
+      "origem": "",
+      "kanji": "鎖",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "tita",
+      "cor": "#6b3b24",
+      "assinaturas": [
+        "punho_da_centesima"
+      ],
+      "tecnicas": [
+        "punho_que_cresce",
+        "martelo_de_cinco_toneladas",
+        "grito_de_guerra",
+        "pele_de_diamante"
+      ],
+      "falas": {
+        "entrada": "A Roda diz que eu morro na centésima luta. Vou girar e morrer velho. Você é a cem?",
+        "furia": "A corrente arrebentou! Agora a Roda que me segure, se puder!",
+        "derrota": "Cem. Ela acertou. Ela sempre acerta.",
+        "vitoria": "Cento e uma. A Roda errou. Pela primeira vez, ela errou."
+      }
+    },
+    {
+      "id": "banqueira_de_destinos",
+      "nome": "A Banqueira de Destinos",
+      "titulo": "a que empresta sorte a juros",
+      "origem": "",
+      "kanji": "貸",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#2f4a3f",
+      "assinaturas": [
+        "juros_de_sangue"
+      ],
+      "tecnicas": [
+        "gaiola_de_fios",
+        "voz_amaldicoada",
+        "possessao",
+        "calma_absoluta"
+      ],
+      "falas": {
+        "entrada": "Nasci para morrer pobre. Hoje todos me devem. Girando, até a Roda vai me dever.",
+        "furia": "Acabou o prazo! Cobro tudo agora, com juros de sangue!",
+        "derrota": "Conta encerrada. Engraçado: nunca anotei a minha.",
+        "vitoria": "Quitado. O seu azar entra no meu livro como lucro."
+      }
+    },
+    {
+      "id": "dono_da_roda",
+      "nome": "O Dono da Roda",
+      "titulo": "o primeiro vencedor",
+      "origem": "",
+      "kanji": "主",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#5a1e1e",
+      "assinaturas": [
+        "dente_da_roda",
+        "destino_escrito"
+      ],
+      "tecnicas": [
+        "pressao_gravitacional",
+        "caixao_negro",
+        "apagar_o_tempo",
+        "vontade_do_rei"
+      ],
+      "falas": {
+        "entrada": "Você chegou ao eixo. Quase todos chegam. Nenhum passa.",
+        "furia": "A Roda gira por mim! Ela não sabe fazer outra coisa!",
+        "derrota": "Leve. Eu tinha esquecido como é ser leve.",
+        "vitoria": "Mais um fio cortado. A Roda agradece, e continua."
+      }
+    },
+    {
+      "id": "reflexo",
+      "nome": "O Reflexo",
+      "titulo": "o que aceitou o destino",
+      "origem": "",
+      "kanji": "映",
+      "papel": "secreto",
+      "capitulo": 4,
+      "estilo": "monge",
+      "cor": "#a9a4b8",
+      "assinaturas": [],
+      "tecnicas": [],
+      "falas": {
+        "entrada": "Eu sou o que você seria. Tenho o seu nome. Vem buscar.",
+        "furia": "Tudo o que você aprendeu, eu também sei. Fugir não ensina nada novo.",
+        "derrota": "Toma. Sempre foi seu.",
+        "vitoria": "Fica. Aceitar dói menos. Eu prometo."
+      }
+    },
+    {
+      "id": "espiao_de_oculos",
+      "nome": "O Espião de Óculos",
+      "titulo": "o médico de duas faces",
+      "origem": "Kabuto Yakushi · Naruto",
+      "kanji": "薬",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "ninja",
+      "cor": "#4b5a6b",
+      "tecnicas": [
+        "mao_curadora",
+        "agulhas_de_veneno",
+        "substituicao"
+      ],
+      "falas": {
+        "entrada": "Calma. Eu só vou medir o seu chakra antes de te abrir.",
+        "derrota": "Interessante... Então é isso que a Roda faz com um corpo."
+      }
+    },
+    {
+      "id": "anjo_de_papel",
+      "nome": "O Anjo de Papel",
+      "titulo": "a que reza pela chuva",
+      "origem": "Konan · Naruto",
+      "kanji": "紙",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "ninja",
+      "cor": "#4e3f6e",
+      "tecnicas": [
+        "selo_explosivo",
+        "substituicao",
+        "bomba_de_fumaca"
+      ],
+      "falas": {
+        "entrada": "Nesta chuva, cada gota responde ao meu deus. Você não é bem-vindo.",
+        "derrota": "O papel se desfaz... mas a flor de papel ainda vai florescer."
+      }
+    },
+    {
+      "id": "mascarado_da_espiral",
+      "nome": "O Mascarado da Espiral",
+      "titulo": "o ninguém que quer ser ninguém",
+      "origem": "Obito Uchiha (Tobi) · Naruto",
+      "kanji": "面",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "ninja",
+      "cor": "#7a4a1e",
+      "tecnicas": [
+        "bola_de_fogo",
+        "substituicao",
+        "grilhao",
+        "intencao_assassina"
+      ],
+      "falas": {
+        "entrada": "Eu não sou ninguém. E ninguém vai acordar deste sonho.",
+        "derrota": "Este mundo... era um inferno de qualquer jeito."
+      }
+    },
+    {
+      "id": "sannin_das_serpentes",
+      "nome": "O Sannin das Serpentes",
+      "titulo": "o que troca de pele",
+      "origem": "Orochimaru · Naruto",
+      "kanji": "蛇",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "ninja",
+      "cor": "#5a3d6b",
+      "assinaturas": [
+        "serpentes_da_manga"
+      ],
+      "tecnicas": [
+        "marca_da_maldicao",
+        "intencao_assassina",
+        "substituicao"
+      ],
+      "falas": {
+        "entrada": "Que corpo bonito, amaldiçoado pela Roda. Eu quero ele para mim.",
+        "furia": "Esta pele já não me serve. Vou trocá-la diante de você.",
+        "derrota": "Hehe... Uma cobra não morre. Ela só troca de casca.",
+        "vitoria": "Agora o seu corpo é meu. Vamos ver o que a Roda guardou aí dentro."
+      }
+    },
+    {
+      "id": "deus_da_dor",
+      "nome": "O Deus da Dor",
+      "titulo": "o que ensina o mundo a sofrer",
+      "origem": "Pain (Nagato) · Naruto",
+      "kanji": "痛",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "monge",
+      "cor": "#7a3b1e",
+      "assinaturas": [
+        "estrela_que_prende"
+      ],
+      "tecnicas": [
+        "julgamento",
+        "selo_explosivo",
+        "mao_curadora"
+      ],
+      "falas": {
+        "entrada": "Sinta a dor. Pense na dor. Aceite a dor. Conheça a dor.",
+        "furia": "Este mundo vai conhecer a dor, e vai começar por você.",
+        "derrota": "Então você também carrega a sua dor... Talvez a resposta seja outra.",
+        "vitoria": "Agora você sabe. A dor é a única coisa que une as pessoas."
+      }
+    },
+    {
+      "id": "fantasma_uchiha",
+      "nome": "O Fantasma Uchiha",
+      "titulo": "o que sonha o sonho eterno",
+      "origem": "Madara Uchiha · Naruto",
+      "kanji": "幽",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#6b1f1f",
+      "assinaturas": [
+        "guerreiro_esqueleto",
+        "lua_do_sonho_eterno"
+      ],
+      "tecnicas": [
+        "bola_de_fogo",
+        "lua_ilusoria",
+        "mil_clones"
+      ],
+      "falas": {
+        "entrada": "Dance comigo, forasteiro. Faz tempo que ninguém me diverte.",
+        "furia": "Acorde quem puder. Vou cobrir este mundo com um sonho sem fim.",
+        "derrota": "A realidade venceu de novo... No fim, eu também só estava sozinho.",
+        "vitoria": "Durma. No sonho, a Roda nunca te amaldiçoou."
+      }
+    },
+    {
+      "id": "carpinteiro_de_quatro_laminas",
+      "nome": "O Carpinteiro de Quatro Lâminas",
+      "titulo": "o nariz quadrado da Justiça",
+      "origem": "Kaku · One Piece",
+      "kanji": "匠",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "espadachim",
+      "cor": "#8a6a3a",
+      "tecnicas": [
+        "corte_em_cruz",
+        "passo_relampago",
+        "corpo_de_ferro"
+      ],
+      "falas": {
+        "entrada": "Nada pessoal. A Justiça manda, e eu corto o que ela manda.",
+        "derrota": "Hm... E eu achando que os carpinteiros eram os fortes da ilha."
+      }
+    },
+    {
+      "id": "carcereiro_da_chuva",
+      "nome": "O Carcereiro da Chuva",
+      "titulo": "a lâmina que troca de lado",
+      "origem": "Shiryu da Chuva · One Piece",
+      "kanji": "雨",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "espadachim",
+      "cor": "#2e3b4e",
+      "tecnicas": [
+        "ultimo_corte",
+        "garra_do_tigre",
+        "corte_rapido"
+      ],
+      "falas": {
+        "entrada": "Aqui embaixo, quem decide quem vive sou eu. E eu estou com tédio.",
+        "derrota": "Heh. Esta prisão nunca soube me prender, e você também não."
+      }
+    },
+    {
+      "id": "atirador_do_destino",
+      "nome": "O Atirador do Destino",
+      "titulo": "o que mira de outra ilha",
+      "origem": "Van Augur · One Piece",
+      "kanji": "銃",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "ninja",
+      "cor": "#3a2a4a",
+      "tecnicas": [
+        "disparo_certeiro",
+        "mira_do_falcao",
+        "passo_relampago"
+      ],
+      "falas": {
+        "entrada": "O destino me trouxe até você. E o destino tem a mira perfeita.",
+        "derrota": "Que estranho... O destino errou o alvo."
+      }
+    },
+    {
+      "id": "leopardo_do_governo",
+      "nome": "O Leopardo do Governo",
+      "titulo": "a Justiça das Trevas",
+      "origem": "Rob Lucci · One Piece",
+      "kanji": "豹",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#5a4a2a",
+      "assinaturas": [
+        "seis_reis"
+      ],
+      "tecnicas": [
+        "passo_relampago",
+        "corpo_de_ferro",
+        "tiro_de_dedo"
+      ],
+      "falas": {
+        "entrada": "Matar em nome da paz é a Justiça das Trevas. Fique quieto e morra.",
+        "furia": "Chega de forma humana. Agora você vai ver os dentes do leopardo.",
+        "derrota": "Impossível... A força do governo, vencida por um amaldiçoado.",
+        "vitoria": "Mais um nome riscado. A Justiça não guarda lembranças."
+      }
+    },
+    {
+      "id": "diretor_do_inferno",
+      "nome": "O Diretor do Inferno",
+      "titulo": "o carcereiro que é veneno",
+      "origem": "Magellan · One Piece",
+      "kanji": "獄",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "oni",
+      "cor": "#4a2e5a",
+      "assinaturas": [
+        "demonio_de_veneno"
+      ],
+      "tecnicas": [
+        "nevoa_venenosa",
+        "bola_de_veneno",
+        "corpo_de_ferro"
+      ],
+      "falas": {
+        "entrada": "Ninguém escapa desta prisão. Eu sou a prisão.",
+        "furia": "Então vou te dar o julgamento do inferno inteiro de uma vez.",
+        "derrota": "Um preso passou pelo diretor... Este inferno perdeu o fundo.",
+        "vitoria": "Mais um para o nível mais fundo. Lá, o veneno é a única companhia."
+      }
+    },
+    {
+      "id": "abismo_sorridente",
+      "nome": "O Abismo Sorridente",
+      "titulo": "o que nunca dorme",
+      "origem": "Barba Negra (Marshall D. Teach) · One Piece",
+      "kanji": "闇",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#1e1a24",
+      "assinaturas": [
+        "vortice_negro",
+        "tremor_do_mundo"
+      ],
+      "tecnicas": [
+        "punho_armado",
+        "pressao_gravitacional",
+        "punho_que_cresce"
+      ],
+      "falas": {
+        "entrada": "Zehahaha! Os sonhos das pessoas nunca acabam, né? O seu acaba aqui.",
+        "furia": "Escuridão e terremoto! Ninguém no mundo tem os dois, só eu!",
+        "derrota": "Zehaha... Que dor! A escuridão puxa tudo, até isso.",
+        "vitoria": "Zehahaha! O destino é meu! Mais um azarado para a coleção!"
+      }
+    },
+    {
+      "id": "tenente_tatuado",
+      "nome": "O Tenente Tatuado",
+      "titulo": "o que uiva para a lua",
+      "origem": "Renji Abarai · Bleach",
+      "kanji": "尾",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "espadachim",
+      "cor": "#7a2a2a",
+      "tecnicas": [
+        "lamina_serpente",
+        "grito_de_guerra",
+        "raio_branco"
+      ],
+      "falas": {
+        "entrada": "Daqui você não passa. Não enquanto eu estiver de pé.",
+        "derrota": "Droga... Se vai subir aquela colina, vai até o fim. Me promete."
+      }
+    },
+    {
+      "id": "pantera_azul",
+      "nome": "A Pantera Azul",
+      "titulo": "o rei que quer destruir tudo",
+      "origem": "Grimmjow Jaegerjaquez · Bleach",
+      "kanji": "王",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#2a4a6b",
+      "tecnicas": [
+        "garras_da_pantera",
+        "raio_do_vazio",
+        "grito_de_guerra"
+      ],
+      "falas": {
+        "entrada": "Olha esse olhar! Finalmente alguém que vale a pena esmagar!",
+        "derrota": "Tsc... Eu não perdi pra você. Só me cansei de esperar."
+      }
+    },
+    {
+      "id": "raposa_sorridente",
+      "nome": "A Raposa Sorridente",
+      "titulo": "a serpente que nunca abre os olhos",
+      "origem": "Gin Ichimaru · Bleach",
+      "kanji": "狐",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "espadachim",
+      "cor": "#8a8a9a",
+      "tecnicas": [
+        "lanca_que_mata_deuses",
+        "raio_branco"
+      ],
+      "falas": {
+        "entrada": "Ah, que pena. Eu já tinha te dito adeus antes de você chegar.",
+        "derrota": "Ah... Sinto muito. Eu ainda tinha uma coisa para fazer."
+      }
+    },
+    {
+      "id": "nobre_das_cerejeiras",
+      "nome": "O Nobre das Cerejeiras",
+      "titulo": "a lei que não se curva",
+      "origem": "Byakuya Kuchiki · Bleach",
+      "kanji": "貴",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "espadachim",
+      "cor": "#6b4a5a",
+      "assinaturas": [
+        "mil_laminas"
+      ],
+      "tecnicas": [
+        "raio_branco",
+        "seis_barras_de_luz"
+      ],
+      "falas": {
+        "entrada": "Quem é você para me erguer uma lâmina? Caia, e não se levante.",
+        "furia": "Seja grato. Vai ver com os próprios olhos a minha lâmina sem disfarce.",
+        "derrota": "A lei me prendeu até hoje... Esta derrota, eu aceito.",
+        "vitoria": "Você não chegou nem perto de tocar a minha capa."
+      }
+    },
+    {
+      "id": "arauto_do_vazio",
+      "nome": "O Arauto do Vazio",
+      "titulo": "o que procura o coração",
+      "origem": "Ulquiorra Cifer · Bleach",
+      "kanji": "無",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#2e4a3a",
+      "assinaturas": [
+        "lanca_do_relampago"
+      ],
+      "tecnicas": [
+        "raio_do_vazio",
+        "raio_branco"
+      ],
+      "falas": {
+        "entrada": "Lixo. O que você chama de coragem é só um jeito de não ver o fim.",
+        "furia": "Isto é a desesperança. Olhe bem. É o fim que você não queria ver.",
+        "derrota": "Entendo... Então isto... é o coração.",
+        "vitoria": "Eu avisei. No fim, não existia nada aí dentro."
+      }
+    },
+    {
+      "id": "senhor_das_ilusoes",
+      "nome": "O Senhor das Ilusões",
+      "titulo": "o que quer ocupar o céu",
+      "origem": "Sosuke Aizen · Bleach",
+      "kanji": "天",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#5a4a3a",
+      "assinaturas": [
+        "flor_no_espelho",
+        "joia_que_realiza"
+      ],
+      "tecnicas": [
+        "caixao_negro",
+        "seis_barras_de_luz",
+        "raio_branco"
+      ],
+      "falas": {
+        "entrada": "Desde quando você acha que está vendo o que eu realmente sou?",
+        "furia": "Admiro a sua coragem. Por isso vou te mostrar o que existe além do humano.",
+        "derrota": "Impossível... A joia... está me rejeitando?",
+        "vitoria": "Não se culpe. Ninguém fica de pé diante de mim por muito tempo."
+      }
+    },
+    {
+      "id": "punho_do_tigre",
+      "nome": "O Punho do Tigre",
+      "titulo": "o que dividiu a própria sombra em duas",
+      "origem": "Castro · Hunter x Hunter",
+      "kanji": "虎",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#5c4a32",
+      "tecnicas": [
+        "golpe_de_misericordia",
+        "guarda_alta"
+      ],
+      "falas": {
+        "entrada": "Duzentos andares para chegar aqui. Um forasteiro sem aura não vai me tirar deste.",
+        "derrota": "Eu me dividi em dois... e mesmo assim não bastou."
+      }
+    },
+    {
+      "id": "gigante_da_trupe",
+      "nome": "O Gigante da Trupe",
+      "titulo": "o que aguenta um míssil de peito aberto",
+      "origem": "Uvogin · Hunter x Hunter",
+      "kanji": "剛",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "tita",
+      "cor": "#5a4636",
+      "tecnicas": [
+        "pedra_carregada",
+        "guarda_alta"
+      ],
+      "falas": {
+        "entrada": "Pode mirar no meu peito. Bala, faca ou míssil: eu aguento tudo de peito aberto.",
+        "derrota": "Não vou te dizer nada sobre a Trupe. Pode acabar comigo."
+      }
+    },
+    {
+      "id": "gato_do_rei",
+      "nome": "O Gato do Rei",
+      "titulo": "o primeiro guarda real",
+      "origem": "Neferpitou · Hunter x Hunter",
+      "kanji": "猫",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "ninja",
+      "cor": "#6b6a72",
+      "tecnicas": [
+        "golpe_de_misericordia",
+        "olhar_de_nen"
+      ],
+      "falas": {
+        "entrada": "Nyaa... você tem cheiro de outro mundo. Antes do Rei, eu brinco com você.",
+        "derrota": "O Rei... ainda preciso... curar o Rei..."
+      }
+    },
+    {
+      "id": "palhaco_magico",
+      "nome": "O Palhaço Mágico",
+      "titulo": "o que espera a fruta amadurecer",
+      "origem": "Hisoka · Hunter x Hunter",
+      "kanji": "奇",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "ninja",
+      "cor": "#6b2f52",
+      "assinaturas": [
+        "textura_enganosa"
+      ],
+      "tecnicas": [
+        "chiclete_elastico",
+        "golpe_de_misericordia",
+        "guarda_alta"
+      ],
+      "falas": {
+        "entrada": "Uma fruta nova, trazida de outro mundo... Ainda verde. Vamos ver se amadurece.",
+        "furia": "Ahh, isso dói. Que delícia. Agora sim, estou empolgado de verdade.",
+        "derrota": "Perdi? Que pena... Fique viva até amadurecer. Eu volto para colher.",
+        "vitoria": "Colhida cedo demais. Que desperdício de fruta."
+      }
+    },
+    {
+      "id": "lider_da_trupe",
+      "nome": "O Líder da Trupe",
+      "titulo": "o que rouba até o poder alheio",
+      "origem": "Chrollo Lucilfer · Hunter x Hunter",
+      "kanji": "盗",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "espadachim",
+      "cor": "#26263a",
+      "assinaturas": [
+        "livro_do_ladrao"
+      ],
+      "tecnicas": [
+        "olhar_de_nen",
+        "golpe_de_misericordia",
+        "guarda_alta"
+      ],
+      "falas": {
+        "entrada": "Hoje enterramos um dos nossos. Toque comigo o réquiem, forasteiro.",
+        "furia": "Interessante. Esse poder que a Roda te deu... vou levá-lo comigo.",
+        "derrota": "A aranha não morre quando perde a cabeça. Outra perna assume.",
+        "vitoria": "Obrigado pelo poder. Vou cuidar bem dele."
+      }
+    },
+    {
+      "id": "rei_sem_nome",
+      "nome": "O Rei Sem Nome",
+      "titulo": "o que nasceu para governar tudo o que respira",
+      "origem": "Meruem · Hunter x Hunter",
+      "kanji": "冠",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "hollow",
+      "cor": "#34504a",
+      "assinaturas": [
+        "banquete_do_rei",
+        "leitura_do_tabuleiro"
+      ],
+      "tecnicas": [
+        "olhar_de_nen",
+        "golpe_de_misericordia",
+        "guarda_alta"
+      ],
+      "falas": {
+        "entrada": "Eu sou o Rei. Diga o seu nome, se achar que vale a pena eu lembrar.",
+        "furia": "Então é este o fundo da maldade de vocês. Eu entendo agora.",
+        "derrota": "A menina do tabuleiro... eu ainda queria mais uma partida.",
+        "vitoria": "Peça capturada. O jogo era meu desde o primeiro lance."
+      }
+    },
+    {
+      "id": "irmao_da_podridao",
+      "nome": "O Irmão da Podridão",
+      "titulo": "o feto amaldiçoado que ganhou corpo",
+      "origem": "Eso · Jujutsu Kaisen",
+      "kanji": "腐",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "oni",
+      "cor": "#4a5a2c",
+      "tecnicas": [
+        "lamina_de_sangue",
+        "carne_maldita"
+      ],
+      "falas": {
+        "entrada": "Somos irmãos de sangue, nascidos de um ventre maldito. E o nosso sangue apodrece o seu.",
+        "derrota": "Irmão... me perdoe... eu caí antes de você."
+      }
+    },
+    {
+      "id": "furia_do_vulcao",
+      "nome": "A Fúria do Vulcão",
+      "titulo": "a maldição que nasceu do medo da terra",
+      "origem": "Jogo · Jujutsu Kaisen",
+      "kanji": "噴",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "tita",
+      "cor": "#6b3424",
+      "tecnicas": [
+        "caixao_da_montanha",
+        "carne_maldita"
+      ],
+      "falas": {
+        "entrada": "Os humanos são a mentira. Nós, maldições, somos os verdadeiros humanos.",
+        "derrota": "Eu ainda queria ver o nosso mundo... de pé."
+      }
+    },
+    {
+      "id": "trovao_de_quatro_seculos",
+      "nome": "O Trovão de Quatro Séculos",
+      "titulo": "o que voltou da morte só para lutar",
+      "origem": "Hajime Kashimo · Jujutsu Kaisen",
+      "kanji": "電",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "ninja",
+      "cor": "#34466b",
+      "tecnicas": [
+        "coruja_trovao",
+        "clarao_negro"
+      ],
+      "falas": {
+        "entrada": "Quatrocentos anos esperando alguém mais forte. Você serve de aperitivo.",
+        "derrota": "Ha... então é isso que se sente ao perder. Não é tão ruim."
+      }
+    },
+    {
+      "id": "remendador_de_almas",
+      "nome": "O Remendador de Almas",
+      "titulo": "o que toca a alma e muda a forma",
+      "origem": "Mahito · Jujutsu Kaisen",
+      "kanji": "魂",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "hollow",
+      "cor": "#4e5e70",
+      "assinaturas": [
+        "toque_na_alma"
+      ],
+      "tecnicas": [
+        "clarao_negro",
+        "carne_maldita"
+      ],
+      "falas": {
+        "entrada": "A alma vem antes do corpo, sabia? Vamos ver que forma a sua aceita.",
+        "furia": "Ha! Agora eu entendi a minha alma de verdade. Obrigado, de coração.",
+        "derrota": "Medo... então é isso que vocês sentem quando eu chego.",
+        "vitoria": "Que forma bonita você virou. Vou guardar de lembrança."
+      }
+    },
+    {
+      "id": "ladrao_de_corpos",
+      "nome": "O Ladrão de Corpos",
+      "titulo": "o que veste o rosto de um amigo morto",
+      "origem": "Kenjaku · Jujutsu Kaisen",
+      "kanji": "縫",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "monge",
+      "cor": "#33333f",
+      "assinaturas": [
+        "espiral_das_maldicoes"
+      ],
+      "tecnicas": [
+        "caes_divinos",
+        "coruja_trovao",
+        "carne_maldita"
+      ],
+      "falas": {
+        "entrada": "Este rosto pertence a um morto. Eu só o visto. Hoje fecho um plano de mil anos.",
+        "furia": "Curioso. Mil anos de planos, e um forasteiro da Roda consegue arranhá-los.",
+        "derrota": "Não faz mal. O que plantei já germinou. O mundo muda sem mim.",
+        "vitoria": "Mais um corpo. Talvez este sirva para alguma coisa."
+      }
+    },
+    {
+      "id": "senhor_dos_vinte_dedos",
+      "nome": "O Senhor dos Vinte Dedos",
+      "titulo": "o rei de uma era de ouro de maldições",
+      "origem": "Ryomen Sukuna · Jujutsu Kaisen",
+      "kanji": "宿",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#5a1c1c",
+      "assinaturas": [
+        "general_da_roda",
+        "templo_dos_cortes"
+      ],
+      "tecnicas": [
+        "corte_do_mundo",
+        "clarao_negro",
+        "carne_maldita"
+      ],
+      "falas": {
+        "entrada": "Conheça o seu lugar, forasteiro. Você está diante de mim.",
+        "furia": "Já que insiste, mostro a forma que eu tinha há mil anos.",
+        "derrota": "Hah. Vivi como quis e morro do mesmo jeito. Fique com o título.",
+        "vitoria": "Fique orgulhoso. Você foi forte. Talvez eu me lembre de você."
+      }
+    },
+    {
+      "id": "assassino_de_aluguel",
+      "nome": "O Assassino de Aluguel",
+      "titulo": "o que viaja montado num pilar arremessado",
+      "origem": "Tao Pai Pai · Dragon Ball",
+      "kanji": "柱",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#5e3f36",
+      "tecnicas": [
+        "raio_da_morte",
+        "disco_cortante"
+      ],
+      "falas": {
+        "entrada": "Pelo preço certo, mato até um deus. Por você, me pagaram pouco.",
+        "derrota": "Impossível... o maior assassino do mundo, vencido por um qualquer!"
+      }
+    },
+    {
+      "id": "androide_rebelde",
+      "nome": "O Androide Sem Dono",
+      "titulo": "o que não obedece nem a quem o fez",
+      "origem": "Androide 17 · Dragon Ball",
+      "kanji": "械",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "ninja",
+      "cor": "#2e3a4a",
+      "tecnicas": [
+        "saraivada_de_ki",
+        "imagem_residual"
+      ],
+      "falas": {
+        "entrada": "Fui feito para caçar um homem só. Ele não está aqui. Você serve para passar o tédio.",
+        "derrota": "Energia infinita... e mesmo assim acabou."
+      }
+    },
+    {
+      "id": "juiz_do_orgulho",
+      "nome": "O Juiz do Orgulho",
+      "titulo": "o que serve à justiça do próprio universo",
+      "origem": "Toppo · Dragon Ball",
+      "kanji": "義",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "tita",
+      "cor": "#5a2a2a",
+      "tecnicas": [
+        "saraivada_de_ki",
+        "onda_de_ki"
+      ],
+      "falas": {
+        "entrada": "Pela justiça do meu universo, nenhum forasteiro sai desta arena de pé.",
+        "derrota": "Minha justiça... não bastou. Que o meu universo me perdoe."
+      }
+    },
+    {
+      "id": "filho_do_rei_demonio",
+      "nome": "O Filho do Rei Demônio",
+      "titulo": "o que nasceu do último ovo do pai",
+      "origem": "Piccolo Jr. · Dragon Ball",
+      "kanji": "魔",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#34502e",
+      "assinaturas": [
+        "raio_espiral_do_demonio"
+      ],
+      "tecnicas": [
+        "saraivada_de_ki",
+        "imagem_residual"
+      ],
+      "falas": {
+        "entrada": "Este torneio é só o primeiro passo. Depois dele, o mundo inteiro se ajoelha.",
+        "furia": "Então eu cresço até você caber na palma da minha mão!",
+        "derrota": "Isto não acabou. Um demônio sempre volta.",
+        "vitoria": "O primeiro a cair diante do novo Rei Demônio. Não vou lembrar do seu nome."
+      }
+    },
+    {
+      "id": "bioandroide_perfeito",
+      "nome": "O Bio-Androide Perfeito",
+      "titulo": "o que nasceu das células de todos os guerreiros",
+      "origem": "Cell · Dragon Ball",
+      "kanji": "完",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#3a4d2c",
+      "assinaturas": [
+        "ultima_celula"
+      ],
+      "tecnicas": [
+        "onda_de_ki",
+        "luz_cegante",
+        "imagem_residual"
+      ],
+      "falas": {
+        "entrada": "Bem-vindo aos meus Jogos. Venha me mostrar algo que eu ainda não absorvi.",
+        "furia": "Basta de brincadeira. Um núcleo me basta para voltar, e voltar mais forte.",
+        "derrota": "Perfeito... eu era perfeito...",
+        "vitoria": "Perfeito. Como tudo o que eu faço."
+      }
+    },
+    {
+      "id": "tirano_das_estrelas",
+      "nome": "O Tirano das Estrelas",
+      "titulo": "o que compra e vende planetas",
+      "origem": "Freeza · Dragon Ball",
+      "kanji": "帝",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "oni",
+      "cor": "#5e4a6e",
+      "assinaturas": [
+        "golpe_no_nucleo",
+        "sol_da_ruina"
+      ],
+      "tecnicas": [
+        "raio_da_morte",
+        "disco_cortante",
+        "saraivada_de_ki"
+      ],
+      "falas": {
+        "entrada": "Ora, ora. Um lutador da Roda. Ajoelhe-se, e talvez eu o deixe trabalhar para mim.",
+        "furia": "Chega de brincadeira. Contemple a minha forma mais bela: a de ouro.",
+        "derrota": "Impossível! Eu sou o imperador do universo!",
+        "vitoria": "Hohoho. Que pena. Quase pareceu uma luta."
+      }
+    },
+    {
+      "id": "demonio_do_sono",
+      "nome": "O Demônio do Sono",
+      "titulo": "a lua de baixo que vende sonhos",
+      "origem": "Enmu · Demon Slayer",
+      "kanji": "寝",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "oni",
+      "cor": "#4a3a5e",
+      "tecnicas": [
+        "sono_do_bilhete",
+        "chuva_de_sangue"
+      ],
+      "falas": {
+        "entrada": "Durma. Eu prometo um sonho bom, antes do pesadelo.",
+        "derrota": "Não... eu ainda queria ver o seu rosto quebrar de desespero."
+      }
+    },
+    {
+      "id": "irmaos_do_distrito",
+      "nome": "Os Irmãos do Distrito",
+      "titulo": "dois num corpo só",
+      "origem": "Daki e Gyutaro · Demon Slayer",
+      "kanji": "帯",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "oni",
+      "cor": "#6b2f45",
+      "tecnicas": [
+        "chuva_de_sangue",
+        "danca_do_inseto"
+      ],
+      "falas": {
+        "entrada": "Feio, sujo, pobre! Irmão, olha só o que veio para a coleção.",
+        "derrota": "Irmão! Ele cortou a minha cabeça! Faz alguma coisa, irmão!"
+      }
+    },
+    {
+      "id": "sacerdote_do_gelo",
+      "nome": "O Sacerdote do Gelo",
+      "titulo": "o que sorri sem sentir nada",
+      "origem": "Doma · Demon Slayer",
+      "kanji": "扇",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "monge",
+      "cor": "#4f6470",
+      "tecnicas": [
+        "lotus_de_gelo",
+        "chuva_de_sangue"
+      ],
+      "falas": {
+        "entrada": "Que pena de você! Venha, eu te salvo: dentro de mim não dói.",
+        "derrota": "Então é assim que se morre? Que estranho. Ainda não sinto nada."
+      }
+    },
+    {
+      "id": "punho_da_bussola",
+      "nome": "O Punho da Bússola",
+      "titulo": "o que despreza os fracos",
+      "origem": "Akaza · Demon Slayer",
+      "kanji": "拳",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#7a3b4e",
+      "assinaturas": [
+        "bussola_de_neve"
+      ],
+      "tecnicas": [
+        "punhos_no_vazio",
+        "respiracao_total"
+      ],
+      "falas": {
+        "entrada": "Que espírito de luta! Vire demônio e lute comigo para sempre.",
+        "furia": "Os fracos não escolhem nada! Mais! Mostre mais!",
+        "derrota": "Neve... você me esperou esse tempo todo?",
+        "vitoria": "Fraco. Eu odeio os fracos. Por que não quis viver mais?"
+      }
+    },
+    {
+      "id": "lua_de_seis_olhos",
+      "nome": "O Espadachim de Seis Olhos",
+      "titulo": "a primeira lua, que já foi caçador",
+      "origem": "Kokushibo · Demon Slayer",
+      "kanji": "六",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "espadachim",
+      "cor": "#4a2f4f",
+      "assinaturas": [
+        "luas_crescentes"
+      ],
+      "tecnicas": [
+        "primeiro_trovao",
+        "chuva_de_sangue"
+      ],
+      "falas": {
+        "entrada": "Você não respira como eles. Mostre que lâmina a Roda te deu.",
+        "furia": "Mesmo agora, aquele sol ainda me queima por dentro.",
+        "derrota": "Eu queria ser ele. E que forma feia eu tomei para isso.",
+        "vitoria": "Fraco demais. Nem a lua vai guardar o seu nome."
+      }
+    },
+    {
+      "id": "primeiro_demonio",
+      "nome": "O Primeiro Demônio",
+      "titulo": "o que foge do sol há mil anos",
+      "origem": "Muzan Kibutsuji · Demon Slayer",
+      "kanji": "鬼",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#5c1f2a",
+      "assinaturas": [
+        "chicotes_de_carne",
+        "mil_bocas"
+      ],
+      "tecnicas": [
+        "chuva_de_sangue",
+        "respiracao_total",
+        "sono_do_bilhete"
+      ],
+      "falas": {
+        "entrada": "Eu nunca erro. Se eu digo que você é fraco, você é fraco.",
+        "furia": "Mil anos fugindo do sol. Não vai ser esta noite que eu caio.",
+        "derrota": "O sol... não! Então que o meu sonho viva em outro corpo.",
+        "vitoria": "Pense em mim como uma calamidade. Você só morreu na chuva."
+      }
+    },
+    {
+      "id": "mestre_da_mascara",
+      "nome": "O Mestre que Vestiu a Máscara",
+      "titulo": "o velho que comprou juventude",
+      "origem": "Straizo · JoJo's Bizarre Adventure",
+      "kanji": "老",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#5a4a3a",
+      "tecnicas": [
+        "olhos_que_cortam",
+        "respiracao_do_sol"
+      ],
+      "falas": {
+        "entrada": "Eu ensinava a respirar luz. Hoje bebo sangue e não envelheço.",
+        "derrota": "A luz por dentro... ao menos escolho morrer pelo sol."
+      }
+    },
+    {
+      "id": "pistoleiro_de_aluguel",
+      "nome": "O Pistoleiro de Aluguel",
+      "titulo": "o eterno número dois",
+      "origem": "Hol Horse · JoJo's Bizarre Adventure",
+      "kanji": "弾",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "ninja",
+      "cor": "#6b5a3a",
+      "tecnicas": [
+        "bala_que_faz_a_curva",
+        "respingo_esmeralda"
+      ],
+      "falas": {
+        "entrada": "Melhor ser o número dois vivo que o número um morto. Nada pessoal.",
+        "derrota": "Ei, ei, calma! Eu sou só o ajudante! Juro que vou embora!"
+      }
+    },
+    {
+      "id": "padre_do_ceu",
+      "nome": "O Padre que Busca o Céu",
+      "titulo": "o amigo do vampiro",
+      "origem": "Enrico Pucci · JoJo's Bizarre Adventure",
+      "kanji": "祈",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "monge",
+      "cor": "#3f4a5e",
+      "tecnicas": [
+        "apagar_o_tempo",
+        "ceu_acelerado"
+      ],
+      "falas": {
+        "entrada": "Conte os primos comigo: dois, três, cinco, sete. Eles nunca se dividem.",
+        "derrota": "Ainda não... o céu estava tão perto, meu amigo."
+      }
+    },
+    {
+      "id": "ser_supremo",
+      "nome": "O Ser Supremo",
+      "titulo": "o que quer vencer o sol",
+      "origem": "Kars · JoJo's Bizarre Adventure",
+      "kanji": "究",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "espadachim",
+      "cor": "#4e3d5c",
+      "assinaturas": [
+        "laminas_de_luz"
+      ],
+      "tecnicas": [
+        "respiracao_do_sol",
+        "olhos_que_cortam"
+      ],
+      "falas": {
+        "entrada": "Eu vou além do sol. Você é só um degrau no caminho.",
+        "furia": "Agora eu sou o ápice! Tudo o que vive, eu sei ser!",
+        "derrota": "Eu, o ser perfeito... jogado para fora, sem conseguir morrer.",
+        "vitoria": "Viu? A evolução não espera quem fica para trás."
+      }
+    },
+    {
+      "id": "servo_do_vazio",
+      "nome": "O Servo do Vazio",
+      "titulo": "o que daria a cabeça pelo mestre",
+      "origem": "Vanilla Ice · JoJo's Bizarre Adventure",
+      "kanji": "空",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#3a2e44",
+      "assinaturas": [
+        "boca_do_vazio"
+      ],
+      "tecnicas": [
+        "vazio_que_varre",
+        "apagar_o_tempo"
+      ],
+      "falas": {
+        "entrada": "Quem sobe a escada do mestre some no vazio. Pedaço por pedaço.",
+        "furia": "Você fez o mestre esperar! Imperdoável! Imperdoável!",
+        "derrota": "Mestre... a luz... me dê mais do seu sangue...",
+        "vitoria": "Não sobrou nada. Nem poeira para enterrar."
+      }
+    },
+    {
+      "id": "vampiro_do_tempo",
+      "nome": "O Vampiro que Para o Tempo",
+      "titulo": "o que quer o céu",
+      "origem": "Dio · JoJo's Bizarre Adventure",
+      "kanji": "世",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#6e5a24",
+      "assinaturas": [
+        "mundo_sem_movimento",
+        "rolo_de_aco"
+      ],
+      "tecnicas": [
+        "nove_segundos",
+        "olhos_que_cortam"
+      ],
+      "falas": {
+        "entrada": "Oh? Você se aproxima? Em vez de fugir, vem direto até mim?",
+        "furia": "Inútil! Inútil! Inútil! O tempo é meu, verme!",
+        "derrota": "Impossível! Eu, que parei o tempo, vencido por um amaldiçoado?",
+        "vitoria": "Achou que era o seu destino? Não! Era eu, desde o começo!"
+      }
+    },
+    {
+      "id": "menina_que_bebe_sangue",
+      "nome": "A Menina que Bebe Sangue",
+      "titulo": "a que quer virar quem ama",
+      "origem": "Himiko Toga · My Hero Academia",
+      "kanji": "愛",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "ninja",
+      "cor": "#8a3a4a",
+      "assinaturas": [],
+      "tecnicas": [
+        "faca_que_bebe",
+        "lamina_provada"
+      ],
+      "falas": {
+        "entrada": "Você sangra bonito. Deixa eu provar só um pouquinho?",
+        "derrota": "Eu só queria ser igual a quem eu amo. É tão errado assim?"
+      }
+    },
+    {
+      "id": "homem_dividido",
+      "nome": "O Homem Dividido",
+      "titulo": "o que não sabe qual dele é o verdadeiro",
+      "origem": "Twice (Jin Bubaigawara) · My Hero Academia",
+      "kanji": "双",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "ninja",
+      "cor": "#4b4a55",
+      "assinaturas": [],
+      "tecnicas": [
+        "multidao_de_copias",
+        "chama_azul"
+      ],
+      "falas": {
+        "entrada": "Vou te matar! Não, vou te proteger! Cala a boca, eu! Qual de nós falou?",
+        "derrota": "Pelo menos no fim... sou eu mesmo. Só um."
+      }
+    },
+    {
+      "id": "filho_queimado",
+      "nome": "O Filho Queimado",
+      "titulo": "o que voltou dos mortos para queimar o pai",
+      "origem": "Dabi · My Hero Academia",
+      "kanji": "灰",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "oni",
+      "cor": "#2e4a7a",
+      "assinaturas": [],
+      "tecnicas": [
+        "chama_azul",
+        "metade_fria"
+      ],
+      "falas": {
+        "entrada": "Nome? Já tive um. Queimou junto com o resto da casa.",
+        "derrota": "Olha pra mim, pai. Pelo menos agora, olha só pra mim."
+      }
+    },
+    {
+      "id": "o_purificador",
+      "nome": "O Purificador",
+      "titulo": "o que mata os falsos heróis",
+      "origem": "Stain (Assassino de Heróis) · My Hero Academia",
+      "kanji": "刃",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "espadachim",
+      "cor": "#6b1f1f",
+      "assinaturas": [
+        "conviccao_que_paralisa"
+      ],
+      "tecnicas": [
+        "lamina_provada",
+        "faca_que_bebe"
+      ],
+      "falas": {
+        "entrada": "Herói de verdade? Prove. Ou sangre como os outros falsos.",
+        "furia": "Ainda não! Só um herói de verdade pode me matar. E você não é um!",
+        "derrota": "Então ainda existem... os de verdade.",
+        "vitoria": "Mais um falso. O mundo agradece."
+      }
+    },
+    {
+      "id": "herdeiro_das_maos",
+      "nome": "O Herdeiro das Mãos",
+      "titulo": "o que quer desfazer o mundo inteiro",
+      "origem": "Tomura Shigaraki · My Hero Academia",
+      "kanji": "崩",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "hollow",
+      "cor": "#7a786b",
+      "assinaturas": [
+        "ruina_que_se_espalha"
+      ],
+      "tecnicas": [
+        "toque_que_desfaz",
+        "soco_que_quebra"
+      ],
+      "falas": {
+        "entrada": "Tudo o que eu toco vira pó. Você não vai ser diferente.",
+        "furia": "Coça. Tudo coça. Vou desfazer este mundo até parar de coçar!",
+        "derrota": "Eu só queria... que alguém me estendesse a mão.",
+        "vitoria": "Pó. Igual a todo o resto."
+      }
+    },
+    {
+      "id": "rei_sem_rosto",
+      "nome": "O Rei Sem Rosto",
+      "titulo": "o que rouba o poder dos outros",
+      "origem": "All For One · My Hero Academia",
+      "kanji": "魔",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#1c1a24",
+      "assinaturas": [
+        "mao_que_rouba",
+        "canhao_multiplicado"
+      ],
+      "tecnicas": [
+        "soco_que_quebra",
+        "toque_que_desfaz",
+        "chama_azul"
+      ],
+      "falas": {
+        "entrada": "Que poder curioso. Sorteado, com preço. Vai ficar melhor em mim.",
+        "furia": "Chega de brincar. Vou usar tudo o que já tirei de vocês.",
+        "derrota": "Séculos de roubo... e quem me derruba nem é deste mundo.",
+        "vitoria": "Obrigado pelo presente. Agora ele é meu."
+      }
+    },
+    {
+      "id": "gigante_da_muralha",
+      "nome": "O Gigante que Chuta a Muralha",
+      "titulo": "o soldado que abriu o portão",
+      "origem": "Bertholdt Hoover (Titã Colossal) · Attack on Titan",
+      "kanji": "門",
+      "papel": "tenente",
+      "capitulo": 1,
+      "estilo": "tita",
+      "cor": "#7a3a2a",
+      "assinaturas": [],
+      "tecnicas": [
+        "gigante_de_vapor",
+        "manobra_3d"
+      ],
+      "falas": {
+        "entrada": "Ninguém aqui é mau. Mas alguém tem que fazer isso.",
+        "derrota": "Desculpa... a gente só queria voltar para casa."
+      }
+    },
+    {
+      "id": "guerreiro_de_couraca",
+      "nome": "O Guerreiro de Couraça",
+      "titulo": "o soldado e o guerreiro no mesmo corpo",
+      "origem": "Reiner Braun (Titã Encouraçado) · Attack on Titan",
+      "kanji": "盾",
+      "papel": "tenente",
+      "capitulo": 2,
+      "estilo": "tita",
+      "cor": "#8a7a5a",
+      "assinaturas": [],
+      "tecnicas": [
+        "couraca_de_pedra",
+        "manobra_3d",
+        "corte_na_nuca"
+      ],
+      "falas": {
+        "entrada": "Sou guerreiro. Chegamos longe demais para voltar atrás.",
+        "derrota": "Acaba logo com isso. Eu mereço."
+      }
+    },
+    {
+      "id": "seguidor_do_demonio",
+      "nome": "O Seguidor do Demônio",
+      "titulo": "o que escolheu o diabo pela ilha",
+      "origem": "Floch Forster (Yeageristas) · Attack on Titan",
+      "kanji": "従",
+      "papel": "tenente",
+      "capitulo": 3,
+      "estilo": "espadachim",
+      "cor": "#3a3a32",
+      "assinaturas": [],
+      "tecnicas": [
+        "disparo_em_voo",
+        "lanca_de_polvora",
+        "manobra_3d"
+      ],
+      "falas": {
+        "entrada": "A ilha precisa de um demônio. Eu escolhi o meu lado.",
+        "derrota": "Se ele parar... a ilha não tem futuro."
+      }
+    },
+    {
+      "id": "tita_de_cristal",
+      "nome": "A Titã de Cristal",
+      "titulo": "a que se fecha no cristal para não contar nada",
+      "origem": "Annie Leonhart (Titã Fêmea) · Attack on Titan",
+      "kanji": "晶",
+      "papel": "chefe",
+      "capitulo": 1,
+      "estilo": "tita",
+      "cor": "#a3aeb2",
+      "assinaturas": [
+        "chute_de_cristal"
+      ],
+      "tecnicas": [
+        "tita_agil",
+        "manobra_3d",
+        "corte_na_nuca"
+      ],
+      "falas": {
+        "entrada": "Nada pessoal. Eu só preciso voltar para casa.",
+        "furia": "Tudo bem. Se é preciso ser a vilã, eu sou.",
+        "derrota": "Pai... eu não consegui voltar.",
+        "vitoria": "Desculpa. Você só estava no caminho."
+      }
+    },
+    {
+      "id": "bestial_que_arremessa",
+      "nome": "O Bestial que Arremessa",
+      "titulo": "o que quer dar fim ao próprio sangue",
+      "origem": "Zeke Yeager (Titã Bestial) · Attack on Titan",
+      "kanji": "獣",
+      "papel": "chefe",
+      "capitulo": 2,
+      "estilo": "tita",
+      "cor": "#6b5a3a",
+      "assinaturas": [
+        "arremesso_do_bestial"
+      ],
+      "tecnicas": [
+        "grito_que_desperta",
+        "mordida_na_mao"
+      ],
+      "falas": {
+        "entrada": "Que tal uma partida? Eu arremesso. Você tenta não morrer.",
+        "furia": "Ótimo. Agora eu arremesso a sério.",
+        "derrota": "Nunca ter nascido... teria sido melhor, não é?",
+        "vitoria": "Fora. E sem dor nenhuma, prometo."
+      }
+    },
+    {
+      "id": "o_que_avanca",
+      "nome": "O Que Avança",
+      "titulo": "o que pôs a terra para marchar",
+      "origem": "Eren Yeager (Titã Fundador) · Attack on Titan",
+      "kanji": "自",
+      "papel": "final",
+      "capitulo": 3,
+      "estilo": "colosso",
+      "cor": "#d6cdb4",
+      "assinaturas": [
+        "colossos_marcham",
+        "estacas_do_martelo"
+      ],
+      "tecnicas": [
+        "mordida_na_mao",
+        "couraca_de_pedra",
+        "manobra_3d"
+      ],
+      "falas": {
+        "entrada": "Eu sigo avançando. Até não restar nenhum inimigo.",
+        "furia": "Você é livre? Então lute. Eu já não posso parar.",
+        "derrota": "Eu não sei por quê. Eu só queria ver o fim.",
+        "vitoria": "Eu já tinha visto você cair. Nada muda o que vem."
+      }
+    }
+  ]
+}

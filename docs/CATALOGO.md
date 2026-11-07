@@ -51,6 +51,14 @@
 | 耳 | Os Elfos | Sangue | Vivem mil anos: começa com o Raio que Mata Homens, +4 de vida máxima e +1 de Percepção. | Elfos (Frieren) · Frieren |
 | 森 | Clã da Floresta | Sangue | +6 de vida máxima e cura 1 por turno. | Clã Senju · Naruto |
 | 継 | Herdeiros do Poder | Maldito | O poder passa de mão em mão: começa com o Cinco Por Cento, suas transformações duram 1 turno a mais e +1 de dano. | One For All · My Hero Academia |
+| 破 | Os Arrancados | Sangue | Pele de aço: 2 de bloqueio no início da luta, e o Raio do Vazio. Preço: toda cura vale 85%. | Arrancar · Bleach |
+| 赤 | Casa do Sangue | Sangue | Começa com a Lâmina de Sangue, e todo ataque que fere faz o rival sangrar 1. Preço: o sangue é gasto, toda cura vale 90%. | Clã Kamo · Jujutsu Kaisen |
+| 縛 | Pacto do Céu | Maldito | Sem energia amaldiçoada, o corpo é a arma: +1 de Velocidade, +6 de vida máxima e +3 no Golpe. Preço: nunca usa técnicas malditas. | Restrição Celestial (Toji) · Jujutsu Kaisen |
+| 緑 | Povo do Planeta Verde | Sangue | Regeneram o que perdem: +4 de vida máxima e, abaixo de 40% da vida, cura 2 por turno. Preço: o Carma enche 10% mais devagar. | Namekuseijin (Piccolo) · Dragon Ball |
+| 陽 | Herdeiros do Sopro | Cinza | Começa com a Respiração do Sol, e ++8% de dano contra chefes: a luz queima o que não devia viver. | Família Zeppeli · JoJo's Bizarre Adventure |
+| 矢 | Filhos da Flecha | Sangue | A flecha fura e escolhe: um Stand que não ocupa espaço, 3 golpes de 4. Preço: −5 de vida máxima. | A Flecha (os Stands) · JoJo's Bizarre Adventure |
+| 焦 | Casa do Fogo e do Gelo | Sangue | Começa com a Metade Fria, e todo ataque que fere faz o rival queimar 1. Preço: −3 de vida máxima (o fogo do pai). | Família Todoroki · My Hero Academia |
+| 無 | Nascidos Vazios | Cinza | Nasceu sem poder e treinou o corpo até sangrar: +2 de vida máxima e +1 de dano no Golpe. | Sem Individualidade (Deku) · My Hero Academia |
 
 ## 命 Destino (gira e aceita)
 
@@ -287,6 +295,35 @@
 | 輪 | O Indomável | Divino | maldita | Invoca o que ninguém domou: fere 16 agora e a cada turno seu, 4 vezes. Uma vez por luta. Preço: 4 de vida. | 99 | 0 |  | Mahoraga (Megumi) · Jujutsu Kaisen |
 | 鋼 | Mundo de Lâminas | Divino | modo | A realidade vira um campo de espadas: por 2 turnos, todo ataque acerta 2 vezes a mais e +1 de dano. Não gasta o turno. Preço: quando acaba, suas técnicas ficam 2 turnos em recarga. | 99 | 0 |  | Unlimited Blade Works (Archer) · Fate |
 | 覇 | Espada da Vitória Prometida | Divino | ataque | Uma vez por luta: 40 de dano, um feixe de luz. Preço: 6 de vida. | 99 | 2 | sim | Excalibur (Saber) · Fate |
+| 零 | Raio do Vazio | Cinza | ataque | Um raio rubro que sai da boca ou da palma: 9 de dano. Pega o bando: os outros sofrem 30% do dano. | 2 | 1 | sim | Cero · Bleach |
+| 裂 | Garras da Pantera | Cinza | ataque | Três rasgos de 3, e o rival sangra 1 por 3 turnos. | 2 | 2 |  | Desgarrón (Grimmjow) · Bleach |
+| 縛 | Seis Barras de Luz | Cinza | maldita | Seis barras de luz cravam o rival: no próximo turno dele, só pode usar o Golpe e não defende. | 3 | 0 |  | Bakudo #61 Rikujokoro · Bleach |
+| 球 | Bola de Veneno | Cinza | ataque | 3 de dano e 4 doses de veneno (ferem e caem 1 por turno; as doses se somam). | 2 | 1 |  | Doku Fugu (Magellan) · One Piece |
+| 蛇 | Lâmina Serpente | Sangue | ataque | A lâmina se parte em gomos e chicoteia: dois golpes de 6 que desfazem bloqueio, revide e escudos. | 2 | 2 |  | Zabimaru (Renji) · Bleach |
+| 神 | Lança que Mata Deuses | Sangue | ataque | 8 de dano de longe, quase sem aviso; um fragmento fica dentro: 4 doses de veneno. | 3 | 4 | sim | Kamishini no Yari (Gin) · Bleach |
+| 残 | Imagem Residual | Cinza | defesa | Não gasta o turno: deixa uma imagem para trás, e o próximo ataque do rival tem 60% de chance de errar (e você devolve um Golpe). | 3 | 0 |  | Zanzoken · Dragon Ball |
+| 射 | Saraivada de Ki | Cinza | ataque | Quatro rajadas de 2, sem pausa para respirar. Pega o bando: os outros sofrem 40% do dano. | 2 | 2 |  | Rajada Contínua de Ki (Vegeta) · Dragon Ball |
+| 刺 | Raio da Morte | Sangue | ataque | Um fio de luz da ponta do dedo: 10 de dano que atravessa bloqueio, difícil de perceber. | 2 | 4 | sim | Death Beam (Freeza) · Dragon Ball |
+| 燃 | Dança do Fogo Ancestral | Sangue | ataque | Dois cortes de 7 em chamas; o rival queima 2. O pulmão não aguenta: 2 de vida. | 3 | 2 | sim | Hinokami Kagura (Tanjiro) · Demon Slayer |
+| 眠 | Sono do Bilhete | Sangue | maldita | Sono pelo bilhete picotado: o rival perde o turno e seus próximos 2 golpes nele causam +50%. Pronto no 3º turno. | 4 | 0 |  | Arte Demoníaca do Sono (Enmu) · Demon Slayer |
+| 撲 | Punhos no Vazio | Cinza | ataque | Socos que viajam pelo ar: 3 golpes de 3, de longe. | 2 | 2 |  | Morte Destrutiva: Tipo Ar (Akaza) · Demon Slayer |
+| 眼 | Olhos que Cortam | Sangue | ataque | Jatos sob pressão saem dos olhos: 12 que atravessa bloqueio, difícil de perceber. | 2 | 3 | sim | Space Ripper Stingy Eyes (Dio) · JoJo's Bizarre Adventure |
+| 曲 | Bala que Faz a Curva | Cinza | ataque | Um tiro de 6 que dobra no ar e te acha onde estiver: quase impossível de perceber. | 2 | 4 | sim | Emperor (Hol Horse) · JoJo's Bizarre Adventure |
+| 無 | O Vazio que Varre | Maldito | maldita | Do vazio: 10 que apaga bloqueio e escudos, e o próximo turno do rival não te acha. Preço: 4 de vida. | 4 | 3 | sim | Cream (Vanilla Ice) · JoJo's Bizarre Adventure |
+| 秒 | Nove Segundos de Silêncio | Divino | maldita | Uma vez por luta o tempo para: duas ações seguidas e +50% nos próximos 2 golpes. Preço: 6 de vida e −2 de vida máxima. | 99 | 0 |  | The World (Dio) · JoJo's Bizarre Adventure |
+| 崩 | Toque dos Cinco Dedos | Maldito | maldita | Cinco dedos e tudo vira pó: 12 de dano que desfaz a defesa, e corrói 3 por 3 turnos. Preço: 3 de vida. | 3 | 2 |  | Decay (Shigaraki) · My Hero Academia |
+| 焼 | Chama Azul | Sangue | ataque | Um fogo que nem o dono aguenta: 13 de dano, e o rival queima 3 por 3 turnos. Preço: 3 de vida. | 2 | 2 | sim | Cremation (Dabi) · My Hero Academia |
+| 飲 | Faca que Bebe | Cinza | ataque | Dois cortes de 3 com a faca-seringa: ela bebe o sangue, e você cura 50% do dano. | 2 | 3 |  | Faca de coleta de sangue (Toga) · My Hero Academia |
+| 凝 | Lâmina Provada | Cinza | ataque | Um corte e a língua na lâmina: 4 de dano, e o rival paralisa, perde 1 turno. | 5 | 2 |  | Bloodcurdle (Stain) · My Hero Academia |
+| 倍 | Multidão de Cópias | Sangue | maldita | 6 cópias suas: cada uma ataca junto (40% do golpe) e pode levar o golpe por você. Preço: 1 de vida. | 4 | 0 |  | Double (Twice) · My Hero Academia |
+| 項 | Corte na Nuca | Cinza | ataque | Só a nuca mata um titã: 6 de dano, que dobra contra rival abaixo de 35% da vida. | 1 | 3 |  | Corte na nuca (Tropa de Exploração) · Attack on Titan |
+| 撃 | Lança de Pólvora | Cinza | ataque | A lança crava (3) e explode no turno seguinte do rival: 13. Feita para furar couraça. | 2 | 2 |  | Thunder Spear · Attack on Titan |
+| 散 | Disparo em Voo | Cinza | ataque | Em pleno voo, dois tiros de 3 à queima-roupa, que atravessam bloqueio. | 1 | 2 |  | Equipamento de Manobra Antipessoal · Attack on Titan |
+| 回 | Pião de Lâminas | Sangue | ataque | Gira no ar com as lâminas abertas: 4 cortes de 3, e o rival sangra 2 por 3 turnos. | 3 | 3 |  | Ataque giratório (Levi) · Attack on Titan |
+| 女 | A Titã Ágil | Sangue | modo | Vira a titã que endurece onde bate: por 3 turnos, +8 de dano e 20% de esquiva. Não gasta o turno. Preço: 2 de vida e 1 turno perdido ao sair. | 99 | 0 |  | Titã Fêmea (Annie) · Attack on Titan |
+| 叫 | Grito que Desperta Gigantes | Sangue | maldita | Um grito, e os do mesmo sangue viram titãs: ferem 6 agora e a cada turno seu, 3 vezes. Preço: 2 de vida. | 4 | 0 |  | Grito do Titã Bestial (Zeke) · Attack on Titan |
+| 甲 | Couraça de Pedra | Maldito | modo | Vira o titã de couraça: por 3 turnos, +6 de dano, bloqueio 12 renovado e dano sofrido −40%. Não gasta o turno. Preço: 3 de vida e 1 turno perdido. | 99 | 0 |  | Titã Encouraçado (Reiner) · Attack on Titan |
+| 汽 | Gigante de Vapor | Maldito | modo | Vira o gigante de vapor: por 2 turnos, todo o seu dano +140% e bloqueio 8 renovado. Não gasta o turno. Preço: 4 de vida e 2 turnos perdidos. | 99 | 0 |  | Titã Colossal (Bertholdt) · Attack on Titan |
 
 ## 章 Arco (gira e aceita)
 
@@ -304,6 +341,28 @@
 | 力 | Torneio do Poder | Divino | Uma luta a menos neste capítulo, e o chefe é 40% mais forte; vencê-lo dá um Despertar guardado. | Torneio do Poder · Dragon Ball |
 | 試 | Exame de Primeira Classe | Sangue | Os rivais são magos atentos (+1 de Percepção), mas toda vitória dá uma Relíquia. | Exame de Magos de Primeira Classe · Frieren |
 | 杯 | Guerra do Cálice | Maldito | O chefe deste capítulo vem 30% mais forte, mas vencê-lo dá um Despertar guardado. | Guerra do Santo Graal · Fate |
+| 戦 | A Guerra sob a Lua | Sangue | Exércitos inteiros no campo: bandos aparecem em dobro, mas cada vitória dá 15 de Carma. | Quarta Grande Guerra Ninja · Naruto |
+| 昼 | A Ilha Sem Noite | Sangue | Os agentes do governo são rápidos e atacam de surpresa, mas toda vitória dá uma Relíquia: uma chave. | Enies Lobby · One Piece |
+| 牢 | O Inferno Submarino | Sangue | Nas celas ninguém se cura direito: a cura entre lutas cai para 40%, mas o seu Carma enche 75% mais rápido. | Impel Down · One Piece |
+| 刑 | O Patíbulo Branco | Cinza | A execução foi adiantada: +1 luta neste capítulo, mas o Treino depois de cada vitória oferece 1 opção a mais. | Soul Society · Bleach |
+| 偽 | A Cidade de Mentira | Sangue | Nada é o que parece: os golpes dos rivais ficam mais difíceis de sentir, mas cada vitória cura 15% da vida. | Karakura falsa · Bleach |
+| 競 | Leilão Subterrâneo | Sangue | Toda vitória arremata uma Relíquia, mas a Trupe caça na cidade: os rivais causam +20% de dano. | Leilão de Yorknew · Hunter x Hunter |
+| 巣 | Ninho da Rainha | Sangue | As formigas vêm em bando e os soldados de elite se multiplicam, mas cada vitória dá +15 de Carma. | Formigas Quimera · Hunter x Hunter |
+| 交 | Encontro de Intercâmbio | Cinza | Escola contra escola: os bandos aparecem em dobro, mas cada Treino oferece uma opção a mais. | Evento de Intercâmbio Kyoto-Tóquio · Jujutsu Kaisen |
+| 点 | Jogo das Colônias | Sangue | Cada vitória vale pontos: +20 de Carma. Mas os jogadores das colônias atacam primeiro: rivais mais rápidos. | Culling Game · Jujutsu Kaisen |
+| 戯 | Jogos do Perfeito | Cinza | O anfitrião espera no ringue 30% mais forte, mas entre uma luta e outra há sementes: a cura sobe para 80%. | Jogos de Cell · Dragon Ball |
+| 夢 | Trem do Sonho Sem Fim | Cinza | Toda vitória cura mais 15% da vida (o sonho bom), mas os golpes dos rivais vêm de dentro do sonho: +1 de Sutileza. | Arco do Trem Infinito · Demon Slayer |
+| 城 | Castelo Sem Fim | Sangue | Os quartos giram ao som do alaúde: o dobro de elites e nenhuma encruzilhada, mas toda vitória dá 15 de Carma. | Castelo Infinito · Demon Slayer |
+| 曙 | Até o Amanhecer | Sangue | Segurar a noite custa caro: a cura entre lutas cai para 40%, mas seu Carma enche 50% mais rápido. | Batalha Final contra o Rei dos Demônios · Demon Slayer |
+| 柱 | Os Homens do Pilar | Cinza | Os rivais são antigos e duros (+20% de vida), mas o Treino depois de cada vitória oferece uma opção a mais. | Os Homens do Pilar (Battle Tendency) · JoJo's Bizarre Adventure |
+| 館 | A Mansão do Vampiro | Sangue | O labirinto engana os olhos (rivais com +1 de Sutileza), mas a casa é rica: toda vitória dá uma Relíquia. | A mansão de Dio no Cairo (Stardust Crusaders) · JoJo's Bizarre Adventure |
+| 宵 | A Noite do Cairo | Sangue | Os rivais chegam antes de você piscar (+2 de Velocidade), mas cada vitória dá 20 de Carma. | A batalha nas ruas do Cairo (Stardust Crusaders) · JoJo's Bizarre Adventure |
+| 夜 | Noite dos Becos | Cinza | Estágio na cidade grande: o Treino oferece 1 opção a mais. Mas nos becos os golpes dos rivais vêm sem ser vistos. | Arco do Assassino de Heróis (Hosu) · My Hero Academia |
+| 解 | A Onda de Pó | Cinza | Um exército de cem mil toma a cidade: mais bandos e menos encruzilhadas no caminho, mas cada vitória dá 15 de Carma. | Guerra de Libertação Paranormal · My Hero Academia |
+| 終 | A Última Guerra | Sangue | Todos os heróis lutam juntos: cada vitória cura mais 20% da vida máxima. Mas o chefe vem 40% mais forte. | Guerra Final · My Hero Academia |
+| 樹 | Mata dos Troncos Gigantes | Cinza | Entre os troncos a manobra voa: o giro de Técnicas dá 1 opção a mais. Mas o inimigo vem pelas costas: rivais mais rápidos. | 57ª Expedição (Floresta das Árvores Gigantes) · Attack on Titan |
+| 帰 | De Volta à Primeira Muralha | Sangue | Dedique o coração: a cura entre lutas cai para 45%, mas o seu Carma enche 50% mais rápido. | Retorno a Shiganshina · Attack on Titan |
+| 轟 | Quando a Terra Treme | Sangue | O chão treme sob milhões de passos: todos perdem 1 de vida no começo do turno, mas cada vitória dá 20 de Carma. | O Rugido da Terra (Rumbling) · Attack on Titan |
 
 ## 宝 Relíquias (gira e aceita)
 
@@ -549,7 +608,7 @@ Vida do bando = a de um rival comum × 1.35 (2) ou ×1.35 (3), repartida pelo pe
 
 | Modo | Vitória alvo (piloto) | Rival +vida/luta | Chefe | Sua vida |
 |---|---|---|---|---|
-| Acessível | 45% | 24 +4.94 | ×1 | 127 |
-| Equilibrado | 36% | 24 +5.7 | ×1 | 119 |
-| Difícil (padrão) | 25% | 24 +6.61 | ×1 | 110 |
-| Brutal | 10% | 24 +9.28 | ×1 | 107 |
+| Acessível | 45% | 24 +4.36 | ×1 | 127 |
+| Equilibrado | 36% | 24 +4.99 | ×1 | 119 |
+| Difícil (padrão) | 25% | 24 +5.71 | ×1 | 110 |
+| Brutal | 10% | 24 +8.14 | ×1 | 107 |

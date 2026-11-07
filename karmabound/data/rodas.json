@@ -465,6 +465,115 @@
             "bonus_dano": 1
           },
           "inicial": "corpo_inteiro"
+        },
+        {
+          "id": "arrancados",
+          "nome": "Os Arrancados",
+          "kanji": "破",
+          "raridade": "sangue",
+          "texto": "Pele de aço: {bloqueio_inicio} de bloqueio no início da luta, e o Raio do Vazio. Preço: toda cura vale 85%.",
+          "origem": "Arrancar · Bleach",
+          "efeito": {
+            "bloqueio_inicio": 2,
+            "cura_mult": 0.85
+          },
+          "inicial": "raio_do_vazio"
+        },
+        {
+          "id": "casa_do_sangue",
+          "nome": "Casa do Sangue",
+          "kanji": "赤",
+          "raridade": "sangue",
+          "texto": "Começa com a Lâmina de Sangue, e todo ataque que fere faz o rival sangrar {sangrar}. Preço: o sangue é gasto, toda cura vale 90%.",
+          "origem": "Clã Kamo · Jujutsu Kaisen",
+          "efeito": {
+            "sangrar": 1,
+            "cura_mult": 0.9
+          },
+          "inicial": "lamina_de_sangue"
+        },
+        {
+          "id": "pacto_do_ceu",
+          "nome": "Pacto do Céu",
+          "kanji": "縛",
+          "raridade": "maldito",
+          "texto": "Sem energia amaldiçoada, o corpo é a arma: +{velocidade} de Velocidade, +{vida_max} de vida máxima e +{basico_dano} no Golpe. Preço: nunca usa técnicas malditas.",
+          "origem": "Restrição Celestial (Toji) · Jujutsu Kaisen",
+          "efeito": {
+            "velocidade": 1,
+            "vida_max": 6,
+            "basico_dano": 3,
+            "proibir_tipo": "maldita"
+          }
+        },
+        {
+          "id": "povo_do_planeta_verde",
+          "nome": "Povo do Planeta Verde",
+          "kanji": "緑",
+          "raridade": "sangue",
+          "texto": "Regeneram o que perdem: +{vida_max} de vida máxima e, abaixo de 40% da vida, cura {regen} por turno. Preço: o Carma enche 10% mais devagar.",
+          "origem": "Namekuseijin (Piccolo) · Dragon Ball",
+          "efeito": {
+            "vida_max": 4,
+            "regen": 2,
+            "regen_ate": 0.4,
+            "carma_mult": 0.9
+          }
+        },
+        {
+          "id": "herdeiros_do_sopro",
+          "nome": "Herdeiros do Sopro",
+          "kanji": "陽",
+          "raridade": "cinza",
+          "texto": "Começa com a Respiração do Sol, e +{dano_chefe_mult+%} de dano contra chefes: a luz queima o que não devia viver.",
+          "origem": "Família Zeppeli · JoJo's Bizarre Adventure",
+          "efeito": {
+            "dano_chefe_mult": 1.08
+          },
+          "inicial": "respiracao_do_sol"
+        },
+        {
+          "id": "filhos_da_flecha",
+          "nome": "Filhos da Flecha",
+          "kanji": "矢",
+          "raridade": "sangue",
+          "texto": "A flecha fura e escolhe: um Stand que não ocupa espaço, {golpes} golpes de {dano}. Preço: −5 de vida máxima.",
+          "origem": "A Flecha (os Stands) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "vida_max": -5
+          },
+          "tecnica": {
+            "tipo": "ataque",
+            "dano": 4,
+            "golpes": 3,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "casa_do_fogo_e_gelo",
+          "nome": "Casa do Fogo e do Gelo",
+          "kanji": "焦",
+          "raridade": "sangue",
+          "texto": "Começa com a Metade Fria, e todo ataque que fere faz o rival queimar {sangrar}. Preço: −3 de vida máxima (o fogo do pai).",
+          "origem": "Família Todoroki · My Hero Academia",
+          "efeito": {
+            "sangrar": 1,
+            "vida_max": -3
+          },
+          "inicial": "metade_fria"
+        },
+        {
+          "id": "nascidos_vazios",
+          "nome": "Nascidos Vazios",
+          "kanji": "無",
+          "raridade": "cinza",
+          "texto": "Nasceu sem poder e treinou o corpo até sangrar: +{vida_max} de vida máxima e +{basico_dano} de dano no Golpe.",
+          "origem": "Sem Individualidade (Deku) · My Hero Academia",
+          "efeito": {
+            "vida_max": 2,
+            "basico_dano": 1
+          }
         }
       ]
     },
@@ -3803,6 +3912,478 @@
             "sutileza": 2,
             "perigosa": true
           }
+        },
+        {
+          "id": "raio_do_vazio",
+          "nome": "Raio do Vazio",
+          "kanji": "零",
+          "raridade": "cinza",
+          "texto": "Um raio rubro que sai da boca ou da palma: {dano} de dano. Pega o bando: os outros sofrem {area%} do dano.",
+          "origem": "Cero · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 9,
+            "area": 0.3,
+            "recarga": 2,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "garras_da_pantera",
+          "nome": "Garras da Pantera",
+          "kanji": "裂",
+          "raridade": "cinza",
+          "texto": "Três rasgos de {dano}, e o rival sangra {sangrar} por 3 turnos.",
+          "origem": "Desgarrón (Grimmjow) · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 3,
+            "sangrar": 1,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "seis_barras_de_luz",
+          "nome": "Seis Barras de Luz",
+          "kanji": "縛",
+          "raridade": "cinza",
+          "texto": "Seis barras de luz cravam o rival: no próximo turno dele, só pode usar o Golpe e não defende.",
+          "origem": "Bakudo #61 Rikujokoro · Bleach",
+          "combate": {
+            "tipo": "maldita",
+            "silenciar": 1,
+            "desarmar": 1,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "bola_de_veneno",
+          "nome": "Bola de Veneno",
+          "kanji": "球",
+          "raridade": "cinza",
+          "texto": "{dano} de dano e {veneno} doses de veneno (ferem e caem 1 por turno; as doses se somam).",
+          "origem": "Doku Fugu (Magellan) · One Piece",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "veneno": 4,
+            "recarga": 2,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "lamina_serpente",
+          "nome": "Lâmina Serpente",
+          "kanji": "蛇",
+          "raridade": "sangue",
+          "texto": "A lâmina se parte em gomos e chicoteia: dois golpes de {dano} que desfazem bloqueio, revide e escudos.",
+          "origem": "Zabimaru (Renji) · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 6,
+            "golpes": 2,
+            "dissipar": true,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "lanca_que_mata_deuses",
+          "nome": "Lança que Mata Deuses",
+          "kanji": "神",
+          "raridade": "sangue",
+          "texto": "{dano} de dano de longe, quase sem aviso; um fragmento fica dentro: {veneno} doses de veneno.",
+          "origem": "Kamishini no Yari (Gin) · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 8,
+            "veneno": 4,
+            "recarga": 3,
+            "sutileza": 4,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "imagem_residual",
+          "nome": "Imagem Residual",
+          "kanji": "残",
+          "raridade": "cinza",
+          "texto": "Não gasta o turno: deixa uma imagem para trás, e o próximo ataque do rival tem 60% de chance de errar (e você devolve um Golpe).",
+          "origem": "Zanzoken · Dragon Ball",
+          "combate": {
+            "tipo": "defesa",
+            "instinto": 1,
+            "livre": true,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "saraivada_de_ki",
+          "nome": "Saraivada de Ki",
+          "kanji": "射",
+          "raridade": "cinza",
+          "texto": "Quatro rajadas de {dano}, sem pausa para respirar. Pega o bando: os outros sofrem {area%} do dano.",
+          "origem": "Rajada Contínua de Ki (Vegeta) · Dragon Ball",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 2,
+            "golpes": 4,
+            "area": 0.4,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "raio_da_morte",
+          "nome": "Raio da Morte",
+          "kanji": "刺",
+          "raridade": "sangue",
+          "texto": "Um fio de luz da ponta do dedo: {dano} de dano que atravessa bloqueio, difícil de perceber.",
+          "origem": "Death Beam (Freeza) · Dragon Ball",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 10,
+            "perfura": true,
+            "recarga": 2,
+            "sutileza": 4,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "danca_do_fogo_ancestral",
+          "nome": "Dança do Fogo Ancestral",
+          "kanji": "燃",
+          "raridade": "sangue",
+          "texto": "Dois cortes de {dano} em chamas; o rival queima {sangrar}. O pulmão não aguenta: {custo_vida} de vida.",
+          "origem": "Hinokami Kagura (Tanjiro) · Demon Slayer",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 7,
+            "golpes": 2,
+            "sangrar": 2,
+            "custo_vida": 2,
+            "recarga": 3,
+            "sutileza": 2,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "sono_do_bilhete",
+          "nome": "Sono do Bilhete",
+          "kanji": "眠",
+          "raridade": "sangue",
+          "texto": "Sono pelo bilhete picotado: o rival perde o turno e seus próximos {expor} golpes nele causam +50%. Pronto no 3º turno.",
+          "origem": "Arte Demoníaca do Sono (Enmu) · Demon Slayer",
+          "combate": {
+            "tipo": "maldita",
+            "atordoar": 1,
+            "expor": 2,
+            "inicia_em_recarga": 2,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "punhos_no_vazio",
+          "nome": "Punhos no Vazio",
+          "kanji": "撲",
+          "raridade": "cinza",
+          "texto": "Socos que viajam pelo ar: {golpes} golpes de {dano}, de longe.",
+          "origem": "Morte Destrutiva: Tipo Ar (Akaza) · Demon Slayer",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 3,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "olhos_que_cortam",
+          "nome": "Olhos que Cortam",
+          "kanji": "眼",
+          "raridade": "sangue",
+          "texto": "Jatos sob pressão saem dos olhos: {dano} que atravessa bloqueio, difícil de perceber.",
+          "origem": "Space Ripper Stingy Eyes (Dio) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 12,
+            "perfura": true,
+            "recarga": 2,
+            "sutileza": 3,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "bala_que_faz_a_curva",
+          "nome": "Bala que Faz a Curva",
+          "kanji": "曲",
+          "raridade": "cinza",
+          "texto": "Um tiro de {dano} que dobra no ar e te acha onde estiver: quase impossível de perceber.",
+          "origem": "Emperor (Hol Horse) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 6,
+            "recarga": 2,
+            "sutileza": 4,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "vazio_que_varre",
+          "nome": "O Vazio que Varre",
+          "kanji": "無",
+          "raridade": "maldito",
+          "texto": "Do vazio: {dano} que apaga bloqueio e escudos, e o próximo turno do rival não te acha. Preço: {custo_vida} de vida.",
+          "origem": "Cream (Vanilla Ice) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 10,
+            "dissipar": true,
+            "perfura": true,
+            "intocavel": 1,
+            "custo_vida": 4,
+            "recarga": 4,
+            "sutileza": 3,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "nove_segundos",
+          "nome": "Nove Segundos de Silêncio",
+          "kanji": "秒",
+          "raridade": "divino",
+          "texto": "Uma vez por luta o tempo para: duas ações seguidas e +50% nos próximos {expor} golpes. Preço: {custo_vida} de vida e −{custo_vida_max} de vida máxima.",
+          "origem": "The World (Dio) · JoJo's Bizarre Adventure",
+          "combate": {
+            "tipo": "maldita",
+            "turno_extra": true,
+            "expor": 2,
+            "custo_vida": 6,
+            "custo_vida_max": 2,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "toque_que_desfaz",
+          "nome": "Toque dos Cinco Dedos",
+          "kanji": "崩",
+          "raridade": "maldito",
+          "texto": "Cinco dedos e tudo vira pó: {dano} de dano que desfaz a defesa, e corrói {sangrar} por 3 turnos. Preço: {custo_vida} de vida.",
+          "origem": "Decay (Shigaraki) · My Hero Academia",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 12,
+            "dissipar": true,
+            "perfura": true,
+            "sangrar": 3,
+            "custo_vida": 3,
+            "recarga": 3,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "chama_azul",
+          "nome": "Chama Azul",
+          "kanji": "焼",
+          "raridade": "sangue",
+          "texto": "Um fogo que nem o dono aguenta: {dano} de dano, e o rival queima {sangrar} por 3 turnos. Preço: {custo_vida} de vida.",
+          "origem": "Cremation (Dabi) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 13,
+            "sangrar": 3,
+            "custo_vida": 3,
+            "recarga": 2,
+            "sutileza": 2,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "faca_que_bebe",
+          "nome": "Faca que Bebe",
+          "kanji": "飲",
+          "raridade": "cinza",
+          "texto": "Dois cortes de {dano} com a faca-seringa: ela bebe o sangue, e você cura {drenar%} do dano.",
+          "origem": "Faca de coleta de sangue (Toga) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 2,
+            "drenar": 0.5,
+            "recarga": 2,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "lamina_provada",
+          "nome": "Lâmina Provada",
+          "kanji": "凝",
+          "raridade": "cinza",
+          "texto": "Um corte e a língua na lâmina: {dano} de dano, e o rival paralisa, perde {atordoar} turno.",
+          "origem": "Bloodcurdle (Stain) · My Hero Academia",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 4,
+            "atordoar": 1,
+            "recarga": 5,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "multidao_de_copias",
+          "nome": "Multidão de Cópias",
+          "kanji": "倍",
+          "raridade": "sangue",
+          "texto": "{clones} cópias suas: cada uma ataca junto (40% do golpe) e pode levar o golpe por você. Preço: {custo_vida} de vida.",
+          "origem": "Double (Twice) · My Hero Academia",
+          "combate": {
+            "tipo": "maldita",
+            "clones": 6,
+            "custo_vida": 1,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "corte_na_nuca",
+          "nome": "Corte na Nuca",
+          "kanji": "項",
+          "raridade": "cinza",
+          "texto": "Só a nuca mata um titã: {dano} de dano, que dobra contra rival abaixo de {executar%} da vida.",
+          "origem": "Corte na nuca (Tropa de Exploração) · Attack on Titan",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 6,
+            "executar": 0.35,
+            "recarga": 1,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "lanca_de_polvora",
+          "nome": "Lança de Pólvora",
+          "kanji": "撃",
+          "raridade": "cinza",
+          "texto": "A lança crava ({dano}) e explode no turno seguinte do rival: {bomba}. Feita para furar couraça.",
+          "origem": "Thunder Spear · Attack on Titan",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "bomba": 13,
+            "bomba_turnos": 1,
+            "recarga": 2,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "disparo_em_voo",
+          "nome": "Disparo em Voo",
+          "kanji": "散",
+          "raridade": "cinza",
+          "texto": "Em pleno voo, dois tiros de {dano} à queima-roupa, que atravessam bloqueio.",
+          "origem": "Equipamento de Manobra Antipessoal · Attack on Titan",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 2,
+            "perfura": true,
+            "recarga": 1,
+            "sutileza": 2
+          }
+        },
+        {
+          "id": "piao_de_laminas",
+          "nome": "Pião de Lâminas",
+          "kanji": "回",
+          "raridade": "sangue",
+          "texto": "Gira no ar com as lâminas abertas: {golpes} cortes de {dano}, e o rival sangra {sangrar} por 3 turnos.",
+          "origem": "Ataque giratório (Levi) · Attack on Titan",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 3,
+            "golpes": 4,
+            "sangrar": 2,
+            "recarga": 3,
+            "sutileza": 3
+          }
+        },
+        {
+          "id": "tita_agil",
+          "nome": "A Titã Ágil",
+          "kanji": "女",
+          "raridade": "sangue",
+          "texto": "Vira a titã que endurece onde bate: por {modo_turnos} turnos, +{modo_dano} de dano e {modo_esquiva%} de esquiva. Não gasta o turno. Preço: {custo_vida} de vida e {modo_exausto} turno perdido ao sair.",
+          "origem": "Titã Fêmea (Annie) · Attack on Titan",
+          "combate": {
+            "tipo": "modo",
+            "custo_vida": 2,
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 8,
+              "esquiva": 0.2,
+              "exausto": 1
+            }
+          }
+        },
+        {
+          "id": "grito_que_desperta",
+          "nome": "Grito que Desperta Gigantes",
+          "kanji": "叫",
+          "raridade": "sangue",
+          "texto": "Um grito, e os do mesmo sangue viram titãs: ferem {invocar} agora e a cada turno seu, {invocar_turnos} vezes. Preço: {custo_vida} de vida.",
+          "origem": "Grito do Titã Bestial (Zeke) · Attack on Titan",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 6,
+            "invocar_turnos": 3,
+            "custo_vida": 2,
+            "recarga": 4
+          }
+        },
+        {
+          "id": "couraca_de_pedra",
+          "nome": "Couraça de Pedra",
+          "kanji": "甲",
+          "raridade": "maldito",
+          "texto": "Vira o titã de couraça: por {modo_turnos} turnos, +{modo_dano} de dano, bloqueio {modo_bloqueio} renovado e dano sofrido {modo_recebido_mult+%}. Não gasta o turno. Preço: {custo_vida} de vida e {modo_exausto} turno perdido.",
+          "origem": "Titã Encouraçado (Reiner) · Attack on Titan",
+          "combate": {
+            "tipo": "modo",
+            "custo_vida": 3,
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 6,
+              "bloqueio": 12,
+              "recebido_mult": 0.6,
+              "exausto": 1
+            }
+          }
+        },
+        {
+          "id": "gigante_de_vapor",
+          "nome": "Gigante de Vapor",
+          "kanji": "汽",
+          "raridade": "maldito",
+          "texto": "Vira o gigante de vapor: por {modo_turnos} turnos, todo o seu dano {modo_dano_mult+%} e bloqueio {modo_bloqueio} renovado. Não gasta o turno. Preço: {custo_vida} de vida e {modo_exausto} turnos perdidos.",
+          "origem": "Titã Colossal (Bertholdt) · Attack on Titan",
+          "combate": {
+            "tipo": "modo",
+            "custo_vida": 4,
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 2,
+              "dano_mult": 2.4,
+              "bloqueio": 8,
+              "exausto": 2
+            }
+          }
         }
       ]
     },
@@ -3949,6 +4530,503 @@
           "regra": {
             "chefe_mult": 1.3,
             "despertar_chefe": true
+          }
+        },
+        {
+          "id": "quarta_guerra",
+          "nome": "A Guerra sob a Lua",
+          "kanji": "戦",
+          "raridade": "sangue",
+          "texto": "Exércitos inteiros no campo: bandos aparecem em dobro, mas cada vitória dá 15 de Carma.",
+          "origem": "Quarta Grande Guerra Ninja · Naruto",
+          "regra": {
+            "portas": {
+              "bando": 2
+            },
+            "carma_por_vitoria": 15
+          },
+          "arena": {
+            "marco": "deserto",
+            "ceu": [
+              "#1c1420",
+              "#5a2a26"
+            ],
+            "chao": "#3a2e26",
+            "particulas": "cinzas",
+            "lua": true
+          }
+        },
+        {
+          "id": "ilha_da_justica",
+          "nome": "A Ilha Sem Noite",
+          "kanji": "昼",
+          "raridade": "sangue",
+          "texto": "Os agentes do governo são rápidos e atacam de surpresa, mas toda vitória dá uma Relíquia: uma chave.",
+          "origem": "Enies Lobby · One Piece",
+          "regra": {
+            "velocidade_rivais": 2,
+            "reliquia_garantida": true
+          },
+          "arena": {
+            "marco": "castelo",
+            "ceu": [
+              "#3a3346",
+              "#8a6a48"
+            ],
+            "chao": "#4a4038",
+            "particulas": "cinzas",
+            "lua": false
+          }
+        },
+        {
+          "id": "prisao_submarina",
+          "nome": "O Inferno Submarino",
+          "kanji": "牢",
+          "raridade": "sangue",
+          "texto": "Nas celas ninguém se cura direito: a cura entre lutas cai para 40%, mas o seu Carma enche 75% mais rápido.",
+          "origem": "Impel Down · One Piece",
+          "regra": {
+            "cura_entre_lutas": 0.4,
+            "carma_mult": 1.75
+          },
+          "arena": {
+            "marco": "muralha",
+            "ceu": [
+              "#160e12",
+              "#4a1a14"
+            ],
+            "chao": "#2e1a16",
+            "particulas": "brasas",
+            "lua": false
+          }
+        },
+        {
+          "id": "corte_das_almas",
+          "nome": "O Patíbulo Branco",
+          "kanji": "刑",
+          "raridade": "cinza",
+          "texto": "A execução foi adiantada: +1 luta neste capítulo, mas o Treino depois de cada vitória oferece 1 opção a mais.",
+          "origem": "Soul Society · Bleach",
+          "regra": {
+            "luta_extra": 1,
+            "treino_extra": 1
+          },
+          "arena": {
+            "marco": "torii",
+            "ceu": [
+              "#1e1a2a",
+              "#5a4a5e"
+            ],
+            "chao": "#3e3a40",
+            "particulas": "petalas",
+            "lua": false
+          }
+        },
+        {
+          "id": "cidade_falsa",
+          "nome": "A Cidade de Mentira",
+          "kanji": "偽",
+          "raridade": "sangue",
+          "texto": "Nada é o que parece: os golpes dos rivais ficam mais difíceis de sentir, mas cada vitória cura 15% da vida.",
+          "origem": "Karakura falsa · Bleach",
+          "regra": {
+            "sutileza_rivais": 2,
+            "cura_por_vitoria": 0.15
+          },
+          "arena": {
+            "marco": "cidade",
+            "ceu": [
+              "#1a2030",
+              "#4a5a6a"
+            ],
+            "chao": "#2a2e34",
+            "particulas": "cinzas",
+            "lua": false
+          }
+        },
+        {
+          "id": "leilao_subterraneo",
+          "nome": "Leilão Subterrâneo",
+          "kanji": "競",
+          "raridade": "sangue",
+          "texto": "Toda vitória arremata uma Relíquia, mas a Trupe caça na cidade: os rivais causam +20% de dano.",
+          "origem": "Leilão de Yorknew · Hunter x Hunter",
+          "regra": {
+            "reliquia_garantida": true,
+            "dano_rivais_mult": 1.2
+          },
+          "arena": {
+            "marco": "cidade",
+            "ceu": [
+              "#16161f",
+              "#3a2f3a"
+            ],
+            "chao": "#222029",
+            "particulas": "chuva",
+            "lua": true
+          }
+        },
+        {
+          "id": "ninho_da_rainha",
+          "nome": "Ninho da Rainha",
+          "kanji": "巣",
+          "raridade": "sangue",
+          "texto": "As formigas vêm em bando e os soldados de elite se multiplicam, mas cada vitória dá +15 de Carma.",
+          "origem": "Formigas Quimera · Hunter x Hunter",
+          "regra": {
+            "portas": {
+              "bando": 2,
+              "elite": 1.5
+            },
+            "carma_por_vitoria": 15
+          },
+          "arena": {
+            "marco": "castelo",
+            "ceu": [
+              "#1c211d",
+              "#4a4836"
+            ],
+            "chao": "#2b2820",
+            "particulas": "cinzas",
+            "lua": true
+          }
+        },
+        {
+          "id": "encontro_de_intercambio",
+          "nome": "Encontro de Intercâmbio",
+          "kanji": "交",
+          "raridade": "cinza",
+          "texto": "Escola contra escola: os bandos aparecem em dobro, mas cada Treino oferece uma opção a mais.",
+          "origem": "Evento de Intercâmbio Kyoto-Tóquio · Jujutsu Kaisen",
+          "regra": {
+            "portas": {
+              "bando": 2
+            },
+            "treino_extra": 1
+          },
+          "arena": {
+            "marco": "floresta",
+            "ceu": [
+              "#1a2420",
+              "#46564a"
+            ],
+            "chao": "#232c26",
+            "particulas": "folhas",
+            "lua": false
+          }
+        },
+        {
+          "id": "jogo_das_colonias",
+          "nome": "Jogo das Colônias",
+          "kanji": "点",
+          "raridade": "sangue",
+          "texto": "Cada vitória vale pontos: +20 de Carma. Mas os jogadores das colônias atacam primeiro: rivais mais rápidos.",
+          "origem": "Culling Game · Jujutsu Kaisen",
+          "regra": {
+            "carma_por_vitoria": 20,
+            "velocidade_rivais": 2
+          },
+          "arena": {
+            "marco": "ruinas",
+            "ceu": [
+              "#18191f",
+              "#4a3636"
+            ],
+            "chao": "#211f1d",
+            "particulas": "cinzas",
+            "lua": true
+          }
+        },
+        {
+          "id": "jogos_do_perfeito",
+          "nome": "Jogos do Perfeito",
+          "kanji": "戯",
+          "raridade": "cinza",
+          "texto": "O anfitrião espera no ringue 30% mais forte, mas entre uma luta e outra há sementes: a cura sobe para 80%.",
+          "origem": "Jogos de Cell · Dragon Ball",
+          "regra": {
+            "cura_entre_lutas": 0.8,
+            "chefe_mult": 1.3
+          },
+          "arena": {
+            "marco": "arena",
+            "ceu": [
+              "#2c2f36",
+              "#5e5848"
+            ],
+            "chao": "#4a4232",
+            "particulas": "faiscas",
+            "lua": false
+          }
+        },
+        {
+          "id": "trem_do_sonho",
+          "nome": "Trem do Sonho Sem Fim",
+          "kanji": "夢",
+          "raridade": "cinza",
+          "texto": "Toda vitória cura mais 15% da vida (o sonho bom), mas os golpes dos rivais vêm de dentro do sonho: +1 de Sutileza.",
+          "origem": "Arco do Trem Infinito · Demon Slayer",
+          "regra": {
+            "cura_por_vitoria": 0.15,
+            "sutileza_rivais": 1
+          },
+          "arena": {
+            "marco": "floresta",
+            "ceu": [
+              "#141226",
+              "#3b2a3e"
+            ],
+            "chao": "#1a171c",
+            "particulas": "brasas",
+            "lua": true
+          }
+        },
+        {
+          "id": "castelo_infinito",
+          "nome": "Castelo Sem Fim",
+          "kanji": "城",
+          "raridade": "sangue",
+          "texto": "Os quartos giram ao som do alaúde: o dobro de elites e nenhuma encruzilhada, mas toda vitória dá 15 de Carma.",
+          "origem": "Castelo Infinito · Demon Slayer",
+          "regra": {
+            "portas": {
+              "elite": 2,
+              "encruzilhada": 0
+            },
+            "carma_por_vitoria": 15
+          },
+          "arena": {
+            "marco": "castelo",
+            "ceu": [
+              "#120d14",
+              "#2a1a24"
+            ],
+            "chao": "#1e1418",
+            "particulas": "nenhuma",
+            "lua": false
+          }
+        },
+        {
+          "id": "ate_o_amanhecer",
+          "nome": "Até o Amanhecer",
+          "kanji": "曙",
+          "raridade": "sangue",
+          "texto": "Segurar a noite custa caro: a cura entre lutas cai para 40%, mas seu Carma enche 50% mais rápido.",
+          "origem": "Batalha Final contra o Rei dos Demônios · Demon Slayer",
+          "regra": {
+            "cura_entre_lutas": 0.4,
+            "carma_mult": 1.5
+          },
+          "arena": {
+            "marco": "cidade",
+            "ceu": [
+              "#1c1424",
+              "#5a3030"
+            ],
+            "chao": "#1b1517",
+            "particulas": "cinzas",
+            "lua": false
+          }
+        },
+        {
+          "id": "homens_do_pilar",
+          "nome": "Os Homens do Pilar",
+          "kanji": "柱",
+          "raridade": "cinza",
+          "texto": "Os rivais são antigos e duros (+20% de vida), mas o Treino depois de cada vitória oferece uma opção a mais.",
+          "origem": "Os Homens do Pilar (Battle Tendency) · JoJo's Bizarre Adventure",
+          "regra": {
+            "vida_rival_mult": 1.2,
+            "treino_extra": 1
+          },
+          "arena": {
+            "marco": "ruinas",
+            "ceu": [
+              "#1a1420",
+              "#3e2c2a"
+            ],
+            "chao": "#221c1a",
+            "particulas": "cinzas",
+            "lua": true
+          }
+        },
+        {
+          "id": "mansao_do_vampiro",
+          "nome": "A Mansão do Vampiro",
+          "kanji": "館",
+          "raridade": "sangue",
+          "texto": "O labirinto engana os olhos (rivais com +1 de Sutileza), mas a casa é rica: toda vitória dá uma Relíquia.",
+          "origem": "A mansão de Dio no Cairo (Stardust Crusaders) · JoJo's Bizarre Adventure",
+          "regra": {
+            "sutileza_rivais": 1,
+            "reliquia_garantida": true
+          },
+          "arena": {
+            "marco": "castelo",
+            "ceu": [
+              "#110f1a",
+              "#2b2232"
+            ],
+            "chao": "#1c171e",
+            "particulas": "nenhuma",
+            "lua": true
+          }
+        },
+        {
+          "id": "noite_do_cairo",
+          "nome": "A Noite do Cairo",
+          "kanji": "宵",
+          "raridade": "sangue",
+          "texto": "Os rivais chegam antes de você piscar (+2 de Velocidade), mas cada vitória dá 20 de Carma.",
+          "origem": "A batalha nas ruas do Cairo (Stardust Crusaders) · JoJo's Bizarre Adventure",
+          "regra": {
+            "velocidade_rivais": 2,
+            "carma_por_vitoria": 20
+          },
+          "arena": {
+            "marco": "cidade",
+            "ceu": [
+              "#0f1222",
+              "#2c2a44"
+            ],
+            "chao": "#1a1a22",
+            "particulas": "faiscas",
+            "lua": true
+          }
+        },
+        {
+          "id": "noite_dos_becos",
+          "nome": "Noite dos Becos",
+          "kanji": "夜",
+          "raridade": "cinza",
+          "texto": "Estágio na cidade grande: o Treino oferece 1 opção a mais. Mas nos becos os golpes dos rivais vêm sem ser vistos.",
+          "origem": "Arco do Assassino de Heróis (Hosu) · My Hero Academia",
+          "regra": {
+            "treino_extra": 1,
+            "sutileza_rivais": 1
+          },
+          "arena": {
+            "marco": "cidade",
+            "ceu": [
+              "#16131d",
+              "#3a2626"
+            ],
+            "chao": "#211e1e",
+            "particulas": "brasas",
+            "lua": true
+          }
+        },
+        {
+          "id": "onda_de_po",
+          "nome": "A Onda de Pó",
+          "kanji": "解",
+          "raridade": "cinza",
+          "texto": "Um exército de cem mil toma a cidade: mais bandos e menos encruzilhadas no caminho, mas cada vitória dá 15 de Carma.",
+          "origem": "Guerra de Libertação Paranormal · My Hero Academia",
+          "regra": {
+            "portas": {
+              "bando": 2,
+              "encruzilhada": 0.5
+            },
+            "carma_por_vitoria": 15
+          },
+          "arena": {
+            "marco": "ruinas",
+            "ceu": [
+              "#26262a",
+              "#56483a"
+            ],
+            "chao": "#463f36",
+            "particulas": "cinzas",
+            "lua": false
+          }
+        },
+        {
+          "id": "ultima_guerra",
+          "nome": "A Última Guerra",
+          "kanji": "終",
+          "raridade": "sangue",
+          "texto": "Todos os heróis lutam juntos: cada vitória cura mais 20% da vida máxima. Mas o chefe vem 40% mais forte.",
+          "origem": "Guerra Final · My Hero Academia",
+          "regra": {
+            "cura_por_vitoria": 0.2,
+            "chefe_mult": 1.4
+          },
+          "arena": {
+            "marco": "castelo",
+            "ceu": [
+              "#13111a",
+              "#382233"
+            ],
+            "chao": "#1d191d",
+            "particulas": "faiscas",
+            "lua": false
+          }
+        },
+        {
+          "id": "mata_dos_troncos",
+          "nome": "Mata dos Troncos Gigantes",
+          "kanji": "樹",
+          "raridade": "cinza",
+          "texto": "Entre os troncos a manobra voa: o giro de Técnicas dá 1 opção a mais. Mas o inimigo vem pelas costas: rivais mais rápidos.",
+          "origem": "57ª Expedição (Floresta das Árvores Gigantes) · Attack on Titan",
+          "regra": {
+            "opcoes_tecnica": 1,
+            "velocidade_rivais": 2
+          },
+          "arena": {
+            "marco": "floresta",
+            "ceu": [
+              "#18201a",
+              "#384232"
+            ],
+            "chao": "#252b21",
+            "particulas": "folhas",
+            "lua": false
+          }
+        },
+        {
+          "id": "primeira_muralha",
+          "nome": "De Volta à Primeira Muralha",
+          "kanji": "帰",
+          "raridade": "sangue",
+          "texto": "Dedique o coração: a cura entre lutas cai para 45%, mas o seu Carma enche 50% mais rápido.",
+          "origem": "Retorno a Shiganshina · Attack on Titan",
+          "regra": {
+            "cura_entre_lutas": 0.45,
+            "carma_mult": 1.5
+          },
+          "arena": {
+            "marco": "muralha",
+            "ceu": [
+              "#281b17",
+              "#663a25"
+            ],
+            "chao": "#382d25",
+            "particulas": "brasas",
+            "lua": false
+          }
+        },
+        {
+          "id": "rugido_da_terra",
+          "nome": "Quando a Terra Treme",
+          "kanji": "轟",
+          "raridade": "sangue",
+          "texto": "O chão treme sob milhões de passos: todos perdem 1 de vida no começo do turno, mas cada vitória dá 20 de Carma.",
+          "origem": "O Rugido da Terra (Rumbling) · Attack on Titan",
+          "regra": {
+            "sangria_todos": 1,
+            "carma_por_vitoria": 20
+          },
+          "arena": {
+            "marco": "deserto",
+            "ceu": [
+              "#36322e",
+              "#7f715e"
+            ],
+            "chao": "#463d35",
+            "particulas": "cinzas",
+            "lua": false
           }
         }
       ]

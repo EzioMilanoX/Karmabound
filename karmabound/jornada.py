@@ -18,7 +18,11 @@ Fases:
                quando uma fusão nasce sem espaço; depois, segue `retomar`)
     altar    o capítulo acabou: o Altar dos Votos abre (monta um voto ou recusa)
     reliquia   depois da técnica, às vezes (sempre, na Invasão): gira Relíquias
-    vitoria    venceu os 3 capítulos
+    cena       uma cena do modo História (ou o convite do Dono): avança linha a linha;
+               depois, segue `cena_depois`
+    convite    venceu o Dono com o capítulo secreto aberto: ir além da Roda ou terminar
+    final      modo História, Torneio da Roda: Quebrar ou Tomar a Roda
+    vitoria    venceu os 3 capítulos (ou o 4º, além da Roda)
     derrota    caiu
 """
 
@@ -33,11 +37,13 @@ from karmabound.caminho import Evento, Porta, nome_de_nemesis, pode_escolher
 from karmabound.combate import HESITAR, Luta, Lutador, Tecnica, valor_tecnica
 from karmabound.fusoes import fundir
 from karmabound.grimorio import Grimorio
+from karmabound.historias import ORIGINAL, Capitulo, Cena, carregar_historias
 from karmabound.mesa import Giro, Mesa
 from karmabound.rodas import Fatia
 from karmabound.run import (
     Contexto,
     EstadoRun,
+    aceitar_convite,
     aplicar_arco,
     aplicar_dom,
     aplicar_linhagem,
@@ -48,10 +54,12 @@ from karmabound.run import (
     beneficios_dos_ganhos,
     comecar_luta,
     comprar_ganhos,
+    convite_aberto,
     custo_dos_ganhos,
     encerrar_luta,
     escolher_porta,
     girar,
+    girar_arco,
     medir_restricoes,
     oferecer_caminho,
     oferecer_treinos,
@@ -120,6 +128,9 @@ class Jornada:
     fusoes_novas: list[Fatia] = field(default_factory=list)
     fila_fusao: list[Fatia] = field(default_factory=list)  # nasceram sem espaço: a trocar
     retomar: str = ""  # depois da troca de uma fusão: a fase (ou o passo "_metodo") que segue
+    # Leva 5: as cenas do modo História e do capítulo secreto
+    cena: Cena = ()  # as linhas da fase "cena"
+    cena_depois: str = ""  # a fase (ou o passo "_metodo") que vem depois da cena
 
     # ------------------------------------------------------------------ começo
 
@@ -134,12 +145,16 @@ class Jornada:
         maestria: dict[str, int] | None = None,
         nemesis: dict | None = None,
         ascensao: int = 0,
+        historia: str = "",
+        alem: bool = False,
     ) -> Jornada:
-        """`modo`: a dificuldade. `jogo`: Clássico, Torre sem fim, Desfile de chefes ou
-        Mundo de um anime (com `anime`). `abertos`, `maestria`, `nemesis`: do Legado.
-        `ascensao`: o degrau da Ascensão (0 na semente do dia)."""
+        """`modo`: a dificuldade. `jogo`: Clássico, História (com `historia`), Torre sem
+        fim, Desfile de chefes ou Mundo de um anime (com `anime`). `abertos`, `maestria`,
+        `nemesis`: do Legado. `ascensao`: o degrau da Ascensão (0 na semente do dia).
+        `alem`: o capítulo secreto está aberto (o Legado venceu o Dono vezes bastantes)."""
         legado = {"abertos": abertos, "maestria": maestria, "nemesis": nemesis}
         legado["ascensao"] = ascensao  # guardado junto: salvar.carregar refaz o Contexto
+        legado["historia"], legado["alem"] = historia, alem
         ctx = Contexto.padrao(modo, jogo=jogo, anime=anime, **legado)
         rng = random.Random(seed)
         mesa = Mesa(ctx.rodas, ctx.raridades, ctx.config_carma, rng)
@@ -222,24 +237,115 @@ class Jornada:
         self._exigir("destino")
         giro = self._girar("destino")
         aplicar_dom(self.estado, self.ctx, giro.fatias[0])
-        self.fase = "arco"
-        self._fundir("arco")
+        self._ir_para_arco()
+        self._fundir(self.fase)
         return giro
 
     def girar_arco(self) -> Giro:
+        """O Arco do capítulo (na História e além da Roda, o fixo cai sem sorteio)."""
         self._exigir("arco")
-        giro = self._girar("arco")
-        aplicar_arco(self.estado, self.ctx, giro.fatias[0])
+        self.giro = girar_arco(self.estado, self.ctx)
+        if self.grimorio is not None:
+            self.grimorio.ver(self.giro.fatias)
+        aplicar_arco(self.estado, self.ctx, self.giro.fatias[0])
         self._antes_da_luta()
-        return giro
+        return self.giro
 
     def _antes_da_luta(self) -> None:
-        """Chefe: a luta começa. Senão, o caminho oferece as portas."""
+        """Chefe: a luta começa (na História, depois da cena dele). Senão, o caminho
+        oferece as portas."""
         if tem_caminho(self.estado, self.ctx):
             self.oferta_caminho = oferecer_caminho(self.estado, self.ctx, self.rng)
             self.fase = "caminho"
+            return
+        cap = self.capitulo_da_cena(self.estado.capitulo)
+        if self.estado.chefe and cap is not None and cap.antes_do_chefe:
+            self._mostrar(cap.antes_do_chefe, "_comecar_luta")
         else:
             self._comecar_luta()
+
+    # ------------------------------------------------------------------ cenas
+
+    @property
+    def original(self):
+        """A campanha do Torneio da Roda (as cenas do Dono e de além da Roda valem também
+        fora dela)."""
+        return carregar_historias().get(ORIGINAL)
+
+    def capitulo_da_cena(self, n: int) -> Capitulo | None:
+        """As cenas do capítulo `n`: as da campanha; além da Roda, as do capítulo secreto."""
+        if self.ctx.historia is not None:
+            return self.ctx.historia.capitulo(n)
+        if self.estado.alem and n > self.ctx.capitulos and self.original is not None:
+            return self.original.alem
+        return None
+
+    def _mostrar(self, linhas: Cena, depois: str) -> None:
+        """Abre a fase "cena" com `linhas` e segue para `depois` ao fim (sem linhas: segue já)."""
+        if not linhas:
+            self._seguir(depois)
+            return
+        self.cena, self.cena_depois, self.fase = tuple(linhas), depois, "cena"
+
+    def avancar_cena(self) -> None:
+        """A cena acabou (a tela mostrou todas as linhas): segue."""
+        self._exigir("cena")
+        depois, self.cena, self.cena_depois = self.cena_depois, (), ""
+        self._seguir(depois)
+
+    def _ir_para_arco(self) -> None:
+        """O começo de um capítulo: a abertura dele (na História) e o giro do Arco."""
+        self.fase = "arco"
+        cap = self.capitulo_da_cena(self.estado.capitulo)
+        if cap is not None and cap.abertura:
+            self._mostrar(cap.abertura, "arco")
+
+    def _venceu_a_run(self, capitulo: int) -> None:
+        """O último chefe caiu: as cenas do fim, o convite para além da Roda ou a escolha."""
+        h = self.ctx.historia
+        cap = self.capitulo_da_cena(capitulo)
+        depois_do_chefe = cap.depois if cap is not None else ()
+        if self.estado.alem:  # o Reflexo caiu: o final verdadeiro
+            self._mostrar(depois_do_chefe, "vitoria")
+        elif convite_aberto(self.estado, self.ctx):
+            self._mostrar(depois_do_chefe, "_convidar")
+        elif h is not None and h.escolha:
+            self._mostrar(depois_do_chefe, "_fim_e_escolha")
+        elif h is not None:
+            self._mostrar((*depois_do_chefe, *h.fim), "vitoria")
+        else:
+            self.fase = "vitoria"
+
+    def _convidar(self) -> None:
+        h = self.ctx.historia or self.original
+        self._mostrar(h.convite if h is not None else (), "convite")
+
+    def _fim_e_escolha(self) -> None:
+        h = self.ctx.historia
+        self._mostrar(h.fim if h is not None else (), "final" if h and h.escolha else "vitoria")
+
+    @property
+    def finais(self):
+        """Os finais à escolha da fase "final"."""
+        return self.ctx.historia.escolha if self.ctx.historia is not None else ()
+
+    def responder_convite(self, seguir: bool) -> None:
+        """Além da Roda (o capítulo secreto) ou o fim de sempre."""
+        self._exigir("convite")
+        if seguir:
+            aceitar_convite(self.estado, self.ctx)
+            self._proxima_luta()
+        elif self.ctx.historia is not None and self.ctx.historia.escolha:
+            self._fim_e_escolha()
+        else:
+            self.fase = "vitoria"
+
+    def escolher_final(self, indice: int) -> None:
+        """Quebrar ou Tomar a Roda: a cena do final escolhido, e a vitória."""
+        self._exigir("final")
+        final = self.finais[indice]
+        self.estado.final = final.id
+        self._mostrar(final.texto, "vitoria")
 
     def escolher_caminho(self, indice: int) -> Porta:
         """Atravessa a porta `indice`: a luta (ou a encruzilhada) começa."""
@@ -318,19 +424,26 @@ class Jornada:
         self._exigir("luta")
         assert self.luta is not None and self.luta.acabou
         self._contar_usos(self.luta)
+        capitulo = self.estado.capitulo
+        chefe = any(r.chefe for r in self.luta.rivais)
         if not encerrar_luta(self.estado, self.ctx, self.luta):
             self.assassino = self._quem_matou(self.luta)
             self.fase = "derrota"
+            if self.ctx.historia is not None:
+                self._mostrar(self.ctx.historia.derrota, "derrota")
             return False
         if self.estado.venceu:
-            self.fase = "vitoria"
-        elif self.ctx.treinos:
-            self.oferta_treino = oferecer_treinos(self.ctx, self.rng)
+            self._venceu_a_run(capitulo)
+            return True
+        if self.ctx.treinos:
+            self.oferta_treino = oferecer_treinos(self.ctx, self.rng, self.estado)
             self.fase = "treino"
         else:
             self.fase = "tecnica"
-        if not self.estado.venceu:
-            self._fundir(self.fase)  # o Despertar da luta pode completar uma fusão
+        self._fundir(self.fase)  # o Despertar da luta pode completar uma fusão
+        cap = self.capitulo_da_cena(capitulo)
+        if chefe and cap is not None and cap.depois:  # a cena depois do chefe do capítulo
+            self._mostrar(cap.depois, self.fase)
         return True
 
     def escolher_treino(self, indice: int) -> Treino:
@@ -433,7 +546,7 @@ class Jornada:
                 self.fase = "altar"
                 return
         if self.estado.arco is None:
-            self.fase = "arco"
+            self._ir_para_arco()
         else:
             self._antes_da_luta()
 

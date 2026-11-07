@@ -1703,3 +1703,41 @@ def mancha_de_sangue(r: IRenderer, x: float, y: float, tam: float, semente: floa
         a = semente + k * 1.3
         d = tam * (1.1 + 0.5 * math.sin(semente * 2 + k))
         r.draw_ui_circle(x + math.cos(a) * d, y + math.sin(a) * d * 0.35, 2 + (k % 3), cor)
+
+
+# Leva 5: as técnicas novas dos Mundos (Bleach, Dragon Ball, Demon Slayer, JoJo, My Hero
+# Academia, Attack on Titan) e as Linhagens com técnica própria
+POR_HABILIDADE.update(
+    {
+        "raio_do_vazio": "feixe",
+        "garras_da_pantera": "sangue",
+        "seis_barras_de_luz": "selo",
+        "bola_de_veneno": "veneno",
+        "lamina_serpente": "corte_x",
+        "lanca_que_mata_deuses": "feixe",
+        "imagem_residual": "clones",
+        "saraivada_de_ki": "explosao",
+        "raio_da_morte": "feixe",
+        "danca_do_fogo_ancestral": "fogo",
+        "sono_do_bilhete": "impacto",
+        "punhos_no_vazio": "punho",
+        "olhos_que_cortam": "olho",
+        "bala_que_faz_a_curva": "feixe",
+        "vazio_que_varre": "clarao_negro",
+        "nove_segundos": "tempo",
+        "toque_que_desfaz": "clarao_negro",
+        "chama_azul": "fogo",
+        "faca_que_bebe": "sangue",
+        "lamina_provada": "impacto",
+        "multidao_de_copias": "clones",
+        "corte_na_nuca": "corte_x",
+        "lanca_de_polvora": "explosao",
+        "disparo_em_voo": "investida",
+        "piao_de_laminas": "rotacao",
+        "tita_agil": "demonio",
+        "grito_que_desperta": "presa",
+        "couraca_de_pedra": "demonio",
+        "gigante_de_vapor": "demonio",
+        "filhos_da_flecha": "espelho",
+    }
+)

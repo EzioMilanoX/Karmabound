@@ -166,11 +166,21 @@ def carregar_caminho(caminho: Path | None = None) -> Caminho:
 
 
 def oferecer_portas(
-    cam: Caminho, rng: random.Random, n_luta: int, capitulo: int, nemesis: bool = False
+    cam: Caminho,
+    rng: random.Random,
+    n_luta: int,
+    capitulo: int,
+    nemesis: bool = False,
+    mult: dict[str, float] | None = None,
 ) -> tuple[Porta, ...]:
     """As portas desta encruzilhada: sempre um Rival; as outras sorteadas pelos pesos,
-    sem repetir. `nemesis`: a Nêmesis está à espera e toma o lugar de uma delas."""
+    sem repetir. `nemesis`: a Nêmesis está à espera e toma o lugar de uma delas.
+    `mult`: a regra do Arco multiplica o peso de cada tipo (0 tira o tipo)."""
     pesos = dict(cam.pesos)
+    for tipo, m in (mult or {}).items():
+        if tipo in pesos:
+            pesos[tipo] *= m
+    pesos = {t: p for t, p in pesos.items() if p > 0}
     if n_luta < cam.elite_a_partir_da_luta:
         pesos.pop("elite", None)
     if n_luta < cam.bando_a_partir_da_luta:  # a primeira luta é um duelo: você ainda bate fraco

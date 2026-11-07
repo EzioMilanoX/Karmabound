@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from karmabound.fusoes import Fusao
     from karmabound.run import EstadoRun
 
-EXTRAS = ("fusoes", "aliados", "afixos")
+EXTRAS = ("fusoes", "aliados", "afixos", "viloes")
 
 
 def caminho_padrao() -> Path:

@@ -11,10 +11,13 @@ sai igual em qualquer máquina e nas capturas.
 
 from __future__ import annotations
 
+import json
 import math
+from functools import cache
 
 from ouroboros.interfaces.renderer import IRenderer
 
+from karmabound.rodas import DADOS
 from karmabound.visual import (
     ALTURA,
     FONTE_PINCEL,
@@ -24,6 +27,7 @@ from karmabound.visual import (
     TINTA,
     Cor,
     alpha,
+    hex_cor,
     mistura,
 )
 
@@ -656,6 +660,170 @@ ARENAS = {
 }
 
 
+# ----------------------------------------------------------------------- arenas por dado
+#
+# Os Arcos da Leva 5 trazem o cenário nos dados (`arena`: marco, céu, chão, partículas,
+# lua): o marco é desenhado aqui, na paleta do Arco.
+
+PARTICULAS = {  # cor, sobe, tamanho, velocidade, deriva
+    "brasas": ((230, 120, 60, 255), True, 2.0, 34.0, 10.0),
+    "neve": ((230, 230, 236, 255), False, 1.8, 22.0, 18.0),
+    "cinzas": ((150, 144, 140, 255), False, 1.6, 16.0, 14.0),
+    "petalas": ((214, 140, 160, 255), False, 2.4, 20.0, 30.0),
+    "chuva": ((150, 160, 180, 255), False, 1.2, 160.0, 2.0),
+    "folhas": ((120, 110, 60, 255), False, 2.4, 24.0, 26.0),
+    "faiscas": ((240, 210, 120, 255), True, 1.4, 60.0, 6.0),
+}
+LUZ = (220, 190, 120, 255)
+
+
+def _escuro(cor: Cor, k: float) -> Cor:
+    return mistura(cor, (0, 0, 0, 255), k)
+
+
+def _marco(c, marco: str, t: float, cor: Cor) -> None:
+    """A silhueta que dá nome ao lugar, atrás do rival."""
+    sil = alpha(_escuro(cor, 0.55), 235)
+    linha = alpha(TINTA, 30)
+    if marco == "torii":
+        for x in (330, 630):
+            c.draw_ui_rect(x - 9, 120, 18, HORIZONTE - 120, sil)
+        c.draw_ui_polygon([(280, 112), (680, 112), (690, 98), (270, 98)], sil)
+        c.draw_ui_rect(300, 140, 360, 12, sil)
+    elif marco == "muralha":
+        c.draw_ui_rect(-60, 130, LARGURA + 120, HORIZONTE - 130, sil)
+        for x in range(-40, LARGURA + 60, 46):
+            c.draw_ui_rect(x, 116, 26, 16, sil)
+        for k in range(6):
+            c.draw_ui_line(-60, 150 + k * 26, LARGURA + 60, 150 + k * 26, linha, 1)
+    elif marco == "navio":
+        y = 250 + math.sin(t * 0.9) * 4
+        c.draw_ui_polygon([(150, y), (520, y), (470, y + 42), (190, y + 42)], sil)
+        for x, h in ((250, 150), (360, 190), (450, 130)):
+            c.draw_ui_line(x, y, x, y - h, sil, 4)
+            vela = [(x, y - h + 8), (x + 56, y - h + 40), (x, y - h + 80)]
+            c.draw_ui_polygon(vela, alpha(sil, 150))
+        c.draw_ui_rect(-60, 280, LARGURA + 120, 20, alpha(_escuro(cor, 0.3), 200))
+    elif marco == "cidade":
+        for k in range(16):
+            x, h = -30 + k * 64, 70 + (k * 53 % 110)
+            c.draw_ui_rect(x, HORIZONTE - h, 54, h, sil)
+            for j in range(h // 26):
+                if (k + j) % 3 == 0:
+                    c.draw_ui_rect(x + 10, HORIZONTE - h + 10 + j * 26, 8, 8, alpha(LUZ, 50))
+    elif marco == "ruinas":
+        for x, h in ((120, 160), (220, 90), (700, 130), (820, 70), (420, 40)):
+            c.draw_ui_rect(x, HORIZONTE - h, 34, h, sil)
+            topo = HORIZONTE - h
+            c.draw_ui_polygon([(x - 6, topo), (x + 40, topo - 12), (x + 40, topo)], sil)
+    elif marco == "castelo":
+        c.draw_ui_rect(300, 150, 360, HORIZONTE - 150, sil)
+        for x in (300, 420, 540):
+            c.draw_ui_polygon([(x - 20, 150), (x + 140, 150), (x + 60, 96)], sil)
+        c.draw_ui_polygon([(400, 96), (560, 96), (480, 40)], sil)
+        for x in (340, 480, 600):
+            c.draw_ui_rect(x, 190, 14, 22, alpha(LUZ, 60))
+    elif marco == "deserto":
+        c.draw_ui_polygon(_serra(-60, LARGURA + 60, HORIZONTE, 60, 0.006, 1.0), sil)
+        piramide = [(600, HORIZONTE - 40), (720, 130), (840, HORIZONTE - 40)]
+        c.draw_ui_polygon(piramide, alpha(sil, 200))
+    elif marco == "templo":
+        c.draw_ui_rect(330, 170, 300, HORIZONTE - 170, sil)
+        for k in range(3):
+            w, y = 380 - k * 70, 170 - k * 40
+            c.draw_ui_polygon([(480 - w / 2, y), (480 + w / 2, y), (480, y - 40)], sil)
+        for x in range(350, 620, 44):
+            c.draw_ui_line(x, 180, x, HORIZONTE, linha, 2)
+    elif marco == "arena":
+        for fileira in range(4):
+            y = 150 + fileira * 30
+            for i in range(36):
+                x = -10 + i * 28 + (fileira % 2) * 14
+                if 330 < x < 630 and fileira < 3:
+                    continue
+                balanco = math.sin(t * 3 + i + fileira) * 2
+                c.draw_ui_circle(x, y + balanco, 9, alpha(sil, 120 + fileira * 30))
+    elif marco == "vazio":
+        for k in range(5):
+            raio = 60 + k * 50 + (t * 12) % 50
+            c.draw_ui_circle(480, 170, raio, alpha(cor, 30 - k * 5), 2)
+    elif marco == "floresta":
+        for k in range(9):
+            x = -20 + k * 120 + (k % 2) * 40
+            c.draw_ui_rect(x, 60, 22, HORIZONTE - 60, sil)
+            _galho(c, x + 11, 140, -90 + (k % 3 - 1) * 12, 60, sil, 7, 2)
+    elif marco == "montanha":
+        c.draw_ui_polygon(_serra(-60, LARGURA + 60, HORIZONTE, 210, 0.008, 2.0), sil)
+        perto = _serra(-60, LARGURA + 60, HORIZONTE, 110, 0.013, 0.4)
+        c.draw_ui_polygon(perto, alpha(_escuro(cor, 0.7), 240))
+    elif marco == "cristais":
+        brilho = alpha(mistura(cor, TINTA, 0.25), 140)
+        for x, h, a in ((140, 170, -8), (250, 110, 10), (690, 190, 6), (810, 120, -12)):
+            b = math.radians(a)
+            topo = (x + math.sin(b) * h, HORIZONTE - math.cos(b) * h)
+            c.draw_ui_polygon([(x - 20, HORIZONTE), topo, (x + 20, HORIZONTE)], brilho)
+    elif marco == "trono":
+        c.draw_ui_rect(400, 120, 160, HORIZONTE - 120, sil)
+        c.draw_ui_polygon([(390, 120), (570, 120), (480, 50)], sil)
+        c.draw_ui_rect(380, 220, 200, 24, alpha(_escuro(cor, 0.4), 230))
+        _brilho(c, 480, 100, 70, SANGUE_VIVO, 0.6)
+
+
+def _por_dado(spec: dict):
+    """(fundo, frente) de uma arena descrita nos dados."""
+    try:
+        topo, base = (hex_cor(x) for x in spec.get("ceu", ("#1c1a1c", "#3a3230")))
+        chao = hex_cor(spec.get("chao", "#24201d"))
+    except (ValueError, TypeError, IndexError):
+        topo, base, chao = (28, 26, 28, 255), (58, 50, 48, 255), (36, 32, 29, 255)
+    marco, part, lua = spec.get("marco", "vazio"), spec.get("particulas", ""), spec.get("lua")
+
+    def fundo(r, t, cam) -> None:
+        _ceu(cam(CEU), topo, base)
+        if lua:
+            _brilho(cam(CEU), 760, 80, 90, (230, 226, 210, 255), 0.7)
+            cam(CEU).draw_ui_circle(760, 80, 26, alpha((236, 232, 220, 255), 200))
+        longe = _serra(-60, LARGURA + 60, HORIZONTE, 90, 0.004, 3.0)
+        cam(LONGE).draw_ui_polygon(longe, alpha(_escuro(base, 0.4), 160))
+        _marco(cam(MEIO), marco, t, base)
+        _nevoa(cam(MEIO), t, HORIZONTE - 10, mistura(base, TINTA, 0.3), 0.8)
+        c = cam(CHAO)
+        _chao(c, chao)
+        c.draw_ui_line(-60, HORIZONTE, LARGURA + 60, HORIZONTE, alpha(TINTA, 36), 2)
+
+    def frente(r, t, cam) -> None:
+        dados = PARTICULAS.get(part)
+        if dados is not None:
+            cor, sobe, tam, vel, deriva = dados
+            c = cam(FRENTE)
+            _particulas(c, t, 26, alpha(cor, 120), sobe, tam, vel, deriva, semente=len(marco))
+
+    return fundo, frente
+
+
+@cache
+def _arenas_dos_dados() -> dict:
+    """As arenas dos Arcos que trazem `arena` nos dados (a roda do Arco e a História)."""
+    pares = {}
+    for nome in ("rodas.json", "historias.json"):
+        arquivo = DADOS / nome
+        if not arquivo.exists():
+            continue
+        bruto = json.loads(arquivo.read_text(encoding="utf-8"))
+        arcos = list(bruto.get("arcos", []))
+        for roda in bruto.get("rodas", []):
+            if roda["id"] == "arco":
+                arcos += roda["fatias"]
+        for a in arcos:
+            if a.get("arena") and a["id"] not in ARENAS:
+                pares[a["id"]] = _por_dado(a["arena"])
+    return pares
+
+
+def _par(arco: str | None):
+    return ARENAS.get(arco or "") or _arenas_dos_dados().get(arco or "")
+
+
 def _corvos(r, t: float) -> None:
     """Corvos cruzando o céu, devagar."""
     for k in range(4):
@@ -688,7 +856,7 @@ def desenhar_arena(r: IRenderer, arco: str | None, relogio: float, abalo: float 
     `abalo`: deslocamento do tremor de um golpe (px), que a câmera soma.
     """
     r.draw_ui_rect(0, 0, LARGURA, ALTURA, FUNDO)
-    par = ARENAS.get(arco or "")
+    par = _par(arco)
     if par is None:
         return
     cam = _Camera(r, relogio, abalo)
@@ -701,6 +869,6 @@ def desenhar_arena(r: IRenderer, arco: str | None, relogio: float, abalo: float 
 
 def desenhar_frente(r: IRenderer, arco: str | None, relogio: float, abalo: float = 0.0) -> None:
     """O primeiro plano do Arco, na frente dos lutadores (só nas bordas da tela)."""
-    par = ARENAS.get(arco or "")
+    par = _par(arco)
     if par is not None:
         par[1](r, relogio, _Camera(r, relogio, abalo))

@@ -41,17 +41,21 @@ ORDEM_RODAS = (
     "reliquias",
     "despertar",
     "chefes",
+    "viloes",
     "fusoes",
     "aliados",
     "afixos",
 )
 NOMES_ABA = {  # abas que não são rodas
     "chefes": ("魔", "Chefes"),
+    "viloes": ("鬼", "Vilões"),
     "fusoes": ("融", "Fusões"),
     "aliados": ("伴", "Aliados"),
     "afixos": ("強", "Afixos"),
 }
-EXTRAS = {"fusoes": "fusao", "aliados": "aliado", "afixos": "afixo"}  # aba -> tipo da entrada
+# aba -> tipo da entrada
+EXTRAS = {"fusoes": "fusao", "aliados": "aliado", "afixos": "afixo", "viloes": "vilao"}
+PAPEL_DO_VILAO = {"tenente": 0, "chefe": 1, "final": 2, "secreto": 3}  # -> a cor
 LINHA = 22
 TOPO_LISTA = 118
 VISIVEIS = 20  # linhas da lista na tela; o resto rola
@@ -95,7 +99,15 @@ def entradas_extras(ctx: Contexto) -> dict[str, list[Entrada]]:
             Entrada(a.id, a.nome, a.kanji, ordem[2], a.texto, "", "afixo")
             for a in ctx.caminho.afixos.values()
         ]
-    return {"fusoes": fusoes, "aliados": aliados, "afixos": afixos}
+    viloes = []
+    if ctx.elenco is not None:  # o bestiário: quem você já enfrentou
+        ordem_papel = sorted(ctx.elenco.viloes, key=lambda v: (PAPEL_DO_VILAO[v.papel], v.anime))
+        for v in ordem_papel:
+            quem = f"{v.titulo[:1].upper()}{v.titulo[1:]}." if v.titulo else ""
+            fala = f" “{v.fala('entrada')}”" if v.fala("entrada") else ""
+            raridade = ordem[min(PAPEL_DO_VILAO[v.papel], len(ordem) - 1)]
+            viloes.append(Entrada(v.id, v.nome, v.kanji, raridade, quem + fala, v.origem, "vilao"))
+    return {"fusoes": fusoes, "aliados": aliados, "afixos": afixos, "viloes": viloes}
 
 
 def entradas(ctx: Contexto) -> dict[str, list[Entrada]]:
@@ -165,6 +177,8 @@ class GrimorioScene(_Base):
             return e.fusao is not None and fusao_descoberta(self.grimorio, e.fusao)
         if e.tipo in ("aliado", "afixo"):
             return self.grimorio.conhece(f"{e.tipo}s", e.id)
+        if e.tipo == "vilao":
+            return self.grimorio.conhece("viloes", e.id)
         return e.id == "golpe_basico" or self.grimorio.viu(e.id)
 
     def _pista(self, e: Entrada) -> str:

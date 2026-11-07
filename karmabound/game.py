@@ -40,6 +40,7 @@ from karmabound.som import SOM
 from karmabound.tela_caminho import CaminhoScene, EncruzilhadaScene
 from karmabound.tela_cronica import CronicaScene
 from karmabound.tela_grimorio import GrimorioScene
+from karmabound.tela_historia import CenaScene, EscolhaScene
 from karmabound.tela_luta import LutaScene
 from karmabound.tela_menus import (
     AliadoScene,
@@ -85,6 +86,28 @@ def _montar_loop() -> GameLoop:
         except Exception:
             escolhas.tela_cheia = False
     return loop
+
+
+KANJI_FINAL = {"quebrar": "砕", "tomar": "握"}
+PROMESSA_FINAL = {  # o que cada carta promete (a cena do final conta o resto)
+    "quebrar": "Todos livres, inclusive do poder. Você deixa de ser quem é.",
+    "tomar": "Você senta no eixo. O ciclo continua, agora pela sua mão.",
+}
+
+
+def final_da_run(j: Jornada) -> str:
+    """O final que a run viu: o escolhido na História, ou o verdadeiro (além da Roda)."""
+    if j.fase != "vitoria":
+        return ""
+    if j.estado.alem:
+        return "verdadeiro"
+    return j.estado.final
+
+
+def vencidos_da_run(j: Jornada) -> list[str]:
+    """Os vilões que caíram nesta run (numa derrota, o último visto foi quem venceu)."""
+    vistos = list(j.estado.viloes_vistos)
+    return vistos[:-1] if j.fase == "derrota" and vistos else vistos
 
 
 class Fluxo:
@@ -146,6 +169,7 @@ class Fluxo:
                 abertos=self.legado.abertos(self.ordem),
                 legado=self._rodape_legado(),
                 ascensoes=dict(self.legado.ascensoes),
+                campanhas=list(self.legado.campanhas),
             )
         )
         if any(n > 0 for n in self.legado.ascensoes.values()):
@@ -205,8 +229,10 @@ class Fluxo:
         jogo: str = "classico",
         anime: str = "",
         ascensao: int = 0,
+        historia: str = "",
     ) -> None:
-        """`ascensao`: o degrau escolhido no título (a semente do dia joga sempre na 0)."""
+        """`ascensao`: o degrau escolhido no título (a semente do dia joga sempre na 0).
+        `historia`: a campanha do modo História."""
         seed = self.seed if seed is None else seed
         legado = {}
         if not diaria:  # a semente do dia é igual para todos: tudo aberto, sem Legado
@@ -215,9 +241,12 @@ class Fluxo:
                 "maestria": self.legado.maestria(),
                 "nemesis": dict(self.legado.nemesis) if self.legado.nemesis else None,
             }
+            legado["alem"] = self.legado.alem_aberto  # o capítulo secreto (o Dono convida)
         else:
             ascensao = 0
-        self.jornada = Jornada.nova(modo, seed, jogo=jogo, anime=anime, ascensao=ascensao, **legado)
+        self.jornada = Jornada.nova(
+            modo, seed, jogo=jogo, anime=anime, ascensao=ascensao, historia=historia, **legado
+        )
         self.jornada.grimorio = self.grimorio
         self.jornada.diaria = diaria
         self.aliado_anunciado, self.veio_de = "", ""
@@ -293,6 +322,9 @@ class Fluxo:
             afixos = [a for r in j.luta.rivais for a in getattr(r, "afixos", ())]
             if afixos:
                 self.grimorio.marcar("afixos", afixos)
+            viloes = [r.vilao for r in j.luta.rivais if getattr(r, "vilao", "")]
+            if viloes:  # o bestiário: quem você enfrentou
+                self.grimorio.marcar("viloes", viloes)
         if fase == "linhagem":
             self._roleta("linhagem", j.girar_linhagem, self.passo)
         elif fase == "destino":
@@ -315,6 +347,38 @@ class Fluxo:
             self._cena(AltarScene(j, self.entrada, self.passo, self.pausar))
         elif fase == "reliquia":
             self._roleta("reliquias", j.girar_reliquia, self.passo)
+        elif fase == "cena":
+            self._cena(CenaScene(j, self.entrada, self.passo, self.pausar))
+        elif fase == "convite":
+            self._cena(
+                EscolhaScene(
+                    "輪  A Roda range",
+                    "Há algo do outro lado. Você pode terminar aqui, ou ir além.",
+                    [
+                        ("越", "Ir além da Roda", "Um capítulo a mais, e quem espera no fim dele."),
+                        ("終", "Terminar aqui", "A vitória que você já tem."),
+                    ],
+                    self.entrada,
+                    lambda i: (j.responder_convite(i == 0), self.passo()),
+                    self.pausar,
+                    arco=j.arco.id if j.arco else None,
+                )
+            )
+        elif fase == "final":
+            self._cena(
+                EscolhaScene(
+                    "主  O eixo está vazio",
+                    "A Roda espera a sua mão.",
+                    [
+                        (KANJI_FINAL.get(f.id, "輪"), f.nome, PROMESSA_FINAL.get(f.id, ""))
+                        for f in j.finais
+                    ],
+                    self.entrada,
+                    lambda i: (j.escolher_final(i), self.passo()),
+                    self.pausar,
+                    arco=j.arco.id if j.arco else None,
+                )
+            )
         else:  # vitoria | derrota
             salvar.apagar()
             recorde = None
@@ -352,8 +416,9 @@ class Fluxo:
             "substituir": "espacos",
             "altar": "altar",
             "reliquia": "reliquia",
-        }[fase]
-        self.dica(dica)
+        }.get(fase)
+        if dica:
+            self.dica(dica)
         if ressonancias_ativas(j.estado):
             self.dica("ressonancia")
 
@@ -375,6 +440,10 @@ class Fluxo:
             nomes=nomes,
             ascensao=j.ascensao,
             dificuldade=j.modo,
+            dono=e.dono_vencido and not j.diaria,
+            final=final_da_run(j),
+            vencidos=vencidos_da_run(j),
+            campanha=j.ctx.historia.id if j.ctx.historia and j.fase == "vitoria" else "",
         )
 
     def _fim_da_luta(self, _venceu: bool) -> None:

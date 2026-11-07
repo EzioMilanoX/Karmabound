@@ -29,6 +29,7 @@ from karmabound.combate import Tecnica
 from karmabound.figuras import desenhar_lutador
 from karmabound.fusoes import Fusao, nomes_dos_requisitos, tecnicas_de_fusao
 from karmabound.grimorio import Grimorio, Perda, Pista, fusao_descoberta, perda, pista
+from karmabound.historias import carregar_historias
 from karmabound.jornada import Jornada, PropostaDeVoto
 from karmabound.legado import Fechamento
 from karmabound.opcoes import OPCOES
@@ -252,8 +253,10 @@ class TituloScene(_Base):
         abertos: frozenset[str] | None = None,
         legado: list[str] | tuple[str, ...] = (),
         ascensoes: dict[str, int] | None = None,
+        campanhas: list[str] | tuple[str, ...] = (),
     ) -> None:
-        """`abertos`: os animes que o Legado já abriu (None: todos); `legado`: as linhas
+        """`campanhas`: as campanhas do modo História já terminadas (ganham um 完).
+        `abertos`: os animes que o Legado já abriu (None: todos); `legado`: as linhas
         discretas do canto (a Memória e a Nêmesis à espera); `ascensoes`: a maior
         Ascensão aberta em cada dificuldade (escolher uma dificuldade com Ascensão aberta
         abre a escolha do degrau; ← → muda, Enter começa, Backspace volta)."""
@@ -278,6 +281,14 @@ class TituloScene(_Base):
         self.i_jogo = 0
         self.tecnicas_anime = Counter(anime_de(f.origem) for f in rodas["tecnicas"].fatias)
         self.i_anime = 0
+        # o modo História: a campanha original e a de cada anime já aberto
+        self.historias = [
+            h
+            for h in carregar_historias().values()
+            if not h.anime or abertos is None or h.anime in abertos
+        ]
+        self.i_historia = 0
+        self.campanhas = set(campanhas)
         self.continuar = continuar if ao_continuar is not None else None
         self.recorde_diaria = recorde_diaria
         self.itens: list[tuple[str, str, str]] = self._montar_itens()
@@ -312,6 +323,13 @@ class TituloScene(_Base):
     def anime(self) -> str:
         return self.animes[self.i_anime] if self.jogo == "anime" and self.animes else ""
 
+    @property
+    def historia(self):
+        """A campanha escolhida no modo História (None fora dele)."""
+        if self.jogo != "historia" or not self.historias:
+            return None
+        return self.historias[self.i_historia]
+
     def _montar_itens(self) -> list[tuple[str, str, str]]:
         """Cada linha: (o que faz, texto, detalhe à direita)."""
         itens = []
@@ -328,6 +346,10 @@ class TituloScene(_Base):
         if self.jogo == "anime" and self.animes:
             n = self.tecnicas_anime[self.anime]
             itens.append(("anime", f"Anime: ← {self.anime} →", f"{n} técnicas"))
+        h = self.historia
+        if h is not None:
+            feita = " 完" if h.id in self.campanhas else ""
+            itens.append(("historia", f"{h.kanji} ← {h.nome} →{feita}", h.anime or "original"))
         for m, d in self.modos:
             detalhe = f"~{d['alvo_vitoria']:.0%} vencem"
             if self.ascensoes.get(m):
@@ -340,6 +362,8 @@ class TituloScene(_Base):
             self.i_jogo = (self.i_jogo + passo) % len(self.jogos)
         elif acao == "anime" and self.animes:
             self.i_anime = (self.i_anime + passo) % len(self.animes)
+        elif acao == "historia" and self.historias:
+            self.i_historia = (self.i_historia + passo) % len(self.historias)
         else:
             return
         self.itens = self._montar_itens()
@@ -347,7 +371,9 @@ class TituloScene(_Base):
 
     def _comecar(self, modo: str, ascensao: int = 0) -> None:
         extra: dict = {}
-        if self.jogo != "classico":
+        if self.jogo == "historia" and self.historia is not None:
+            extra = {"jogo": "historia", "historia": self.historia.id}
+        elif self.jogo != "classico":
             extra = {"jogo": self.jogo, "anime": self.anime}
         if ascensao:
             extra["ascensao"] = ascensao
@@ -402,7 +428,7 @@ class TituloScene(_Base):
             self._mudar(self.itens[self.cursor][0], 1)
         elif e.is_action_pressed("confirmar"):
             acao = self.itens[self.cursor][0]
-            if acao in ("jogo", "anime"):
+            if acao in ("jogo", "anime", "historia"):
                 self._mudar(acao, 1)
                 return
             som.tocar("confirmar")
@@ -483,7 +509,7 @@ class TituloScene(_Base):
         for i, (acao, texto, detalhe) in enumerate(self.itens):
             y = y0 + i * passo
             foco = self.cartas.foco_de(i)
-            especial = acao in ("continuar", "diaria", "jogo", "anime")
+            especial = acao in ("continuar", "diaria", "jogo", "anime", "historia")
             cor = alpha(OURO if especial else TINTA, 120 + 135 * foco)
             c = self.cartas.camada(r, i, (480, y))
             self._t(c, 266 + 6 * foco, y - 2, texto, 18, cor)

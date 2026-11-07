@@ -1,6 +1,7 @@
 """As habilidades-homenagem: cada mecânica nova, isolada, e a origem de todas."""
 
 import random
+from dataclasses import replace
 
 import pytest
 
@@ -190,8 +191,8 @@ def test_ovo_do_eclipse_desperta_sem_carma_e_cobra_o_dom(ctx):
     aplicar_dom(e, ctx, _fatia(ctx, "destino", "corpo_resistente"))
     receber_reliquia(e, _fatia(ctx, "reliquias", "ovo_do_eclipse"))
     e.mesa.carma.valor = 0
-    lt = comecar_luta(e, ctx, random.Random(2))
-    e.jogador.vida = 1
+    lt = comecar_luta(e, replace(ctx, elenco=None), random.Random(2))  # o rival anônimo
+    e.jogador.vida, e.jogador.bloqueio = 1, 0  # sem a defesa que a Linhagem sorteada desse
     lt.vez = lt.rival
     lt.intencao_rival = ctx.basico
     acao = lt.turno_rival()
@@ -263,7 +264,7 @@ def test_chefes_e_aliados_tem_a_sua_origem_e_o_seu_kanji(ctx):
     from karmabound.rodas import carregar_mecanicas
 
     for f in ctx.chefes:
-        assert " · " in f.origem and f.kanji and f.mecanica, f"{f.id} sem origem/kanji"
+        assert " · " in f.origem and f.kanji, f"{f.id} sem origem/kanji"
     for m in carregar_mecanicas().values():
         assert m["kanji"]
     for a in carregar_aliados():
@@ -273,10 +274,10 @@ def test_chefes_e_aliados_tem_a_sua_origem_e_o_seu_kanji(ctx):
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
     assert contagem == {
-        "linhagem": 36,
+        "linhagem": 44,
         "destino": 57,
-        "tecnicas": 169,
-        "arco": 12,
+        "tecnicas": 198,
+        "arco": 34,
         "reliquias": 42,
         "despertar": 45,
     }
@@ -351,7 +352,10 @@ def test_toda_tecnica_tem_efeito_proprio_e_todo_arco_uma_arena(ctx):
     assert set(tecnicas) <= set(vfx.POR_HABILIDADE), set(tecnicas) - set(vfx.POR_HABILIDADE)
     assert all(n in vfx.EFEITOS for n in vfx.POR_HABILIDADE.values())
     assert {f.id for f in ctx.rodas["despertar"].fatias} == set(vfx.AURAS)
-    assert {f.id for f in ctx.rodas["arco"].fatias} == set(ARENAS)
+    from karmabound.arenas import _par
+
+    assert set(ARENAS) <= {f.id for f in ctx.rodas["arco"].fatias}
+    assert all(_par(f.id) is not None for f in ctx.rodas["arco"].fatias)  # os novos: por dado
 
 
 def test_os_efeitos_desenham_em_qualquer_ponto_da_animacao():
