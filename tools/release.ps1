@@ -23,7 +23,8 @@ function Falhar($msg) { Write-Host "ERRO: $msg" -ForegroundColor Red; exit 1 }
 function Passo($msg) { Write-Host "-> $msg" -ForegroundColor Cyan }
 function Ler($caminho) { [IO.File]::ReadAllText($caminho, $utf8) }
 function Gravar($caminho, $texto) { [IO.File]::WriteAllText($caminho, $texto, $utf8) }
-function Git { & git -C $raiz @args; if ($LASTEXITCODE -ne 0) { Falhar "git $args" } }
+# (não chame de "Git": o PowerShell não diferencia maiúsculas, e a função chamaria a si mesma)
+function RodarGit { & git.exe -C $raiz @args; if ($LASTEXITCODE -ne 0) { Falhar "git $args" } }
 
 if ($Versao -notmatch '^\d+\.\d+\.\d+$') { Falhar "versão no formato 0.4.0" }
 
@@ -31,7 +32,7 @@ if ($Versao -notmatch '^\d+\.\d+\.\d+$') { Falhar "versão no formato 0.4.0" }
 Passo "Conferindo o repositório"
 if ((git -C $raiz branch --show-current) -ne "main") { Falhar "o release sai da main: troque para ela" }
 if (git -C $raiz status --porcelain) { Falhar "há mudanças sem commit; commite ou guarde antes" }
-Git fetch -q origin
+RodarGit fetch -q origin
 if ((git -C $raiz rev-parse HEAD) -ne (git -C $raiz rev-parse origin/main)) {
     Falhar "a main local e a do GitHub estão diferentes (git pull / git push antes)"
 }
@@ -76,15 +77,15 @@ $novaSecao = "## Ainda sem versão`n`n## $tag — $Titulo ($hoje)`n"
 Gravar $changelog ([regex]::Replace($textoLog, '(?m)^## Ainda sem versão\s*\r?\n', $novaSecao, 1))
 Gravar (Join-Path $raiz "engine.ref") "$refEngine`n"
 
-Git add pyproject.toml karmabound/__init__.py CHANGELOG.md engine.ref
-Git commit -q -m "$tag — $Titulo"
-Git tag -a $tag -m "$tag — $Titulo"
+RodarGit add pyproject.toml karmabound/__init__.py CHANGELOG.md engine.ref
+RodarGit commit -q -m "$tag — $Titulo"
+RodarGit tag -a $tag -m "$tag — $Titulo"
 
 # ---------------------------------------------------------------- subir
 Passo "Subindo (como $contaPessoal)"
 & gh auth switch -u $contaPessoal | Out-Null
 try {
-    Git push -q origin main --follow-tags
+    RodarGit push -q origin main --follow-tags
 } finally {
     & gh auth switch -u $contaTrabalho | Out-Null
 }
