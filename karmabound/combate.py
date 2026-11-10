@@ -144,6 +144,7 @@ class Tecnica:
     clones: int = 0  # cada clone ataca junto (40% do golpe) e absorve um golpe recebido
     invocar: int = 0  # uma invocação fere o alvo em N a cada turno seu, por `invocar_turnos`
     invocar_turnos: int = 3
+    roda_dharma: bool = False  # a Roda do Dharma do jogador: você se adapta até o fim da luta
     vinculo: int = 0  # por N turnos seus, toda dor que você sofre o alvo sofre junto (Hidan)
     purificar: bool = False  # tira de você sangramento, veneno, Marca, cegueira e bloqueios
     custo_percepcao: int = 0  # preço: −N de Percepção pelo resto da run, a cada uso (Mangekyō)
@@ -278,6 +279,8 @@ class Lutador:
     vilao: str = ""  # o id em data/viloes.json ("" = rival anônimo)
     cor: str = ""  # o tom da figura
     guarda_mult: float = 1.0  # regra do Arco: o limiar da quebra de guarda ×
+    zona: int = 0  # Kokusens seguidos (a faixa do próximo é maior); erro ou dano zera
+    roda_dharma: bool = False  # o General da Roda do seu lado: os golpes repetidos falham
     # Leva 5: as mecânicas dos chefes finais (só da luta: o rival nasce a cada luta)
     roubos: int = 0  # O Roubo: técnicas suas que ele já tomou nesta luta
     marcha: int = 0  # A Marcha: o dano absoluto que você sofre a cada turno dele
@@ -329,6 +332,7 @@ class Lutador:
         self.dor = self.instinto = self.percepcao_luta = 0
         self.fera = self.intocavel = 0
         self.dano_extra, self.dano_mult = 0, 1.0
+        self.roda_dharma, self.adaptacao = False, {}  # a roda recomeça a cada luta
         self.sangue = self.sangue_turnos = self.cegueira = self.exposto = 0
         self.acumulos, self.bombas = {}, []
         self.silencio = self.desarme = self.espelho = self.regen_luta = self.absolutos = 0
@@ -428,6 +432,7 @@ GUARDA_ESVAI = 0.15  # a cada turno do rival, o medidor esvazia 15% da vida máx
 GUARDA_QUEBRADA = 1.25  # guarda quebrada: +25% de dano recebido até ele agir de novo
 # Mecânicas dos chefes (uma por técnica-assinatura; nome e texto em data/chefes.json)
 ADAPTAR = (1.0, 0.5, 0.0)  # Mahoraga: 1º uso de uma técnica sua inteiro, 2º metade, 3º nada
+ADAPTAR_REVIDE = 8  # o chefe que se adaptou a um golpe devolve o próximo com isto
 ILUSAO = 0.5  # Aizen: chance de o anúncio ser uma isca (ele age com o que decidiu de verdade)
 INTANGIVEL = 0.25  # Kamui: chance de um ataque seu atravessar (absoluto não; feridas, não)
 REPULSAO_CADA = 3  # Pain: a cada 3 turnos dele, empurra: clones, invocações e bloqueio seus
@@ -450,6 +455,9 @@ AMANHECER_TURNO, AMANHECER_FRAC = 6, 0.05  # o Amanhecer: quando o sol nasce, cu
 MUNDO_PARADO = (2, 3)  # O Mundo Para: ações dele na 1ª parada e da 2ª em diante
 SUTILEZA_TEMPO_PARADO = 99
 LUTA_LONGA, LUTA_LONGA_PASSO = 60, 10  # depois de 60 ações: sem cura, e um desgaste que cresce
+# O Kokusen (o Clarão Negro de verdade): apertar no instante certo da barra do golpe
+KOKUSEN_MULT = 1.75  # o dano do golpe perfeito
+ZONA_MAX = 3  # "na zona": cada Kokusen seguido alarga a faixa do próximo, até aqui
 ENFRAQUECER_MAX = 3  # o quanto o enfraquecer tira, no total, de cada golpe (o Golpe causa 4)
 GIRO_FATIAS = ("sangue", "ferrugem", "divida", "juizo")
 GIRO_CADA, GIRO_CADA_FURIA = 3, 2  # gira a cada N turnos dele (2 na segunda forma)
@@ -580,6 +588,7 @@ class Luta:
         self._iludiu = False  # o rival que age agora mentiu no anúncio (Aizen)
         self._verdade: dict[int, Tecnica] = {}  # Aizen: o que ele vai fazer, atrás da isca
         self._mecanica = ""  # a mecânica de chefe que agiu na ação em curso
+        self._kokusen = False  # a ação em curso é um Kokusen
         self.roda_dono = ""  # o Giro do Dono: a fatia que vale agora (GIRO_FATIAS)
         for r in rivais:
             r.contrato = r.mecanica == "contrato"  # Makima chega com o contrato firmado
@@ -1261,8 +1270,13 @@ class Luta:
         ferrugem = 1 if self.roda_dono == "ferrugem" and ator is self.jogador else 0
         return max(1, t.recarga - menos) + selo + ferrugem
 
-    def resolver(self, t: Tecnica, sacrificio: Tecnica | None = None) -> Acao:
-        """Usa `t`. `sacrificio`: a técnica que um Contrato destrói (padrão: a mais fraca)."""
+    def resolver(
+        self, t: Tecnica, sacrificio: Tecnica | None = None, kokusen: bool = False
+    ) -> Acao:
+        """Usa `t`. `sacrificio`: a técnica que um Contrato destrói (padrão: a mais fraca).
+        `kokusen`: o jogador acertou o tempo da barra (a tela decide): dano ×KOKUSEN_MULT
+        e a zona sobe; um ataque fora do tempo, uma defesa ou tomar dano zeram a zona."""
+        self._kokusen = kokusen and self.vez is self.jogador and t.dano > 0
         if self.acabou:
             raise RuntimeError("a luta já acabou")
         self.forma_revelada = False
@@ -1342,6 +1356,8 @@ class Luta:
         alvo.marca += efetiva.marca
         ator.eco += efetiva.eco
         ator.instinto += efetiva.instinto
+        if efetiva.roda_dharma:  # o General da Roda: daqui até o fim da luta você se adapta
+            ator.roda_dharma = True
         ator.intocavel += efetiva.intocavel
         ator.fera += efetiva.fera
         ator.percepcao_luta += efetiva.foco
@@ -1432,18 +1448,24 @@ class Luta:
                 mult *= 1 + ator.efeitos.dano_marcado
             if ator.veneno:  # o veneno amolece o corpo de quem golpeia
                 mult *= 1 - min(FRAQUEZA_MAXIMA, FRAQUEZA_POR_DOSE * ator.veneno)
-            if alvo.mecanica == "adaptar" and ator is self.jogador:  # a roda gira
+            adapta_chefe = alvo.mecanica == "adaptar" and ator is self.jogador
+            adapta_voce = alvo is self.jogador and alvo.roda_dharma and ator is not alvo
+            if adapta_chefe or adapta_voce:  # a Roda do Dharma gira
                 usos = alvo.adaptacao.get(t.id, 0)
                 alvo.adaptacao[t.id] = usos + 1
                 mult *= ADAPTAR[min(usos, len(ADAPTAR) - 1)]
                 if usos:
                     self._mecanica = "adaptar"
+                    if adapta_chefe and usos == 1:  # adaptado: ele devolve o golpe
+                        alvo.revide = max(alvo.revide, ADAPTAR_REVIDE)
             if ator.carga and t.id == ator.assinatura:  # Leigan: o Disparo sai carregado
                 mult *= 1 + CARGA_BONUS * ator.carga
                 self._mecanica = "carregar"
             base = round(base * mult)
             if efetiva.critico and self.rng.random() < efetiva.critico:
                 base, critico = round(base * CRITICO), True  # Clarão Negro
+            if self._kokusen and ator is self.jogador:  # o golpe no instante exato
+                base, critico = round(base * KOKUSEN_MULT), True
             if alvo.chefe:
                 base = round(base * ator.efeitos.dano_chefe_mult)  # Carrasco
             santuario = ator.santuario > 0 and not ativou_santuario
@@ -1710,6 +1732,10 @@ class Luta:
             disparou = t.id == ator.assinatura  # disparar descarrega; esperar carrega
             ator.carga = 0 if disparou else min(CARGA_MAX, ator.carga + 1)
         self._mecanicas_finais(ator, alvo, t, vida_antes - alvo.vida, encadeada)
+        if ator is self.jogador and t is not HESITAR:  # a zona do Kokusen
+            ator.zona = min(ZONA_MAX, ator.zona + 1) if self._kokusen else 0
+        elif ator is not self.jogador and vida_antes > alvo.vida and alvo is self.jogador:
+            alvo.zona = 0  # tomou dano: sai da zona
         if ator.mecanica == "preco" and t.id == ator.assinatura and not ator.preco:
             ator.preco = True  # Mugetsu: o poder inteiro num golpe, e o que sobra é metade
             ator.dano_mult *= PRECO

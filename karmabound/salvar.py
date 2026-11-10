@@ -20,7 +20,9 @@ from karmabound.grimorio import caminho_padrao
 from karmabound.jornada import Jornada
 from karmabound.run import JOGOS, Contexto
 
-VERSAO = 4  # 2: o caminho, os bandos e o Legado; 3: fusões, mapa e Ascensão; 4: vilões e História
+# 2: caminho, bandos e Legado; 3: fusões, mapa e Ascensão; 4: vilões e História;
+# 5: votos no menu, sem o Mundo de um anime
+VERSAO = 5
 
 
 def caminho() -> Path:

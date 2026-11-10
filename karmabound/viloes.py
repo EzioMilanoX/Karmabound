@@ -25,7 +25,7 @@ from pathlib import Path
 
 from karmabound.rodas import DADOS, anime_de
 
-PAPEIS = ("tenente", "chefe", "final", "secreto")
+PAPEIS = ("tenente", "chefe", "final", "secreto", "meme")  # meme: chefes secretos (memes.py)
 DONO = "dono_da_roda"  # o chefe fixo do último capítulo do Clássico
 REFLEXO = "reflexo"  # o chefe do capítulo secreto
 MECANICA_REFLEXO = "reflexo"  # a mecânica dele: copia as suas técnicas no começo da luta
@@ -45,6 +45,8 @@ class Vilao:
     assinaturas: tuple[str, ...] = ()
     tecnicas: tuple[str, ...] = ()
     falas: dict = field(default_factory=dict, hash=False, compare=False)
+    imagens: str = ""  # chefe secreto: a pasta dos quadros em karmabound/data/memes/
+    troca: float = 0.5  # chefe secreto: segundos por quadro (tosco de propósito)
 
     @property
     def anime(self) -> str:

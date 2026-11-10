@@ -527,6 +527,25 @@ Pedido do Enzo: chefes fixos especiais como em The Binding of Isaac, um modo his
 
 **Telas:** a entrada do vilão mostra kanji, nome, quem ele é e a fala; a fala da segunda forma aparece no alto; o banner do fim traz a última fala. Figuras com a cor do vilão. O título tem o modo História com a campanha (← →, 完 nas terminadas). O Grimório ganhou a aba **Vilões** (o bestiário). O Legado guarda as vitórias sobre o Dono, os finais vistos, os vilões vencidos e as campanhas terminadas.
 
+## Revisão: votos no menu, mundos fechados, Kokusen e a Roda do Dharma (2026-11-10)
+
+Decidido com o Enzo depois da Leva 5, para tirar o que confundia:
+
+- **Chefe = vilão especial.** O Grimório tem uma aba só (Vilões), e cada vilão mostra o papel, a assinatura e a regra. O chefe anônimo só existe sem elenco (testes e medições).
+- **Votos no menu** (`pacto.py`, `tela_pacto.py`, entrada "Votos" no título). Saem o Altar entre capítulos e o Juramento. Antes da run, você jura restrições (até 4) com preço fixo: os valores típicos do catálogo para uma run de 12 lutas, sem simulação. Os pontos compram ganhos que valem a run inteira; quebrar cobra como sempre. **Por que jurar:** cada restrição tem uma recompensa (`votos.json` → `recompensa`, 16 itens com a tag `voto`), que fica fora das rodas até você vencer uma run com o voto de pé (`Legado.desbloqueios`). As de conduta, que valem 0 pontos, existem por essa recompensa. Separado da Ascensão. O voto de luta fica.
+- **A História de um anime só sorteia aquele mundo** (`filtrar_anime(convidados=False)`): 55 itens novos fecharam as raridades de Linhagem, Destino, Técnicas e Relíquias, e um teste garante que nenhuma roda de nenhum mundo tem buraco. O modo Mundo de um anime saiu.
+- **Kokusen** (`combate.KOKUSEN_MULT`, `tela_luta`): todo golpe de ataque do jogador abre uma barra de 0,6 s em tempo real; Enter na faixa dá dano ×1,75. Na zona (`Lutador.zona`, até 3), a faixa alarga; errar o tempo, defender ou tomar dano zera. A Ressonância de Jujutsu Kaisen alarga a faixa. Nas Opções, a barra desliga: aí o Kokusen sai em 8% dos golpes. O piloto automático não faz Kokusen.
+- **A Roda do Dharma**: técnica Divina do jogador (`roda_do_dharma`): invoca o general e liga `Lutador.roda_dharma`, e o golpe que o rival repete fere metade, depois nada; preço: vida máxima. O Mahoraga chefe, adaptado a um golpe, devolve o próximo (`ADAPTAR_REVIDE`).
+- **Dificuldades:** o título mostra uma frase (`frase` no balanceamento), sem a porcentagem. **Calibrar só quando o Enzo pedir:** o teste de calibração tem o marcador `calibracao` e fica fora da suíte padrão (`pytest -m calibracao`).
+
+### Laboratório (modo livre de dev)
+
+`livre.py` + `tela_livre.py`. A mesma sequência secreta faz aparecer **研 Laboratório** no título: escolha Linhagem, Destino, até 4 técnicas, até 3 Relíquias, o Arco, o rival (qualquer vilão, do tenente ao meme) e o capítulo, e lute direto contra ele (`EstadoRun.vilao_forcado`). Tudo vem aberto, sem limite de espaços; nada salva nem conta para o Legado, e a luta volta para a montagem.
+
+### Chefes secretos (memes)
+
+`memes.py`. A sequência ↑ ↑ ↓ ↓ ← → ← → no título (a do modo desenvolvedor do BulletHell) liga e desliga os chefes secretos (`Legado.segredos`). Ligados, um chefe de capítulo que não é fixo tem 20% de chance (`MEME_CHANCE`) de virar um meme: vilão de papel `meme` com `imagens` (a pasta em `karmabound/data/memes/<pasta>/`) e `troca` (segundos por quadro). A luta desenha os PNG em vez da figura, trocando de quadro com um pulo e um tremor, tosco de propósito. As imagens vão no executável, mas a pasta fica no `.gitignore`; sem PNG, o chefe não aparece. O primeiro é a Speaki. Nunca no último capítulo nem na História.
+
 ## Poderes impossíveis de balancear
 
 Preocupação levantada em 2026-11-02: alguns arquétipos (parar o tempo, copiar, golpe que nunca erra, dano igual ao Carma) quebram qualquer luta.

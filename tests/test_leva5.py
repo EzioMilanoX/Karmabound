@@ -101,9 +101,9 @@ def test_o_dono_fecha_o_ultimo_capitulo_do_classico():
     assert DONO not in pool and len(pool) > 3  # o capítulo 1 sorteia de uma lista
 
 
-def test_no_mundo_de_um_anime_so_aparecem_os_viloes_dele():
+def test_na_historia_de_um_anime_so_aparecem_os_viloes_dele():
     for seed in range(4):
-        j = Jornada.nova("acessivel", seed=seed, jogo="anime", anime="Bleach")
+        j = Jornada.nova("acessivel", seed=seed, jogo="historia", historia="bleach")
         jogar_ate_o_fim(j)
         assert all(ELENCO[v].anime == "Bleach" for v in j.estado.viloes_vistos)
 
@@ -322,3 +322,32 @@ def test_origens_dos_viloes_de_anime_dizem_a_obra():
     for v in ELENCO.viloes:
         if v.papel != "secreto" and v.id != DONO and v.origem:
             assert anime_de(v.origem), v.id
+
+
+def test_o_kokusen_multiplica_o_golpe_e_a_zona_cresce():
+    rival = Lutador("Rival", 500, 1, 0, [GUARDA])
+    lt = _luta(rival, tecnicas=(DIRETO,))
+    lt.vez = lt.jogador
+    normal = lt.resolver(DIRETO).dano
+    lt.vez = lt.jogador
+    perfeito = lt.resolver(DIRETO, kokusen=True)
+    assert perfeito.dano >= round(normal * combate.KOKUSEN_MULT) - 1 and perfeito.critico
+    assert lt.jogador.zona == 1
+    lt.vez = lt.jogador
+    lt.resolver(DIRETO)  # fora do tempo: sai da zona
+    assert lt.jogador.zona == 0
+
+
+def test_a_roda_do_dharma_do_jogador_se_adapta_ao_golpe_repetido():
+    soco = Tecnica("soco", "Soco", "ataque", dano=10)
+    roda = Tecnica("roda", "Roda", "maldita", invocar=1, roda_dharma=True, recarga=99)
+    lt = _luta(Lutador("Rival", 500, 1, 0, [soco]), tecnicas=(roda,), vida=200)
+    lt.vez = lt.jogador
+    lt.resolver(roda)
+    assert lt.jogador.roda_dharma
+    danos = []
+    for _ in range(3):
+        antes = lt.jogador.vida
+        _chefe_usa(lt, soco)
+        danos.append(antes - lt.jogador.vida)
+    assert danos[0] > danos[1] > danos[2] == 0

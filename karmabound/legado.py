@@ -60,6 +60,7 @@ class Fechamento:
     ascensao_aberta: int = 0  # a Ascensão que esta vitória abriu (0: nenhuma)
     alem_aberto: bool = False  # esta vitória sobre o Dono abriu o capítulo secreto
     final_novo: str = ""  # um final que você ainda não tinha visto (quebrar | tomar | verdadeiro)
+    desbloqueados: list[str] = field(default_factory=list)  # recompensas de voto liberadas
 
 
 class Legado:
@@ -77,6 +78,9 @@ class Legado:
         self.finais: list[str] = []  # os finais já vistos
         self.vencidos: Counter = Counter()  # vilão -> vezes que você o venceu
         self.campanhas: list[str] = []  # as campanhas do modo História já terminadas
+        self.desbloqueios: set[str] = set()  # recompensas de voto liberadas (pacto.py)
+        self.pacto: dict = {"restricoes": [], "ganhos": []}  # o último pacto montado no menu
+        self.segredos = False  # os chefes secretos (memes.py): a sequência no título
         if arquivo is not None and arquivo.exists():
             try:
                 d = json.loads(arquivo.read_text(encoding="utf-8"))
@@ -89,6 +93,9 @@ class Legado:
                 self.finais = list(d.get("finais", []))
                 self.vencidos = Counter(d.get("vencidos", {}))
                 self.campanhas = list(d.get("campanhas", []))
+                self.desbloqueios = set(d.get("desbloqueios", []))
+                self.pacto = dict(d.get("pacto") or self.pacto)
+                self.segredos = bool(d.get("segredos", False))
             except (ValueError, KeyError, TypeError, AttributeError):
                 self.memoria, self.usos, self.nemesis = memoria_inicial, Counter(), None
                 self.ascensoes = {}
@@ -111,6 +118,9 @@ class Legado:
             "finais": self.finais,
             "vencidos": dict(self.vencidos),
             "campanhas": self.campanhas,
+            "desbloqueios": sorted(self.desbloqueios),
+            "pacto": self.pacto,
+            "segredos": self.segredos,
         }
         self.arquivo.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
 
@@ -146,6 +156,12 @@ class Legado:
         """O capítulo secreto: abre depois de vencer o Dono da Roda DONOS_PARA_ALEM vezes."""
         return self.donos >= DONOS_PARA_ALEM
 
+    def alternar_segredos(self) -> bool:
+        """A sequência secreta liga (ou desliga) os chefes secretos; devolve o estado novo."""
+        self.segredos = not self.segredos
+        self.salvar()
+        return self.segredos
+
     # ------------------------------------------------------------- fim de run
 
     def fechar_run(
@@ -164,6 +180,7 @@ class Legado:
         final: str = "",
         vencidos: list[str] | None = None,
         campanha: str = "",
+        recompensas: list[str] | None = None,
     ) -> Fechamento:
         """Registra a run que acabou. `capitulos`: fechados; `usos`: técnica → usos na run;
         `assassino`: quem te matou ({nome, estilo, tecnica, nemesis}), se perdeu.
@@ -181,6 +198,10 @@ class Legado:
         self.vencidos.update(vencidos or [])
         if campanha and campanha not in self.campanhas:
             self.campanhas.append(campanha)
+        if venceu:  # venceu com o voto inteiro: as recompensas dele saem nas rodas
+            novas = [r for r in recompensas or [] if r not in self.desbloqueios]
+            self.desbloqueios.update(novas)
+            f.desbloqueados = novas
         if venceu and dificuldade:
             nova = min(ascensao + 1, maximo_ascensao())
             if nova > self.ascensao_maxima(dificuldade):

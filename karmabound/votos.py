@@ -55,6 +55,7 @@ class Catalogo:
     preco_minimo: float = 0.05
     preco_exclusivo: float = 1.25
     preco_cambio: float = 1.0  # escala o poder total dos votos
+    recompensas: dict = field(default_factory=dict)  # restrição -> item que ela libera
 
     def creditado(self, sacrificio_voto: float, individuais: list[float]) -> float:
         """Retorno decrescente por restrição: cada uma credita no máximo `teto_por_restricao`.
@@ -115,6 +116,7 @@ def carregar_catalogo(caminho: Path | None = None) -> Catalogo:
         preco_minimo=d["precos"]["minimo"],
         preco_exclusivo=d["precos"]["exclusivo"],
         preco_cambio=d["precos"].get("cambio", 1.0),
+        recompensas={r["id"]: r["recompensa"] for r in d["restricoes"] if r.get("recompensa")},
     )
 
 

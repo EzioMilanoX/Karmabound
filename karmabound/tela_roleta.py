@@ -672,7 +672,7 @@ class RoletaScene(IScene):
             tela = r
             for j, f in enumerate(self.giro.fatias):
                 cor = self.cores_claras[f.raridade]
-                yj = y + 34 + j * 52
+                yj = y + 34 + j * (52 if len(self.giro.fatias) <= 3 else 42)  # 4: mais junto
                 foco = self.cartas.foco_de(j)
                 r = self.cartas.camada(tela, j, (x + 118, yj + 14))
                 if foco > 0.02:  # o destaque desliza entre as opções

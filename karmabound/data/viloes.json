@@ -1521,6 +1521,29 @@
         "derrota": "Eu não sei por quê. Eu só queria ver o fim.",
         "vitoria": "Eu já tinha visto você cair. Nada muda o que vem."
       }
+    },
+    {
+      "id": "speaki",
+      "nome": "Speaki",
+      "titulo": "o chefe que ninguém pediu",
+      "origem": "",
+      "kanji": "泣",
+      "papel": "meme",
+      "capitulo": 1,
+      "estilo": "monge",
+      "cor": "#e8a0b8",
+      "assinaturas": [
+        "choro_de_speaki"
+      ],
+      "tecnicas": [],
+      "imagens": "speaki",
+      "troca": 0.45,
+      "falas": {
+        "entrada": "Speaki.",
+        "furia": "SPEAKI!!",
+        "derrota": "...speaki.",
+        "vitoria": "Speaki."
+      }
     }
   ]
 }

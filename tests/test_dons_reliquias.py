@@ -190,10 +190,11 @@ def fatia(ctx, roda, fid):
 
 def test_dom_aplica_efeito_e_tecnica(ctx):
     e = nova_run(ctx, random.Random(1))
+    sem_dom = e.jogador.efeitos.vida_max  # o que a Linhagem sorteada já dá
     aplicar_dom(e, ctx, fatia(ctx, "destino", "corpo_resistente"))
-    assert e.jogador.efeitos.vida_max > 0 and e.jogador.tecnica_dom is None
+    assert e.jogador.efeitos.vida_max > sem_dom and e.jogador.tecnica_dom is None
     aplicar_dom(e, ctx, fatia(ctx, "destino", "santuario"))
-    assert e.jogador.tecnica_dom.santuario > 0 and e.jogador.efeitos.vida_max == 0
+    assert e.jogador.tecnica_dom.santuario > 0 and e.jogador.efeitos.vida_max == sem_dom
 
 
 def test_reliquias_repetidas_se_somam(ctx):

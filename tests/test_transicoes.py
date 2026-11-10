@@ -288,6 +288,7 @@ def test_o_treino_aceita_a_escolha_durante_a_entrada_e_sai_carimbando(velocidade
 def test_o_titulo_desliza_a_selecao():
     entrada = Entrada()
     tela = TituloScene(entrada, lambda *a, **k: None, lambda: None)
+    tela.preparar()  # o preparo tem várias linhas; o cursor fica em Começar, a última
     tela.assentar()
     antes = tela.y_sel
     entrada.apertadas = {"cima"}

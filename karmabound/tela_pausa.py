@@ -232,7 +232,17 @@ class PausaScene(_Sobre):
 class OpcoesScene(_Sobre):
     """Volume, silenciar, tela cheia, velocidade das animações e dicas. Tudo vale na hora."""
 
-    LINHAS = ("musica", "efeitos", "mudo", "tela_cheia", "velocidade", "dicas", "rever", "voltar")
+    LINHAS = (
+        "musica",
+        "efeitos",
+        "mudo",
+        "tela_cheia",
+        "velocidade",
+        "kokusen",
+        "dicas",
+        "rever",
+        "voltar",
+    )
 
     def __init__(self, baixo, entrada, ao_fechar, ao_sair, renderer=None) -> None:
         super().__init__(baixo, entrada, ao_fechar, ao_sair)
@@ -248,6 +258,7 @@ class OpcoesScene(_Sobre):
             "mudo": ("Silenciar tudo", "sim" if o.mudo else "não"),
             "tela_cheia": ("Tela cheia", "sim" if o.tela_cheia else "não"),
             "velocidade": ("Velocidade das animações", f"{o.velocidade:g}×".replace(".", ",")),
+            "kokusen": ("Kokusen (o tempo do golpe)", "ligado" if o.kokusen else "desligado"),
             "dicas": ("Dicas da primeira run", "ligadas" if o.dicas else "desligadas"),
             "rever": ("Rever todas as dicas", ""),
             "voltar": ("Voltar", ""),
@@ -271,6 +282,8 @@ class OpcoesScene(_Sobre):
         elif linha == "velocidade":
             i = VELOCIDADES.index(o.velocidade) if o.velocidade in VELOCIDADES else 0
             o.velocidade = VELOCIDADES[(i + (1 if passo >= 0 else -1)) % len(VELOCIDADES)]
+        elif linha == "kokusen":
+            o.kokusen = not o.kokusen
         elif linha == "dicas":
             o.dicas = not o.dicas
         elif linha == "rever":

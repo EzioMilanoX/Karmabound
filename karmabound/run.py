@@ -60,6 +60,7 @@ from karmabound.historias import (
     carregar_arcos_da_historia,
     carregar_historias,
 )
+from karmabound.memes import MEME_CHANCE, memes_disponiveis
 from karmabound.mesa import Giro, Mesa
 from karmabound.ressonancia import efeitos_de_ressonancia
 from karmabound.rodas import (
@@ -123,6 +124,7 @@ class Contexto:
     arcos_fixos: dict[str, Fatia] = field(default_factory=dict)  # Arcos fora da roda
     alem: bool = False  # o capítulo secreto já está aberto (Legado): o Dono convida
     assinaturas: dict[str, Fatia] = field(default_factory=dict)  # todas as de chefe, por id
+    memes: tuple[Vilao, ...] = ()  # os chefes secretos ligados e com imagem (memes.py)
 
     @property
     def lutas(self) -> int:
@@ -158,18 +160,29 @@ class Contexto:
         historia: str = "",
         alem: bool = False,
         viloes: bool = True,
+        desbloqueios: frozenset[str] = frozenset(),
+        memes: bool = False,
     ) -> Contexto:
         """`abertos`: os animes que o Legado já abriu (None: todos). `maestria` e
         `nemesis`: do Legado de quem joga. `caminho=False`: luta atrás de luta.
         `ascensao`: o degrau da Ascensão (0: nenhum). `historia`: a campanha do modo
         História. `alem`: o capítulo secreto está aberto. `viloes=False`: rivais e
-        chefes anônimos, como antes da Leva 5 (para medir)."""
+        chefes anônimos, como antes da Leva 5 (para medir). `desbloqueios`: as
+        recompensas de voto já liberadas (pacto.py); as outras ficam fora das rodas."""
         if jogo not in JOGOS:
             raise ValueError(f"modo de jogo '{jogo}' não existe (use: {', '.join(JOGOS)})")
         bal = balanceamento or carregar_balanceamento()
         raridades = carregar_raridades(bal)
         cfg = config_combate(bal, dificuldade)
         rodas, chefes = carregar_rodas(raridades), carregar_chefes()
+
+        def liberada(f: Fatia) -> bool:  # as recompensas de voto só entram depois de liberadas
+            return "voto" not in f.tags or f.id in desbloqueios
+
+        rodas = {
+            rid: replace(roda, fatias=tuple(f for f in roda.fatias if liberada(f)))
+            for rid, roda in rodas.items()
+        }
         if abertos is not None:  # a roda se abre aos poucos: só os animes já abertos
             fixas = set(cfg["jogador"]["tecnicas"])
             fixas |= {f.inicial for f in rodas["linhagem"].fatias if f.inicial}
@@ -188,12 +201,12 @@ class Contexto:
         elif historia:
             raise ValueError("`historia` só vale no modo História")
         assinaturas = {c.id: c for c in chefes}  # todas: um vilão leva as dele em qualquer modo
-        if jogo == "anime" or (jogo == "historia" and anime):
+        if jogo == "historia" and anime:  # a campanha de um anime: só aquele mundo
             if not anime:
                 raise ValueError("o Mundo de um anime precisa do anime")
             fixas = set(cfg["jogador"]["tecnicas"])
             fixas |= {f.inicial for f in rodas["linhagem"].fatias if f.inicial}
-            rodas = filtrar_anime(rodas, anime, frozenset(fixas))
+            rodas = filtrar_anime(rodas, anime, frozenset(fixas), convidados=False)
             chefes = tuple(c for c in chefes if anime_de(c.origem) == anime) or chefes
         treinos, oferta = carregar_treinos()
         elenco = carregar_viloes() if viloes else None
@@ -216,6 +229,7 @@ class Contexto:
             fusoes=carregar_fusoes(),
             elenco=elenco,
             assinaturas=assinaturas,
+            memes=memes_disponiveis(elenco) if memes and elenco and jogo != "historia" else (),
             animes=abertos,
             historia=campanha,
             arcos_fixos=carregar_arcos_da_historia(),
@@ -232,14 +246,12 @@ JOGOS = {
     "historia": "História",
     "torre": "Torre sem fim",
     "chefes": "Desfile de chefes",
-    "anime": "Mundo de um anime",
 }
 DESCRICAO_JOGO = {
     "classico": "3 capítulos, 12 lutas",
     "historia": "capítulos, cenas e chefes fixos",
     "torre": "até onde você sobe?",
     "chefes": "6 lutas, só chefes",
-    "anime": "um anime só",
 }
 MECANICAS_ANTIGAS = frozenset(  # as mecânicas de chefe de antes dos vilões finais
     "petalas armadura repulsao intangivel preco carregar contrato balanca regenera adaptar "
@@ -252,14 +264,16 @@ HORIZONTE_TORRE = 12  # o Altar e o piloto projetam a Torre como uma run de 12 l
 MINIMO_ANIME = 10  # técnicas de um anime para ele ter o próprio Mundo
 
 
-def filtrar_anime(rodas: dict[str, Roda], anime: str, manter=frozenset()) -> dict[str, Roda]:
-    """As rodas só com o anime. Uma raridade que ele não tem numa roda volta inteira
-    (os convidados), para nenhuma roda ficar sem o que sortear."""
-    return filtrar_animes(rodas, frozenset({anime}), manter)
+def filtrar_anime(
+    rodas: dict[str, Roda], anime: str, manter=frozenset(), convidados: bool = True
+) -> dict[str, Roda]:
+    """As rodas só com o anime. `convidados`: uma raridade que ele não tem numa roda
+    volta inteira (sem eles, a História: todo anime tem todas as raridades)."""
+    return filtrar_animes(rodas, frozenset({anime}), manter, convidados)
 
 
 def filtrar_animes(
-    rodas: dict[str, Roda], animes: frozenset[str], manter=frozenset()
+    rodas: dict[str, Roda], animes: frozenset[str], manter=frozenset(), convidados: bool = True
 ) -> dict[str, Roda]:
     """As rodas só com estes animes (e as fatias de `manter`). Uma raridade que eles não
     têm numa roda volta inteira, para nenhuma roda ficar sem o que sortear."""
@@ -267,8 +281,10 @@ def filtrar_animes(
     for rid, roda in rodas.items():
         do_anime = [f for f in roda.fatias if anime_de(f.origem) in animes or f.id in manter]
         tem = {f.raridade for f in do_anime}
-        convidados = [f for f in roda.fatias if f.raridade not in tem]
-        novas[rid] = replace(roda, fatias=tuple(do_anime + convidados))
+        de_fora = [f for f in roda.fatias if f.raridade not in tem] if convidados else []
+        if not do_anime:  # sem nada daquele mundo (o Arco, que a História fixa): fica
+            de_fora = list(roda.fatias)
+        novas[rid] = replace(roda, fatias=tuple(do_anime + de_fora))
     return novas
 
 
@@ -324,6 +340,7 @@ class EstadoRun:
     alem: bool = False  # aceitou o convite: o capítulo secreto, além da Roda
     final: str = ""  # o final escolhido no modo História (quebrar | tomar)
     dono_vencido: bool = False  # venceu o Dono da Roda nesta run
+    vilao_forcado: str = ""  # o Laboratório (livre.py): o rival escolhido a dedo
 
     @property
     def acabou(self) -> bool:
@@ -506,6 +523,8 @@ def vilao_chefe(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> Vilao |
         cap = ctx.historia.capitulo(estado.capitulo)
         if cap is not None and el.get(cap.chefe) is not None:
             return el[cap.chefe]
+    if ctx.memes and not _ultimo_capitulo(estado, ctx) and rng.random() < MEME_CHANCE:
+        return rng.choice(ctx.memes)  # um chefe secreto toma o lugar
     return escolher_chefe(
         el,
         estado.capitulo,
@@ -554,6 +573,11 @@ def gerar_oponentes(estado: EstadoRun, ctx: Contexto, rng: random.Random) -> lis
     chefe = estado.chefe or ctx.todos_chefes
     porta, cam = estado.porta, ctx.caminho
     n, cap = estado.proxima_luta, estado.capitulo
+    forcado = ctx.elenco.get(estado.vilao_forcado) if estado.vilao_forcado and ctx.elenco else None
+    if forcado is not None:  # o Laboratório: quem você escolheu (tenente não é chefe)
+        rival = gerar_rival(ctx, n, rng, cap, forcado.papel != "tenente", vilao=forcado)
+        _vestir(rival, forcado, estado, estilo_do_rival(n, cap, rival.chefe))
+        return [rival]
     if chefe or porta is None or cam is None or porta.tipo == "rival":
         vilao = vilao_chefe(estado, ctx, rng) if chefe else vilao_rival(estado, ctx, rng)
         rival = gerar_rival(ctx, n, rng, cap, chefe, vilao=vilao)
@@ -785,7 +809,7 @@ def encerrar_luta(estado: EstadoRun, ctx: Contexto, luta: Luta) -> bool:
         estado.arco = None
         estado.tamanho_capitulo = ctx.lutas_por_capitulo
         estado.venceu = estado.capitulo > ctx.capitulos + estado.alem
-        estado.altar_pendente = not estado.venceu  # o Altar abre entre capítulos
+        # os votos agora são jurados no menu, antes da run (pacto.py): sem Altar no meio
     else:
         estado.luta_no_capitulo += 1
     atualizar_efeitos(estado)
@@ -805,7 +829,6 @@ def aceitar_convite(estado: EstadoRun, ctx: Contexto) -> None:
     if not ctx.alem or estado.alem or not estado.venceu:
         raise RuntimeError("o convite para além da Roda não está aberto")
     estado.alem, estado.venceu = True, False
-    estado.altar_pendente = estado.votos.pode_jurar()
 
 
 def convite_aberto(estado: EstadoRun, ctx: Contexto) -> bool:

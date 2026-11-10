@@ -59,6 +59,19 @@
 | 矢 | Filhos da Flecha | Sangue | A flecha fura e escolhe: um Stand que não ocupa espaço, 3 golpes de 4. Preço: −5 de vida máxima. | A Flecha (os Stands) · JoJo's Bizarre Adventure |
 | 焦 | Casa do Fogo e do Gelo | Sangue | Começa com a Metade Fria, e todo ataque que fere faz o rival queimar 1. Preço: −3 de vida máxima (o fogo do pai). | Família Todoroki · My Hero Academia |
 | 無 | Nascidos Vazios | Cinza | Nasceu sem poder e treinou o corpo até sangrar: +2 de vida máxima e +1 de dano no Golpe. | Sem Individualidade (Deku) · My Hero Academia |
+| 改 | Sangue Costurado | Maldito | +1 de Velocidade e todo dano +6%. Preço: sem compaixão, toda cura vale 80%. | Família Vinsmoke (Reino Germa) · One Piece |
+| 魂 | Almas da Rua Cinzenta | Cinza | Quem sobreviveu à fome: cura 1 e 1 de bloqueio no início de cada luta. | Rukongai (Rukia) · Bleach |
+| 虚 | O Outro Dentro | Maldito | +4 de dano conforme a vida cai e todo dano +4%. Preço: o dano que você sofre +8%. | Hollow Interior (Ichigo) · Bleach |
+| 光 | Sangue do Pai das Luzes | Divino | +1 de Percepção, cura 15% do dano que causa e todo dano +10%. Preço: vida máxima −10% e Carma 20% mais lento. | Sangue de Yhwach (Quincy) · Bleach |
+| 塵 | Filhos do Lixão | Maldito | +2 de Sutileza, o primeiro ataque causa +10% e todo dano +4%. Preço: toda cura vale 80%. | Cidade Meteoro (Chrollo) · Hunter x Hunter |
+| 蟻 | Sangue do Rei Quimera | Divino | +12 de vida máxima, +1 de Percepção e todo dano +10%. Preço: toda cura vale 80% e o Carma enche 20% mais devagar. | Rei Quimera (Meruem) · Hunter x Hunter |
+| 徒 | Casa dos Aprendizes | Cinza | Corpo reforçado desde cedo: +2 de vida máxima e +1 de dano no Golpe. | Escola Técnica de Jujutsu (Yuji) · Jujutsu Kaisen |
+| 限 | Sangue do Infinito | Divino | 12% de esquiva, 2 golpe ignorado por luta e +1 de Percepção. Preço: vida máxima −10% e Carma 20% mais lento. | Clã Gojo (Satoru) · Jujutsu Kaisen |
+| 覇 | Estirpe do Lendário | Divino | +6 de dano abaixo de 30% da vida, todo dano +12% e +1 de vida máxima por vitória. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Saiyajin Lendário (Broly) · Dragon Ball |
+| 日 | Estirpe do Sol Primordial | Divino | +2 de Percepção, todo dano +12% e a surpresa do rival não ganha bônus. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Marca do Sol (Yoriichi) · Demon Slayer |
+| 霊 | Linhagem da Alma Visível | Divino | Um Stand luta ao seu lado: repete 20% de cada golpe, e todo dano +8%. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Stand (Jotaro Kujo) · JoJo's Bizarre Adventure |
+| 九 | Herança dos Nove | Divino | Todo dano +12%, +1 de Percepção e transformações duram 2 turnos a mais. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Os usuários anteriores (Deku) · My Hero Academia |
+| 戦 | Guerreiros Condenados | Sangue | Todo dano +6%: o poder dos titãs. Preço: −3 de vida máxima (treze anos de vida). | Guerreiros de Marley (Reiner) · Attack on Titan |
 
 ## 命 Destino (gira e aceita)
 
@@ -121,6 +134,21 @@
 | 秘 | Mana Escondida | Sangue | Mil anos escondendo a mana: o rival te subestima — o primeiro ataque de cada luta causa +7%. | Ocultar a mana (Frieren) · Frieren |
 | 婆 | Maldição que Corre | Cinza | Uma maldição veloz: +2 de Velocidade e 2% de chance de esquivar. | Turbo Vovó (Okarun) · Dandadan |
 | 念 | Mãos Invisíveis | Sangue | Técnica: mãos de energia prendem o rival — ele não pode defender por 2 turnos, e o próximo golpe nele causa +50%. | Psicocinese (Momo) · Dandadan |
+| 解 | Veste de Lâmina Negra | Divino | Técnica, uma vez por luta: por 3 turnos, +8 de dano e um golpe a mais. Não gasta o turno. Preço: 3 de vida e técnicas 3 turnos em recarga. | Bankai (Tensa Zangetsu, Ichigo) · Bleach |
+| 誓 | Voto Sem Volta | Maldito | +2 de dano em todo golpe e todo dano +8%. Preço: o voto não aceita defesa, você nunca defende. | Voto e Limitação (Nen) · Hunter x Hunter |
+| 掌 | Cem Mãos do Bodisatva | Divino | Uma vez por luta: 5 golpes de 9, a mão que nunca para. Preço: 8 de vida. | Guanyin Bodhisattva de Cem Mãos (Netero) · Hunter x Hunter |
+| 癒 | Fôlego Reverso | Cinza | A energia gira ao contrário: cura 1 por turno enquanto a vida estiver abaixo de 50%. | Energia Reversa (Shoko) · Jujutsu Kaisen |
+| 感 | Faro de Energia | Sangue | +2 de Percepção: você sente a energia do rival antes do golpe. Preço: −4 de vida máxima. | Sentir Ki (Piccolo) · Dragon Ball |
+| 瞬 | Dois Dedos na Testa | Maldito | Técnica: o próximo turno do rival não te fere. Preço: 2 de vida. | Teletransporte (Goku) · Dragon Ball |
+| 悟 | Instinto da Batalha | Divino | 30% de chance de um golpe inteiro errar e +2 de Percepção: o corpo reage sozinho. Preço: vida máxima −5% e o Carma enche 30% mais devagar. | Instinto Superior (Goku) · Dragon Ball |
+| 蘇 | Carne que Não Morre | Divino | Uma vez por run, ao cair, volta com 30% da vida; abaixo de 60% cura 5 por turno. Preço: toda cura de fora vale 50% e vida máxima −10%. | Células de Muzan (Muzan Kibutsuji) · Demon Slayer |
+| 詭 | Truque Sujo | Cinza | O primeiro ataque de cada luta causa +4%, e +1 de Sutileza. | Truques de Joseph (Joseph Joestar) · JoJo's Bizarre Adventure |
+| 修 | Pedaços que Voltam | Sangue | Técnica: bloqueia 14 e cura 2 por turno até o fim da luta. | Crazy Diamond (Josuke) · JoJo's Bizarre Adventure |
+| 硬 | Pele Endurecida | Cinza | Começa cada luta com 2 de bloqueio. | Endurecer (Kirishima) · My Hero Academia |
+| 駆 | Motor nas Pernas | Sangue | +1 de Velocidade: você quase sempre ataca primeiro. Preço: −3 de vida máxima. | Engine (Iida) · My Hero Academia |
+| 透 | Atravessar o Chão | Maldito | 20% de chance de um golpe inteiro errar: o corpo atravessa tudo. Preço: −4 de vida máxima. | Permeação (Mirio) · My Hero Academia |
+| 盗 | Tomar Poderes | Divino | Técnica: usa a última técnica do rival como se fosse sua, com +60%. Preço: 4 de vida. | Todos por Um (All For One) · My Hero Academia |
+| 訓 | Treino de Cadete | Cinza | +1 de vida máxima e começa cada luta com 1 de bloqueio. | Treinamento dos Cadetes (104º Corpo) · Attack on Titan |
 
 ## 技 Técnicas (gira 3, escolhe 1)
 
@@ -324,6 +352,18 @@
 | 叫 | Grito que Desperta Gigantes | Sangue | maldita | Um grito, e os do mesmo sangue viram titãs: ferem 6 agora e a cada turno seu, 3 vezes. Preço: 2 de vida. | 4 | 0 |  | Grito do Titã Bestial (Zeke) · Attack on Titan |
 | 甲 | Couraça de Pedra | Maldito | modo | Vira o titã de couraça: por 3 turnos, +6 de dano, bloqueio 12 renovado e dano sofrido −40%. Não gasta o turno. Preço: 3 de vida e 1 turno perdido. | 99 | 0 |  | Titã Encouraçado (Reiner) · Attack on Titan |
 | 汽 | Gigante de Vapor | Maldito | modo | Vira o gigante de vapor: por 2 turnos, todo o seu dano +140% e bloqueio 8 renovado. Não gasta o turno. Preço: 4 de vida e 2 turnos perdidos. | 99 | 0 |  | Titã Colossal (Bertholdt) · Attack on Titan |
+| 肉 | Carne por Poder | Maldito | ataque | 22 de dano que atravessa o bloqueio. Preço: 5 de vida. | 3 | 2 | sim | Voto de carne (Kurapika) · Hunter x Hunter |
+| 攻 | Tudo no Ataque | Sangue | ataque | 3 golpes de 5, sem pensar em defesa. | 2 | 1 |  | Gear Second (Luffy) · One Piece |
+| 念 | Golpe sem Mãos | Sangue | ataque | A aura bate por você: 9 de dano que você não precisa erguer as mãos para dar. | 1 | 3 |  | Emissão de Nen · Hunter x Hunter |
+| 刻 | Golpe Contado | Maldito | ataque | O tempo curto vira força: 18 de dano, quase impossível de perceber. | 3 | 4 | sim | Revelação da técnica (Nanami) · Jujutsu Kaisen |
+| 封 | Poder Contido | Maldito | maldita | O que não despertou explode de uma vez: 26 de dano. Preço: 6 de vida. | 4 | 2 | sim | Selo do Kyuubi · Naruto |
+| 忍 | Corte Paciente | Sangue | ataque | Um corte que espera a hora: 10 de dano com crítico ×0,25. | 3 | 2 |  | Iaido (Kenpachi) · Bleach |
+| 純 | Punho Puro | Maldito | ataque | Sem maldição nenhuma, só o corpo: 3 golpes de 7. | 3 | 3 |  | Restrição Celestial (Toji) · Jujutsu Kaisen |
+| 宣 | Golpe Declarado | Maldito | maldita | Você avisa e ainda assim acerta: 16 de dano absoluto. | 4 | 0 | sim | Revelação do voto · Jujutsu Kaisen |
+| 法 | A Roda do Dharma | Divino | maldita | Invoca o general que se adapta: fere 6 por 4 turnos, e o golpe que o rival repete te fere metade, depois nada. Preço: 5 de vida máxima. | 99 | 0 |  | Mahoraga (Megumi) · Jujutsu Kaisen |
+| 環 | Ciclo das Treze Formas | Divino | ataque | Uma vez por luta: 12 cortes de 4 em chamas, e o rival queima 3 por 3 turnos. Preço: 8 de vida. | 99 | 2 | sim | Hinokami Kagura: Treze Formas (Tanjiro) · Demon Slayer |
+| 象 | Golpe do Símbolo | Divino | maldita | Uma vez por luta: 52 de dano que atravessa bloqueio. Pega o bando: os outros sofrem 40%. Preço: 5 de vida e −3 de vida máxima. | 99 | 1 | sim | United States of Smash (All Might) · My Hero Academia |
+| 軍 | Marcha dos Gigantes | Divino | maldita | Uma vez por luta: mil titãs marcham, ferem 12 agora e a cada turno seu, 5 vezes. Preço: 6 de vida e −3 de vida máxima. | 99 | 0 |  | O Retumbar (Eren Jaeger) · Attack on Titan |
 
 ## 章 Arco (gira e aceita)
 
@@ -410,6 +450,37 @@
 | 鞘 | Bainha Sagrada | Divino | A bainha que cura tudo: cura 4 por turno; uma vez por run um golpe fatal deixa você com 1 de vida, e uma vez por run, ao cair, você volta com 30% da vida. | Avalon (Saber) · Fate |
 | 鉄 | Espada Grande Demais | Maldito | Grande demais para ser uma espada: +1 de dano em todo golpe. Preço: −1 de Velocidade. | Dragonslayer (Guts) · Berserk |
 | 面 | Máscara de Pedra | Sangue | Quem a veste vira vampiro: cura 39% de todo dano que causa. Preço: as outras curas valem 80%. | Máscara de Pedra (Dio) · JoJo's Bizarre Adventure |
+| 鉛 | Corrente de Chumbo | Sangue | Quem anda devagar bate com o peso todo: +2 de dano. | Treino com pesos (Rock Lee) · Naruto |
+| 眠 | Brasa que Não Dorme | Maldito | Você se refaz lutando: cura 3 por turno enquanto estiver abaixo da metade. | Respiração de Concentração Total · Demon Slayer |
+| 視 | Olho que Vê Quem Vê | Sangue | Quem te observa também é observado: +2 de Percepção. | Gyo · Hunter x Hunter |
+| 刃 | Lâmina do Limite | Maldito | Quem anda no fio aprende a cortar com ele: +125% de dano contra chefes. | Voto de vida (Kurapika) · Hunter x Hunter |
+| 帯 | Venda de Seda | Sangue | Sem ver, você sente: 12% de chance de esquivar. | A venda (Gojo) · Jujutsu Kaisen |
+| 沸 | Sangue que Ferve | Sangue | O que não fecha, queima: +4 de dano conforme a vida cai. | Manipulação de Sangue (Choso) · Jujutsu Kaisen |
+| 硝 | Pele de Vidro | Sangue | Quem sente tudo, revida tudo: revide 3 em toda luta. | Contra-ataque (Hisoka) · Hunter x Hunter |
+| 静 | Calma do Monge | Sangue | A calma vira ação: as recargas das suas técnicas −1. | Mente Clara (Netero) · Hunter x Hunter |
+| 樹 | Fruto da Árvore Primeva | Divino | +8 de vida máxima e todo dano +12%. Preço: o Carma enche 20% mais devagar. | Fruto do Shinju (Kaguya) · Naruto |
+| 焔 | Brasa do Velho Mestre | Divino | O rival queima 4, o fogo fere +30% e todo dano +6%. Preço: 1 de vida por turno e dano sofrido +10%. | Zanka no Tachi (Yamamoto) · Bleach |
+| 証 | Licença de Caçador | Sangue | Abre todas as portas: cura 2 no início de cada luta e +15% de chance de Relíquia. | Licença de Hunter (Gon) · Hunter x Hunter |
+| 札 | Baralho Afiado | Maldito | Todo ataque que fere faz o rival sangrar 2 por 3 turnos, e +25% de dano contra quem sangra. Preço: o dano que você sofre +10%. | Cartas de Hisoka (Bungee Gum e Texture Surprise) · Hunter x Hunter |
+| 爆 | Rosa dos Pobres | Divino | O primeiro ataque causa +50% e todo ataque que fere injeta 2 de veneno. Preço: vida máxima −15%. | Rosa Miniatura dos Pobres (Netero) · Hunter x Hunter |
+| 釘 | Martelo e Pregos | Cinza | +30% de dano contra rival que sangra, queima ou está envenenado. | Martelo e Pregos (Nobara) · Jujutsu Kaisen |
+| 矛 | Lança que Anula | Sangue | O Golpe atravessa bloqueio, causa +1 e quase não se percebe (+1 de Sutileza). | Lança Invertida do Céu (Toji) · Jujutsu Kaisen |
+| 契 | Aliança do Amor Maldito | Maldito | Começa cada luta com uma invocação: fere 3 a cada turno seu, por 3 turnos. Preço: o dano que você sofre +10%. | Anel de Yuta (Rika) · Jujutsu Kaisen |
+| 測 | Lente Medidora | Sangue | O primeiro ataque de cada luta causa +9%, e +1 de Sutileza. | Scouter (Raditz) · Dragon Ball |
+| 融 | Brincos de Fusão | Maldito | Duas almas num corpo: +1 espaço de técnica e +1 de dano. Preço: vida máxima −8%. | Brincos Potara (Supremo Senhor Kaioh) · Dragon Ball |
+| 願 | Sete Esferas | Divino | Sete esferas, um desejo: uma vez por run, ao cair, você volta com 30% da vida, e +10 de vida máxima. Preço: o Carma enche 30% mais devagar. | Esferas do Dragão (Shenron) · Dragon Ball |
+| 赫 | Lâmina Escarlate | Maldito | O aço fica rubro: todo ataque que fere faz o rival queimar 2, e técnicas causam +8%. Preço: vida máxima −5%. | Espada Nichirin escarlate (Tanjiro) · Demon Slayer |
+| 蒼 | Flor-Aranha Azul | Divino | A flor que vence o sol: abaixo da metade cura 3 por turno, todo dano +12% e um golpe fatal deixa 1 de vida (1×). Preço: Carma 30% mais devagar. | Higanbana azul (Muzan Kibutsuji) · Demon Slayer |
+| 球 | Bola de Aço | Cinza | +1 de vida máxima e +1 de dano no Golpe. | Bola de Aço (Gyro Zeppeli) · JoJo's Bizarre Adventure |
+| 盤 | Disco de Stand | Maldito | Um disco de poder alheio: +1 espaço de técnica e +1 de dano. Preço: vida máxima −8%. | DISC (Whitesnake) · JoJo's Bizarre Adventure |
+| 矢 | Flecha do Réquiem | Divino | A flecha que leva o poder além: +1 espaço de técnica e um golpe fatal deixa 1 de vida (1×). Preço: vida máxima −10% e o Carma enche 30% mais devagar. | Flecha do Réquiem (Giorno Giovanna) · JoJo's Bizarre Adventure |
+| 記 | Caderno de Análise | Cinza | +1 de Percepção. | Caderno de Análise de Heróis (Deku) · My Hero Academia |
+| 弾 | Bracelete-Granada | Sangue | +0,5 de dano a cada turno seu na luta (acumula; vale a parte inteira). | Bracelete de granada (Bakugo) · My Hero Academia |
+| 薬 | Gatilho | Maldito | A droga que acorda o poder: todo dano +14%. Preço: 1 de vida por turno. | Trigger (Shie Hassaikai) · My Hero Academia |
+| 平 | Manto da Paz | Divino | ++30% de dano contra chefes e +2 de dano. Preço: vida máxima −10% e o Carma enche 20% mais devagar. | Traje do Símbolo da Paz (All Might) · My Hero Academia |
+| 気 | Tanque de Gás | Sangue | O primeiro ataque de cada luta causa +9%, e +1 de Sutileza. | Tanque de gás (Manobra 3D) · Attack on Titan |
+| 針 | Seringa de Titã | Maldito | Suas transformações duram 1 turno a mais e todo dano +12%. Preço: 1 de vida por turno. | Soro de Titã (Cadetes de Marley) · Attack on Titan |
+| 道 | Coordenada | Divino | Começa cada luta com titãs que ferem 3 a cada turno seu, por 3 turnos, e todo dano +10%. Preço: vida máxima −10% e Carma 20% mais devagar. | Coordenada (Ymir Fritz) · Attack on Titan |
 
 ## 覚 Despertar (gira e aceita)
 
@@ -460,6 +531,7 @@
 | 獄 | Inferno Negro | Divino | As chamas negras saem do olho: o rival queima 4 por turno, a chama cresce 1 a cada turno e, quando a vida dele cai a 2× a chama, o que sobra vira cinza. | Enton: Kagutsuchi (Sasuke) · Naruto |
 | 勇 | O que o Herói Faria | Divino | Você lembra do herói: cura 40% da vida, tira sangramento, veneno e Marca, e os próximos 2 golpes passam através de você. | Himmel, o herói · Frieren |
 | 妖 | Lei das Fadas | Divino | Uma luz que só fere quem você vê como inimigo: 30 de dano agora, que atravessa tudo, e o rival causa −2 em todo golpe. | Fairy Law (Makarov) · Fairy Tail |
+| 越 | Além do Limite | Divino | Por 3 turnos dano dobrado e nada entra em recarga, e +3 de dano até o fim da luta. Preço: −10% de vida máxima pelo resto da run. | Plus Ultra (Deku) · My Hero Academia |
 
 ## 誓 Votos vinculativos (o Altar)
 

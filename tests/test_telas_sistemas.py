@@ -302,8 +302,11 @@ def test_o_titulo_escolhe_o_degrau_da_ascensao():
     tela = TituloScene(
         entrada, lambda m, **k: escolhas.append((m, k)), lambda: None, ascensoes={"dificil": 3}
     )
-    tela.cursor = [x[0] for x in tela.itens].index("dificil")
-    assert "昇 3" in tela.itens[tela.cursor][2]
+    tela.preparar()  # Jogar → o preparo; a dificuldade é uma linha com ← →
+    tela.i_modo = [m for m, _d in tela.modos].index("dificil")
+    tela.itens = tela._montar_itens()
+    assert "昇 3" in tela.itens[tela._linha("dificuldade")][2]
+    tela.cursor = tela._linha("comecar")
 
     def quadro(*teclas):
         entrada.apertadas = set(teclas)
@@ -322,7 +325,9 @@ def test_o_titulo_escolhe_o_degrau_da_ascensao():
     quadro("confirmar")
     assert escolhas == [("dificil", {"ascensao": 1})]
     # sem Ascensão aberta, a dificuldade começa direto, como antes
-    tela.cursor = [x[0] for x in tela.itens].index("equilibrado")
+    tela.i_modo = [m for m, _d in tela.modos].index("equilibrado")
+    tela.itens = tela._montar_itens()
+    tela.cursor = tela._linha("comecar")
     quadro("confirmar")
     assert escolhas[-1] == ("equilibrado", {})
 

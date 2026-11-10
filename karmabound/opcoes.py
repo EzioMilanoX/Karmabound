@@ -30,6 +30,7 @@ class Opcoes:
     tela_cheia: bool = False
     velocidade: float = 1.0  # multiplica o tempo das animações
     dicas: bool = True
+    kokusen: bool = True  # a barra do golpe (o Kokusen); desligada, só estratégia
     dicas_vistas: list[str] = field(default_factory=list)
     caminho: Path | None = field(default=None, repr=False, compare=False)
 

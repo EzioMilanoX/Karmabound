@@ -26,7 +26,7 @@ from ouroboros.bootstrap.engine_config import EngineConfig
 from ouroboros.bootstrap.game_loop import GameLoop
 from ouroboros.bootstrap.scene import GameplayScene
 
-from karmabound import opcoes, salvar
+from karmabound import livre, opcoes, salvar
 from karmabound.aliados import aliado as aliado_de
 from karmabound.cronica import Cronica
 from karmabound.grimorio import Grimorio
@@ -34,13 +34,14 @@ from karmabound.jornada import Jornada
 from karmabound.legado import Legado, memoria_da_cronica, ordem_dos_animes
 from karmabound.mesa import Mesa
 from karmabound.ressonancia import ressonancias_ativas
-from karmabound.rodas import DADOS
+from karmabound.rodas import DADOS, carregar_rodas
 from karmabound.run import Contexto
 from karmabound.som import SOM
 from karmabound.tela_caminho import CaminhoScene, EncruzilhadaScene
 from karmabound.tela_cronica import CronicaScene
 from karmabound.tela_grimorio import GrimorioScene
 from karmabound.tela_historia import CenaScene, EscolhaScene
+from karmabound.tela_livre import LivreScene
 from karmabound.tela_luta import LutaScene
 from karmabound.tela_menus import (
     AliadoScene,
@@ -51,6 +52,7 @@ from karmabound.tela_menus import (
     TituloScene,
     TreinoScene,
 )
+from karmabound.tela_pacto import PactoScene
 from karmabound.tela_pausa import DicaScene, OpcoesScene, PausaScene, VotosScene
 from karmabound.tela_roleta import RoletaScene
 from karmabound.transicoes import Transicao
@@ -124,6 +126,8 @@ class Fluxo:
         self.transicao = Transicao(lambda: self.loop.input_provider, lambda: self.loop.world)
         self.aliado_anunciado = ""  # o aliado que o jogador já viu chegar nesta run
         self.veio_de = ""  # a última fase mostrada (de onde veio o aliado)
+        self.modo_livre: str | None = None  # o Laboratório (livre.py): a dificuldade e a build
+        self.escolha_livre: dict = {}
         loop.set_on_draw_ui(self.transicao.quadro)
 
     @property
@@ -170,10 +174,64 @@ class Fluxo:
                 legado=self._rodape_legado(),
                 ascensoes=dict(self.legado.ascensoes),
                 campanhas=list(self.legado.campanhas),
+                ao_votos=self.abrir_pacto,
+                ao_segredo=self.legado.alternar_segredos,
+                ao_livre=self.abrir_livre,
+                segredos=self.legado.segredos,
+                votos=self._resumo_pacto(),
             )
         )
         if any(n > 0 for n in self.legado.ascensoes.values()):
             self.dica("ascensao")
+
+    def _resumo_pacto(self) -> str:
+        p = self.legado.pacto
+        r, g = len(p.get("restricoes", [])), len(p.get("ganhos", []))
+        if not r:
+            return ""
+        return f"{r} restrição" + ("ões" if r > 1 else "") + (f" · {g} ganhos" if g else "")
+
+    def abrir_pacto(self) -> None:
+        """Os votos do menu: jurados antes da run, valem a run inteira (pacto.py)."""
+        cat = self.ctx_completo.catalogo
+        nomes = {}
+        for roda in carregar_rodas(self.ctx_completo.raridades).values():
+            nomes.update({f.id: f.nome for f in roda.fatias})
+
+        def voltar(escolha: dict) -> None:
+            self.legado.pacto = escolha
+            self.legado.salvar()
+            self.titulo()
+
+        self._cena(
+            PactoScene(
+                cat, self.legado.pacto, nomes, self.legado.desbloqueios, self.entrada, voltar
+            )
+        )
+
+    def abrir_livre(self, modo: str | None = None) -> None:
+        """O Laboratório (livre.py): a build e o rival a dedo; a luta volta para cá."""
+        self.modo_livre = modo or self.modo_livre
+
+        def lutar(escolha: dict) -> None:
+            self.escolha_livre = escolha
+            self.jornada = livre.montar(escolha, self.modo_livre)
+            self.jornada.grimorio = self.grimorio
+            self._cena(
+                LutaScene(
+                    self.jornada,
+                    self.entrada,
+                    lambda _v: self.abrir_livre(),
+                    self.pausar,
+                    self.dica,
+                )
+            )
+
+        def voltar(escolha: dict) -> None:
+            self.escolha_livre = escolha
+            self.titulo()
+
+        self._cena(LivreScene(self.modo_livre, self.escolha_livre, self.entrada, lutar, voltar))
 
     def abrir_cronica(self) -> None:
         self._cena(CronicaScene(self.cronica, self.entrada, self.titulo, self.titulo))
@@ -242,6 +300,9 @@ class Fluxo:
                 "nemesis": dict(self.legado.nemesis) if self.legado.nemesis else None,
             }
             legado["alem"] = self.legado.alem_aberto  # o capítulo secreto (o Dono convida)
+            legado["pacto"] = self.legado.pacto  # os votos jurados no menu (pacto.py)
+            legado["desbloqueios"] = frozenset(self.legado.desbloqueios)
+            legado["memes"] = self.legado.segredos  # os chefes secretos (memes.py)
         else:
             ascensao = 0
         self.jornada = Jornada.nova(
@@ -444,6 +505,7 @@ class Fluxo:
             final=final_da_run(j),
             vencidos=vencidos_da_run(j),
             campanha=j.ctx.historia.id if j.ctx.historia and j.fase == "vitoria" else "",
+            recompensas=j.recompensas_cumpridas() if not j.diaria else [],
         )
 
     def _fim_da_luta(self, _venceu: bool) -> None:

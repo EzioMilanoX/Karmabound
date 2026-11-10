@@ -283,14 +283,15 @@ def test_linhagem_com_tecnica_inicial_e_tecnica_propria(ctx):
     assert estado.jogador.vida == estado.jogador.vida_max
 
 
-def test_o_altar_abre_entre_capitulos(ctx):
+def test_o_altar_nao_abre_mais_entre_capitulos(ctx):
+    """Os votos são jurados no menu, antes da run (pacto.py)."""
     abertos = []
     for seed in range(30):
         estado = nova_run(ctx, random.Random(seed))
         jogar_run(
             estado, ctx, random.Random(seed), altar=lambda e, c, r: abertos.append(e.capitulo)
         )
-    assert abertos and set(abertos) <= {2, 3}  # depois do 1º e do 2º capítulo, nunca no fim
+    assert abertos == []
 
 
 def test_altar_rapido_jura_com_os_valores_tipicos(ctx):
@@ -305,13 +306,13 @@ def test_altar_rapido_jura_com_os_valores_tipicos(ctx):
     assert jurou == (5 if tipicos else 0) or not tipicos
 
 
-def test_encerrar_luta_do_chefe_marca_o_altar(ctx):
+def test_encerrar_luta_do_chefe_avanca_o_capitulo_sem_altar(ctx):
     estado = nova_run(ctx, random.Random(2))
     estado.luta_no_capitulo = estado.tamanho_capitulo
     lt = luta(estado.jogador, lut("R", vida=1))
     lt.resolver(BASICO)
     encerrar_luta(estado, ctx, lt)
-    assert estado.altar_pendente and estado.capitulo == 2
+    assert not estado.altar_pendente and estado.capitulo == 2  # os votos são do menu
 
 
 # ------------------------------------------------------------------ textos

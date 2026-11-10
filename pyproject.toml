@@ -21,3 +21,6 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# calibração só quando o Enzo pedir: pytest -m calibracao
+addopts = "-m 'not calibracao'"
+markers = ["calibracao: confere a calibração (lento; só quando pedirem)"]

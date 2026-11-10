@@ -32,6 +32,7 @@ from karmabound.grimorio import Grimorio, Perda, Pista, fusao_descoberta, perda,
 from karmabound.historias import carregar_historias
 from karmabound.jornada import Jornada, PropostaDeVoto
 from karmabound.legado import Fechamento
+from karmabound.memes import Sequencia
 from karmabound.opcoes import OPCOES
 from karmabound.ressonancia import contar_animes, ressonancias_ativas
 from karmabound.rodas import (
@@ -237,6 +238,15 @@ class _Base(IScene):
 # ----------------------------------------------------------------------- título
 
 
+def _nome_do_item(item_id: str) -> str:
+    """O nome de um item de qualquer roda (as recompensas de voto)."""
+    for roda in carregar_rodas(carregar_raridades(carregar_balanceamento())).values():
+        for f in roda.fatias:
+            if f.id == item_id:
+                return f.nome
+    return item_id
+
+
 class TituloScene(_Base):
     def __init__(
         self,
@@ -254,6 +264,11 @@ class TituloScene(_Base):
         legado: list[str] | tuple[str, ...] = (),
         ascensoes: dict[str, int] | None = None,
         campanhas: list[str] | tuple[str, ...] = (),
+        ao_votos=None,
+        votos: str = "",
+        ao_segredo=None,
+        ao_livre=None,
+        segredos: bool = False,
     ) -> None:
         """`campanhas`: as campanhas do modo História já terminadas (ganham um 完).
         `abertos`: os animes que o Legado já abriu (None: todos); `legado`: as linhas
@@ -289,13 +304,19 @@ class TituloScene(_Base):
         ]
         self.i_historia = 0
         self.campanhas = set(campanhas)
+        self.ao_votos, self.votos = ao_votos, votos  # o pacto do menu (tela_pacto.py)
+        self.ao_segredo = ao_segredo  # a sequência liga/desliga os chefes secretos (memes.py)
+        self.ao_livre, self.segredos = ao_livre, segredos  # e o Laboratório (livre.py)
+        self.sequencia = Sequencia()
+        self.aviso_segredo: tuple[str, float] | None = None  # (texto, até quando)
         self.continuar = continuar if ao_continuar is not None else None
         self.recorde_diaria = recorde_diaria
-        self.itens: list[tuple[str, str, str]] = self._montar_itens()
+        # dois níveis: o começo (Continuar, Jogar, Semente do dia) e o preparo da run
+        self.etapa = "inicio"
         padrao = cfg["dificuldade_padrao"]
-        self.cursor = (
-            0 if continuar else next(i for i, x in enumerate(self.itens) if x[0] == padrao)
-        )
+        self.i_modo = next(i for i, (m, _d) in enumerate(self.modos) if m == padrao)
+        self.itens: list[tuple[str, str, str]] = self._montar_itens()
+        self.cursor = 0 if continuar else self._linha("jogar")
         self.ao_escolher = ao_escolher
         self.cartas = Cartas(sobe=26, lado=True)  # o menu entra linha a linha
         self.cartas.t = -0.35  # depois do título
@@ -330,18 +351,50 @@ class TituloScene(_Base):
             return None
         return self.historias[self.i_historia]
 
+    @property
+    def modo(self) -> str:
+        """A dificuldade escolhida no preparo."""
+        return self.modos[self.i_modo][0]
+
+    def _linha(self, acao: str) -> int:
+        return next((i for i, x in enumerate(self.itens) if x[0] == acao), 0)
+
+    def preparar(self) -> None:
+        """Abre o preparo da run (o segundo nível do título)."""
+        self.etapa = "preparar"
+        self.itens = self._montar_itens()
+        self.cursor = self._linha("comecar")
+
+    def voltar_ao_inicio(self) -> None:
+        self.etapa = "inicio"
+        self.itens = self._montar_itens()
+        self.cursor = self._linha("jogar")
+
     def _montar_itens(self) -> list[tuple[str, str, str]]:
         """Cada linha: (o que faz, texto, detalhe à direita)."""
-        itens = []
-        if self.continuar:
-            itens.append(("continuar", "Continuar a run", self.continuar))
-        if self.ao_diaria is not None:
-            detalhe = (
-                f"hoje: {self.recorde_diaria} de 12"
-                if self.recorde_diaria is not None
-                else "Difícil, a mesma sorte para todos"
+        if self.etapa == "inicio":
+            itens = []
+            if self.continuar:
+                itens.append(("continuar", "Continuar a run", self.continuar))
+            itens.append(
+                ("jogar", "Jogar", f"{JOGOS[self.jogo]} · {self.modos[self.i_modo][1]['nome']}")
             )
-            itens.append(("diaria", "Semente do dia", detalhe))
+            if self.ao_diaria is not None:
+                detalhe = (
+                    f"hoje: {self.recorde_diaria} de 12"
+                    if self.recorde_diaria is not None
+                    else "Difícil, a mesma sorte para todos"
+                )
+                itens.append(("diaria", "Semente do dia", detalhe))
+            if self.segredos and self.ao_livre is not None:
+                itens.append(
+                    ("livre", "研 Laboratório", "modo livre: qualquer poder, qualquer chefe")
+                )
+            return itens
+        return self._itens_do_preparo()
+
+    def _itens_do_preparo(self) -> list[tuple[str, str, str]]:
+        itens = []
         itens.append(("jogo", f"Modo: ← {JOGOS[self.jogo]} →", DESCRICAO_JOGO[self.jogo]))
         if self.jogo == "anime" and self.animes:
             n = self.tecnicas_anime[self.anime]
@@ -350,11 +403,14 @@ class TituloScene(_Base):
         if h is not None:
             feita = " 完" if h.id in self.campanhas else ""
             itens.append(("historia", f"{h.kanji} ← {h.nome} →{feita}", h.anime or "original"))
-        for m, d in self.modos:
-            detalhe = f"~{d['alvo_vitoria']:.0%} vencem"
-            if self.ascensoes.get(m):
-                detalhe += f" · 昇 {self.ascensoes[m]}"
-            itens.append((m, d["nome"], detalhe))
+        if self.ao_votos is not None:
+            itens.append(("votos", "誓 Votos", self.votos or "nenhum jurado"))
+        m, d = self.modos[self.i_modo]
+        detalhe = d.get("frase", "")
+        if self.ascensoes.get(m):
+            detalhe += f" · 昇 {self.ascensoes[m]}"
+        itens.append(("dificuldade", f"Dificuldade: ← {d['nome']} →", detalhe))
+        itens.append(("comecar", "Começar", ""))
         return itens
 
     def _mudar(self, acao: str, passo: int) -> None:
@@ -364,6 +420,8 @@ class TituloScene(_Base):
             self.i_anime = (self.i_anime + passo) % len(self.animes)
         elif acao == "historia" and self.historias:
             self.i_historia = (self.i_historia + passo) % len(self.historias)
+        elif acao == "dificuldade":
+            self.i_modo = (self.i_modo + passo) % len(self.modos)
         else:
             return
         self.itens = self._montar_itens()
@@ -404,6 +462,20 @@ class TituloScene(_Base):
             self.t_asc += delta_time * OPCOES.velocidade
             self._escolher_ascensao(e)
             return
+        if self.ao_segredo is not None and self.sequencia.apertou(e):
+            self.segredos = self.ao_segredo()
+            estado = "acordaram" if self.segredos else "voltaram a dormir"
+            self.aviso_segredo = (f"秘  Os segredos {estado}", self.relogio + 2.4)
+            acao = self.itens[self.cursor][0]
+            self.itens = self._montar_itens()  # o Laboratório aparece (ou some)
+            self.cursor = self._linha(acao)
+            som.tocar("revela_divino")
+        if self.etapa == "preparar" and (
+            e.is_action_pressed("sair") or e.is_action_pressed("cancelar")
+        ):
+            self.voltar_ao_inicio()  # do preparo, Esc volta ao começo (não fecha o jogo)
+            som.tocar("mover")
+            return
         if self._sair():
             return
         if self.ao_grimorio is not None and e.is_action_pressed("grimorio"):
@@ -428,11 +500,20 @@ class TituloScene(_Base):
             self._mudar(self.itens[self.cursor][0], 1)
         elif e.is_action_pressed("confirmar"):
             acao = self.itens[self.cursor][0]
-            if acao in ("jogo", "anime", "historia"):
+            if acao in ("jogo", "anime", "historia", "dificuldade"):
                 self._mudar(acao, 1)
                 return
             som.tocar("confirmar")
-            if acao == "continuar":
+            if acao == "jogar":
+                self.preparar()
+                return
+            if acao == "comecar":
+                acao = self.modo
+            if acao == "votos":
+                self.ao_votos()
+            elif acao == "livre":
+                self.ao_livre(self.modo)
+            elif acao == "continuar":
                 self.ao_continuar()
             elif acao == "diaria":
                 self.ao_diaria()
@@ -495,6 +576,10 @@ class TituloScene(_Base):
         )
         self._t(r, 480, 150, "Karmabound", 52, TINTA, "center")
         self._t(r, 480, 200, "todo azar fica preso ao seu Carma", 18, alpha(TINTA, 150), "center")
+        if self.aviso_segredo is not None and self.relogio < self.aviso_segredo[1]:
+            some = min(1.0, (self.aviso_segredo[1] - self.relogio) / 0.5)
+            cor = alpha(SANGUE_VIVO, 255 * some)
+            self._t(r, 480, 236, self.aviso_segredo[0], 20, cor, "center")
         for k, linha in enumerate(self.legado[:2]):  # o Legado, num canto discreto
             cor = alpha(SANGUE_VIVO, 200) if linha.startswith("Nêmesis") else alpha(TINTA, 120)
             self._t(r, 24, 18 + k * 20, linha, 13, cor)
@@ -509,7 +594,7 @@ class TituloScene(_Base):
         for i, (acao, texto, detalhe) in enumerate(self.itens):
             y = y0 + i * passo
             foco = self.cartas.foco_de(i)
-            especial = acao in ("continuar", "diaria", "jogo", "anime", "historia")
+            especial = acao in ("continuar", "diaria", "jogo", "anime", "historia", "dificuldade")
             cor = alpha(OURO if especial else TINTA, 120 + 135 * foco)
             c = self.cartas.camada(r, i, (480, y))
             self._t(c, 266 + 6 * foco, y - 2, texto, 18, cor)
@@ -834,7 +919,10 @@ class TreinoScene(_Base):
         )
         oferta = self.fixo or self.j.oferta_treino
         largura, altura, folga = 260, 300, 30
+        if len(oferta) > 3:  # o Arco deu um treino a mais: as cartas estreitam para caber
+            largura, folga = 212, 16
         x0 = 480 - (len(oferta) * largura + (len(oferta) - 1) * folga) / 2
+        quebra = 26 if largura >= 260 else 21
         pulso = self.cartas.pulso()
         for i, tr in enumerate(oferta):
             x, y = x0 + i * (largura + folga), 150
@@ -849,9 +937,9 @@ class TreinoScene(_Base):
             cx = x + largura / 2
             self._t(c, cx, y + 60, tr.kanji, 64, cor, "center")
             self._t(c, cx, y + 124, tr.nome, 20, cor, "center")
-            for k, linha in enumerate(quebrar(tr.texto, 26)[:3]):
+            for k, linha in enumerate(quebrar(tr.texto, quebra)[:4]):
                 self._t(c, cx, y + 162 + k * 22, linha, 16, alpha(TINTA, 190), "center")
-            for k, linha in enumerate(quebrar(tr.origem, 30)[:2]):
+            for k, linha in enumerate(quebrar(tr.origem, quebra + 4)[:2]):
                 self._t(c, cx, y + 254 + k * 16, linha, 12, alpha(TINTA, 110), "center")
             self._t(c, x + 14, y + 10, str(i + 1), 18, alpha(TINTA, 120))
             if i == self.cartas.escolhida:
@@ -1381,6 +1469,9 @@ class FimScene(_Base):
         if f.animes:
             plural = "Anime aberto" if len(f.animes) == 1 else "Animes abertos"
             linhas.append((f"開 {plural}: {', '.join(f.animes)}", OURO))
+        if getattr(f, "desbloqueados", None):  # o voto cumprido liberou recompensas
+            nomes = [_nome_do_item(i) for i in f.desbloqueados]
+            linhas.append((f"誓 O voto liberou: {', '.join(nomes)}", OURO))
         aberta = getattr(f, "ascensao_aberta", 0)
         if aberta:
             linhas.append((f"昇 Ascensão {aberta} aberta", OURO))

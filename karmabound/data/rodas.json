@@ -574,6 +574,186 @@
             "vida_max": 2,
             "basico_dano": 1
           }
+        },
+        {
+          "id": "sangue_costurado",
+          "nome": "Sangue Costurado",
+          "kanji": "改",
+          "raridade": "maldito",
+          "texto": "+{velocidade} de Velocidade e todo dano {dano_mult+%}. Preço: sem compaixão, toda cura vale 80%.",
+          "origem": "Família Vinsmoke (Reino Germa) · One Piece",
+          "efeito": {
+            "velocidade": 1,
+            "dano_mult": 1.06,
+            "cura_mult": 0.8
+          }
+        },
+        {
+          "id": "almas_da_rua_cinzenta",
+          "nome": "Almas da Rua Cinzenta",
+          "kanji": "魂",
+          "raridade": "cinza",
+          "texto": "Quem sobreviveu à fome: cura {cura_inicio} e {bloqueio_inicio} de bloqueio no início de cada luta.",
+          "origem": "Rukongai (Rukia) · Bleach",
+          "efeito": {
+            "cura_inicio": 1,
+            "bloqueio_inicio": 1
+          }
+        },
+        {
+          "id": "o_outro_dentro",
+          "nome": "O Outro Dentro",
+          "kanji": "虚",
+          "raridade": "maldito",
+          "texto": "+{furia} de dano conforme a vida cai e todo dano {dano_mult+%}. Preço: o dano que você sofre {dano_recebido_mult+%}.",
+          "origem": "Hollow Interior (Ichigo) · Bleach",
+          "efeito": {
+            "furia": 4,
+            "dano_mult": 1.04,
+            "dano_recebido_mult": 1.08
+          }
+        },
+        {
+          "id": "sangue_do_pai_das_luzes",
+          "nome": "Sangue do Pai das Luzes",
+          "kanji": "光",
+          "raridade": "divino",
+          "texto": "+{percepcao} de Percepção, cura {drenar%} do dano que causa e todo dano {dano_mult+%}. Preço: vida máxima −10% e Carma 20% mais lento.",
+          "origem": "Sangue de Yhwach (Quincy) · Bleach",
+          "efeito": {
+            "percepcao": 1,
+            "drenar": 0.15,
+            "dano_mult": 1.1,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "filhos_do_lixao",
+          "nome": "Filhos do Lixão",
+          "kanji": "塵",
+          "raridade": "maldito",
+          "texto": "+{sutileza} de Sutileza, o primeiro ataque causa +{primeiro_golpe%} e todo dano {dano_mult+%}. Preço: toda cura vale 80%.",
+          "origem": "Cidade Meteoro (Chrollo) · Hunter x Hunter",
+          "efeito": {
+            "sutileza": 2,
+            "primeiro_golpe": 0.1,
+            "dano_mult": 1.04,
+            "cura_mult": 0.8
+          }
+        },
+        {
+          "id": "sangue_do_rei_quimera",
+          "nome": "Sangue do Rei Quimera",
+          "kanji": "蟻",
+          "raridade": "divino",
+          "texto": "+{vida_max} de vida máxima, +{percepcao} de Percepção e todo dano {dano_mult+%}. Preço: toda cura vale 80% e o Carma enche 20% mais devagar.",
+          "origem": "Rei Quimera (Meruem) · Hunter x Hunter",
+          "efeito": {
+            "vida_max": 12,
+            "percepcao": 1,
+            "dano_mult": 1.1,
+            "cura_mult": 0.8,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "casa_dos_aprendizes",
+          "nome": "Casa dos Aprendizes",
+          "kanji": "徒",
+          "raridade": "cinza",
+          "texto": "Corpo reforçado desde cedo: +{vida_max} de vida máxima e +{basico_dano} de dano no Golpe.",
+          "origem": "Escola Técnica de Jujutsu (Yuji) · Jujutsu Kaisen",
+          "efeito": {
+            "vida_max": 2,
+            "basico_dano": 1
+          }
+        },
+        {
+          "id": "sangue_do_infinito",
+          "nome": "Sangue do Infinito",
+          "kanji": "限",
+          "raridade": "divino",
+          "texto": "{esquiva%} de esquiva, {escudo_inicial} golpe ignorado por luta e +{percepcao} de Percepção. Preço: vida máxima −10% e Carma 20% mais lento.",
+          "origem": "Clã Gojo (Satoru) · Jujutsu Kaisen",
+          "efeito": {
+            "esquiva": 0.12,
+            "escudo_inicial": 2,
+            "percepcao": 1,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "estirpe_do_lendario",
+          "nome": "Estirpe do Lendário",
+          "kanji": "覇",
+          "raridade": "divino",
+          "texto": "+{ultimo_suspiro} de dano abaixo de 30% da vida, todo dano {dano_mult+%} e +1 de vida máxima por vitória. Preço: vida máxima −10% e o Carma enche 20% mais devagar.",
+          "origem": "Saiyajin Lendário (Broly) · Dragon Ball",
+          "efeito": {
+            "ultimo_suspiro": 6,
+            "dano_mult": 1.12,
+            "vida_por_vitoria": 1,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "estirpe_do_sol_primordial",
+          "nome": "Estirpe do Sol Primordial",
+          "kanji": "日",
+          "raridade": "divino",
+          "texto": "+{percepcao} de Percepção, todo dano {dano_mult+%} e a surpresa do rival não ganha bônus. Preço: vida máxima −10% e o Carma enche 20% mais devagar.",
+          "origem": "Marca do Sol (Yoriichi) · Demon Slayer",
+          "efeito": {
+            "percepcao": 2,
+            "dano_mult": 1.12,
+            "sem_surpresa": true,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "linhagem_da_alma_visivel",
+          "nome": "Linhagem da Alma Visível",
+          "kanji": "霊",
+          "raridade": "divino",
+          "texto": "Um Stand luta ao seu lado: repete {sombra%} de cada golpe, e todo dano {dano_mult+%}. Preço: vida máxima −10% e o Carma enche 20% mais devagar.",
+          "origem": "Stand (Jotaro Kujo) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "sombra": 0.2,
+            "dano_mult": 1.08,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "heranca_dos_nove",
+          "nome": "Herança dos Nove",
+          "kanji": "九",
+          "raridade": "divino",
+          "texto": "Todo dano {dano_mult+%}, +{percepcao} de Percepção e transformações duram {modo_extra} turnos a mais. Preço: vida máxima −10% e o Carma enche 20% mais devagar.",
+          "origem": "Os usuários anteriores (Deku) · My Hero Academia",
+          "efeito": {
+            "dano_mult": 1.12,
+            "percepcao": 1,
+            "modo_extra": 2,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "guerreiros_condenados",
+          "nome": "Guerreiros Condenados",
+          "kanji": "戦",
+          "raridade": "sangue",
+          "texto": "Todo dano {dano_mult+%}: o poder dos titãs. Preço: −3 de vida máxima (treze anos de vida).",
+          "origem": "Guerreiros de Marley (Reiner) · Attack on Titan",
+          "efeito": {
+            "dano_mult": 1.06,
+            "vida_max": -3
+          }
         }
       ]
     },
@@ -1289,6 +1469,211 @@
             "desarmar": 2,
             "expor": 1,
             "recarga": 2
+          }
+        },
+        {
+          "id": "veste_de_lamina_negra",
+          "nome": "Veste de Lâmina Negra",
+          "kanji": "解",
+          "raridade": "divino",
+          "texto": "Técnica, uma vez por luta: por {modo_turnos} turnos, +{modo_dano} de dano e um golpe a mais. Não gasta o turno. Preço: {custo_vida} de vida e técnicas {modo_travar} turnos em recarga.",
+          "origem": "Bankai (Tensa Zangetsu, Ichigo) · Bleach",
+          "tecnica": {
+            "tipo": "modo",
+            "custo_vida": 3,
+            "recarga": 99,
+            "livre": true,
+            "modo": {
+              "turnos": 3,
+              "dano": 8,
+              "golpes": 1,
+              "travar": 3
+            }
+          }
+        },
+        {
+          "id": "voto_sem_volta",
+          "nome": "Voto Sem Volta",
+          "kanji": "誓",
+          "raridade": "maldito",
+          "texto": "+{bonus_dano} de dano em todo golpe e todo dano {dano_mult+%}. Preço: o voto não aceita defesa, você nunca defende.",
+          "origem": "Voto e Limitação (Nen) · Hunter x Hunter",
+          "efeito": {
+            "bonus_dano": 2,
+            "dano_mult": 1.08,
+            "proibir_tipo": "defesa"
+          }
+        },
+        {
+          "id": "cem_maos_do_bodisatva",
+          "nome": "Cem Mãos do Bodisatva",
+          "kanji": "掌",
+          "raridade": "divino",
+          "texto": "Uma vez por luta: {golpes} golpes de {dano}, a mão que nunca para. Preço: {custo_vida} de vida.",
+          "origem": "Guanyin Bodhisattva de Cem Mãos (Netero) · Hunter x Hunter",
+          "tecnica": {
+            "tipo": "ataque",
+            "dano": 9,
+            "golpes": 5,
+            "custo_vida": 8,
+            "recarga": 99,
+            "sutileza": 2,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "folego_reverso",
+          "nome": "Fôlego Reverso",
+          "kanji": "癒",
+          "raridade": "cinza",
+          "texto": "A energia gira ao contrário: cura {regen} por turno enquanto a vida estiver abaixo de 50%.",
+          "origem": "Energia Reversa (Shoko) · Jujutsu Kaisen",
+          "efeito": {
+            "regen": 1,
+            "regen_ate": 0.5
+          }
+        },
+        {
+          "id": "faro_de_energia",
+          "nome": "Faro de Energia",
+          "kanji": "感",
+          "raridade": "sangue",
+          "texto": "+{percepcao} de Percepção: você sente a energia do rival antes do golpe. Preço: −4 de vida máxima.",
+          "origem": "Sentir Ki (Piccolo) · Dragon Ball",
+          "efeito": {
+            "percepcao": 2,
+            "vida_max": -4
+          }
+        },
+        {
+          "id": "dois_dedos_na_testa",
+          "nome": "Dois Dedos na Testa",
+          "kanji": "瞬",
+          "raridade": "maldito",
+          "texto": "Técnica: o próximo turno do rival não te fere. Preço: {custo_vida} de vida.",
+          "origem": "Teletransporte (Goku) · Dragon Ball",
+          "tecnica": {
+            "tipo": "maldita",
+            "intocavel": 1,
+            "custo_vida": 2,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "instinto_da_batalha",
+          "nome": "Instinto da Batalha",
+          "kanji": "悟",
+          "raridade": "divino",
+          "texto": "{esquiva%} de chance de um golpe inteiro errar e +{percepcao} de Percepção: o corpo reage sozinho. Preço: vida máxima −5% e o Carma enche 30% mais devagar.",
+          "origem": "Instinto Superior (Goku) · Dragon Ball",
+          "efeito": {
+            "esquiva": 0.3,
+            "percepcao": 2,
+            "vida_max_mult": 0.95,
+            "carma_mult": 0.7
+          }
+        },
+        {
+          "id": "carne_que_nao_morre",
+          "nome": "Carne que Não Morre",
+          "kanji": "蘇",
+          "raridade": "divino",
+          "texto": "Uma vez por run, ao cair, volta com 30% da vida; abaixo de 60% cura {regen} por turno. Preço: toda cura de fora vale 50% e vida máxima −10%.",
+          "origem": "Células de Muzan (Muzan Kibutsuji) · Demon Slayer",
+          "efeito": {
+            "reviver": 1,
+            "regen": 5,
+            "regen_ate": 0.6,
+            "cura_mult": 0.5,
+            "vida_max_mult": 0.9
+          }
+        },
+        {
+          "id": "truque_sujo",
+          "nome": "Truque Sujo",
+          "kanji": "詭",
+          "raridade": "cinza",
+          "texto": "O primeiro ataque de cada luta causa +{primeiro_golpe%}, e +{sutileza} de Sutileza.",
+          "origem": "Truques de Joseph (Joseph Joestar) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "primeiro_golpe": 0.04,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "pedacos_que_voltam",
+          "nome": "Pedaços que Voltam",
+          "kanji": "修",
+          "raridade": "sangue",
+          "texto": "Técnica: bloqueia {bloqueio} e cura {regenerar} por turno até o fim da luta.",
+          "origem": "Crazy Diamond (Josuke) · JoJo's Bizarre Adventure",
+          "tecnica": {
+            "tipo": "defesa",
+            "bloqueio": 14,
+            "regenerar": 2,
+            "recarga": 3
+          }
+        },
+        {
+          "id": "pele_endurecida",
+          "nome": "Pele Endurecida",
+          "kanji": "硬",
+          "raridade": "cinza",
+          "texto": "Começa cada luta com {bloqueio_inicio} de bloqueio.",
+          "origem": "Endurecer (Kirishima) · My Hero Academia",
+          "efeito": {
+            "bloqueio_inicio": 2
+          }
+        },
+        {
+          "id": "motor_nas_pernas",
+          "nome": "Motor nas Pernas",
+          "kanji": "駆",
+          "raridade": "sangue",
+          "texto": "+{velocidade} de Velocidade: você quase sempre ataca primeiro. Preço: −3 de vida máxima.",
+          "origem": "Engine (Iida) · My Hero Academia",
+          "efeito": {
+            "velocidade": 1,
+            "vida_max": -3
+          }
+        },
+        {
+          "id": "atravessar_o_chao",
+          "nome": "Atravessar o Chão",
+          "kanji": "透",
+          "raridade": "maldito",
+          "texto": "{esquiva%} de chance de um golpe inteiro errar: o corpo atravessa tudo. Preço: −4 de vida máxima.",
+          "origem": "Permeação (Mirio) · My Hero Academia",
+          "efeito": {
+            "esquiva": 0.2,
+            "vida_max": -4
+          }
+        },
+        {
+          "id": "tomar_poderes",
+          "nome": "Tomar Poderes",
+          "kanji": "盗",
+          "raridade": "divino",
+          "texto": "Técnica: usa a última técnica do rival como se fosse sua, com +60%. Preço: {custo_vida} de vida.",
+          "origem": "Todos por Um (All For One) · My Hero Academia",
+          "tecnica": {
+            "tipo": "maldita",
+            "copia_rival": true,
+            "copia_bonus": 1.6,
+            "custo_vida": 4,
+            "recarga": 2
+          }
+        },
+        {
+          "id": "treino_de_cadete",
+          "nome": "Treino de Cadete",
+          "kanji": "訓",
+          "raridade": "cinza",
+          "texto": "+{vida_max} de vida máxima e começa cada luta com {bloqueio_inicio} de bloqueio.",
+          "origem": "Treinamento dos Cadetes (104º Corpo) · Attack on Titan",
+          "efeito": {
+            "vida_max": 1,
+            "bloqueio_inicio": 1
           }
         }
       ]
@@ -4384,6 +4769,222 @@
               "exausto": 2
             }
           }
+        },
+        {
+          "id": "carne_por_poder",
+          "nome": "Carne por Poder",
+          "kanji": "肉",
+          "raridade": "maldito",
+          "texto": "{dano} de dano que atravessa o bloqueio. Preço: {custo_vida} de vida.",
+          "origem": "Voto de carne (Kurapika) · Hunter x Hunter",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 22,
+            "perfura": true,
+            "custo_vida": 5,
+            "recarga": 3,
+            "sutileza": 2,
+            "perigosa": true
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "tudo_no_ataque",
+          "nome": "Tudo no Ataque",
+          "kanji": "攻",
+          "raridade": "sangue",
+          "texto": "{golpes} golpes de {dano}, sem pensar em defesa.",
+          "origem": "Gear Second (Luffy) · One Piece",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 5,
+            "golpes": 3,
+            "recarga": 2,
+            "sutileza": 1
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "golpe_sem_maos",
+          "nome": "Golpe sem Mãos",
+          "kanji": "念",
+          "raridade": "sangue",
+          "texto": "A aura bate por você: {dano} de dano que você não precisa erguer as mãos para dar.",
+          "origem": "Emissão de Nen · Hunter x Hunter",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 9,
+            "recarga": 1,
+            "sutileza": 3
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "golpe_contado",
+          "nome": "Golpe Contado",
+          "kanji": "刻",
+          "raridade": "maldito",
+          "texto": "O tempo curto vira força: {dano} de dano, quase impossível de perceber.",
+          "origem": "Revelação da técnica (Nanami) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 18,
+            "recarga": 3,
+            "sutileza": 4,
+            "perigosa": true
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "poder_contido",
+          "nome": "Poder Contido",
+          "kanji": "封",
+          "raridade": "maldito",
+          "texto": "O que não despertou explode de uma vez: {dano} de dano. Preço: {custo_vida} de vida.",
+          "origem": "Selo do Kyuubi · Naruto",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 26,
+            "custo_vida": 6,
+            "recarga": 4,
+            "sutileza": 2,
+            "perigosa": true
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "corte_paciente",
+          "nome": "Corte Paciente",
+          "kanji": "忍",
+          "raridade": "sangue",
+          "texto": "Um corte que espera a hora: {dano} de dano com crítico ×{critico}.",
+          "origem": "Iaido (Kenpachi) · Bleach",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 10,
+            "critico": 0.25,
+            "recarga": 3,
+            "sutileza": 2
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "punho_puro",
+          "nome": "Punho Puro",
+          "kanji": "純",
+          "raridade": "maldito",
+          "texto": "Sem maldição nenhuma, só o corpo: {golpes} golpes de {dano}.",
+          "origem": "Restrição Celestial (Toji) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 7,
+            "golpes": 3,
+            "recarga": 3,
+            "sutileza": 3
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "golpe_declarado",
+          "nome": "Golpe Declarado",
+          "kanji": "宣",
+          "raridade": "maldito",
+          "texto": "Você avisa e ainda assim acerta: {dano} de dano absoluto.",
+          "origem": "Revelação do voto · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 16,
+            "absoluto": true,
+            "recarga": 4,
+            "sutileza": 0,
+            "perigosa": true
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "roda_do_dharma",
+          "nome": "A Roda do Dharma",
+          "kanji": "法",
+          "raridade": "divino",
+          "texto": "Invoca o general que se adapta: fere {invocar} por {invocar_turnos} turnos, e o golpe que o rival repete te fere metade, depois nada. Preço: {custo_vida_max} de vida máxima.",
+          "origem": "Mahoraga (Megumi) · Jujutsu Kaisen",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 6,
+            "invocar_turnos": 4,
+            "roda_dharma": true,
+            "custo_vida_max": 5,
+            "recarga": 99
+          }
+        },
+        {
+          "id": "ciclo_das_treze_formas",
+          "nome": "Ciclo das Treze Formas",
+          "kanji": "環",
+          "raridade": "divino",
+          "texto": "Uma vez por luta: {golpes} cortes de {dano} em chamas, e o rival queima {sangrar} por 3 turnos. Preço: {custo_vida} de vida.",
+          "origem": "Hinokami Kagura: Treze Formas (Tanjiro) · Demon Slayer",
+          "combate": {
+            "tipo": "ataque",
+            "dano": 4,
+            "golpes": 12,
+            "sangrar": 3,
+            "custo_vida": 8,
+            "recarga": 99,
+            "sutileza": 2,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "golpe_do_simbolo",
+          "nome": "Golpe do Símbolo",
+          "kanji": "象",
+          "raridade": "divino",
+          "texto": "Uma vez por luta: {dano} de dano que atravessa bloqueio. Pega o bando: os outros sofrem {area%}. Preço: {custo_vida} de vida e −{custo_vida_max} de vida máxima.",
+          "origem": "United States of Smash (All Might) · My Hero Academia",
+          "combate": {
+            "tipo": "maldita",
+            "dano": 52,
+            "perfura": true,
+            "area": 0.4,
+            "custo_vida": 5,
+            "custo_vida_max": 3,
+            "recarga": 99,
+            "sutileza": 1,
+            "perigosa": true
+          }
+        },
+        {
+          "id": "marcha_dos_gigantes",
+          "nome": "Marcha dos Gigantes",
+          "kanji": "軍",
+          "raridade": "divino",
+          "texto": "Uma vez por luta: mil titãs marcham, ferem {invocar} agora e a cada turno seu, {invocar_turnos} vezes. Preço: {custo_vida} de vida e −{custo_vida_max} de vida máxima.",
+          "origem": "O Retumbar (Eren Jaeger) · Attack on Titan",
+          "combate": {
+            "tipo": "maldita",
+            "invocar": 12,
+            "invocar_turnos": 5,
+            "custo_vida": 6,
+            "custo_vida_max": 3,
+            "recarga": 99
+          }
         }
       ]
     },
@@ -5518,6 +6119,414 @@
             "drenar": 0.392,
             "cura_mult": 0.8
           }
+        },
+        {
+          "id": "corrente_de_chumbo",
+          "nome": "Corrente de Chumbo",
+          "kanji": "鉛",
+          "raridade": "sangue",
+          "texto": "Quem anda devagar bate com o peso todo: +{bonus_dano} de dano.",
+          "origem": "Treino com pesos (Rock Lee) · Naruto",
+          "efeito": {
+            "bonus_dano": 2
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "brasa_que_nao_dorme",
+          "nome": "Brasa que Não Dorme",
+          "kanji": "眠",
+          "raridade": "maldito",
+          "texto": "Você se refaz lutando: cura {regen} por turno enquanto estiver abaixo da metade.",
+          "origem": "Respiração de Concentração Total · Demon Slayer",
+          "efeito": {
+            "regen": 3,
+            "regen_ate": 0.5
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "olho_que_ve_quem_ve",
+          "nome": "Olho que Vê Quem Vê",
+          "kanji": "視",
+          "raridade": "sangue",
+          "texto": "Quem te observa também é observado: +{percepcao} de Percepção.",
+          "origem": "Gyo · Hunter x Hunter",
+          "efeito": {
+            "percepcao": 2
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "lamina_do_limite",
+          "nome": "Lâmina do Limite",
+          "kanji": "刃",
+          "raridade": "maldito",
+          "texto": "Quem anda no fio aprende a cortar com ele: +{dano_chefe_mult%} de dano contra chefes.",
+          "origem": "Voto de vida (Kurapika) · Hunter x Hunter",
+          "efeito": {
+            "dano_chefe_mult": 1.25
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "venda_de_seda",
+          "nome": "Venda de Seda",
+          "kanji": "帯",
+          "raridade": "sangue",
+          "texto": "Sem ver, você sente: {esquiva%} de chance de esquivar.",
+          "origem": "A venda (Gojo) · Jujutsu Kaisen",
+          "efeito": {
+            "esquiva": 0.12
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "sangue_que_ferve",
+          "nome": "Sangue que Ferve",
+          "kanji": "沸",
+          "raridade": "sangue",
+          "texto": "O que não fecha, queima: +{furia} de dano conforme a vida cai.",
+          "origem": "Manipulação de Sangue (Choso) · Jujutsu Kaisen",
+          "efeito": {
+            "furia": 4
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "pele_de_vidro",
+          "nome": "Pele de Vidro",
+          "kanji": "硝",
+          "raridade": "sangue",
+          "texto": "Quem sente tudo, revida tudo: revide {revide_permanente} em toda luta.",
+          "origem": "Contra-ataque (Hisoka) · Hunter x Hunter",
+          "efeito": {
+            "revide_permanente": 3
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "calma_do_monge",
+          "nome": "Calma do Monge",
+          "kanji": "静",
+          "raridade": "sangue",
+          "texto": "A calma vira ação: as recargas das suas técnicas −{recarga_menos}.",
+          "origem": "Mente Clara (Netero) · Hunter x Hunter",
+          "efeito": {
+            "recarga_menos": 1
+          },
+          "tags": [
+            "voto"
+          ]
+        },
+        {
+          "id": "fruto_da_arvore_primeva",
+          "nome": "Fruto da Árvore Primeva",
+          "kanji": "樹",
+          "raridade": "divino",
+          "texto": "+{vida_max} de vida máxima e todo dano {dano_mult+%}. Preço: o Carma enche 20% mais devagar.",
+          "origem": "Fruto do Shinju (Kaguya) · Naruto",
+          "efeito": {
+            "vida_max": 8,
+            "dano_mult": 1.12,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "brasa_do_velho_mestre",
+          "nome": "Brasa do Velho Mestre",
+          "kanji": "焔",
+          "raridade": "divino",
+          "texto": "O rival queima {sangrar}, o fogo fere {dot_mult+%} e todo dano {dano_mult+%}. Preço: {sangria} de vida por turno e dano sofrido {dano_recebido_mult+%}.",
+          "origem": "Zanka no Tachi (Yamamoto) · Bleach",
+          "efeito": {
+            "sangrar": 4,
+            "dot_mult": 1.3,
+            "dano_mult": 1.06,
+            "sangria": 1,
+            "dano_recebido_mult": 1.1
+          }
+        },
+        {
+          "id": "licenca_de_cacador",
+          "nome": "Licença de Caçador",
+          "kanji": "証",
+          "raridade": "sangue",
+          "texto": "Abre todas as portas: cura {cura_inicio} no início de cada luta e +{chance_reliquia%} de chance de Relíquia.",
+          "origem": "Licença de Hunter (Gon) · Hunter x Hunter",
+          "efeito": {
+            "cura_inicio": 2,
+            "chance_reliquia": 0.15
+          }
+        },
+        {
+          "id": "baralho_afiado",
+          "nome": "Baralho Afiado",
+          "kanji": "札",
+          "raridade": "maldito",
+          "texto": "Todo ataque que fere faz o rival sangrar {sangrar} por 3 turnos, e +{dano_marcado%} de dano contra quem sangra. Preço: o dano que você sofre {dano_recebido_mult+%}.",
+          "origem": "Cartas de Hisoka (Bungee Gum e Texture Surprise) · Hunter x Hunter",
+          "efeito": {
+            "sangrar": 2,
+            "dano_marcado": 0.25,
+            "dano_recebido_mult": 1.1
+          }
+        },
+        {
+          "id": "rosa_dos_pobres",
+          "nome": "Rosa dos Pobres",
+          "kanji": "爆",
+          "raridade": "divino",
+          "texto": "O primeiro ataque causa +{primeiro_golpe%} e todo ataque que fere injeta {veneno_ao_ferir} de veneno. Preço: vida máxima −15%.",
+          "origem": "Rosa Miniatura dos Pobres (Netero) · Hunter x Hunter",
+          "efeito": {
+            "primeiro_golpe": 0.5,
+            "veneno_ao_ferir": 2,
+            "dot_mult": 1.25,
+            "vida_max_mult": 0.85
+          }
+        },
+        {
+          "id": "martelo_e_pregos",
+          "nome": "Martelo e Pregos",
+          "kanji": "釘",
+          "raridade": "cinza",
+          "texto": "+{dano_marcado%} de dano contra rival que sangra, queima ou está envenenado.",
+          "origem": "Martelo e Pregos (Nobara) · Jujutsu Kaisen",
+          "efeito": {
+            "dano_marcado": 0.3
+          }
+        },
+        {
+          "id": "lanca_que_anula",
+          "nome": "Lança que Anula",
+          "kanji": "矛",
+          "raridade": "sangue",
+          "texto": "O Golpe atravessa bloqueio, causa +{basico_dano} e quase não se percebe (+{sutileza} de Sutileza).",
+          "origem": "Lança Invertida do Céu (Toji) · Jujutsu Kaisen",
+          "efeito": {
+            "basico_perfura": true,
+            "basico_dano": 1,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "alianca_do_amor_maldito",
+          "nome": "Aliança do Amor Maldito",
+          "kanji": "契",
+          "raridade": "maldito",
+          "texto": "Começa cada luta com uma invocação: fere {invocar_inicio} a cada turno seu, por 3 turnos. Preço: o dano que você sofre {dano_recebido_mult+%}.",
+          "origem": "Anel de Yuta (Rika) · Jujutsu Kaisen",
+          "efeito": {
+            "invocar_inicio": 3,
+            "dano_recebido_mult": 1.1
+          }
+        },
+        {
+          "id": "lente_medidora",
+          "nome": "Lente Medidora",
+          "kanji": "測",
+          "raridade": "sangue",
+          "texto": "O primeiro ataque de cada luta causa +{primeiro_golpe%}, e +{sutileza} de Sutileza.",
+          "origem": "Scouter (Raditz) · Dragon Ball",
+          "efeito": {
+            "primeiro_golpe": 0.09,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "brincos_de_fusao",
+          "nome": "Brincos de Fusão",
+          "kanji": "融",
+          "raridade": "maldito",
+          "texto": "Duas almas num corpo: +1 espaço de técnica e +{bonus_dano} de dano. Preço: vida máxima −8%.",
+          "origem": "Brincos Potara (Supremo Senhor Kaioh) · Dragon Ball",
+          "efeito": {
+            "espacos_extra": 1,
+            "bonus_dano": 1,
+            "vida_max_mult": 0.92
+          }
+        },
+        {
+          "id": "sete_esferas",
+          "nome": "Sete Esferas",
+          "kanji": "願",
+          "raridade": "divino",
+          "texto": "Sete esferas, um desejo: uma vez por run, ao cair, você volta com 30% da vida, e +{vida_max} de vida máxima. Preço: o Carma enche 30% mais devagar.",
+          "origem": "Esferas do Dragão (Shenron) · Dragon Ball",
+          "efeito": {
+            "reviver": 1,
+            "vida_max": 10,
+            "carma_mult": 0.7
+          }
+        },
+        {
+          "id": "lamina_escarlate",
+          "nome": "Lâmina Escarlate",
+          "kanji": "赫",
+          "raridade": "maldito",
+          "texto": "O aço fica rubro: todo ataque que fere faz o rival queimar {sangrar}, e técnicas causam {dano_tecnicas_mult+%}. Preço: vida máxima −5%.",
+          "origem": "Espada Nichirin escarlate (Tanjiro) · Demon Slayer",
+          "efeito": {
+            "sangrar": 2,
+            "dano_tecnicas_mult": 1.08,
+            "vida_max_mult": 0.95
+          }
+        },
+        {
+          "id": "flor_aranha_azul",
+          "nome": "Flor-Aranha Azul",
+          "kanji": "蒼",
+          "raridade": "divino",
+          "texto": "A flor que vence o sol: abaixo da metade cura {regen} por turno, todo dano {dano_mult+%} e um golpe fatal deixa 1 de vida (1×). Preço: Carma 30% mais devagar.",
+          "origem": "Higanbana azul (Muzan Kibutsuji) · Demon Slayer",
+          "efeito": {
+            "salvacao": 1,
+            "regen": 3,
+            "regen_ate": 0.5,
+            "dano_mult": 1.12,
+            "carma_mult": 0.7
+          }
+        },
+        {
+          "id": "bola_de_aco",
+          "nome": "Bola de Aço",
+          "kanji": "球",
+          "raridade": "cinza",
+          "texto": "+{vida_max} de vida máxima e +{basico_dano} de dano no Golpe.",
+          "origem": "Bola de Aço (Gyro Zeppeli) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "vida_max": 1,
+            "basico_dano": 1
+          }
+        },
+        {
+          "id": "disco_de_stand",
+          "nome": "Disco de Stand",
+          "kanji": "盤",
+          "raridade": "maldito",
+          "texto": "Um disco de poder alheio: +1 espaço de técnica e +{bonus_dano} de dano. Preço: vida máxima −8%.",
+          "origem": "DISC (Whitesnake) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "espacos_extra": 1,
+            "bonus_dano": 1,
+            "vida_max_mult": 0.92
+          }
+        },
+        {
+          "id": "flecha_do_requiem",
+          "nome": "Flecha do Réquiem",
+          "kanji": "矢",
+          "raridade": "divino",
+          "texto": "A flecha que leva o poder além: +1 espaço de técnica e um golpe fatal deixa 1 de vida (1×). Preço: vida máxima −10% e o Carma enche 30% mais devagar.",
+          "origem": "Flecha do Réquiem (Giorno Giovanna) · JoJo's Bizarre Adventure",
+          "efeito": {
+            "espacos_extra": 1,
+            "salvacao": 1,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.7
+          }
+        },
+        {
+          "id": "caderno_de_analise",
+          "nome": "Caderno de Análise",
+          "kanji": "記",
+          "raridade": "cinza",
+          "texto": "+{percepcao} de Percepção.",
+          "origem": "Caderno de Análise de Heróis (Deku) · My Hero Academia",
+          "efeito": {
+            "percepcao": 1
+          }
+        },
+        {
+          "id": "bracelete_granada",
+          "nome": "Bracelete-Granada",
+          "kanji": "弾",
+          "raridade": "sangue",
+          "texto": "+{crescer} de dano a cada turno seu na luta (acumula; vale a parte inteira).",
+          "origem": "Bracelete de granada (Bakugo) · My Hero Academia",
+          "efeito": {
+            "crescer": 0.5
+          }
+        },
+        {
+          "id": "gatilho",
+          "nome": "Gatilho",
+          "kanji": "薬",
+          "raridade": "maldito",
+          "texto": "A droga que acorda o poder: todo dano {dano_mult+%}. Preço: {sangria} de vida por turno.",
+          "origem": "Trigger (Shie Hassaikai) · My Hero Academia",
+          "efeito": {
+            "dano_mult": 1.14,
+            "sangria": 1
+          }
+        },
+        {
+          "id": "manto_da_paz",
+          "nome": "Manto da Paz",
+          "kanji": "平",
+          "raridade": "divino",
+          "texto": "+{dano_chefe_mult+%} de dano contra chefes e +{bonus_dano} de dano. Preço: vida máxima −10% e o Carma enche 20% mais devagar.",
+          "origem": "Traje do Símbolo da Paz (All Might) · My Hero Academia",
+          "efeito": {
+            "dano_chefe_mult": 1.3,
+            "bonus_dano": 2,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
+        },
+        {
+          "id": "tanque_de_gas",
+          "nome": "Tanque de Gás",
+          "kanji": "気",
+          "raridade": "sangue",
+          "texto": "O primeiro ataque de cada luta causa +{primeiro_golpe%}, e +{sutileza} de Sutileza.",
+          "origem": "Tanque de gás (Manobra 3D) · Attack on Titan",
+          "efeito": {
+            "primeiro_golpe": 0.09,
+            "sutileza": 1
+          }
+        },
+        {
+          "id": "seringa_de_tita",
+          "nome": "Seringa de Titã",
+          "kanji": "針",
+          "raridade": "maldito",
+          "texto": "Suas transformações duram {modo_extra} turno a mais e todo dano {dano_mult+%}. Preço: {sangria} de vida por turno.",
+          "origem": "Soro de Titã (Cadetes de Marley) · Attack on Titan",
+          "efeito": {
+            "modo_extra": 1,
+            "dano_mult": 1.12,
+            "sangria": 1
+          }
+        },
+        {
+          "id": "coordenada",
+          "nome": "Coordenada",
+          "kanji": "道",
+          "raridade": "divino",
+          "texto": "Começa cada luta com titãs que ferem {invocar_inicio} a cada turno seu, por 3 turnos, e todo dano {dano_mult+%}. Preço: vida máxima −10% e Carma 20% mais devagar.",
+          "origem": "Coordenada (Ymir Fritz) · Attack on Titan",
+          "efeito": {
+            "invocar_inicio": 3,
+            "dano_mult": 1.1,
+            "vida_max_mult": 0.9,
+            "carma_mult": 0.8
+          }
         }
       ]
     },
@@ -6063,6 +7072,19 @@
           "despertar": {
             "golpe_imediato": 30,
             "enfraquecer": 2
+          }
+        },
+        {
+          "id": "alem_do_limite",
+          "nome": "Além do Limite",
+          "kanji": "越",
+          "raridade": "divino",
+          "texto": "Por {forma} turnos dano dobrado e nada entra em recarga, e +{dano} de dano até o fim da luta. Preço: −{perde_vida_max%} de vida máxima pelo resto da run.",
+          "origem": "Plus Ultra (Deku) · My Hero Academia",
+          "despertar": {
+            "forma": 3,
+            "dano": 3,
+            "perde_vida_max": 0.1
           }
         }
       ]

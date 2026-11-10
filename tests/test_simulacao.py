@@ -1,3 +1,5 @@
+import pytest
+
 from karmabound.simulacao import simular, simular_com_combate
 
 
@@ -6,6 +8,7 @@ def test_reprodutivel():
     assert a.despertares == b.despertares
 
 
+@pytest.mark.calibracao
 def test_calibracao_no_alvo():
     """Alvo do DESIGN.md: 1–2 Despertares por run, em média, com combate real."""
     res = simular_com_combate(800, seed=1, dificuldade="dificil")

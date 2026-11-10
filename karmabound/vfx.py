@@ -1368,6 +1368,7 @@ AURAS = {  # id do Despertar -> (cor, estilo)
     "retribuicao": (SANGUE_VIVO, "espinhos"),
     "tomar_o_destino": (OURO, "correntes"),
     "forma_desperta": (AMARELO, "chamas"),
+    "alem_do_limite": ((120, 200, 255, 255), "chamas"),  # Plus Ultra (My Hero Academia)
     "renascer_das_cinzas": ((255, 150, 70, 255), "asas"),
     "liberacao_final": (SANGUE_VIVO, "pressao"),
     "instinto_puro": ((210, 220, 240, 255), "brilho"),
@@ -1709,6 +1710,23 @@ def mancha_de_sangue(r: IRenderer, x: float, y: float, tam: float, semente: floa
 # Academia, Attack on Titan) e as Linhagens com técnica própria
 POR_HABILIDADE.update(
     {
+        "carne_por_poder": "corte_x",
+        "tudo_no_ataque": "punho",
+        "golpe_sem_maos": "feixe",
+        "golpe_contado": "corte_x",
+        "poder_contido": "explosao",
+        "corte_paciente": "corte_x",
+        "punho_puro": "punho",
+        "golpe_declarado": "selo",
+        "ciclo_das_treze_formas": "fogo",
+        "golpe_do_simbolo": "punho_gigante",
+        "marcha_dos_gigantes": "presa",
+        "veste_de_lamina_negra": "demonio",
+        "cem_maos_do_bodisatva": "punho_gigante",
+        "dois_dedos_na_testa": "feixe",
+        "pedacos_que_voltam": "cura",
+        "tomar_poderes": "espelho",
+        "roda_do_dharma": "roda_dharma",
         "raio_do_vazio": "feixe",
         "garras_da_pantera": "sangue",
         "seis_barras_de_luz": "selo",

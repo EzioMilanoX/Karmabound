@@ -54,7 +54,7 @@ def test_o_grimorio_lista_todas_as_habilidades_com_origem(ctx):
     por_roda = entradas(ctx)
     total = sum(len(v) for v in por_roda.values())
     fatias = sum(len(r.fatias) for r in ctx.rodas.values())
-    assert total == fatias + 1 + len(ctx.chefes)  # + o Golpe e os chefes
+    assert total == fatias + 1  # + o Golpe (os chefes são vilões: aba Vilões)
     assert por_roda["tecnicas"][0].id == "golpe_basico"
     assert all(e.origem for v in por_roda.values() for e in v)
 

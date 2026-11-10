@@ -58,6 +58,7 @@ from karmabound.figuras import (
 )
 from karmabound.fusoes import carregar_fusoes, tecnicas_de_fusao
 from karmabound.jornada import Jornada
+from karmabound.memes import desenhar_meme, tocar_meme
 from karmabound.opcoes import OPCOES
 from karmabound.ressonancia import ressonancias_ativas
 from karmabound.rodas import carregar_mecanicas
@@ -84,6 +85,14 @@ from karmabound.visual import (
 DURACAO_ACAO = 0.6
 DURACAO_ENTRADA = 1.7  # a entrada do rival (o chefe demora mais)
 DURACAO_ENTRADA_CHEFE = 2.6
+# A barra do Kokusen (tempo de verdade, em segundos)
+BARRA_DURACAO = 0.6  # a barra inteira: não segura o ritmo do turno
+BARRA_ALVO = 0.42  # onde fica o instante certo
+KOKUSEN_JANELA = 0.07  # a faixa certa, sem zona
+ZONA_PASSO = 0.02  # cada Kokusen seguido alarga a faixa
+KOKUSEN_JJK = 0.04  # a Ressonância de Jujutsu Kaisen alarga a faixa
+KOKUSEN_SORTE = 0.08  # com a barra desligada: a chance de um Kokusen
+ALTURA_MEME = 190  # a altura do chefe secreto na tela (o colosso tem mais ou menos isso)
 DURACAO_FALA = 1.6  # a entrada de um vilão que fala dura mais, para dar tempo de ler
 DURACAO_FALA_FURIA = 3.2  # a fala da segunda forma fica no alto da tela
 DURACAO_FIM = 1.3  # o rival se desfaz, ou as correntes se fecham
@@ -362,6 +371,7 @@ class LutaScene(IScene):
         self.proxima_rival = self.entrada_ate + PAUSA_RIVAL
         self.fim_inicio: float | None = None
         self.fala_tela: tuple | None = None  # (fala, início, quem): a fala da segunda forma
+        self.barra: tuple | None = None  # o Kokusen: (técnica, sacrifício, segundos passados)
         self.manchas: list[tuple[float, float, float, float]] = []  # o sangue no chão, até o fim
         self.primeiro_quadro = True
         self.cursor = 1 if self.j.jogador.tecnicas else 0
@@ -743,12 +753,67 @@ class LutaScene(IScene):
         som.tocar("mover")
 
     def _executar(self, t: Tecnica, sacrificio: Tecnica | None = None) -> None:
+        if t.dano > 0 and t.tipo != "defesa" and self.barra is None:
+            if OPCOES.kokusen:  # o golpe espera o instante certo (a barra do Kokusen)
+                self.barra = (t, sacrificio, 0.0)
+                return
+            # sem a barra, o Kokusen ainda acontece de vez em quando
+            self._golpear(t, sacrificio, self.luta.rng.random() < KOKUSEN_SORTE)
+            return
+        self._golpear(t, sacrificio, False)
+
+    def _golpear(self, t: Tecnica, sacrificio: Tecnica | None, kokusen: bool) -> None:
         alvo, antes = self.luta.rival, self._foto()  # o motor remira se o alvo cair
-        self._animar(self.luta.resolver(t, sacrificio), alvo, antes)
+        acao = self.luta.resolver(t, sacrificio, kokusen=kokusen)
+        self._animar(acao, alvo, antes)
+        if acao.dano:
+            tocar_meme(self.vilao(alvo), "dor")
+        if kokusen:  # o Clarão Negro: o tempo para e a tela escurece por um instante
+            x, y = self._centro(self.luta.rival)
+            self._por(Texto(x, y - 190, "黒閃  Kokusen", SANGUE_VIVO, self.relogio, 34, pop=True))
+            som.tocar("critico")
+
+    def janela_kokusen(self) -> float:
+        """A largura (em segundos) da faixa certa: cresce na zona e com a Ressonância de
+        Jujutsu Kaisen (o Kokusen é coisa deles)."""
+        j = self.j.jogador
+        jjk = any(r.anime == "Jujutsu Kaisen" for r in ressonancias_ativas(self.j.estado))
+        return KOKUSEN_JANELA + ZONA_PASSO * j.zona + (KOKUSEN_JJK if jjk else 0.0)
+
+    def _tempo_do_golpe(self, real_dt: float) -> bool:
+        """A barra do Kokusen em andamento: Enter na faixa solta o golpe perfeito.
+        Corre no tempo de verdade (a velocidade das animações não a encolhe)."""
+        if self.barra is None:
+            return False
+        t, sacrificio, passou = self.barra
+        passou += real_dt
+        self.barra = (t, sacrificio, passou)
+        apertou = self.entrada.is_action_pressed("confirmar")
+        if apertou or passou >= BARRA_DURACAO:
+            acertou = apertou and abs(passou - BARRA_ALVO) <= self.janela_kokusen() / 2
+            self.barra = None
+            self._golpear(t, sacrificio, acertou)
+        return True
+
+    def _desenhar_kokusen(self, r: IRenderer) -> None:
+        if self.barra is None:
+            return
+        passou = self.barra[2]
+        x0, y, largura = 330, 470, 300
+        r.draw_ui_rect(x0, y, largura, 10, alpha(FUNDO, 230))
+        janela = self.janela_kokusen() / BARRA_DURACAO * largura
+        centro = x0 + BARRA_ALVO / BARRA_DURACAO * largura
+        r.draw_ui_rect(centro - janela / 2, y - 2, janela, 14, alpha(SANGUE_VIVO, 200))
+        cursor = x0 + min(1.0, passou / BARRA_DURACAO) * largura
+        r.draw_ui_rect(cursor - 2, y - 8, 4, 26, OURO)
+        zona = self.j.jogador.zona
+        rotulo = "黒閃  Enter no vermelho" + (f" · na zona {zona}" if zona else "")
+        self._texto(r, 480, y + 18, rotulo, 14, alpha(TINTA, 200), "center")
 
     def _agir_rival(self) -> None:
         antes = self._foto()
         self._animar(self.luta.turno_rival(), antes=antes)
+        tocar_meme(self.vilao(self.luta.rival), "golpe")
 
     def _animar(
         self,
@@ -1209,11 +1274,14 @@ class LutaScene(IScene):
         som.SOM.atualizar(delta_time)  # a passagem da música corre no tempo de verdade
         if self.acelerando:
             delta_time *= ACELERAR
+        if self._tempo_do_golpe(delta_time):  # o Kokusen espera o Enter (tempo de verdade)
+            return
         delta_time *= OPCOES.velocidade  # a velocidade das animações, das opções
         self._passar(delta_time)
         if self.primeiro_quadro:
             self.primeiro_quadro = False
             som.tocar("chefe_entra" if self.luta.rival.chefe else "rival_entra")
+            tocar_meme(self.vilao(self.luta.rival), "entrada")
         self._musica()
         if self.sons:  # os sons que esperavam o impacto
             agora = [s for s in self.sons if s[0] <= self.relogio]
@@ -1267,6 +1335,7 @@ class LutaScene(IScene):
             self.anim_ate = self.relogio + DURACAO_FIM
             venceu = self.luta.vencedor is self.j.jogador
             som.tocar("vitoria" if venceu else "derrota")
+            tocar_meme(self.vilao(self.luta.rival), "derrota" if venceu else "vitoria")
             return
         if self.luta.vez is not self.j.jogador:
             if self.relogio >= self.proxima_rival:
@@ -1533,6 +1602,7 @@ class LutaScene(IScene):
         self._cena_despertar(r)
         self._entrada_do_rival(r)
         self._fala_na_tela(r)
+        self._desenhar_kokusen(r)
         if self.modo == "fim" and self.relogio >= self.anim_ate:
             self._banner(r)
         transicoes.revelar(self, r, self.relogio)
@@ -2261,6 +2331,11 @@ class LutaScene(IScene):
         visivel *= self._translucido(rival)
         if rival.modo is not None and visivel:  # o rival transformado
             vfx.aura(r, rival.modo_id, x + dx, y + dy - 66 * escala, 0.12, self.relogio)
+        meme = self.vilao(rival)
+        if meme is not None and meme.papel == "meme":  # o chefe secreto: a imagem, tosca
+            altura = ALTURA_MEME * escala
+            if desenhar_meme(r, meme, x + dx, y + dy, altura, self.relogio, visivel):
+                return
         desenhar_lutador(
             r,
             x + dx,

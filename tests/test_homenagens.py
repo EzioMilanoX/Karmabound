@@ -274,12 +274,12 @@ def test_chefes_e_aliados_tem_a_sua_origem_e_o_seu_kanji(ctx):
 def test_as_rodas_tem_as_habilidades_novas(ctx):
     contagem = {r.id: len(r.fatias) for r in ctx.rodas.values()}
     assert contagem == {
-        "linhagem": 44,
-        "destino": 57,
-        "tecnicas": 198,
+        "linhagem": 57,
+        "destino": 72,
+        "tecnicas": 202,
         "arco": 34,
-        "reliquias": 42,
-        "despertar": 45,
+        "reliquias": 65,
+        "despertar": 46,
     }
 
 

@@ -17,6 +17,7 @@ from karmabound.aliados import carregar_aliados
 from karmabound.fusoes import Fusao, nomes_dos_requisitos
 from karmabound.grimorio import Grimorio, fusao_descoberta
 from karmabound.legado import MAESTRIA, nivel_maestria
+from karmabound.rodas import carregar_mecanicas
 from karmabound.run import Contexto
 from karmabound.tela_menus import _Base
 from karmabound.visual import (
@@ -40,14 +41,12 @@ ORDEM_RODAS = (
     "arco",
     "reliquias",
     "despertar",
-    "chefes",
     "viloes",
     "fusoes",
     "aliados",
     "afixos",
 )
 NOMES_ABA = {  # abas que não são rodas
-    "chefes": ("魔", "Chefes"),
     "viloes": ("鬼", "Vilões"),
     "fusoes": ("融", "Fusões"),
     "aliados": ("伴", "Aliados"),
@@ -55,7 +54,7 @@ NOMES_ABA = {  # abas que não são rodas
 }
 # aba -> tipo da entrada
 EXTRAS = {"fusoes": "fusao", "aliados": "aliado", "afixos": "afixo", "viloes": "vilao"}
-PAPEL_DO_VILAO = {"tenente": 0, "chefe": 1, "final": 2, "secreto": 3}  # -> a cor
+PAPEL_DO_VILAO = {"tenente": 0, "chefe": 1, "final": 2, "secreto": 3, "meme": 3}  # -> a cor
 LINHA = 22
 TOPO_LISTA = 118
 VISIVEIS = 20  # linhas da lista na tela; o resto rola
@@ -100,11 +99,17 @@ def entradas_extras(ctx: Contexto) -> dict[str, list[Entrada]]:
             for a in ctx.caminho.afixos.values()
         ]
     viloes = []
+    mecanicas = carregar_mecanicas()
     if ctx.elenco is not None:  # o bestiário: quem você já enfrentou
         ordem_papel = sorted(ctx.elenco.viloes, key=lambda v: (PAPEL_DO_VILAO[v.papel], v.anime))
         for v in ordem_papel:
             quem = f"{v.titulo[:1].upper()}{v.titulo[1:]}." if v.titulo else ""
             fala = f" “{v.fala('entrada')}”" if v.fala("entrada") else ""
+            for aid in v.assinaturas:  # o chefe é um vilão especial: a assinatura é dele
+                a = ctx.assinaturas.get(aid)
+                if a is not None:
+                    regra = mecanicas.get(a.mecanica, {}).get("nome", "")
+                    quem += f" {a.kanji} {a.nome}" + (f" ({regra})." if regra else ".")
             raridade = ordem[min(PAPEL_DO_VILAO[v.papel], len(ordem) - 1)]
             viloes.append(Entrada(v.id, v.nome, v.kanji, raridade, quem + fala, v.origem, "vilao"))
     return {"fusoes": fusoes, "aliados": aliados, "afixos": afixos, "viloes": viloes}
@@ -116,7 +121,7 @@ def entradas(ctx: Contexto) -> dict[str, list[Entrada]]:
     for rid in ORDEM_RODAS:
         if rid in EXTRAS:
             continue
-        fatias = ctx.chefes if rid == "chefes" else ctx.rodas[rid].fatias
+        fatias = ctx.rodas[rid].fatias
         por_roda[rid] = [
             Entrada(f.id, f.nome, f.kanji, f.raridade, f.texto, f.origem) for f in fatias
         ]

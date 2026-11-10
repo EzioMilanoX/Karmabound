@@ -108,6 +108,7 @@
       "_nota": "Vitória do piloto automático em 12 lutas (tools/simular.py --combate). Um jogador de verdade vence mais.",
       "acessivel": {
         "nome": "Acessível",
+        "frase": "para conhecer o torneio",
         "alvo_vitoria": 0.45,
         "rivais": {
           "vida_por_luta": 4.36,
@@ -119,6 +120,7 @@
       },
       "equilibrado": {
         "nome": "Equilibrado",
+        "frase": "o jogo como foi pensado",
         "alvo_vitoria": 0.36,
         "rivais": {
           "vida_por_luta": 4.99,
@@ -130,6 +132,7 @@
       },
       "dificil": {
         "nome": "Difícil",
+        "frase": "o torneio de verdade",
         "alvo_vitoria": 0.25,
         "rivais": {
           "vida_por_luta": 5.71,
@@ -141,6 +144,7 @@
       },
       "brutal": {
         "nome": "Brutal",
+        "frase": "para quem já vence",
         "alvo_vitoria": 0.1,
         "rivais": {
           "vida_por_luta": 8.14,

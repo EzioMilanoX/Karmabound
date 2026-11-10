@@ -41,7 +41,8 @@
       "efeito": {
         "vida_max_mult": 0.75
       },
-      "tipico": 0.1326
+      "tipico": 0.1326,
+      "recompensa": "carne_por_poder"
     },
     {
       "id": "passos_pesados",
@@ -52,7 +53,8 @@
       "efeito": {
         "velocidade": -1
       },
-      "tipico": 0.0843
+      "tipico": 0.0843,
+      "recompensa": "corrente_de_chumbo"
     },
     {
       "id": "sem_descanso",
@@ -63,7 +65,8 @@
       "efeito": {
         "sem_cura": true
       },
-      "tipico": 0.3367
+      "tipico": 0.3367,
+      "recompensa": "brasa_que_nao_dorme"
     },
     {
       "id": "sem_guarda",
@@ -74,7 +77,8 @@
       "efeito": {
         "proibir_tipo": "defesa"
       },
-      "tipico": 0.0
+      "tipico": 0.0,
+      "recompensa": "tudo_no_ataque"
     },
     {
       "id": "maos_atadas",
@@ -85,7 +89,8 @@
       "efeito": {
         "proibir_basico": true
       },
-      "tipico": 0.0164
+      "tipico": 0.0164,
+      "recompensa": "golpe_sem_maos"
     },
     {
       "id": "voto_exposto",
@@ -96,7 +101,8 @@
       "efeito": {
         "percepcao_rival": 2
       },
-      "tipico": 0.1048
+      "tipico": 0.1048,
+      "recompensa": "olho_que_ve_quem_ve"
     },
     {
       "id": "prazo",
@@ -107,7 +113,8 @@
       "efeito": {
         "limite_turnos": 10
       },
-      "tipico": 0.0015
+      "tipico": 0.0015,
+      "recompensa": "golpe_contado"
     },
     {
       "id": "fio_da_navalha",
@@ -118,7 +125,8 @@
       "efeito": {
         "morte_abaixo": 0.2
       },
-      "tipico": 0.185
+      "tipico": 0.185,
+      "recompensa": "lamina_do_limite"
     },
     {
       "id": "olhos_vendados",
@@ -129,7 +137,8 @@
       "efeito": {
         "percepcao": -2
       },
-      "tipico": 0.0574
+      "tipico": 0.0574,
+      "recompensa": "venda_de_seda"
     },
     {
       "id": "despertar_selado",
@@ -140,7 +149,8 @@
       "efeito": {
         "sem_despertar": true
       },
-      "tipico": 0.0969
+      "tipico": 0.0969,
+      "recompensa": "poder_contido"
     },
     {
       "id": "sangue_ralo",
@@ -151,7 +161,8 @@
       "efeito": {
         "cura_mult": 0.5
       },
-      "tipico": 0.1759
+      "tipico": 0.1759,
+      "recompensa": "sangue_que_ferve"
     },
     {
       "id": "lamina_lenta",
@@ -162,7 +173,8 @@
       "efeito": {
         "recarga_menos": -1
       },
-      "tipico": 0.0032
+      "tipico": 0.0032,
+      "recompensa": "corte_paciente"
     },
     {
       "id": "pele_fina",
@@ -173,7 +185,8 @@
       "efeito": {
         "dano_recebido_mult": 1.25
       },
-      "tipico": 0.1011
+      "tipico": 0.1011,
+      "recompensa": "pele_de_vidro"
     },
     {
       "id": "silencio_maldito",
@@ -184,7 +197,8 @@
       "efeito": {
         "proibir_tipo": "maldita"
       },
-      "tipico": 0.1986
+      "tipico": 0.1986,
+      "recompensa": "punho_puro"
     },
     {
       "id": "coracao_frio",
@@ -195,7 +209,8 @@
       "efeito": {
         "carma_mult": 0.5
       },
-      "tipico": 0.0435
+      "tipico": 0.0435,
+      "recompensa": "calma_do_monge"
     },
     {
       "id": "voto_anunciado",
@@ -206,7 +221,8 @@
       "efeito": {
         "sutileza": -2
       },
-      "tipico": 0.1088
+      "tipico": 0.1088,
+      "recompensa": "golpe_declarado"
     }
   ],
   "ganhos": [

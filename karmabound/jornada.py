@@ -39,6 +39,7 @@ from karmabound.fusoes import fundir
 from karmabound.grimorio import Grimorio
 from karmabound.historias import ORIGINAL, Capitulo, Cena, carregar_historias
 from karmabound.mesa import Giro, Mesa
+from karmabound.pacto import montar as montar_pacto
 from karmabound.rodas import Fatia
 from karmabound.run import (
     Contexto,
@@ -147,6 +148,9 @@ class Jornada:
         ascensao: int = 0,
         historia: str = "",
         alem: bool = False,
+        pacto: dict | None = None,
+        desbloqueios: frozenset[str] = frozenset(),
+        memes: bool = False,
     ) -> Jornada:
         """`modo`: a dificuldade. `jogo`: Clássico, História (com `historia`), Torre sem
         fim, Desfile de chefes ou Mundo de um anime (com `anime`). `abertos`, `maestria`,
@@ -155,6 +159,8 @@ class Jornada:
         legado = {"abertos": abertos, "maestria": maestria, "nemesis": nemesis}
         legado["ascensao"] = ascensao  # guardado junto: salvar.carregar refaz o Contexto
         legado["historia"], legado["alem"] = historia, alem
+        legado["desbloqueios"] = frozenset(desbloqueios)
+        legado["memes"] = memes
         ctx = Contexto.padrao(modo, jogo=jogo, anime=anime, **legado)
         rng = random.Random(seed)
         mesa = Mesa(ctx.rodas, ctx.raridades, ctx.config_carma, rng)
@@ -168,7 +174,23 @@ class Jornada:
             carma=mesa.carma,
         )
         estado = EstadoRun(jogador, mesa, Votos(ctx.catalogo))
-        return cls(ctx, estado, rng, ctx.combate["dificuldade"], legado=legado)
+        j = cls(ctx, estado, rng, ctx.combate["dificuldade"], legado=legado)
+        pacto = pacto or {}
+        voto = montar_pacto(ctx.catalogo, pacto.get("restricoes", []), pacto.get("ganhos", []))
+        if voto is not None:  # o voto do menu: jurado antes da primeira luta
+            aplicar_voto(estado, ctx, voto)
+        return j
+
+    def recompensas_cumpridas(self) -> list[str]:
+        """As recompensas dos votos de run ainda de pé (venceu com eles: liberam)."""
+        recompensa = self.ctx.catalogo.recompensas
+        return [
+            recompensa[r.id]
+            for v in self.estado.votos.ativos
+            if v.duracao == "run" and not v.de_quebra
+            for r in v.restricoes
+            if r.id in recompensa
+        ]
 
     # ------------------------------------------------------------------ atalhos
 
