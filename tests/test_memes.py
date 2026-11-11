@@ -87,3 +87,22 @@ def test_o_som_do_chefe_secreto_sai_pelo_momento(monkeypatch):
     assert memes.tocar_meme(speaki, "dor") and tocados == ["dor.mp3"]
     assert not memes.tocar_meme(speaki, "entrada")  # sem arquivo: mudo
     assert not memes.tocar_meme(carregar_viloes().viloes[0], "dor")  # não é meme
+
+
+def test_a_speaki_luta_so_com_o_que_e_dela():
+    from karmabound import livre
+
+    j = livre.montar({"rival": "speaki"}, "dificil", seed=3)
+    ids = {t.id for t in j.luta.rival.tecnicas}
+    dela = {"choro_de_speaki", "olhar_pidao", "rolar_no_chao", "mais_speakis", "grito_de_speaki"}
+    assert ids == dela  # nenhuma técnica sorteada do pool
+
+
+def test_a_trilha_do_chefe_secreto_vem_da_pasta_dele():
+    speaki = carregar_viloes()["speaki"]
+    assert memes.trilha(speaki) is None  # sem arquivo: a música de chefe de sempre
+    pasta = memes.pasta_memes() / "speaki"
+    pasta.mkdir(parents=True, exist_ok=True)
+    (pasta / "musica.wav").write_bytes(b"")
+    assert memes.trilha(speaki).name == "musica.wav"
+    assert memes.trilha(carregar_viloes().viloes[0]) is None

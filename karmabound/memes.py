@@ -12,7 +12,8 @@ com um pulo e um tremor, sem transição nenhuma.
 
 Os sons ficam em `<pasta>/sons/`, pelo momento no começo do nome: `entrada`, `golpe`
 (quando ele ataca), `dor` (quando apanha), `derrota` e `vitoria` (`golpe_1.mp3`,
-`golpe_2.mp3`... sorteia entre os do mesmo momento). Sem arquivo, fica mudo.
+`golpe_2.mp3`... sorteia entre os do mesmo momento). Sem arquivo, fica mudo. A trilha
+da luta é `<pasta>/musica.*` (tools/gerar_trilha_meme.py gera uma original).
 """
 
 from __future__ import annotations
@@ -74,6 +75,15 @@ def tocar_meme(vilao: Vilao | None, momento: str, rng: random.Random | None = No
 
     SOM.tocar_arquivo((rng or random).choice(lista))
     return True
+
+
+def trilha(vilao: Vilao | None, pasta: Path | None = None) -> Path | None:
+    """A música da luta contra o chefe secreto (None: a de chefe de sempre)."""
+    if vilao is None or vilao.papel != "meme" or not vilao.imagens:
+        return None
+    dele = (pasta or pasta_memes()) / vilao.imagens
+    achadas = sorted(p for p in dele.glob("musica.*") if p.suffix.lower() in SONS)
+    return achadas[0] if achadas else None
 
 
 class Sequencia:

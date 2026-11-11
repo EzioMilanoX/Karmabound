@@ -124,6 +124,24 @@ class _Som:
         except Exception:
             pass
 
+    def faixa_de_arquivo(self, caminho: Path) -> str | None:
+        """Registra uma faixa de fora do banco (a trilha de um chefe secreto); o nome dela."""
+        nome = f"arquivo:{caminho}"
+        if self.audio is None:
+            return None
+        if nome not in self.musicas:
+            try:
+                self.audio.load_track(nome, str(caminho))
+            except Exception:
+                return None
+            self.musicas.add(nome)
+            try:
+                with wave.open(str(caminho), "rb") as w:
+                    self.duracoes[nome] = w.getnframes() / w.getframerate()
+            except Exception:  # mp3/ogg: sem compasso para casar, troca seca
+                pass
+        return nome
+
     def tocar_arquivo(self, caminho: Path, volume: float = 1.0) -> None:
         """Um som de fora do banco (os chefes secretos): carrega na primeira vez."""
         if self.audio is None:

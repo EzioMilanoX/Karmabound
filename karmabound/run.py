@@ -645,7 +645,9 @@ def gerar_rival(
     mais_tecnicas += cfg.get("chefe_tecnicas_extra", 0) if chefe else 0  # Ascensão
     n_tec = min(len(pool), n_tec + mais_tecnicas)
     vida = vida_do_rival(ctx, n_luta)
-    if vilao is None:
+    if vilao is not None and vilao.papel == "meme":
+        fatias = []  # o chefe secreto luta só com o que é dele (as assinaturas)
+    elif vilao is None:
         fatias = rng.sample(pool, n_tec)
     else:
         no_pool = {f.id for f in pool}

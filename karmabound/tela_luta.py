@@ -58,7 +58,7 @@ from karmabound.figuras import (
 )
 from karmabound.fusoes import carregar_fusoes, tecnicas_de_fusao
 from karmabound.jornada import Jornada
-from karmabound.memes import desenhar_meme, tocar_meme
+from karmabound.memes import desenhar_meme, tocar_meme, trilha
 from karmabound.opcoes import OPCOES
 from karmabound.ressonancia import ressonancias_ativas
 from karmabound.rodas import carregar_mecanicas
@@ -1190,6 +1190,11 @@ class LutaScene(IScene):
     def _faixa(self) -> str:
         """A música desta luta: a do chefe muda na segunda forma."""
         chefes = [r for r in self.luta.rivais if r.chefe]
+        meme = trilha(self.vilao(self.luta.rival))
+        if meme is not None:  # o chefe secreto tem a trilha dele
+            nome = som.SOM.faixa_de_arquivo(meme)
+            if nome is not None:
+                return nome
         if chefes:
             return "chefe_furia" if any(r.segunda_forma for r in chefes) else "chefe"
         return "luta_carma" if self.j.carma.transbordando else "luta"
